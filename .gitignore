@@ -1,0 +1,29 @@
+# Env — ignore every real env file (any name starting with ".env" or
+# ending in ".env"), but keep committed example/template files tracked.
+# This intentionally also covers files not created yet, like a future
+# real .env.production, not just the ones that exist today.
+.env
+.env.*
+*.env
+!*.example
+
+# Python
+backend/venv/
+backend/**/__pycache__/
+backend/**/*.pyc
+backend/**/*.db
+backend/.pytest_cache/
+backend/htmlcov/
+backend/.coverage
+
+# Node / Next.js
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/coverage/
+frontend/next-env.d.ts
+frontend/tsconfig.tsbuildinfo
+
+# Misc
+.DS_Store
+*.log
