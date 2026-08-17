@@ -1,9 +1,9 @@
-# CareerFound — Tech Career Launchpad
+# CareerFound|Tech Career Launchpad
 
 > "You don't need to figure out your entire future today. You just need to know your next step."
 
 CareerFound takes a complete beginner from **confused → discovered → learning →
-building → portfolio → job-ready**. It's not a course catalog — it's an AI
+building → portfolio → job-ready**. It's not a course catalog it's an AI
 career advisor, personalized roadmap generator, project-based accelerator,
 and employability tracker in one product.
 
@@ -58,7 +58,7 @@ npm run dev
 ## Going live with real AI
 
 Every AI feature (career assessment analysis, AI mentor, project reviewer,
-portfolio copywriter) runs on a `MockLLMProvider` by default — realistic,
+portfolio copywriter) runs on a `MockLLMProvider` by default realistic,
 personalized, structured responses with zero API key required, so the whole
 product is fully clickable today. To go live:
 
