@@ -57,7 +57,7 @@ export default function RetakeAssessmentPage() {
             <Sparkles className="h-3.5 w-3.5" /> Find Your Tech Path
           </p>
           <h1 className="mt-2 text-2xl font-semibold text-ink-100">Retake your assessment</h1>
-          <p className="mt-1 text-sm text-ink-500">Answers update your recommendations — your progress stays untouched.</p>
+          <p className="mt-1 text-sm text-ink-500">Answers update your recommendations, your progress stays untouched.</p>
         </div>
 
         <Card className="p-8">
@@ -73,7 +73,7 @@ export default function RetakeAssessmentPage() {
                     onClick={() => setAnswers((a) => ({ ...a, [q.key]: true }))}
                     className={cn(
                       "rounded-xl border px-4 py-2.5 text-sm font-medium transition-colors focus-ring",
-                      answers[q.key] === true ? "border-accent bg-accent/15 text-accent-light" : "border-white/10 bg-white/[0.03] text-ink-300"
+                      answers[q.key] === true ? "border-accent bg-accent/15 text-accent-light" : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] text-ink-300"
                     )}
                   >
                     Yes
@@ -83,7 +83,7 @@ export default function RetakeAssessmentPage() {
                     onClick={() => setAnswers((a) => ({ ...a, [q.key]: false }))}
                     className={cn(
                       "rounded-xl border px-4 py-2.5 text-sm font-medium transition-colors focus-ring",
-                      answers[q.key] === false ? "border-accent bg-accent/15 text-accent-light" : "border-white/10 bg-white/[0.03] text-ink-300"
+                      answers[q.key] === false ? "border-accent bg-accent/15 text-accent-light" : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] text-ink-300"
                     )}
                   >
                     Not really

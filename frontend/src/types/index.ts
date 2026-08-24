@@ -11,6 +11,8 @@ export interface User {
   beginner_mode: boolean;
   plan: "free" | "pro";
   role: "user" | "mentor" | "admin";
+  email_verified: boolean;
+  marketing_opt_in: boolean;
 }
 
 export interface CareerPath {
@@ -90,11 +92,17 @@ export interface ProjectItem {
   common_mistakes: string[];
   difficulty: number;
   difficulty_label: "Beginner" | "Intermediate" | "Expert";
+  estimated_duration: string;
   status: "not_started" | "in_progress" | "completed";
 }
 
 export interface CareerProjectItem extends ProjectItem {
   phase_title: string;
+}
+
+export interface RoleProjectCatalogEntry {
+  path: CareerPath;
+  projects: CareerProjectItem[];
 }
 
 export interface QuizItem {
@@ -237,6 +245,10 @@ export interface Mentor {
   value_proposition: string;
   availability_note: string;
   mentee_count: number;
+  mentorship_duration_label: string;
+  mentorship_price_label: string;
+  consultation_duration_label: string;
+  consultation_price_label: string;
 }
 
 export type HelpTopic =

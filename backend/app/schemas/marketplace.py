@@ -27,6 +27,10 @@ class MentorOut(BaseModel):
     value_proposition: str
     availability_note: str
     mentee_count: int
+    mentorship_duration_label: str = ""
+    mentorship_price_label: str = ""
+    consultation_duration_label: str = ""
+    consultation_price_label: str = ""
 
     model_config = {"from_attributes": True}
 
@@ -34,7 +38,7 @@ class MentorOut(BaseModel):
 class MentorProfileUpdate(BaseModel):
     """Fields a mentor can edit about their own profile (PATCH /mentors/me/profile).
     Everything is optional so a partial update is possible; nothing here lets
-    a mentor set is_verified, is_founding_mentor, is_demo, or rating fields —
+    a mentor set is_verified, is_founding_mentor, is_demo, or rating fields:
     those stay outside self-service editing.
     """
 
@@ -47,6 +51,10 @@ class MentorProfileUpdate(BaseModel):
     session_durations_minutes: list[int] | None = None
     availability_note: str | None = None
     paths: list[str] | None = None
+    mentorship_duration_label: str | None = None
+    mentorship_price_label: str | None = None
+    consultation_duration_label: str | None = None
+    consultation_price_label: str | None = None
 
 
 HELP_TOPICS = (
@@ -188,7 +196,7 @@ class MentorEarningsSummaryOut(BaseModel):
     pending_requests: int
     total_earned_cents: int
     currency: str
-    note: str = "Sessions are free during the founding-mentor launch — earnings will reflect real charges once pricing is turned on."
+    note: str = "Sessions are free during the founding-mentor launch. Earnings will reflect real charges once pricing is turned on."
 
 
 class MentorApplicationIn(BaseModel):

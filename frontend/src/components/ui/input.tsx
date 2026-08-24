@@ -6,7 +6,7 @@ export const Input = forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTML
     <input
       ref={ref}
       className={cn(
-        "w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm text-ink-100 placeholder:text-ink-500 focus-ring transition-colors",
+        "w-full rounded-xl border border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.04)] px-4 py-2.5 text-sm text-ink-100 placeholder:text-ink-500 focus-ring transition-colors",
         className
       )}
       {...props}
@@ -20,7 +20,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, React.TextareaHTMLAttrib
     <textarea
       ref={ref}
       className={cn(
-        "w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm text-ink-100 placeholder:text-ink-500 focus-ring transition-colors resize-y",
+        "w-full rounded-xl border border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.04)] px-4 py-2.5 text-sm text-ink-100 placeholder:text-ink-500 focus-ring transition-colors resize-y",
         className
       )}
       {...props}

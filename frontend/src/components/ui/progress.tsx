@@ -14,7 +14,7 @@ export function ProgressBar({
   const clamped = Math.max(0, Math.min(100, value));
   const toneClass = { accent: "bg-accent", success: "bg-success", warning: "bg-warning" }[tone];
   return (
-    <div className={cn("h-2 w-full overflow-hidden rounded-full bg-white/[0.08]", trackClassName)}>
+    <div className={cn("h-2 w-full overflow-hidden rounded-full bg-[rgb(var(--fg-tint)/0.08)]", trackClassName)}>
       <div
         data-testid="progress-fill"
         className={cn("h-full rounded-full transition-all duration-700 ease-out", toneClass, className)}

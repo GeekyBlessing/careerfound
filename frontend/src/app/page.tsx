@@ -30,24 +30,24 @@ const careerPreview = [
   { name: "Data Analysis", icon: BarChart3, blurb: "Turn raw numbers into insights that drive decisions." },
   { name: "Backend Engineering", icon: Server, blurb: "Build the servers and APIs that power an app behind the scenes." },
   { name: "UI/UX Design", icon: Palette, blurb: "Design interfaces that are effortless for people to use." },
-  { name: "IT Support", icon: Headphones, blurb: "The most accessible first tech job — often a launchpad into more." },
+  { name: "IT Support", icon: Headphones, blurb: "The most accessible first tech job, often a launchpad into more." },
   { name: "+ 13 more paths", icon: Sparkles, blurb: "From DevOps to Product Management to AI/ML Engineering." },
 ];
 
 const steps = [
   {
     title: "1. Discover your path",
-    body: "Answer honest questions about your time, budget, interests, and goals. Get a Best Match, Strong Alternative, and Wild Card — not a random guess.",
+    body: "Answer honest questions about your time, budget, interests, and goals. Get a Best Match, Strong Alternative, and Wild Card, not a random guess.",
     icon: Compass,
   },
   {
     title: "2. Get a personalized roadmap",
-    body: "Phased lessons, exercises, and projects generated for your chosen path — not a static PDF everyone gets.",
+    body: "Phased lessons, exercises, and projects generated for your chosen path, not a static PDF everyone gets.",
     icon: Map,
   },
   {
     title: "3. Build real projects",
-    body: "Learn by shipping — a password checker, a port scanner, a full-stack app — with AI feedback on every submission.",
+    body: "Learn by shipping real projects (a password checker, a port scanner, a full-stack app) with AI feedback on every submission.",
     icon: FolderGit2,
   },
   {
@@ -71,7 +71,7 @@ const pricingTiers = [
     name: "Pro",
     price: "$19",
     period: "/month",
-    description: "The full accelerator — for people serious about landing a role.",
+    description: "The full accelerator, for people serious about landing a role.",
     features: [
       "Full AI Mentor access",
       "Complete roadmap, all phases",
@@ -96,11 +96,11 @@ const pricingTiers = [
 const faqs = [
   {
     q: "I know nothing about tech. Is this actually for me?",
-    a: "Yes — that's specifically who CareerFound is built for. Turn on 'I Know Nothing' mode and every technical term gets a plain-language explanation before we use it.",
+    a: "Yes, that's specifically who CareerFound is built for. Turn on 'I Know Nothing' mode and every technical term gets a plain-language explanation before we use it.",
   },
   {
     q: "How is this different from a course platform like Udemy or Coursera?",
-    a: "Those platforms hand you a catalog and hope you pick the right thing. CareerFound tells you what to do today, adapts your roadmap to your actual progress, and builds a portfolio and readiness score alongside your learning — it's a system, not a library.",
+    a: "Those platforms hand you a catalog and hope you pick the right thing. CareerFound tells you what to do today, adapts your roadmap to your actual progress, and builds a portfolio and readiness score alongside your learning: it's a system, not a library.",
   },
   {
     q: "What if I only have a smartphone and limited data?",
@@ -108,11 +108,11 @@ const faqs = [
   },
   {
     q: "Do I need to know what career I want before I start?",
-    a: "No — that's the whole point of the 'Find Your Tech Path' assessment. Most people start with zero clarity and leave with a specific, personalized recommendation.",
+    a: "No, that's the whole point of the 'Find Your Tech Path' assessment. Most people start with zero clarity and leave with a specific, personalized recommendation.",
   },
   {
     q: "Is the AI mentor a real person?",
-    a: "It's an AI trained to behave like a patient senior engineer — explaining simply, giving hints before answers, and adjusting to your level. Human mentors are available separately in the Mentorship Marketplace.",
+    a: "It's an AI trained to behave like a patient senior engineer, explaining simply, giving hints before answers, and adjusting to your level. Human mentors are available separately in the Mentorship Marketplace.",
   },
 ];
 
@@ -128,16 +128,16 @@ export default function LandingPage() {
             style={{ background: "radial-gradient(600px circle at 50% 0%, rgba(91,108,255,0.25), transparent 70%)" }}
           />
           <div className="container-page text-center">
-            <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3.5 py-1.5 text-xs font-medium text-ink-300 animate-fade-in">
+            <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.04)] px-3.5 py-1.5 text-xs font-medium text-ink-300 animate-fade-in">
               <Sparkles className="h-3.5 w-3.5 text-accent-light" />
-              AI career advisor · roadmap generator · project accelerator — in one place
+              AI career advisor · roadmap generator · project accelerator, in one place
             </div>
             <h1 className="mx-auto max-w-3xl text-4xl font-semibold tracking-tight text-gradient sm:text-6xl animate-fade-in">
               You don&apos;t need to know where to start. We&apos;ll help you find your path.
             </h1>
             <p className="mx-auto mt-6 max-w-xl text-base text-ink-300 sm:text-lg animate-fade-in">
               Discover the right tech career, get a personalized roadmap, build real projects, and
-              become job-ready — one step at a time.
+              become job-ready, one step at a time.
             </p>
             <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row animate-fade-in">
               <Link href="/onboarding">
@@ -179,12 +179,12 @@ export default function LandingPage() {
             <SectionHeading
               eyebrow="Career paths"
               title="21 tech careers, one honest assessment to find yours"
-              description="We don't just ask what you want to learn — we help you discover what actually fits how you think and what you enjoy."
+              description="We don't just ask what you want to learn, we help you discover what actually fits how you think and what you enjoy."
             />
             <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {careerPreview.map((c) => (
                 <Card key={c.name} className="p-5">
-                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-white/[0.06] text-ink-300">
+                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-[rgb(var(--fg-tint)/0.06)] text-ink-300">
                     <c.icon className="h-4.5 w-4.5" />
                   </div>
                   <p className="text-sm font-semibold text-ink-100">{c.name}</p>
@@ -206,7 +206,7 @@ export default function LandingPage() {
                 your code, runs mock interviews, and adjusts your roadmap when it notices you&apos;re
                 struggling.
               </p>
-              <div className="mt-6 space-y-3 rounded-xl border border-white/10 bg-base-950/60 p-4 text-sm">
+              <div className="mt-6 space-y-3 rounded-xl border border-[rgb(var(--fg-tint)/0.1)] bg-base-950/60 p-4 text-sm">
                 <p className="text-ink-500">You: <span className="text-ink-300">&ldquo;I don&apos;t understand DNS.&rdquo;</span></p>
                 <p className="text-ink-300">
                   Mentor: <span className="text-ink-100">&ldquo;That&apos;s okay. Let&apos;s forget the technical
@@ -219,8 +219,8 @@ export default function LandingPage() {
               <Badge tone="accent">Project-first learning</Badge>
               <h3 className="mt-4 text-xl font-semibold text-ink-100">Learn by shipping, not by watching</h3>
               <p className="mt-3 text-sm leading-relaxed text-ink-500">
-                Every path is built around progressively harder real projects — a password-strength
-                checker, a Python port scanner, a mini SOC dashboard — each with step-by-step
+                Every path is built around progressively harder real projects (a password-strength
+                checker, a Python port scanner, a mini SOC dashboard), each with step-by-step
                 guidance, hints, and common mistakes to avoid.
               </p>
               <ul className="mt-6 space-y-2.5 text-sm text-ink-300">
@@ -252,7 +252,7 @@ export default function LandingPage() {
               <h3 className="mt-4 text-xl font-semibold text-ink-100">Real professionals, when you need a human</h3>
               <p className="mt-3 text-sm leading-relaxed text-ink-500">
                 Book 30-minute sessions for portfolio reviews, mock interviews, and career guidance
-                with working professionals — filtered by the exact career path you&apos;re pursuing.
+                with working professionals, filtered by the exact career path you&apos;re pursuing.
               </p>
               <Link href="/mentors" className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline">
                 Browse mentors <ArrowRight className="h-3.5 w-3.5" />
@@ -320,7 +320,7 @@ export default function LandingPage() {
             <SectionHeading eyebrow="FAQ" title="Questions people ask before starting" />
             <div className="mt-10 space-y-3">
               {faqs.map((f) => (
-                <details key={f.q} className="group rounded-xl border border-white/10 bg-white/[0.03] p-5 open:bg-white/[0.05]">
+                <details key={f.q} className="group rounded-xl border border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] p-5 open:bg-[rgb(var(--fg-tint)/0.05)]">
                   <summary className="cursor-pointer list-none text-sm font-medium text-ink-100 marker:content-none">
                     {f.q}
                   </summary>

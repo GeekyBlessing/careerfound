@@ -22,7 +22,7 @@ SIMULATIONS = {
             "explanation_md": (
                 "**Alert B** is the clear priority: a high-volume brute-force pattern from an unexpected "
                 "geography is a strong signal of an active attack in progress. Alert A is routine (single "
-                "failed login from the expected location — likely a typo). Alert C is mundane background "
+                "failed login from the expected location, likely a typo). Alert C is mundane background "
                 "activity with no inherent risk signal. Prioritizing by volume, anomaly, and business impact "
                 "is the core SOC triage skill."
             ),
@@ -44,8 +44,8 @@ SIMULATIONS = {
             ],
             "correct_option": "b",
             "explanation_md": (
-                "Checking the server-side logs/stack trace is the fastest way to find the actual failure point "
-                "— in this case it's very likely the new code doesn't handle an empty cart (e.g. dividing by "
+                "Checking the server-side logs/stack trace is the fastest way to find the actual failure point: "
+                "in this case it's very likely the new code doesn't handle an empty cart (e.g. dividing by "
                 "the number of items, or accessing index 0 of an empty list) and throws an unhandled exception. "
                 "A rollback might be the right *next* step once you understand the cause, but investigating "
                 "first prevents you from missing a quick, targeted fix. Clearing cache wouldn't affect a "

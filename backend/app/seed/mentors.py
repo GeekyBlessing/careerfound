@@ -1,8 +1,8 @@
 MENTORS = [
     dict(
         display_name="Chidinma Okafor",
-        headline="Senior SOC Manager, ex-Tier 1 analyst — now hires and trains junior analysts",
-        bio="8 years in security operations across fintech and telecom. I love helping career switchers get their first SOC role — I was one myself.",
+        headline="Senior SOC Manager, ex-Tier 1 analyst, now hires and trains junior analysts",
+        bio="8 years in security operations across fintech and telecom. I love helping career switchers get their first SOC role, since I was one myself.",
         avatar_seed="chidinma",
         paths=["cybersecurity", "soc-analysis"],
         years_experience=8,
@@ -13,7 +13,7 @@ MENTORS = [
     ),
     dict(
         display_name="Marcus Webb",
-        headline="Staff Software Engineer — resume + mock interview specialist",
+        headline="Staff Software Engineer, resume and mock interview specialist",
         bio="I've interviewed 200+ junior engineer candidates. I'll tell you honestly what's working and what's not in your resume and portfolio.",
         avatar_seed="marcus",
         paths=["software-engineering", "backend-engineering", "full-stack-development"],
@@ -26,7 +26,7 @@ MENTORS = [
     dict(
         display_name="Priya Nair",
         headline="Cloud Security Engineer, AWS & Azure certified",
-        bio="Helping beginners bridge from general IT into cloud security — happy to review your home-lab projects.",
+        bio="Helping beginners bridge from general IT into cloud security. Happy to review your home-lab projects.",
         avatar_seed="priya",
         paths=["cloud-security", "cloud-engineering"],
         years_experience=6,
@@ -50,7 +50,7 @@ MENTORS = [
     dict(
         display_name="Aisha Bello",
         headline="Product Designer, ex-Figma community lead",
-        bio="Portfolio reviews are my specialty — I'll give you the same feedback I give designers I actually hire.",
+        bio="Portfolio reviews are my specialty. I'll give you the same feedback I give designers I actually hire.",
         avatar_seed="aisha",
         paths=["product-design", "ui-ux-design"],
         years_experience=9,
@@ -61,7 +61,7 @@ MENTORS = [
     ),
     dict(
         display_name="Ryan Achterberg",
-        headline="Senior Frontend Engineer — React & accessibility specialist",
+        headline="Senior Frontend Engineer, React and accessibility specialist",
         bio="I lead frontend at a mid-size fintech and mentor bootcamp grads on the side. Bring me a portfolio project and I'll rip it apart (kindly) and tell you what a hiring manager actually notices.",
         avatar_seed="ryan",
         paths=["frontend-development"],
@@ -74,7 +74,7 @@ MENTORS = [
     dict(
         display_name="Femi Adeyemi",
         headline="Offensive Security Consultant, OSCP",
-        bio="I run pentest engagements for mid-market clients and got my start through TryHackMe and home labs, no CS degree. Great for people who feel like they need a 'perfect' background to break in — you don't.",
+        bio="I run pentest engagements for mid-market clients and got my start through TryHackMe and home labs, no CS degree. Great for people who feel like they need a 'perfect' background to break in: you don't.",
         avatar_seed="femi",
         paths=["penetration-testing"],
         years_experience=7,
@@ -85,7 +85,7 @@ MENTORS = [
     ),
     dict(
         display_name="Elena Vasquez",
-        headline="DevOps Lead — Kubernetes & CI/CD at scale",
+        headline="DevOps Lead, Kubernetes and CI/CD at scale",
         bio="I've built deployment pipelines for teams of 5 and teams of 200. I like working with people transitioning from sysadmin or backend roles into DevOps specifically.",
         avatar_seed="elena",
         paths=["devops"],
@@ -97,7 +97,7 @@ MENTORS = [
     ),
     dict(
         display_name="Wei Zhang",
-        headline="ML Engineer, ex-research — now shipping models in production",
+        headline="ML Engineer, ex-research, now shipping models in production",
         bio="I spent 3 years in academic ML before moving to industry, so I know exactly which parts of a CS/ML degree matter for a job and which don't. I focus on making your projects portfolio-ready, not just technically correct.",
         avatar_seed="wei",
         paths=["ai-ml-engineering"],
@@ -133,7 +133,7 @@ MENTORS = [
     ),
     dict(
         display_name="Tomas Novak",
-        headline="QA Automation Lead — Playwright & CI pipelines",
+        headline="QA Automation Lead, Playwright and CI pipelines",
         bio="I built the automated regression suite at my company from scratch. I'm most useful for people who already know how to test manually and want to make the jump into automation.",
         avatar_seed="tomas",
         paths=["qa-engineering"],
@@ -145,7 +145,7 @@ MENTORS = [
     ),
     dict(
         display_name="Ngozi Eze",
-        headline="No-Code Consultant — Zapier, Airtable & Bubble certified partner",
+        headline="No-Code Consultant, Zapier, Airtable and Bubble certified partner",
         bio="I run a small agency building automations and internal tools for small businesses, all without traditional code. Perfect if you want a fast, practical path into tech without learning to program first.",
         avatar_seed="ngozi",
         paths=["no-code-automation"],
@@ -157,7 +157,7 @@ MENTORS = [
     ),
     dict(
         display_name="Carlos Reyes",
-        headline="IT Manager — hires and trains help desk & support techs",
+        headline="IT Manager, hires and trains help desk and support techs",
         bio="I started in a mall Genius Bar and now manage IT for a 300-person company. I know exactly what gets an entry-level support candidate hired with zero degree or certs required.",
         avatar_seed="carlos",
         paths=["it-support"],
@@ -170,7 +170,7 @@ MENTORS = [
     dict(
         display_name="Rebecca Lin",
         headline="Principal Solutions Architect, ex-AWS",
-        bio="I design enterprise cloud architectures and mentor engineers who are 2-5 years in and aiming for an architect track. Not a beginner-friendly first mentor — best once you already have hands-on cloud/backend experience.",
+        bio="I design enterprise cloud architectures and mentor engineers who are 2-5 years in and aiming for an architect track. Not a beginner-friendly first mentor: best once you already have hands-on cloud/backend experience.",
         avatar_seed="rebecca",
         paths=["solutions-architecture"],
         years_experience=15,
@@ -197,7 +197,7 @@ FOUNDING_MENTOR = dict(
     display_name="Toriola Opeyemi",
     headline="Cybersecurity & Cloud Security Engineer | Cybersecurity Mentor",
     bio=(
-        "I mentor people who are figuring out how to break into tech — especially complete "
+        "I mentor people who are figuring out how to break into tech, especially complete "
         "beginners with little or no technical background. My focus is cybersecurity, cloud "
         "security, and security engineering: what to learn first, how to structure your learning "
         "path, and how to avoid the mistakes that slow beginners down most. If you're stuck on "
@@ -222,4 +222,8 @@ FOUNDING_MENTOR = dict(
     focus_beginner_friendly=True,
     contact_email=FOUNDING_MENTOR_EMAIL,
     mentee_count=0,
+    mentorship_duration_label="2 months",
+    mentorship_price_label="₦250,000 ($200)",
+    consultation_duration_label="30 minutes",
+    consultation_price_label="₦10,000 ($7)",
 )

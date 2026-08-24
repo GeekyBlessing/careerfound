@@ -17,7 +17,7 @@ export function SkillGraphView({ graph }: { graph: SkillGraph }) {
     <div className="space-y-1">
       {orderedNodes.map((node, i) => (
         <div key={node.id}>
-          <div className="flex items-center gap-4 rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-3">
+          <div className="flex items-center gap-4 rounded-xl border border-[rgb(var(--fg-tint)/0.06)] bg-[rgb(var(--fg-tint)/0.02)] px-4 py-3">
             <div className="flex-1">
               <div className="mb-1.5 flex items-center justify-between">
                 <span className="text-sm font-medium text-ink-100">{node.label}</span>

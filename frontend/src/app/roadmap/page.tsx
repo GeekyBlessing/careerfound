@@ -120,7 +120,7 @@ function PhaseAccordion({ phase, defaultOpen }: { phase: PhaseItem; defaultOpen:
       </button>
 
       {open && (
-        <CardContent className="space-y-2 border-t border-white/[0.06] p-5 pt-4">
+        <CardContent className="space-y-2 border-t border-[rgb(var(--fg-tint)/0.06)] p-5 pt-4">
           {phase.lessons.map((lesson) => (
             <LessonRow key={lesson.id} lesson={lesson} />
           ))}
@@ -162,7 +162,7 @@ function LessonRow({ lesson }: { lesson: LessonItem }) {
   }
 
   return (
-    <div className="rounded-xl border border-white/[0.06] bg-white/[0.015] px-4 py-3">
+    <div className="rounded-xl border border-[rgb(var(--fg-tint)/0.06)] bg-[rgb(var(--fg-tint)/0.015)] px-4 py-3">
       <div className="flex items-start gap-3">
         <StatusIcon status={status} />
         <div className="min-w-0 flex-1">
@@ -193,7 +193,7 @@ function ProjectRow({ project }: { project: ProjectItem }) {
   return (
     <Link
       href={`/projects/${project.id}`}
-      className="flex items-start gap-3 rounded-xl border border-white/[0.06] bg-white/[0.015] px-4 py-3 transition-colors hover:bg-white/[0.03]"
+      className="flex items-start gap-3 rounded-xl border border-[rgb(var(--fg-tint)/0.06)] bg-[rgb(var(--fg-tint)/0.015)] px-4 py-3 transition-colors hover:bg-[rgb(var(--fg-tint)/0.03)]"
     >
       <StatusIcon status={project.status} />
       <div className="min-w-0 flex-1">
@@ -211,7 +211,7 @@ function QuizRow({ quiz }: { quiz: QuizItem }) {
   return (
     <Link
       href={`/roadmap/quiz/${quiz.id}`}
-      className="flex items-start gap-3 rounded-xl border border-white/[0.06] bg-white/[0.015] px-4 py-3 transition-colors hover:bg-white/[0.03]"
+      className="flex items-start gap-3 rounded-xl border border-[rgb(var(--fg-tint)/0.06)] bg-[rgb(var(--fg-tint)/0.015)] px-4 py-3 transition-colors hover:bg-[rgb(var(--fg-tint)/0.03)]"
     >
       <StatusIcon status={quiz.status} />
       <div className="min-w-0 flex-1">

@@ -8,12 +8,17 @@ from app.core.security import decode_token, create_token
 from app.db.session import get_db
 from app.models.user import User
 from app.schemas.auth import (
+    EmailPreferencesUpdate,
+    ForgotPasswordRequest,
     GoogleAuthRequest,
     LoginRequest,
+    MessageResponse,
     RefreshRequest,
     RegisterRequest,
+    ResetPasswordRequest,
     TokenResponse,
     UserOut,
+    VerifyEmailRequest,
 )
 from app.services import auth_service
 from app.services.audit_service import log_action
@@ -83,3 +88,41 @@ async def google_auth(payload: GoogleAuthRequest, db: AsyncSession = Depends(get
 @router.get("/me", response_model=UserOut)
 async def me(user: User = Depends(get_current_user)):
     return user
+
+
+@router.post("/verify-email", response_model=UserOut)
+async def verify_email(payload: VerifyEmailRequest, db: AsyncSession = Depends(get_db)):
+    try:
+        user = await auth_service.verify_email(db, payload.token)
+    except auth_service.AuthError as exc:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, str(exc)) from exc
+    return user
+
+
+@router.post("/resend-verification", response_model=MessageResponse)
+async def resend_verification(request: Request, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+    limiter.check(f"resend-verification:{user.id}", settings.EMAIL_RATE_LIMIT_PER_MINUTE)
+    try:
+        await auth_service.resend_verification_email(db, user)
+    except auth_service.AuthError as exc:
+        raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from exc
+    return MessageResponse(message="Verification email sent. Check your inbox.")
+
+
+@router.post("/forgot-password", response_model=MessageResponse)
+async def forgot_password(payload: ForgotPasswordRequest, request: Request, db: AsyncSession = Depends(get_db)):
+    limiter.check(f"forgot-password:{_client_ip(request)}", settings.EMAIL_RATE_LIMIT_PER_MINUTE)
+    await auth_service.request_password_reset(db, payload.email)
+    # Same response whether or not the email is registered, this endpoint
+    # must never reveal which emails have accounts.
+    return MessageResponse(message="If an account exists for that email, a password reset link is on its way.")
+
+
+@router.post("/reset-password", response_model=MessageResponse)
+async def reset_password(payload: ResetPasswordRequest, request: Request, db: AsyncSession = Depends(get_db)):
+    limiter.check(f"reset-password:{_client_ip(request)}", settings.AUTH_RATE_LIMIT_PER_MINUTE)
+    try:
+        await auth_service.reset_password(db, payload.token, payload.new_password)
+    except auth_service.AuthError as exc:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, str(exc)) from exc
+    return MessageResponse(message="Your password has been reset. You can log in now.")

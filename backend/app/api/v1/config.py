@@ -12,5 +12,6 @@ async def public_config():
         "google_auth_enabled": bool(settings.GOOGLE_OAUTH_CLIENT_ID),
         "payments_enabled": bool(settings.STRIPE_SECRET_KEY),
         "ai_provider": settings.LLM_PROVIDER,
+        "email_configured": settings.email_live,
         "environment": settings.ENVIRONMENT,
     }

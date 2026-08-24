@@ -128,7 +128,7 @@ export default function MentorDashboardPage() {
           </div>
           <p className="text-xs text-ink-500">{summary.note}</p>
 
-          <div className="flex gap-2 border-b border-white/[0.06]">
+          <div className="flex gap-2 border-b border-[rgb(var(--fg-tint)/0.06)]">
             <TabButton active={tab === "sessions"} onClick={() => setTab("sessions")}>
               Sessions
             </TabButton>
@@ -158,7 +158,7 @@ export default function MentorDashboardPage() {
 function StatCard({ icon: Icon, label, value }: { icon: React.ElementType; label: string; value: string }) {
   return (
     <Card className="p-4">
-      <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white/[0.06] text-ink-300">
+      <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-[rgb(var(--fg-tint)/0.06)] text-ink-300">
         <Icon className="h-4 w-4" />
       </div>
       <p className="text-xs font-medium uppercase tracking-wide text-ink-500">{label}</p>
@@ -224,10 +224,10 @@ function SessionCard({ session, onChanged }: { session: MentorSessionDetail; onC
       </button>
 
       {expanded && (
-        <CardContent className="space-y-4 border-t border-white/[0.06] pt-4">
+        <CardContent className="space-y-4 border-t border-[rgb(var(--fg-tint)/0.06)] pt-4">
           <div>
             <p className="mb-1.5 text-xs font-medium text-ink-300">Mentee summary (auto-generated)</p>
-            <p className="rounded-xl bg-white/[0.03] px-4 py-3 text-xs leading-relaxed text-ink-400">
+            <p className="rounded-xl bg-[rgb(var(--fg-tint)/0.03)] px-4 py-3 text-xs leading-relaxed text-ink-400">
               {session.mentee_summary || "No summary available."}
             </p>
           </div>
@@ -296,9 +296,9 @@ function PrivateNotesEditor({ sessionId }: { sessionId: string }) {
   if (!loaded) return null;
 
   return (
-    <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+    <div className="rounded-xl border border-[rgb(var(--fg-tint)/0.06)] bg-[rgb(var(--fg-tint)/0.02)] p-4">
       <div className="mb-2 flex items-center gap-1.5 text-xs font-medium text-ink-300">
-        <Lock className="h-3 w-3" /> Private notes — only you can see this
+        <Lock className="h-3 w-3" /> Private notes, only you can see this
       </div>
       <Textarea
         value={note.what_to_work_on}
@@ -358,13 +358,13 @@ function RecommendationsComposer({ sessionId }: { sessionId: string }) {
   return (
     <div className="rounded-xl border border-accent/20 bg-accent/[0.04] p-4">
       <div className="mb-2 flex items-center gap-1.5 text-xs font-medium text-ink-300">
-        <GraduationCap className="h-3 w-3" /> Recommendations — visible to the mentee, can be added to their roadmap
+        <GraduationCap className="h-3 w-3" /> Recommendations, visible to the mentee, can be added to their roadmap
       </div>
 
       {items.length > 0 && (
         <div className="mb-3 space-y-1.5">
           {items.map((item, i) => (
-            <div key={i} className="flex items-center justify-between rounded-lg bg-white/[0.04] px-3 py-1.5 text-xs">
+            <div key={i} className="flex items-center justify-between rounded-lg bg-[rgb(var(--fg-tint)/0.04)] px-3 py-1.5 text-xs">
               <span className="text-ink-200">
                 {item.title} <span className="text-ink-500">({item.item_type})</span>
               </span>
@@ -382,7 +382,7 @@ function RecommendationsComposer({ sessionId }: { sessionId: string }) {
         <select
           value={itemType}
           onChange={(e) => setItemType(e.target.value as RecommendationItem["item_type"])}
-          className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2.5 text-xs text-ink-100 focus-ring"
+          className="rounded-xl border border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.04)] px-3 py-2.5 text-xs text-ink-100 focus-ring"
         >
           <option value="skill">Skill</option>
           <option value="project">Project</option>
@@ -464,7 +464,7 @@ function ProfileEditor({ mentor, onSaved }: { mentor: Mentor; onSaved: (m: Mento
           <Label>Availability note</Label>
           <Textarea value={availabilityNote} onChange={(e) => setAvailabilityNote(e.target.value)} rows={2} />
           <p className="mt-1 text-xs text-ink-500">
-            Free text — there&apos;s no live calendar/scheduling system yet, so this is what mentees see.
+            Free text, there&apos;s no live calendar/scheduling system yet, so this is what mentees see.
           </p>
         </div>
         <div className="flex items-center gap-2">

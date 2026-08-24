@@ -8,7 +8,12 @@ Security notes:
   signed with HS256 using JWT_SECRET_KEY. In production this secret MUST be
   a long random value injected via environment/secrets manager, never
   committed — see .env.example.
+- Email verification / password reset links use a separate, single-use,
+  expiring token, not a JWT. Only its SHA-256 hash is ever persisted, see
+  generate_secure_token/hash_token below and app.models.email.EmailToken.
 """
+import hashlib
+import secrets
 from datetime import datetime, timedelta, timezone
 from typing import Literal
 from uuid import UUID
@@ -50,3 +55,19 @@ def decode_token(token: str) -> dict:
         return jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
     except JWTError as exc:
         raise ValueError("Invalid or expired token") from exc
+
+
+def generate_secure_token() -> str:
+    """A high-entropy, URL-safe random token for one-time email links
+    (verification, password reset). Not a JWT: it carries no data of its
+    own, it's just an unguessable lookup key, the real state lives in the
+    EmailToken row it hashes to."""
+    return secrets.token_urlsafe(32)
+
+
+def hash_token(token: str) -> str:
+    """SHA-256 is intentionally used here instead of bcrypt: this hashes a
+    32-byte random token (already far too high-entropy to brute-force),
+    not a user-chosen secret, so a fast, deterministic hash is correct and
+    lets token lookup use an indexed equality query."""
+    return hashlib.sha256(token.encode("utf-8")).hexdigest()

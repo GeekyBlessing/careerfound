@@ -118,7 +118,7 @@ export default function CareerDetailPage() {
           <div>
             <h2 className="mb-1 text-lg font-semibold text-ink-100">What you&apos;ll actually build</h2>
             <p className="mb-5 text-sm text-ink-500">
-              Real projects at every level — not a video course. Each one has step-by-step guidance, hints, and
+              Real projects at every level, not a video course. Each one has step-by-step guidance, hints, and
               common mistakes to avoid.
             </p>
 
@@ -132,7 +132,7 @@ export default function CareerDetailPage() {
 
             {projects && projects.length === 0 && (
               <Alert>
-                The full project catalog for this path is still being authored — check back soon, or take the
+                The full project catalog for this path is still being authored, check back soon, or take the
                 assessment to see paths with a complete project set.
               </Alert>
             )}
@@ -154,6 +154,10 @@ export default function CareerDetailPage() {
                           <p className="mt-2 text-[11px] text-ink-500">
                             <span className="text-ink-300">You&apos;ll produce:</span> {project.expected_output}
                           </p>
+                          <div className="mt-3 flex items-center gap-1.5 text-[11px] text-ink-500">
+                            <Clock className="h-3 w-3" />
+                            {project.estimated_duration}
+                          </div>
                         </Card>
                       ))}
                     </div>

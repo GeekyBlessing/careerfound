@@ -3,7 +3,7 @@ import { Compass } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="border-t border-white/[0.06] py-12">
+    <footer className="border-t border-[rgb(var(--fg-tint)/0.06)] py-12">
       <div className="container-page flex flex-col items-start justify-between gap-8 md:flex-row">
         <div>
           <Link href="/" className="flex items-center gap-2 font-semibold text-ink-100">
@@ -41,7 +41,7 @@ export function Footer() {
           </div>
         </div>
       </div>
-      <div className="container-page mt-10 border-t border-white/[0.06] pt-6 text-xs text-ink-500">
+      <div className="container-page mt-10 border-t border-[rgb(var(--fg-tint)/0.06)] pt-6 text-xs text-ink-500">
         © {new Date().getFullYear()} CareerFound. Built for people just starting out.
       </div>
     </footer>

@@ -54,7 +54,7 @@ def build_reason(mentor: Mentor, path_name: str, level: str, gap_labels: list[st
         if gap_labels:
             reason += (
                 f" Based on your progress so far, your biggest gaps right now are "
-                f"{', '.join(gap_labels)} — exactly the kind of thing {name} works through with new mentees."
+                f"{', '.join(gap_labels)}, exactly the kind of thing {name} works through with new mentees."
             )
         return reason
 

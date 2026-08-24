@@ -75,7 +75,7 @@ export default function QuizPage() {
                           "w-full rounded-lg border px-4 py-2.5 text-left text-sm transition-colors focus-ring",
                           selected[q.id] === opt
                             ? "border-accent bg-accent/15 text-accent-light"
-                            : "border-white/10 bg-white/[0.02] text-ink-300 hover:border-white/20"
+                            : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.02)] text-ink-300 hover:border-[rgb(var(--fg-tint)/0.2)]"
                         )}
                       >
                         {opt}

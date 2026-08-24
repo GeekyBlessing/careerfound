@@ -1,7 +1,7 @@
 """
 Fully authored roadmap content for the two launch paths: Cybersecurity and
 Software Engineering. Every lesson, exercise, project, and quiz here is real,
-specific content — not lorem ipsum — matching the phase structure specified
+specific content, not lorem ipsum, matching the phase structure specified
 in the product brief.
 """
 
@@ -33,13 +33,13 @@ CYBERSECURITY = {
     ],
     "phases": [
         {
-            "title": "Phase 1 — Computer Fundamentals",
+            "title": "Phase 1, Computer Fundamentals",
             "summary": "The absolute basics of how a computer stores and processes information, so nothing later feels like magic.",
             "skill_key": "computer_fundamentals",
             "lessons": [
                 {
                     "title": "How computers store information",
-                    "concept_summary": "Everything on a computer — text, images, this lesson — is stored as combinations of 1s and 0s (binary).",
+                    "concept_summary": "Everything on a computer, text, images, this lesson, is stored as combinations of 1s and 0s (binary).",
                     "beginner_explainer": "Think of a light switch: on or off. A computer has billions of tiny switches. Every letter, photo, and program is just a very long pattern of those switches being on or off.",
                     "content_md": "## Binary basics\nComputers use **binary** (base 2) because transistors are easiest to build as two-state (on/off) switches.\n\n- 1 bit = one switch (0 or 1)\n- 1 byte = 8 bits, enough to represent one character (e.g. 'A' = 01000001)\n\nYou don't need to do binary math by hand day-to-day, but understanding this makes concepts like IP addresses, file sizes, and encoding click much faster later.",
                     "est_minutes": 15,
@@ -48,7 +48,7 @@ CYBERSECURITY = {
                     "title": "Operating systems, processes, and files",
                     "concept_summary": "The operating system (Windows, macOS, Linux) manages hardware and runs everything else as 'processes'.",
                     "beginner_explainer": "The OS is like a hotel manager: it decides which guest (program) gets which room (memory) and for how long, and keeps guests from wrecking each other's rooms.",
-                    "content_md": "## Key concepts\n- **Process**: a running program\n- **File system**: how the OS organizes files into folders/directories\n- **Permissions**: rules about who can read/write/execute a file — the foundation of most security later in this path",
+                    "content_md": "## Key concepts\n- **Process**: a running program\n- **File system**: how the OS organizes files into folders/directories\n- **Permissions**: rules about who can read/write/execute a file, the foundation of most security later in this path",
                     "est_minutes": 15,
                 },
             ],
@@ -72,22 +72,22 @@ CYBERSECURITY = {
             },
         },
         {
-            "title": "Phase 2 — Networking",
-            "summary": "How computers find and talk to each other — the foundation for everything in security.",
+            "title": "Phase 2, Networking",
+            "summary": "How computers find and talk to each other, the foundation for everything in security.",
             "skill_key": "networking",
             "lessons": [
                 {
                     "title": "What is an IP address?",
                     "concept_summary": "An IP address is a unique numeric address that lets devices find each other on a network.",
-                    "beginner_explainer": "Think of an IP address like a street address for a computer — it's how data knows exactly where to be delivered among millions of other devices.",
-                    "content_md": "## IPv4 basics\nAn IPv4 address looks like `192.168.1.10` — four numbers (0-255) separated by dots.\n\n- **Public IP**: visible on the internet\n- **Private IP**: only visible on your local network (e.g. your home Wi-Fi)\n\nEvery device you own gets a private IP from your router; your router itself has one public IP shared by your whole household.",
+                    "beginner_explainer": "Think of an IP address like a street address for a computer, it's how data knows exactly where to be delivered among millions of other devices.",
+                    "content_md": "## IPv4 basics\nAn IPv4 address looks like `192.168.1.10`, four numbers (0-255) separated by dots.\n\n- **Public IP**: visible on the internet\n- **Private IP**: only visible on your local network (e.g. your home Wi-Fi)\n\nEvery device you own gets a private IP from your router; your router itself has one public IP shared by your whole household.",
                     "est_minutes": 15,
                 },
                 {
                     "title": "TCP/IP and how data actually travels",
                     "concept_summary": "TCP/IP is the pair of rules that address and reliably deliver data across networks.",
                     "beginner_explainer": "Think of TCP/IP like the postal service's rules: IP is the address on the envelope, and TCP is the promise that every page of your letter arrives, in order, with nothing missing.",
-                    "content_md": "## Ports\nA port is like an apartment number at that street address — it tells the computer *which* application should receive the data (e.g. port 443 for HTTPS, port 22 for SSH).",
+                    "content_md": "## Ports\nA port is like an apartment number at that street address, it tells the computer *which* application should receive the data (e.g. port 443 for HTTPS, port 22 for SSH).",
                     "est_minutes": 20,
                 },
             ],
@@ -120,7 +120,7 @@ CYBERSECURITY = {
                     ],
                     "common_mistakes": [
                         "Forgetting a timeout, causing the scan to hang indefinitely on filtered ports.",
-                        "Scanning a host without permission — always scan localhost or an intentionally vulnerable practice target.",
+                        "Scanning a host without permission, always scan localhost or an intentionally vulnerable practice target.",
                     ],
                     "difficulty": 2,
                 }
@@ -135,15 +135,15 @@ CYBERSECURITY = {
             },
         },
         {
-            "title": "Phase 3 — Linux",
-            "summary": "Most security tools and servers run on Linux — comfort with the command line is non-negotiable.",
+            "title": "Phase 3, Linux",
+            "summary": "Most security tools and servers run on Linux, comfort with the command line is non-negotiable.",
             "skill_key": "linux",
             "lessons": [
                 {
                     "title": "The Linux command line, from zero",
                     "concept_summary": "A small set of commands (ls, cd, cat, grep, chmod) covers the vast majority of daily work.",
-                    "beginner_explainer": "The command line is just a different way of talking to your computer — instead of clicking icons, you type short instructions. It feels slower at first and becomes much faster once it clicks.",
-                    "content_md": "## Core commands\n- `ls` — list files\n- `cd` — change directory\n- `cat` — print a file's contents\n- `grep` — search text\n- `chmod` — change file permissions\n\nTry these in any Linux terminal, a WSL install on Windows, or an online sandbox — you don't need a dedicated machine to start.",
+                    "beginner_explainer": "The command line is just a different way of talking to your computer, instead of clicking icons, you type short instructions. It feels slower at first and becomes much faster once it clicks.",
+                    "content_md": "## Core commands\n- `ls`, list files\n- `cd`, change directory\n- `cat`, print a file's contents\n- `grep`, search text\n- `chmod`, change file permissions\n\nTry these in any Linux terminal, a WSL install on Windows, or an online sandbox, you don't need a dedicated machine to start.",
                     "est_minutes": 20,
                 },
             ],
@@ -166,13 +166,13 @@ CYBERSECURITY = {
             },
         },
         {
-            "title": "Phase 4 — Python",
-            "summary": "Python is the most common scripting language in security work — automation is a huge part of the job.",
+            "title": "Phase 4, Python",
+            "summary": "Python is the most common scripting language in security work, automation is a huge part of the job.",
             "skill_key": "python",
             "lessons": [
                 {
                     "title": "Python fundamentals for security work",
-                    "concept_summary": "Variables, loops, conditionals, and functions — the small toolkit behind almost every security script you'll write.",
+                    "concept_summary": "Variables, loops, conditionals, and functions, the small toolkit behind almost every security script you'll write.",
                     "beginner_explainer": "Python reads almost like English. A loop just means 'do this again for each item', and a conditional means 'only do this if something is true'.",
                     "content_md": "## Example\n```python\nfor attempt in range(3):\n    password = input('Enter password: ')\n    if password == 'correct-horse':\n        print('Access granted')\n        break\nelse:\n    print('Access denied')\n```",
                     "est_minutes": 20,
@@ -203,11 +203,11 @@ CYBERSECURITY = {
                     ],
                     "hints": [
                         "Python's `string` module has helpful character-set constants.",
-                        "Keep the common-password list small (20-30 entries) — the goal is the logic, not the dataset.",
+                        "Keep the common-password list small (20-30 entries), the goal is the logic, not the dataset.",
                     ],
                     "common_mistakes": [
                         "Scoring only on length and ignoring character variety.",
-                        "Printing the entered password back in logs — never log real passwords, even in a practice project.",
+                        "Printing the entered password back in logs, never log real passwords, even in a practice project.",
                     ],
                     "difficulty": 1,
                 }
@@ -221,8 +221,8 @@ CYBERSECURITY = {
             },
         },
         {
-            "title": "Phase 5 — Security Fundamentals",
-            "summary": "The core concepts — CIA triad, threats, vulnerabilities, and risk — that every other security specialty builds on.",
+            "title": "Phase 5, Security Fundamentals",
+            "summary": "The core concepts, CIA triad, threats, vulnerabilities, and risk, that every other security specialty builds on.",
             "skill_key": "security_fundamentals",
             "lessons": [
                 {
@@ -252,15 +252,15 @@ CYBERSECURITY = {
             },
         },
         {
-            "title": "Phase 6 — SOC Fundamentals",
+            "title": "Phase 6, SOC Fundamentals",
             "summary": "What a Security Operations Center actually does day to day, and how alerts turn into action.",
             "skill_key": "soc_fundamentals",
             "lessons": [
                 {
                     "title": "A day in the life of a SOC analyst",
                     "concept_summary": "SOC analysts triage alerts, investigate suspicious activity, and escalate real incidents.",
-                    "beginner_explainer": "Imagine a security guard watching dozens of camera feeds — most movement is nothing, but they need a process to quickly tell normal from suspicious.",
-                    "content_md": "## The triage mindset\n1. **Alert fires** — something matched a detection rule\n2. **Triage** — is this likely a false positive or worth investigating?\n3. **Investigate** — gather context (who, what, when, from where)\n4. **Escalate or close** — hand off to Tier 2, or close with notes",
+                    "beginner_explainer": "Imagine a security guard watching dozens of camera feeds, most movement is nothing, but they need a process to quickly tell normal from suspicious.",
+                    "content_md": "## The triage mindset\n1. **Alert fires**, something matched a detection rule\n2. **Triage**, is this likely a false positive or worth investigating?\n3. **Investigate**, gather context (who, what, when, from where)\n4. **Escalate or close**, hand off to Tier 2, or close with notes",
                     "est_minutes": 15,
                 },
             ],
@@ -306,14 +306,14 @@ CYBERSECURITY = {
             },
         },
         {
-            "title": "Phase 7 — SIEM",
+            "title": "Phase 7, SIEM",
             "summary": "How Security Information and Event Management tools aggregate logs so analysts can search and detect threats at scale.",
             "skill_key": "siem",
             "lessons": [
                 {
                     "title": "What a SIEM actually does",
                     "concept_summary": "A SIEM collects logs from many systems into one searchable place and raises alerts based on rules.",
-                    "beginner_explainer": "Imagine every door, camera, and alarm in a building reporting to one control room instead of being checked separately — that's what a SIEM does for a company's computers.",
+                    "beginner_explainer": "Imagine every door, camera, and alarm in a building reporting to one control room instead of being checked separately, that's what a SIEM does for a company's computers.",
                     "content_md": "## Core SIEM workflow\n1. Logs are collected from servers, firewalls, endpoints\n2. Logs are normalized into a common format\n3. Detection rules run against incoming logs\n4. Matches generate alerts an analyst reviews",
                     "est_minutes": 15,
                 },
@@ -361,7 +361,7 @@ CYBERSECURITY = {
             },
         },
         {
-            "title": "Phase 8 — Cloud Security",
+            "title": "Phase 8, Cloud Security",
             "summary": "How security changes (and doesn't) when systems move from physical servers to the cloud.",
             "skill_key": "cloud_security",
             "lessons": [
@@ -378,7 +378,7 @@ CYBERSECURITY = {
                     "lesson_index": 0,
                     "prompt": "Under the shared responsibility model, who secures the applications you build on the cloud?",
                     "type": "mcq",
-                    "options": ["You (the customer)", "Entirely the cloud provider", "No one — it's automatic"],
+                    "options": ["You (the customer)", "Entirely the cloud provider", "No one, it's automatic"],
                     "answer_key": {"value": "You (the customer)"},
                     "est_minutes": 10,
                 }
@@ -392,7 +392,7 @@ CYBERSECURITY = {
             },
         },
         {
-            "title": "Phase 9 — Detection Engineering",
+            "title": "Phase 9, Detection Engineering",
             "summary": "How to write the rules that turn raw activity into meaningful alerts, and reduce noisy false positives.",
             "skill_key": "detection_engineering",
             "lessons": [
@@ -400,7 +400,7 @@ CYBERSECURITY = {
                     "title": "Writing your first detection rule",
                     "concept_summary": "A detection rule matches a specific pattern of activity likely to indicate malicious behavior.",
                     "beginner_explainer": "A detection rule is like setting a specific tripwire: 'alert me if this exact kind of thing happens', instead of just watching everything and hoping to notice.",
-                    "content_md": "## Reducing false positives\nGood detections are specific enough to catch real threats without drowning analysts in noise from normal behavior — this balance is the core skill of detection engineering.",
+                    "content_md": "## Reducing false positives\nGood detections are specific enough to catch real threats without drowning analysts in noise from normal behavior, this balance is the core skill of detection engineering.",
                     "est_minutes": 15,
                 },
             ],
@@ -417,7 +417,7 @@ CYBERSECURITY = {
             "projects": [
                 {
                     "title": "Create a mini SOC dashboard",
-                    "teaches": "pulling together logs, alerts, and summary metrics into one view — the core idea behind SOC tooling",
+                    "teaches": "pulling together logs, alerts, and summary metrics into one view, the core idea behind SOC tooling",
                     "prerequisites": ["Python fundamentals", "SIEM basics", "Log analysis project"],
                     "expected_output": "A simple local web dashboard (Flask or Streamlit) showing recent flagged events from your log analyzer project, with counts and a basic severity indicator.",
                     "steps": [
@@ -429,7 +429,7 @@ CYBERSECURITY = {
                     ],
                     "hints": [
                         "Streamlit is the fastest way to get a working dashboard with minimal frontend code.",
-                        "Keep the data source as a simple in-memory list or SQLite table — no need for a full database yet.",
+                        "Keep the data source as a simple in-memory list or SQLite table, no need for a full database yet.",
                     ],
                     "common_mistakes": [
                         "Over-engineering the frontend before the underlying detection logic actually works.",
@@ -447,14 +447,14 @@ CYBERSECURITY = {
             },
         },
         {
-            "title": "Phase 10 — Portfolio",
+            "title": "Phase 10, Portfolio",
             "summary": "Turn your completed projects into a portfolio that gets you interviews.",
             "skill_key": "portfolio",
             "lessons": [
                 {
                     "title": "What makes a security portfolio stand out",
                     "concept_summary": "Hiring managers want to see how you think, not just a list of tools.",
-                    "beginner_explainer": "A portfolio project is basically proof you can do the job — write it up so a busy hiring manager understands what you built and why in under a minute.",
+                    "beginner_explainer": "A portfolio project is basically proof you can do the job, write it up so a busy hiring manager understands what you built and why in under a minute.",
                     "content_md": "## Structure that works\n1. The problem\n2. What you built\n3. What you learned / would improve\n\nUse the Portfolio Builder to auto-generate a first draft of each of your completed projects, then personalize it.",
                     "est_minutes": 15,
                 },
@@ -462,12 +462,12 @@ CYBERSECURITY = {
             "projects": [
                 {
                     "title": "Build an automated security alert system",
-                    "teaches": "tying detection logic to real notifications — the last mile that makes a detection system actually useful",
+                    "teaches": "tying detection logic to real notifications, the last mile that makes a detection system actually useful",
                     "prerequisites": ["Log analyzer project", "Mini SOC dashboard project"],
                     "expected_output": "A script or small service that monitors your log analyzer's output and sends a notification (console, email, or webhook) when a high-severity event is detected.",
                     "steps": [
                         "Define what counts as 'high severity' based on your earlier log analyzer logic.",
-                        "Add a notification step — start simple with a formatted console/log message, then optionally add email or a webhook (e.g. a Discord/Slack webhook).",
+                        "Add a notification step, start simple with a formatted console/log message, then optionally add email or a webhook (e.g. a Discord/Slack webhook).",
                         "Add basic rate-limiting so one burst of events doesn't spam 50 notifications.",
                         "Document the end-to-end flow: log → detection → alert.",
                     ],
@@ -491,14 +491,14 @@ CYBERSECURITY = {
             },
         },
         {
-            "title": "Phase 11 — Job Preparation",
+            "title": "Phase 11, Job Preparation",
             "summary": "Mock interviews, resume polish, and real-world simulations to get you ready to apply with confidence.",
             "skill_key": "job_prep",
             "lessons": [
                 {
                     "title": "How entry-level security interviews actually go",
                     "concept_summary": "Expect a mix of fundamentals questions, a scenario/triage exercise, and behavioral questions.",
-                    "beginner_explainer": "Interviewers aren't trying to trick you — they mostly want to see how you think through a problem out loud, even if you don't know the exact answer immediately.",
+                    "beginner_explainer": "Interviewers aren't trying to trick you, they mostly want to see how you think through a problem out loud, even if you don't know the exact answer immediately.",
                     "content_md": "## Practice with your AI Mentor\nUse the AI Mentor's mock interview mode to rehearse SOC triage scenarios and fundamentals questions before your real interviews.",
                     "est_minutes": 15,
                 },
@@ -536,8 +536,8 @@ SOFTWARE_ENGINEERING = {
     ],
     "phases": [
         {
-            "title": "Phase 1 — Programming Fundamentals",
-            "summary": "Variables, control flow, functions, and data structures — the building blocks of every program you'll ever write.",
+            "title": "Phase 1, Programming Fundamentals",
+            "summary": "Variables, control flow, functions, and data structures, the building blocks of every program you'll ever write.",
             "skill_key": "programming_fundamentals",
             "lessons": [
                 {
@@ -550,7 +550,7 @@ SOFTWARE_ENGINEERING = {
                 {
                     "title": "Functions and reusable code",
                     "concept_summary": "Functions let you package up logic so you can reuse it instead of repeating yourself.",
-                    "beginner_explainer": "A function is like a recipe: you give it ingredients (inputs), it follows steps, and hands you back a result (output) — and you can reuse that recipe as many times as you want.",
+                    "beginner_explainer": "A function is like a recipe: you give it ingredients (inputs), it follows steps, and hands you back a result (output), and you can reuse that recipe as many times as you want.",
                     "content_md": "## Example\n```python\ndef greet(name):\n    return f'Hello, {name}!'\n\nprint(greet('Amina'))\n```",
                     "est_minutes": 20,
                 },
@@ -592,7 +592,7 @@ SOFTWARE_ENGINEERING = {
             },
         },
         {
-            "title": "Phase 2 — Git & Version Control",
+            "title": "Phase 2, Git & Version Control",
             "summary": "How professional developers track changes, collaborate, and never lose work.",
             "skill_key": "git",
             "lessons": [
@@ -616,8 +616,8 @@ SOFTWARE_ENGINEERING = {
             },
         },
         {
-            "title": "Phase 3 — Web Fundamentals",
-            "summary": "HTML, CSS, and JavaScript — how a web page is structured, styled, and made interactive.",
+            "title": "Phase 3, Web Fundamentals",
+            "summary": "HTML, CSS, and JavaScript, how a web page is structured, styled, and made interactive.",
             "skill_key": "web_fundamentals",
             "lessons": [
                 {
@@ -629,8 +629,8 @@ SOFTWARE_ENGINEERING = {
                 },
                 {
                     "title": "JavaScript: making pages interactive",
-                    "concept_summary": "JavaScript runs in the browser and responds to what users do — clicks, typing, and more.",
-                    "beginner_explainer": "If HTML is the skeleton and CSS is the paint, JavaScript is the muscles — it's what makes things actually move and respond when you interact with a page.",
+                    "concept_summary": "JavaScript runs in the browser and responds to what users do, clicks, typing, and more.",
+                    "beginner_explainer": "If HTML is the skeleton and CSS is the paint, JavaScript is the muscles, it's what makes things actually move and respond when you interact with a page.",
                     "content_md": "## Example\n```javascript\ndocument.querySelector('button').addEventListener('click', () => {\n  alert('Clicked!');\n});\n```",
                     "est_minutes": 20,
                 },
@@ -653,7 +653,7 @@ SOFTWARE_ENGINEERING = {
                     ],
                     "hints": [
                         "Use event delegation on the list container instead of adding a listener to every single item.",
-                        "Do not use localStorage for this exercise — keep state in a JavaScript array in memory.",
+                        "Do not use localStorage for this exercise, keep state in a JavaScript array in memory.",
                     ],
                     "common_mistakes": [
                         "Forgetting to clear the input field after adding an item.",
@@ -671,7 +671,7 @@ SOFTWARE_ENGINEERING = {
             },
         },
         {
-            "title": "Phase 4 — Backend & APIs",
+            "title": "Phase 4, Backend & APIs",
             "summary": "How servers respond to requests and expose data through APIs.",
             "skill_key": "backend_apis",
             "lessons": [
@@ -679,7 +679,7 @@ SOFTWARE_ENGINEERING = {
                     "title": "What is an API?",
                     "concept_summary": "An API is a defined way for two pieces of software to talk to each other.",
                     "beginner_explainer": "An API is like a restaurant menu: you don't need to know how the kitchen works, you just order from the menu (the API) and the kitchen (the server) hands back what you asked for.",
-                    "content_md": "## REST basics\n- `GET` — fetch data\n- `POST` — create data\n- `PUT/PATCH` — update data\n- `DELETE` — remove data\n\nEach endpoint (URL) represents a resource, e.g. `/users/42`.",
+                    "content_md": "## REST basics\n- `GET`, fetch data\n- `POST`, create data\n- `PUT/PATCH`, update data\n- `DELETE`, remove data\n\nEach endpoint (URL) represents a resource, e.g. `/users/42`.",
                     "est_minutes": 20,
                 },
             ],
@@ -700,7 +700,7 @@ SOFTWARE_ENGINEERING = {
                         "Display the result in a clean card layout.",
                     ],
                     "hints": [
-                        "Never commit your API key to a public GitHub repo — use an environment variable.",
+                        "Never commit your API key to a public GitHub repo, use an environment variable.",
                         "Always handle the 'city not found' case explicitly instead of showing a blank screen.",
                     ],
                     "common_mistakes": [
@@ -719,7 +719,7 @@ SOFTWARE_ENGINEERING = {
             },
         },
         {
-            "title": "Phase 5 — Databases & SQL",
+            "title": "Phase 5, Databases & SQL",
             "summary": "How applications persist data, and how to query it with SQL.",
             "skill_key": "databases",
             "lessons": [
@@ -748,7 +748,7 @@ SOFTWARE_ENGINEERING = {
                         "Add basic input validation (e.g. title can't be empty).",
                     ],
                     "hints": [
-                        "Start with SQLite — no server setup required, and it's a real, production-grade database.",
+                        "Start with SQLite, no server setup required, and it's a real, production-grade database.",
                         "Test every endpoint with a tool like curl or Postman before considering it done.",
                     ],
                     "common_mistakes": [
@@ -767,7 +767,7 @@ SOFTWARE_ENGINEERING = {
             },
         },
         {
-            "title": "Phase 6 — Testing & Debugging",
+            "title": "Phase 6, Testing & Debugging",
             "summary": "How to systematically find bugs and prove your code works.",
             "skill_key": "testing_debugging",
             "lessons": [
@@ -791,13 +791,13 @@ SOFTWARE_ENGINEERING = {
             },
         },
         {
-            "title": "Phase 7 — Portfolio",
+            "title": "Phase 7, Portfolio",
             "summary": "Package your projects into a portfolio that demonstrates real, job-ready skill.",
             "skill_key": "portfolio_se",
             "lessons": [
                 {
                     "title": "What makes a developer portfolio project stand out",
-                    "concept_summary": "Depth and clear write-ups beat quantity — one well-documented full project beats five half-finished ones.",
+                    "concept_summary": "Depth and clear write-ups beat quantity, one well-documented full project beats five half-finished ones.",
                     "beginner_explainer": "Reviewers spend seconds per project. A clear README explaining the problem, your approach, and what you'd improve does more work than the code itself.",
                     "content_md": "Use the Portfolio Builder to generate a first draft of your README, CV bullet, and LinkedIn post for each completed project, then personalize it with specifics.",
                     "est_minutes": 15,
@@ -817,11 +817,11 @@ SOFTWARE_ENGINEERING = {
                         "Deploy it somewhere reachable by a URL (a free-tier host is fine) and write a full README.",
                     ],
                     "hints": [
-                        "Build and test the backend API fully before starting the frontend — it's much easier to debug one layer at a time.",
-                        "A free-tier deployment (e.g. Render, Railway, Vercel) is enough — polish matters more than infrastructure here.",
+                        "Build and test the backend API fully before starting the frontend, it's much easier to debug one layer at a time.",
+                        "A free-tier deployment (e.g. Render, Railway, Vercel) is enough, polish matters more than infrastructure here.",
                     ],
                     "common_mistakes": [
-                        "Skipping deployment and only running it locally — a live link matters a lot to reviewers.",
+                        "Skipping deployment and only running it locally, a live link matters a lot to reviewers.",
                         "No error handling for failed API calls in the frontend.",
                     ],
                     "difficulty": 4,
@@ -836,7 +836,7 @@ SOFTWARE_ENGINEERING = {
             },
         },
         {
-            "title": "Phase 8 — Job Preparation",
+            "title": "Phase 8, Job Preparation",
             "summary": "Mock interviews, resume polish, and coding practice to get you ready to apply with confidence.",
             "skill_key": "job_prep_se",
             "lessons": [

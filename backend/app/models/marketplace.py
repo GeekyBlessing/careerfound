@@ -56,11 +56,23 @@ class Mentor(Base, UUIDMixin, TimestampMixin):
     session_durations_minutes: Mapped[list] = mapped_column(JSON, default=lambda: [30, 60])
     value_proposition: Mapped[str] = mapped_column(Text, default="")
     focus_beginner_friendly: Mapped[bool] = mapped_column(Boolean, default=False)
-    # Free-text placeholder — there is no real calendar/scheduling system.
+    # Free-text placeholder, there is no real calendar/scheduling system yet.
     availability_note: Mapped[str] = mapped_column(
-        Text, default="Availability coming soon — check back or ask a question."
+        Text, default="Availability coming soon: check back or ask a question."
     )
     mentee_count: Mapped[int] = mapped_column(Integer, default=0)
+
+    # --- Named, fixed-price service offerings (distinct from the generic
+    # hourly_rate_cents used by the fictional demo marketplace mentors).
+    # Stored as pre-formatted display labels rather than raw numbers plus a
+    # currency-conversion pipeline, since these are specific, manually-set
+    # prices for one real mentor's real services, not a computed rate. Empty
+    # string means "this mentor does not offer this service" — the frontend
+    # only renders a service card when its label is non-empty.
+    mentorship_duration_label: Mapped[str] = mapped_column(String(80), default="")
+    mentorship_price_label: Mapped[str] = mapped_column(String(80), default="")
+    consultation_duration_label: Mapped[str] = mapped_column(String(80), default="")
+    consultation_price_label: Mapped[str] = mapped_column(String(80), default="")
 
 
 class MentorSession(Base, UUIDMixin, TimestampMixin):

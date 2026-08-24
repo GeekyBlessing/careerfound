@@ -64,7 +64,7 @@ export default function PortfolioPage() {
                 key={item.id}
                 onClick={() => setActiveId(item.id)}
                 className={`w-full rounded-xl border px-4 py-3 text-left text-sm transition-colors ${
-                  activeId === item.id ? "border-accent bg-accent/10 text-ink-100" : "border-white/10 bg-white/[0.02] text-ink-400 hover:text-ink-100"
+                  activeId === item.id ? "border-accent bg-accent/10 text-ink-100" : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.02)] text-ink-400 hover:text-ink-100"
                 }`}
               >
                 <p className="font-medium">{item.title}</p>

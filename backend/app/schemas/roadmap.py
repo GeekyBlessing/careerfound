@@ -2,6 +2,8 @@ import uuid
 
 from pydantic import BaseModel, computed_field
 
+from app.schemas.career import CareerPathOut
+
 
 class GenerateRoadmapRequest(BaseModel):
     path_slug: str
@@ -47,6 +49,21 @@ class ProjectOut(BaseModel):
             return "Intermediate"
         return "Expert"
 
+    @computed_field  # type: ignore[misc]
+    @property
+    def estimated_duration(self) -> str:
+        """A rough, honest time estimate derived from the same 1-5 difficulty
+        score as difficulty_label, not a precisely measured figure. Shown on
+        project cards so a project browser has a sense of scope before
+        starting, the same way difficulty_label avoids hardcoding a tier
+        mapping in the frontend.
+        """
+        if self.difficulty <= 2:
+            return "3 to 5 hours"
+        if self.difficulty == 3:
+            return "6 to 10 hours"
+        return "10+ hours"
+
 
 class CareerProjectOut(ProjectOut):
     """A project shown in a career path's public project catalog (Beginner /
@@ -56,6 +73,16 @@ class CareerProjectOut(ProjectOut):
     """
 
     phase_title: str = ""
+
+
+class RoleProjectCatalogEntry(BaseModel):
+    """One career role/path plus every project available for it, used by
+    GET /careers/projects/catalog to power the "Projects by Role" discovery
+    page in a single request instead of one call per role.
+    """
+
+    path: CareerPathOut
+    projects: list[CareerProjectOut]
 
 
 class QuizOut(BaseModel):

@@ -77,7 +77,7 @@ export default function AdminPage() {
             {stats.map((s) => (
               <Card key={s.label}>
                 <CardContent className="p-5">
-                  <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white/[0.06] text-ink-300">
+                  <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-[rgb(var(--fg-tint)/0.06)] text-ink-300">
                     <s.icon className="h-4 w-4" />
                   </div>
                   <p className="text-2xl font-semibold text-ink-100">{s.value}</p>
@@ -141,14 +141,14 @@ function MentorApplicationsSection() {
       <CardContent className="p-6">
         <p className="mb-1 text-sm font-semibold text-ink-100">Pending mentor applications</p>
         <p className="mb-4 text-xs text-ink-500">
-          Approval creates a real, but explicitly unverified, mentor profile — no automated identity or expertise
+          Approval creates a real, but explicitly unverified, mentor profile, no automated identity or expertise
           check is performed.
         </p>
         {error && <Alert className="mb-4">{error}</Alert>}
         {applications && applications.length === 0 && <p className="text-xs text-ink-500">No pending applications.</p>}
         <div className="space-y-3">
           {applications?.map((app) => (
-            <div key={app.id} className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+            <div key={app.id} className="rounded-xl border border-[rgb(var(--fg-tint)/0.06)] bg-[rgb(var(--fg-tint)/0.02)] p-4">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-ink-100">

@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { MentorAvatar } from "@/components/mentors/mentor-avatar";
 import { MentorBadge } from "@/components/mentors/mentor-badge";
 import { api, ApiError } from "@/lib/api";
-import { formatCents } from "@/lib/utils";
+import { mentorPriceLabel } from "@/lib/utils";
 import type { MentorRecommendationRequest } from "@/types";
 
 const LEVEL_TONE: Record<string, "success" | "accent" | "warning" | "neutral"> = {
@@ -90,7 +90,7 @@ export function SmartMentorRecommendation({ pathSlug, pathName }: { pathSlug: st
             return (
               <Link
                 href={`/mentors/${top.mentor.id}`}
-                className="block rounded-xl border border-white/10 bg-base-950/40 p-4 transition hover:border-accent/30"
+                className="block rounded-xl border border-[rgb(var(--fg-tint)/0.1)] bg-base-950/40 p-4 transition hover:border-accent/30"
               >
                 <div className="flex items-start gap-3">
                   <MentorAvatar displayName={top.mentor.display_name} avatarUrl={top.mentor.avatar_url} />
@@ -103,7 +103,7 @@ export function SmartMentorRecommendation({ pathSlug, pathName }: { pathSlug: st
                       <Star className="h-2.5 w-2.5 fill-warning text-warning" />
                       {top.mentor.rating_count > 0 ? top.mentor.rating_avg.toFixed(1) : "No ratings yet"}
                       <span className="mx-1">·</span>
-                      {top.mentor.hourly_rate_cents > 0 ? `${formatCents(top.mentor.hourly_rate_cents, top.mentor.currency)}/hr` : "Free"}
+                      {mentorPriceLabel(top.mentor)}
                     </div>
                     <p className="mt-2 text-xs leading-relaxed text-ink-400">{top.reason}</p>
                   </div>

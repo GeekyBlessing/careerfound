@@ -105,8 +105,8 @@ def _safe_pct(done: int, total: int) -> int:
 def _next_actions(knowledge: int, projects: int, portfolio: int, interview: int, practical: int) -> list[str]:
     dims = {
         "knowledge": (knowledge, "Complete two more lessons this week to lift your knowledge score."),
-        "projects": (projects, "Ship your next mini-project — projects carry the most weight in your score."),
-        "portfolio": (portfolio, "Generate a portfolio write-up for a completed project — it's a quick, high-leverage win."),
+        "projects": (projects, "Ship your next mini-project: projects carry the most weight in your score."),
+        "portfolio": (portfolio, "Generate a portfolio write-up for a completed project, it's a quick, high-leverage win."),
         "interview": (interview, "Try a real-world simulation scenario to build interview readiness."),
         "practical": (practical, "Pass a checkpoint quiz to prove practical mastery of your current phase."),
     }

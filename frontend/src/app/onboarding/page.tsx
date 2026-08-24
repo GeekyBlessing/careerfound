@@ -80,7 +80,7 @@ function OptionGrid<T extends string | number>({
             "rounded-xl border px-4 py-3.5 text-left text-sm font-medium transition-colors focus-ring",
             value === opt.value
               ? "border-accent bg-accent/15 text-accent-light"
-              : "border-white/10 bg-white/[0.03] text-ink-300 hover:border-white/20 hover:text-ink-100"
+              : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] text-ink-300 hover:border-[rgb(var(--fg-tint)/0.2)] hover:text-ink-100"
           )}
         >
           {opt.label}
@@ -98,7 +98,7 @@ function YesNo({ value, onChange }: { value: boolean | undefined; onChange: (v: 
         onClick={() => onChange(true)}
         className={cn(
           "rounded-xl border px-4 py-3 text-sm font-medium transition-colors focus-ring",
-          value === true ? "border-accent bg-accent/15 text-accent-light" : "border-white/10 bg-white/[0.03] text-ink-300 hover:text-ink-100"
+          value === true ? "border-accent bg-accent/15 text-accent-light" : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] text-ink-300 hover:text-ink-100"
         )}
       >
         Yes
@@ -108,7 +108,7 @@ function YesNo({ value, onChange }: { value: boolean | undefined; onChange: (v: 
         onClick={() => onChange(false)}
         className={cn(
           "rounded-xl border px-4 py-3 text-sm font-medium transition-colors focus-ring",
-          value === false ? "border-accent bg-accent/15 text-accent-light" : "border-white/10 bg-white/[0.03] text-ink-300 hover:text-ink-100"
+          value === false ? "border-accent bg-accent/15 text-accent-light" : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] text-ink-300 hover:text-ink-100"
         )}
       >
         Not really
@@ -179,7 +179,7 @@ export default function OnboardingPage() {
       title: "Let's figure out your future in tech.",
       body: (
         <p className="text-sm leading-relaxed text-ink-500">
-          Answer a few honest questions — there are no wrong answers. It takes about 5 minutes,
+          Answer a few honest questions, there are no wrong answers. It takes about 5 minutes,
           and at the end we&apos;ll tell you exactly which tech careers fit you, and why.
         </p>
       ),
@@ -221,7 +221,7 @@ export default function OnboardingPage() {
       canContinue: answers.enjoys_math !== undefined,
     },
     {
-      title: "Do you enjoy creative work — design, writing, visual thinking?",
+      title: "Do you enjoy creative work, design, writing, visual thinking?",
       body: <YesNo value={answers.enjoys_creativity} onChange={(v) => update("enjoys_creativity", v)} />,
       canContinue: answers.enjoys_creativity !== undefined,
     },
@@ -237,7 +237,7 @@ export default function OnboardingPage() {
             }}
             className={cn(
               "rounded-xl border px-4 py-3.5 text-sm font-medium transition-colors focus-ring",
-              answers.enjoys_people === true ? "border-accent bg-accent/15 text-accent-light" : "border-white/10 bg-white/[0.03] text-ink-300 hover:text-ink-100"
+              answers.enjoys_people === true ? "border-accent bg-accent/15 text-accent-light" : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] text-ink-300 hover:text-ink-100"
             )}
           >
             People
@@ -250,7 +250,7 @@ export default function OnboardingPage() {
             }}
             className={cn(
               "rounded-xl border px-4 py-3.5 text-sm font-medium transition-colors focus-ring",
-              answers.prefers_systems === true ? "border-accent bg-accent/15 text-accent-light" : "border-white/10 bg-white/[0.03] text-ink-300 hover:text-ink-100"
+              answers.prefers_systems === true ? "border-accent bg-accent/15 text-accent-light" : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] text-ink-300 hover:text-ink-100"
             )}
           >
             Systems
@@ -260,7 +260,7 @@ export default function OnboardingPage() {
       canContinue: answers.enjoys_people !== undefined || answers.prefers_systems !== undefined,
     },
     {
-      title: "One last thing — do you want to work remotely?",
+      title: "One last thing, do you want to work remotely?",
       body: <YesNo value={answers.wants_remote} onChange={(v) => update("wants_remote", v)} />,
       canContinue: answers.wants_remote !== undefined,
     },
@@ -279,7 +279,7 @@ export default function OnboardingPage() {
       </div>
 
       <div className="w-full max-w-lg">
-        <div className="mb-6 h-1.5 w-full overflow-hidden rounded-full bg-white/[0.08]">
+        <div className="mb-6 h-1.5 w-full overflow-hidden rounded-full bg-[rgb(var(--fg-tint)/0.08)]">
           <div className="h-full rounded-full bg-accent transition-all duration-500" style={{ width: `${progress}%` }} />
         </div>
 
@@ -292,7 +292,7 @@ export default function OnboardingPage() {
           <div className="mt-5">{current.body}</div>
 
           {isLastStep && !user && (
-            <div className="mt-6 space-y-3 border-t border-white/10 pt-6">
+            <div className="mt-6 space-y-3 border-t border-[rgb(var(--fg-tint)/0.1)] pt-6">
               <p className="text-sm font-medium text-ink-100">
                 {mode === "signup" ? "Create your free account to see your results" : "Log in to see your results"}
               </p>

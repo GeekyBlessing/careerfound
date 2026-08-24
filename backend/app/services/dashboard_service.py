@@ -73,8 +73,8 @@ async def get_or_generate_today_mission(db: AsyncSession, user_id: uuid.UUID, pa
     tasks = await _next_incomplete_items(db, path_id, user_id)
     total_minutes = sum(t["est_minutes"] for t in tasks)
     rationale = (
-        f"This is today's focus because it's the next unfinished step in your {path_name} roadmap — "
-        "completing it in order keeps each new concept building on one you've already got, instead of "
+        f"This is today's focus because it's the next unfinished step in your {path_name} roadmap. "
+        "Completing it in order keeps each new concept building on one you've already got, instead of "
         "jumping around and leaving gaps."
     )
     mission = DailyMission(user_id=user_id, date=today, tasks=tasks, rationale_text=rationale)

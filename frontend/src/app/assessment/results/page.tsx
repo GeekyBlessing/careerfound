@@ -51,7 +51,7 @@ export default function AssessmentResultsPage() {
       <div className="mb-8">
         <p className="text-xs font-semibold uppercase tracking-wider text-accent-light">Your results</p>
         <h1 className="mt-1 text-2xl font-semibold text-ink-100">We found your strongest paths</h1>
-        <p className="mt-1 text-sm text-ink-500">Based on your answers — not a generic list, your specific fit.</p>
+        <p className="mt-1 text-sm text-ink-500">Based on your answers, not a generic list, your specific fit.</p>
       </div>
 
       {loading && (

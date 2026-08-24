@@ -2,17 +2,71 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Theme tokens: light values live on :root, dark values override under
+   .dark (toggled by the theme provider in lib/theme.tsx). Every color
+   below is an "R G B" triplet (no commas, no rgb() wrapper) so Tailwind's
+   rgb(var(--x) / <alpha-value>) pattern in tailwind.config.ts can still
+   apply opacity modifiers like bg-base-950/60. */
 :root {
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* base = backgrounds, brightness-ordered the same way in both themes:
+     950 is the page background, 900 is the raised/card background. */
+  --color-base-50: 17 24 21;
+  --color-base-900: 255 255 255;
+  --color-base-950: 248 250 249;
+
+  /* ink = text, 100 is the brightest/primary reading color, 700 is the
+     most muted (closest to the page background). */
+  --color-ink-100: 15 23 42;
+  --color-ink-200: 30 41 59;
+  --color-ink-300: 71 85 105;
+  --color-ink-400: 100 116 139;
+  --color-ink-500: 148 163 184;
+  --color-ink-700: 203 213 225;
+
+  /* The brand green shade used for "pop" text against the page background.
+     Needs to be a darker green on a light page and a brighter green on a
+     dark page to stay readable in both, so unlike accent/accent-dark this
+     one is theme-aware. */
+  --color-accent-light: 77 93 40;
+
+  /* A subtle foreground-tinted overlay used for hairline borders and soft
+     card highlights, black-tinted on a light page, white-tinted on a dark
+     page, so the exact opacity value in each usage (e.g. /[0.06]) keeps
+     working unchanged in both themes. */
+  --fg-tint: 15 23 42;
+}
+
+:root[data-theme="dark"],
+.dark {
+  --color-base-50: 247 248 250;
+  --color-base-900: 11 13 18;
+  --color-base-950: 7 8 11;
+
+  --color-ink-100: 244 245 247;
+  --color-ink-200: 224 227 231;
+  --color-ink-300: 198 201 210;
+  --color-ink-400: 168 172 184;
+  --color-ink-500: 138 143 156;
+  --color-ink-700: 75 79 90;
+
+  --color-accent-light: 165 199 96;
+
+  --fg-tint: 255 255 255;
 }
 
 html {
+  color-scheme: light;
+}
+
+html.dark {
   color-scheme: dark;
 }
 
 body {
-  @apply bg-base-950 text-ink-100 antialiased;
+  @apply bg-base-950 text-ink-100 antialiased transition-colors duration-200;
 }
 
 ::selection {
@@ -24,7 +78,7 @@ body {
 }
 
 .text-gradient {
-  background: linear-gradient(135deg, #ffffff 0%, #b9c0ff 100%);
+  background: linear-gradient(135deg, rgb(var(--color-ink-100)) 0%, rgb(var(--color-accent-light)) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;

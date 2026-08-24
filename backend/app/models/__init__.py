@@ -12,6 +12,7 @@ from app.models.community import (  # noqa: F401
     CommunityPost,
     LeaderboardEntry,
 )
+from app.models.email import EmailToken  # noqa: F401
 from app.models.marketplace import (  # noqa: F401
     Mentor,
     MentorApplication,

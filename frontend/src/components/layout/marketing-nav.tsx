@@ -19,7 +19,7 @@ export function MarketingNav() {
   const { user } = useAuth();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-base-950/80 backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b border-[rgb(var(--fg-tint)/0.06)] bg-base-950/80 backdrop-blur-md">
       <div className="container-page flex h-16 items-center justify-between">
         <Link href="/" className="flex items-center gap-2 font-semibold text-ink-100">
           <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent">
@@ -59,7 +59,7 @@ export function MarketingNav() {
       </div>
 
       {open && (
-        <div className="border-t border-white/[0.06] px-4 py-4 md:hidden">
+        <div className="border-t border-[rgb(var(--fg-tint)/0.06)] px-4 py-4 md:hidden">
           <nav className="flex flex-col gap-3">
             {links.map((l) => (
               <a key={l.href} href={l.href} className="text-sm text-ink-300" onClick={() => setOpen(false)}>

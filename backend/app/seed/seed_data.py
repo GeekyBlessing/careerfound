@@ -197,6 +197,31 @@ async def seed_mentors(db: AsyncSession) -> None:
     if not existing_founder:
         db.add(Mentor(**FOUNDING_MENTOR, is_verified=False, is_active=True, is_demo=False, is_founding_mentor=True))
         await db.commit()
+    else:
+        # Backfill only the newly-added pricing-label fields when they're
+        # still blank, e.g. a row seeded before these fields existed. Every
+        # other field is intentionally left untouched so a real profile
+        # edit made from the mentor dashboard is never overwritten by a
+        # later redeploy re-running this seed script.
+        changed = False
+        for field in (
+            "mentorship_duration_label",
+            "mentorship_price_label",
+            "consultation_duration_label",
+            "consultation_price_label",
+        ):
+            if not getattr(existing_founder, field) and FOUNDING_MENTOR.get(field):
+                setattr(existing_founder, field, FOUNDING_MENTOR[field])
+                changed = True
+        # One-time text fix: an earlier column default used an em dash. Only
+        # touch rows that still hold that exact original default, so a
+        # mentor-dashboard edit to this field is never overwritten.
+        old_default = "Availability coming soon — check back or ask a question."
+        if existing_founder.availability_note == old_default:
+            existing_founder.availability_note = "Availability coming soon: check back or ask a question."
+            changed = True
+        if changed:
+            await db.commit()
 
 
 async def seed_communities(db: AsyncSession, paths: dict[str, CareerPath], demo_user: User) -> None:
@@ -219,9 +244,9 @@ async def seed_communities(db: AsyncSession, paths: dict[str, CareerPath], demo_
         communities[slug] = community
 
     seed_posts = [
-        ("cybersecurity", "showcase", "Just finished my port scanner project!", "Took me a weekend but it's fully working with threading now. Huge thanks to the AI mentor for pushing me to add a timeout — my first version hung forever on filtered ports."),
-        ("cybersecurity", "question", "How do you tell a real brute-force attempt from a user who just forgot their password?", "I keep going back and forth on Alert B in the SOC simulation. Volume + geography seem like the key signals — anything else you all look at?"),
-        ("software-engineering", "discussion", "What's your Git commit message style?", "Trying to build a good habit early. Currently doing 'type: short description' (feat:, fix:, etc) — curious what's standard on real teams."),
+        ("cybersecurity", "showcase", "Just finished my port scanner project!", "Took me a weekend but it's fully working with threading now. Huge thanks to the AI mentor for pushing me to add a timeout, my first version hung forever on filtered ports."),
+        ("cybersecurity", "question", "How do you tell a real brute-force attempt from a user who just forgot their password?", "I keep going back and forth on Alert B in the SOC simulation. Volume and geography seem like the key signals, anything else you all look at?"),
+        ("software-engineering", "discussion", "What's your Git commit message style?", "Trying to build a good habit early. Currently doing 'type: short description' (feat:, fix:, etc), curious what's standard on real teams."),
         ("software-engineering", "showcase", "Deployed my capstone task manager!", "First time deploying anything live. Render's free tier made it pretty painless. Would love feedback on the README."),
     ]
     for slug, kind, title, body in seed_posts:
@@ -297,7 +322,7 @@ async def seed_demo_progress(db: AsyncSession, users: dict[str, User], paths: di
     db.add(
         ReadinessScore(
             user_id=demo.id, overall=42, knowledge_pct=55, projects_pct=40, portfolio_pct=25, interview_pct=20, practical_pct=60,
-            next_actions=["Ship your next mini-project — projects carry the most weight in your score.", "Generate a portfolio write-up for a completed project."],
+            next_actions=["Ship your next mini-project: projects carry the most weight in your score.", "Generate a portfolio write-up for a completed project."],
         )
     )
     await db.commit()

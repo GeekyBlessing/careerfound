@@ -15,9 +15,9 @@ export function EmptyState({
   className?: string;
 }) {
   return (
-    <div className={cn("flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 px-6 py-14 text-center", className)}>
+    <div className={cn("flex flex-col items-center justify-center rounded-2xl border border-dashed border-[rgb(var(--fg-tint)/0.1)] px-6 py-14 text-center", className)}>
       {Icon && (
-        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-white/[0.06] text-ink-300">
+        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[rgb(var(--fg-tint)/0.06)] text-ink-300">
           <Icon className="h-5 w-5" />
         </div>
       )}

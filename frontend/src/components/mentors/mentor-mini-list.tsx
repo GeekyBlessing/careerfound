@@ -6,7 +6,7 @@ import { Star, ArrowRight, Users } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api, ApiError } from "@/lib/api";
-import { formatCents, initials } from "@/lib/utils";
+import { initials, mentorPriceLabel } from "@/lib/utils";
 import type { Mentor } from "@/types";
 
 /**
@@ -68,7 +68,7 @@ export function MentorMiniList({ pathSlug, pathName, limit = 3 }: { pathSlug: st
             <Link
               key={mentor.id}
               href={`/mentors?path=${encodeURIComponent(pathSlug)}`}
-              className="block rounded-xl border border-white/10 bg-base-950/40 p-4 transition hover:border-accent/30"
+              className="block rounded-xl border border-[rgb(var(--fg-tint)/0.1)] bg-base-950/40 p-4 transition hover:border-accent/30"
             >
               <div className="flex items-center gap-2.5">
                 <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-accent/15 text-xs font-semibold text-accent-light">
@@ -83,9 +83,7 @@ export function MentorMiniList({ pathSlug, pathName, limit = 3 }: { pathSlug: st
                 </div>
               </div>
               <p className="mt-2 line-clamp-2 text-[11px] leading-relaxed text-ink-500">{mentor.headline}</p>
-              <p className="mt-2 text-[11px] font-medium text-ink-300">
-                {formatCents(mentor.hourly_rate_cents, mentor.currency)}/hr
-              </p>
+              <p className="mt-2 text-[11px] font-medium text-ink-300">{mentorPriceLabel(mentor)}</p>
             </Link>
           ))}
         </div>

@@ -15,7 +15,7 @@ logger = logging.getLogger("careerfound")
 app = FastAPI(
     title=settings.APP_NAME,
     version="0.1.0",
-    description="API for CareerFound — the tech career launchpad.",
+    description="API for CareerFound, the tech career launchpad.",
 )
 
 app.add_middleware(SecurityHeadersMiddleware)

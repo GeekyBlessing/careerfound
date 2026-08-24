@@ -153,7 +153,7 @@ export default function ProjectDetailPage() {
                     <ol className="space-y-2 text-sm text-ink-400">
                       {project.steps.map((step, i) => (
                         <li key={i} className="flex gap-3">
-                          <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-white/[0.08] text-xs text-ink-300">
+                          <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[rgb(var(--fg-tint)/0.08)] text-xs text-ink-300">
                             {i + 1}
                           </span>
                           {step}
@@ -205,11 +205,11 @@ export default function ProjectDetailPage() {
                   </Button>
 
                   {review && (
-                    <div className="mt-6 space-y-4 border-t border-white/10 pt-5">
+                    <div className="mt-6 space-y-4 border-t border-[rgb(var(--fg-tint)/0.1)] pt-5">
                       <p className="text-sm text-ink-300">{review.overall_assessment}</p>
                       <div className="space-y-2">
                         {review.findings.map((f, i) => (
-                          <div key={i} className="flex items-start gap-2.5 rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2.5">
+                          <div key={i} className="flex items-start gap-2.5 rounded-lg border border-[rgb(var(--fg-tint)/0.06)] bg-[rgb(var(--fg-tint)/0.02)] px-3 py-2.5">
                             <Badge tone={SEVERITY_META[f.severity].tone} className="mt-0.5 flex-shrink-0">
                               {SEVERITY_META[f.severity].label}
                             </Badge>
@@ -255,7 +255,7 @@ export default function ProjectDetailPage() {
                   </Button>
 
                   {portfolio && (
-                    <div className="mt-4 space-y-3 rounded-xl border border-white/10 bg-base-950/60 p-3 text-xs">
+                    <div className="mt-4 space-y-3 rounded-xl border border-[rgb(var(--fg-tint)/0.1)] bg-base-950/60 p-3 text-xs">
                       <p className="text-ink-300">{portfolio.cv_bullet}</p>
                       <Button variant="ghost" size="sm" className="w-full" onClick={() => router.push("/portfolio")}>
                         Edit in Portfolio Builder →

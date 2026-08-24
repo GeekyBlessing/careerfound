@@ -13,7 +13,7 @@ import { SkeletonCard } from "@/components/ui/skeleton";
 import { MentorAvatar } from "@/components/mentors/mentor-avatar";
 import { MentorBadge } from "@/components/mentors/mentor-badge";
 import { api, ApiError } from "@/lib/api";
-import { formatCents } from "@/lib/utils";
+import { mentorPriceLabel } from "@/lib/utils";
 import type { Mentor } from "@/types";
 
 export default function MentorsPage() {
@@ -49,7 +49,7 @@ function MentorsPageInner() {
           <p className="text-xs font-semibold uppercase tracking-wider text-accent-light">Mentorship Marketplace</p>
           <h1 className="mt-1 text-2xl font-semibold text-ink-100">Real professionals, when you need a human</h1>
           <p className="mt-1 text-sm text-ink-500">
-            Booking is fully functional and stored — payment capture is a Phase 2 integration point (see docs), so
+            Booking is fully functional and stored, payment capture is a Phase 2 integration point (see docs), so
             sessions are created in &ldquo;requested&rdquo; status without a real charge.
           </p>
           {pathFilter && (
@@ -92,7 +92,7 @@ function MentorsPageInner() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {mentors.map((mentor) => (
           <Link key={mentor.id} href={`/mentors/${mentor.id}`}>
-            <Card className="h-full transition-colors hover:bg-white/[0.045]">
+            <Card className="h-full transition-colors hover:bg-[rgb(var(--fg-tint)/0.045)]">
               <CardContent className="flex h-full flex-col p-6">
                 <div className="flex items-center gap-3">
                   <MentorAvatar displayName={mentor.display_name} avatarUrl={mentor.avatar_url} />
@@ -117,7 +117,7 @@ function MentorsPageInner() {
                     <Briefcase className="h-3 w-3" /> {mentor.years_experience ? `${mentor.years_experience} yrs` : "New mentor"}
                   </span>
                   <span className="font-medium text-ink-300">
-                    {mentor.hourly_rate_cents > 0 ? `${formatCents(mentor.hourly_rate_cents, mentor.currency)}/hr` : "Free"}
+                    {mentorPriceLabel(mentor)}
                   </span>
                 </div>
                 <Button size="sm" variant="secondary" className="mt-4 w-full gap-1.5">

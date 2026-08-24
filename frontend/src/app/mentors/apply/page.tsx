@@ -76,7 +76,7 @@ export default function ApplyToMentorPage() {
         <p className="text-xs font-semibold uppercase tracking-wider text-accent-light">Mentorship</p>
         <h1 className="mt-1 text-2xl font-semibold text-ink-100">Apply to become a mentor</h1>
         <p className="mt-1 text-sm text-ink-500">
-          Tell us about yourself. Applications are reviewed manually — there&apos;s no automated identity or
+          Tell us about yourself. Applications are reviewed manually, there&apos;s no automated identity or
           expertise verification, so approved profiles start unverified until reviewed further.
         </p>
       </div>
@@ -88,7 +88,7 @@ export default function ApplyToMentorPage() {
             <p className="text-sm font-medium">Application submitted</p>
           </div>
           <p className="mt-2 text-sm text-ink-400">
-            Thanks — we&apos;ll review it and follow up at {email}. If approved, sign in with this email and claim
+            Thanks, we&apos;ll review it and follow up at {email}. If approved, sign in with this email and claim
             your mentor profile from the mentor dashboard.
           </p>
         </Card>
@@ -127,7 +127,7 @@ export default function ApplyToMentorPage() {
                     className={`rounded-full border px-3 py-1 text-xs capitalize transition-colors ${
                       paths.includes(slug)
                         ? "border-accent/40 bg-accent/15 text-accent-light"
-                        : "border-white/10 bg-white/[0.03] text-ink-400 hover:bg-white/[0.06]"
+                        : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] text-ink-400 hover:bg-[rgb(var(--fg-tint)/0.06)]"
                     }`}
                   >
                     {slug.replace(/-/g, " ")}

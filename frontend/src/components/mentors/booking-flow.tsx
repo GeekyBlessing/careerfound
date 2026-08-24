@@ -27,15 +27,22 @@ export function BookingFlow({
   mode,
   onClose,
   onBooked,
+  initialMessage = "",
+  initialDurationMinutes,
 }: {
   mentor: Mentor;
   mode: "session" | "question";
   onClose: () => void;
   onBooked: (session: MentorSession) => void;
+  /** Pre-fills the message field, used when a specific named service (e.g.
+   * a priced offering shown elsewhere on the page) started this flow, so
+   * the mentor sees which service was requested without a separate field. */
+  initialMessage?: string;
+  initialDurationMinutes?: number;
 }) {
   const [helpTopic, setHelpTopic] = useState<HelpTopic>(HELP_TOPIC_OPTIONS[0]?.value ?? "other");
-  const [message, setMessage] = useState("");
-  const [duration, setDuration] = useState(mentor.session_durations_minutes[0] ?? 30);
+  const [message, setMessage] = useState(initialMessage);
+  const [duration, setDuration] = useState(initialDurationMinutes ?? mentor.session_durations_minutes[0] ?? 30);
   const [scheduledAt, setScheduledAt] = useState(defaultScheduledAtLocal());
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -74,7 +81,7 @@ export function BookingFlow({
           {HELP_TOPIC_OPTIONS.map((opt) => (
             <label
               key={opt.value}
-              className="flex cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-xs text-ink-300 hover:bg-white/[0.04]"
+              className="flex cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-xs text-ink-300 hover:bg-[rgb(var(--fg-tint)/0.04)]"
             >
               <input
                 type="radio"
@@ -112,7 +119,7 @@ export function BookingFlow({
             <select
               value={duration}
               onChange={(e) => setDuration(Number(e.target.value))}
-              className="mt-1.5 w-full rounded-xl border border-white/10 bg-base-950/60 px-3 py-2 text-xs text-ink-100 focus-ring"
+              className="mt-1.5 w-full rounded-xl border border-[rgb(var(--fg-tint)/0.1)] bg-base-950/60 px-3 py-2 text-xs text-ink-100 focus-ring"
             >
               {mentor.session_durations_minutes.map((d) => (
                 <option key={d} value={d}>
@@ -127,7 +134,7 @@ export function BookingFlow({
               type="datetime-local"
               value={scheduledAt}
               onChange={(e) => setScheduledAt(e.target.value)}
-              className="mt-1.5 w-full rounded-xl border border-white/10 bg-base-950/60 px-3 py-2 text-xs text-ink-100 focus-ring"
+              className="mt-1.5 w-full rounded-xl border border-[rgb(var(--fg-tint)/0.1)] bg-base-950/60 px-3 py-2 text-xs text-ink-100 focus-ring"
             />
           </div>
         </div>

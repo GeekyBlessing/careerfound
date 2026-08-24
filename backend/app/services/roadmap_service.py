@@ -35,7 +35,7 @@ async def generate_roadmap(db: AsyncSession, user_id: uuid.UUID, path_slug: str)
     if not phases_result.scalars().first():
         raise RoadmapError(
             f"No roadmap content is seeded yet for '{path.name}'. This path is fully "
-            "architected but content authoring hasn't happened for it yet — try "
+            "architected but content authoring hasn't happened for it yet, try "
             "Cybersecurity or Software Engineering, which are fully seeded."
         )
 

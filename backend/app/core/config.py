@@ -63,13 +63,36 @@ class Settings(BaseSettings):
     STRIPE_SECRET_KEY: str = ""
     STRIPE_WEBHOOK_SECRET: str = ""
 
+    # --- Transactional email ---
+    # "console" (default) logs the rendered email instead of sending it, so
+    # registration/password-reset flows work with zero setup in local dev
+    # and tests. Set EMAIL_PROVIDER=resend and RESEND_API_KEY to send real
+    # email, no other code changes required anywhere in the app. Mirrors the
+    # LLM_PROVIDER mock/live pattern above.
+    EMAIL_PROVIDER: Literal["console", "resend"] = "console"
+    RESEND_API_KEY: str = ""
+    EMAIL_FROM_NAME: str = "CareerFound"
+    # Must be an address at a domain verified with the email provider (SPF/
+    # DKIM records added, see docs). Defaults to the project's domain; not a
+    # placeholder that silently fails, see infra/README.md before going live.
+    EMAIL_FROM_ADDRESS: str = "no-reply@mycareerfound.com"
+    EMAIL_REPLY_TO: str = "hello@mycareerfound.com"
+
     # --- Rate limiting ---
     AI_RATE_LIMIT_PER_MINUTE: int = 20
     AUTH_RATE_LIMIT_PER_MINUTE: int = 10
+    EMAIL_RATE_LIMIT_PER_MINUTE: int = 5
 
     @property
     def is_sqlite(self) -> bool:
         return self.DATABASE_URL.startswith("sqlite")
+
+    @property
+    def email_live(self) -> bool:
+        """True only when a real provider is configured with credentials.
+        Used to decide whether to warn/log instead of silently pretending
+        email is going out (see EMAIL_PROVIDER docstring above)."""
+        return self.EMAIL_PROVIDER == "resend" and bool(self.RESEND_API_KEY)
 
     @property
     def frontend_origins(self) -> list[str]:

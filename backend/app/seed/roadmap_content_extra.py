@@ -2,13 +2,13 @@
 career paths beyond the two fully-authored end-to-end roadmaps
 (Cybersecurity, Software Engineering).
 
-Each path here gets a compact skill graph (4-5 skills) and three phases —
-Foundations / Building Real Skills / Advanced Practice — each holding one
+Each path here gets a compact skill graph (4-5 skills) and three phases:
+Foundations / Building Real Skills / Advanced Practice, each holding one
 real, fully-specified project at that difficulty tier (Beginner ~1,
 Intermediate ~3, Expert ~5). No lessons/exercises/quizzes are included for
 these paths; that fuller curriculum remains a documented Phase 2 item
 (see docs/PHASE_2.md item #5). Every project below is real, specific
-content — not lorem ipsum — naming actual tools, commands, and workflows.
+content, not lorem ipsum, naming actual tools, commands, and workflows.
 """
 
 PATH_PROJECTS = {
@@ -29,7 +29,7 @@ PATH_PROJECTS = {
         "phases": [
             {
                 "title": "Foundations",
-                "summary": "Covers semantic HTML, the CSS box model, Flexbox/Grid layout, and responsive design with media queries — the building blocks every frontend developer uses daily before touching a framework.",
+                "summary": "Covers semantic HTML, the CSS box model, Flexbox/Grid layout, and responsive design with media queries, the building blocks every frontend developer uses daily before touching a framework.",
                 "skill_key": "html_css_fundamentals",
                 "projects": [
                     {
@@ -81,7 +81,7 @@ PATH_PROJECTS = {
                             "Style the components with CSS Modules or plain CSS so each component's styles are scoped.",
                         ],
                         "hints": [
-                            "Never commit your API key — add .env to .gitignore and use import.meta.env in Vite.",
+                            "Never commit your API key, add .env to .gitignore and use import.meta.env in Vite.",
                             "Put the fetch logic in a custom hook like useWeather(city) to keep components focused on rendering.",
                             "Use a dependency array on useEffect correctly, or you'll trigger an infinite fetch loop.",
                             "AbortController lets you cancel a stale fetch if the user searches again before the first request finishes.",
@@ -150,7 +150,7 @@ PATH_PROJECTS = {
         "phases": [
             {
                 "title": "Foundations",
-                "summary": "Covers how HTTP requests and responses work, building simple server routes, and modeling/querying data with SQL — the basics every backend service is built on.",
+                "summary": "Covers how HTTP requests and responses work, building simple server routes, and modeling/querying data with SQL, the basics every backend service is built on.",
                 "skill_key": "server_fundamentals",
                 "projects": [
                     {
@@ -168,7 +168,7 @@ PATH_PROJECTS = {
                             "Add basic request logging middleware so you can see each incoming request in the console.",
                         ],
                         "hints": [
-                            "Status codes matter: don't return 200 for a failed lookup — that breaks any client relying on status to detect errors.",
+                            "Status codes matter: don't return 200 for a failed lookup, that breaks any client relying on status to detect errors.",
                             "express.json() (or Flask's request.get_json()) must run before your route handlers or req.body will be undefined.",
                             "Use Postman collections or a .http file to save your test requests instead of retyping curl commands.",
                             "Keep the in-memory array in a separate module so route handlers stay focused on request/response logic.",
@@ -196,16 +196,16 @@ PATH_PROJECTS = {
                         "steps": [
                             "Design a schema with users, posts, and comments tables, using foreign keys (posts.user_id references users.id).",
                             "Write the schema as SQL migration files (or use an ORM like Prisma/SQLAlchemy) and run them against a local Postgres instance.",
-                            "Implement POST /auth/register that hashes passwords with bcrypt before storing them — never store plaintext passwords.",
+                            "Implement POST /auth/register that hashes passwords with bcrypt before storing them, never store plaintext passwords.",
                             "Implement POST /auth/login that verifies the password and returns a signed JWT (using jsonwebtoken or PyJWT).",
                             "Write middleware that verifies the JWT on protected routes and attaches the user id to the request.",
                             "Implement POST /posts and DELETE /posts/:id so only the post's owner (checked via the JWT's user id) can modify or delete it.",
                             "Write a GET /posts/:id/comments endpoint that uses a SQL JOIN to return comments with the commenter's username attached.",
                         ],
                         "hints": [
-                            "Always compare passwords with bcrypt.compare() — never decrypt and compare plaintext.",
+                            "Always compare passwords with bcrypt.compare(), never decrypt and compare plaintext.",
                             "Store the JWT secret in an environment variable, not in source code.",
-                            "Use parameterized queries (or your ORM's query builder) everywhere — never string-concatenate user input into SQL.",
+                            "Use parameterized queries (or your ORM's query builder) everywhere, never string-concatenate user input into SQL.",
                             "An ON DELETE CASCADE (or explicit cleanup logic) on the foreign key prevents orphaned comments when a post is deleted.",
                         ],
                         "common_mistakes": [
@@ -238,7 +238,7 @@ PATH_PROJECTS = {
                             "Add a health-check endpoint (GET /health) that verifies DB and Redis connectivity, and reference it in the Dockerfile's HEALTHCHECK.",
                         ],
                         "hints": [
-                            "Cache invalidation is the hard part — clear or update the Redis key for GET /jobs whenever a job posting is created or edited.",
+                            "Cache invalidation is the hard part, clear or update the Redis key for GET /jobs whenever a job posting is created or edited.",
                             "Run the worker as a separate docker-compose service so it can be scaled independently of the API.",
                             "Set explicit TTLs on cached keys; an unbounded cache silently serves stale data forever.",
                             "Use docker-compose's depends_on plus a wait-for script or healthcheck condition, since Postgres/Redis can take a moment to be ready when containers start together.",
@@ -290,10 +290,10 @@ PATH_PROJECTS = {
                             "Run `tsc --noEmit` on both projects to confirm there are zero type errors before considering it done.",
                         ],
                         "hints": [
-                            "Avoid `any` — if you don't know a type yet, use `unknown` and narrow it, which forces you to handle it safely.",
+                            "Avoid `any`, if you don't know a type yet, use `unknown` and narrow it, which forces you to handle it safely.",
                             "Vite's server.proxy config in vite.config.ts avoids CORS headaches during local development.",
                             "Keep the shared Note interface in one file and import it in both projects (or a small shared workspace package) so a schema change fails to compile on both sides.",
-                            "Turn on tsconfig's `strict: true` from day one — it catches far more real bugs than the default config.",
+                            "Turn on tsconfig's `strict: true` from day one, it catches far more real bugs than the default config.",
                         ],
                         "common_mistakes": [
                             "Typing API responses as `any`, which defeats the purpose of using TypeScript across the stack.",
@@ -361,7 +361,7 @@ PATH_PROJECTS = {
                         ],
                         "hints": [
                             "Always verify the Stripe webhook signature (stripe.webhooks.constructEvent) or anyone can POST fake 'payment succeeded' events to your endpoint.",
-                            "Webhook handlers must be idempotent — Stripe can and does retry/redeliver the same event, so check you haven't already applied it.",
+                            "Webhook handlers must be idempotent, Stripe can and does retry/redeliver the same event, so check you haven't already applied it.",
                             "Use the Stripe CLI's `stripe listen --forward-to localhost:3000/api/webhooks/stripe` to test webhooks locally before deploying.",
                             "Keep Stripe secret keys and the webhook signing secret in environment variables/secrets manager, never in the repo.",
                         ],
@@ -394,12 +394,12 @@ PATH_PROJECTS = {
         "phases": [
             {
                 "title": "Foundations",
-                "summary": "Covers core AWS building blocks — IAM users/policies, S3 static hosting, and CloudFront CDN distribution — plus basic Linux/CLI usage via the AWS CLI.",
+                "summary": "Covers core AWS building blocks, IAM users/policies, S3 static hosting, and CloudFront CDN distribution, plus basic Linux/CLI usage via the AWS CLI.",
                 "skill_key": "linux_cloud_fundamentals",
                 "projects": [
                     {
                         "title": "Host a Static Website on AWS S3 + CloudFront",
-                        "teaches": "core AWS building blocks — IAM users/policies, S3 static website hosting, and CloudFront CDN distribution — plus basic Linux CLI usage via the AWS CLI",
+                        "teaches": "core AWS building blocks, IAM users/policies, S3 static website hosting, and CloudFront CDN distribution, plus basic Linux CLI usage via the AWS CLI",
                         "prerequisites": ["A free-tier AWS account", "Basic command-line familiarity", "A simple static HTML/CSS site to deploy"],
                         "expected_output": "A static website live on the internet over HTTPS via a CloudFront distribution, backed by a private S3 bucket, deployed and updated from the terminal using the AWS CLI rather than the console.",
                         "steps": [
@@ -412,8 +412,8 @@ PATH_PROJECTS = {
                             "(Optional) Point a custom domain at the distribution using Route 53 and an ACM certificate.",
                         ],
                         "hints": [
-                            "S3 static website hosting (public bucket) and S3-as-CloudFront-origin (private bucket + OAC) are different patterns — prefer the private+OAC approach, it's the current AWS-recommended one.",
-                            "CloudFront edge caches are not instant to update — you must invalidate the cache path (or version your file names) after every deploy.",
+                            "S3 static website hosting (public bucket) and S3-as-CloudFront-origin (private bucket + OAC) are different patterns, prefer the private+OAC approach, it's the current AWS-recommended one.",
+                            "CloudFront edge caches are not instant to update, you must invalidate the cache path (or version your file names) after every deploy.",
                             "`aws configure list` is a fast way to confirm which credentials/region the CLI is actually using before you run a command.",
                             "Tag your bucket and distribution (e.g., project=portfolio-site) so you can find and clean them up later to avoid surprise charges.",
                         ],
@@ -447,9 +447,9 @@ PATH_PROJECTS = {
                             "Run `terraform destroy` at the end and confirm in the AWS console that no resources were left behind.",
                         ],
                         "hints": [
-                            "Never hardcode AWS credentials in .tf files — use the AWS CLI's configured profile or environment variables, and add terraform.tfstate to .gitignore since it can contain sensitive data.",
+                            "Never hardcode AWS credentials in .tf files, use the AWS CLI's configured profile or environment variables, and add terraform.tfstate to .gitignore since it can contain sensitive data.",
                             "Always run `terraform plan` before `apply` and actually read the diff, especially the 'destroy' lines, before approving.",
-                            "Security groups are stateful and reference each other by ID — pointing the EC2 SG's allowed source at the ALB's SG (not a CIDR range) keeps things locked down as the ALB's IPs change.",
+                            "Security groups are stateful and reference each other by ID, pointing the EC2 SG's allowed source at the ALB's SG (not a CIDR range) keeps things locked down as the ALB's IPs change.",
                             "Store Terraform state in a remote backend (e.g., an S3 bucket + DynamoDB lock table) once you're working with more than a solo local project.",
                         ],
                         "common_mistakes": [
@@ -485,7 +485,7 @@ PATH_PROJECTS = {
                             "Use `terraform plan -out=tfplan` in CI and require a manual approval step before `apply` in a shared/production environment.",
                             "ECS deployment circuit breaker (deployment_circuit_breaker in the service definition) can automatically roll back a deployment that fails health checks, instead of leaving the service stuck.",
                             "Tag every Docker image with the git commit SHA, not just `latest`, so you can always identify and roll back to an exact previous build.",
-                            "CloudWatch Container Insights gives you per-task CPU/memory metrics that plain ECS service metrics don't show by default — worth enabling for real debugging.",
+                            "CloudWatch Container Insights gives you per-task CPU/memory metrics that plain ECS service metrics don't show by default, worth enabling for real debugging.",
                         ],
                         "common_mistakes": [
                             "Deploying with the `latest` tag only, making it impossible to know which code version is actually running or to roll back precisely.",
@@ -534,7 +534,7 @@ PATH_PROJECTS = {
                             "Write a short report documenting the changes made and why.",
                         ],
                         "hints": [
-                            "AWS's free tier includes limited AWS Config and CloudTrail usage — watch the limits.",
+                            "AWS's free tier includes limited AWS Config and CloudTrail usage, watch the limits.",
                             "S3 Block Public Access has four separate toggles; check all of them.",
                             "Use the IAM Policy Simulator to check what your admin user can actually do.",
                             "Set a billing alarm immediately so a misconfiguration doesn't turn into a surprise bill.",
@@ -569,7 +569,7 @@ PATH_PROJECTS = {
                             "Use the IAM Policy Simulator to verify the role can't do anything beyond its intended scope.",
                         ],
                         "hints": [
-                            "NACLs are stateless, security groups are stateful — know when to use each.",
+                            "NACLs are stateless, security groups are stateful, know when to use each.",
                             "Follow 'deny by default, allow explicitly' for every security group rule.",
                             "Test least privilege by trying an action that should fail and confirming it does.",
                             "Tag every resource for cost and security tracking from the start.",
@@ -591,7 +591,7 @@ PATH_PROJECTS = {
                 "projects": [
                     {
                         "title": "Build an automated cloud security posture scanner with remediation for an AWS account",
-                        "teaches": "production-grade cloud security engineering — writing Python/boto3 tooling to continuously detect misconfigurations (like Prowler/ScoutSuite do) and auto-remediate common issues, integrated with GuardDuty alerts",
+                        "teaches": "production-grade cloud security engineering, writing Python/boto3 tooling to continuously detect misconfigurations (like Prowler/ScoutSuite do) and auto-remediate common issues, integrated with GuardDuty alerts",
                         "prerequisites": ["Comfort with Python and boto3", "Completion of the VPC/IAM segmentation project", "A sandbox AWS account, not production"],
                         "expected_output": "A deployed, scheduled scanning tool that reports misconfigurations with severity ratings and automatically remediates at least one finding type, with GuardDuty-triggered automated response for a compromised instance.",
                         "steps": [
@@ -604,7 +604,7 @@ PATH_PROJECTS = {
                             "Document the tool and compare its output against an open-source tool like Prowler or ScoutSuite to validate coverage.",
                         ],
                         "hints": [
-                            "boto3 paginators are needed for accounts with many resources — unpaginated calls silently miss results.",
+                            "boto3 paginators are needed for accounts with many resources, unpaginated calls silently miss results.",
                             "GuardDuty findings include a 'severity' field you can filter and act on.",
                             "Give the Lambda its own tightly scoped IAM execution role, never long-lived credentials.",
                             "Test remediation logic against a sandbox account with a dry-run flag before enabling live changes.",
@@ -643,7 +643,7 @@ PATH_PROJECTS = {
                 "projects": [
                     {
                         "title": "Build a home lab and ingest Windows/Linux logs into Splunk Free",
-                        "teaches": "how raw system/security logs (Windows Event Logs, syslog) become structured, searchable data in a SIEM — the foundation of all SOC work",
+                        "teaches": "how raw system/security logs (Windows Event Logs, syslog) become structured, searchable data in a SIEM, the foundation of all SOC work",
                         "prerequisites": ["Basic comfort with virtual machines", "Basic command-line usage"],
                         "expected_output": "A working Splunk Free instance receiving live Windows and/or Linux logs, with a search returning failed login events and a basic dashboard panel visualizing them.",
                         "steps": [
@@ -659,7 +659,7 @@ PATH_PROJECTS = {
                             "Event ID 4624 is a successful logon, 4625 is a failed logon in Windows.",
                             "Run `index=* | stats count by sourcetype` first to confirm what's actually flowing in.",
                             "Sysmon gives far richer process-creation logs than default Windows logging.",
-                            "Splunk Free has a daily indexing volume limit — watch it so ingestion doesn't stop.",
+                            "Splunk Free has a daily indexing volume limit, watch it so ingestion doesn't stop.",
                         ],
                         "common_mistakes": [
                             "Forgetting to configure the forwarder's outputs.conf, so no data ever arrives.",
@@ -678,7 +678,7 @@ PATH_PROJECTS = {
                 "projects": [
                     {
                         "title": "Triage a simulated brute-force and phishing alert set using Splunk and a triage playbook",
-                        "teaches": "real SOC Tier-1 workflow — taking a raw alert, enriching it with context, deciding true/false positive, and escalating with a written justification",
+                        "teaches": "real SOC Tier-1 workflow, taking a raw alert, enriching it with context, deciding true/false positive, and escalating with a written justification",
                         "prerequisites": ["Completion of the Splunk log ingestion project", "Basic SPL search syntax"],
                         "expected_output": "Three completed triage write-ups (alert summary, evidence, verdict, recommended action) built from a real or simulated brute-force dataset, plus one escalated ticket with IOCs.",
                         "steps": [
@@ -688,13 +688,13 @@ PATH_PROJECTS = {
                             "Create a simple triage template (alert summary, evidence, false-positive/true-positive verdict, recommended action) and fill it out for 3 different alerts.",
                             "Practice checking a suspicious IP against threat intel sources like AbuseIPDB or VirusTotal.",
                             "Escalate one finding as if opening a ticket, including IOCs (IPs, usernames, timestamps).",
-                            "Time yourself — real SOC analysts are measured on mean-time-to-triage.",
+                            "Time yourself, real SOC analysts are measured on mean-time-to-triage.",
                         ],
                         "hints": [
                             "`stats count by ... | where count > N` combined with `bucket _time span=5m` helps detect burst patterns in SPL.",
-                            "Always check whether the 'attacker' IP is internal — it could be a misconfigured service, not an attack.",
+                            "Always check whether the 'attacker' IP is internal, it could be a misconfigured service, not an attack.",
                             "Enrich with a lookup table of known-good service accounts to cut false positives.",
-                            "Document your reasoning, not just your verdict — SOC leads review the write-up, not just the outcome.",
+                            "Document your reasoning, not just your verdict, SOC leads review the write-up, not just the outcome.",
                         ],
                         "common_mistakes": [
                             "Treating every alert as a true positive without checking baseline behavior first.",
@@ -713,7 +713,7 @@ PATH_PROJECTS = {
                 "projects": [
                     {
                         "title": "Run a structured threat hunt for lateral movement across a simulated small network",
-                        "teaches": "proactive threat hunting methodology — forming a hypothesis, searching for TTPs mapped to MITRE ATT&CK, and finding an attacker who hasn't triggered any existing alert",
+                        "teaches": "proactive threat hunting methodology, forming a hypothesis, searching for TTPs mapped to MITRE ATT&CK, and finding an attacker who hasn't triggered any existing alert",
                         "prerequisites": ["Completion of the alert triage project", "Familiarity with MITRE ATT&CK basics", "Sysmon deployed in the lab"],
                         "expected_output": "A written hunt report (hypothesis, methodology, findings, intrusion timeline mapped to ATT&CK) plus a new saved Splunk correlation search that closes the detection gap found during the hunt.",
                         "steps": [
@@ -729,7 +729,7 @@ PATH_PROJECTS = {
                             "Atomic Red Team maps every test directly to an ATT&CK technique ID, which makes documenting coverage easy.",
                             "Event ID 7045 (new service installed) is a classic PsExec artifact worth searching for.",
                             "Sysmon Event ID 1 (process creation) with full command-line logging gives the richest lateral movement evidence.",
-                            "A good hunt report is reusable — it should let another analyst repeat the hunt exactly.",
+                            "A good hunt report is reusable, it should let another analyst repeat the hunt exactly.",
                         ],
                         "common_mistakes": [
                             "Hunting without a specific, testable hypothesis and just 'looking for weird stuff'.",
@@ -765,7 +765,7 @@ PATH_PROJECTS = {
                 "projects": [
                     {
                         "title": "Perform reconnaissance and vulnerability scanning against a legal practice target (TryHackMe/DVWA)",
-                        "teaches": "the recon phase of the penetration testing methodology (PTES) — passive and active information gathering before any exploitation is attempted",
+                        "teaches": "the recon phase of the penetration testing methodology (PTES), passive and active information gathering before any exploitation is attempted",
                         "prerequisites": ["Kali Linux installed (VM or WSL)", "Basic Linux command-line usage"],
                         "expected_output": "A written recon report listing open ports, service versions, discovered web directories, and candidate CVEs for an authorized lab target such as TryHackMe's Basic Pentesting room or a local Metasploitable2/DVWA VM.",
                         "steps": [
@@ -780,7 +780,7 @@ PATH_PROJECTS = {
                         "hints": [
                             "`nmap -sC -sV -oN scan.txt <target>` saves output for later reference instead of re-running the scan.",
                             "`searchsploit -x <path>` shows exploit code without needing to download it separately.",
-                            "gobuster needs a wordlist — install SecLists, the standard one used in most labs.",
+                            "gobuster needs a wordlist, install SecLists, the standard one used in most labs.",
                             "Always double-check the target IP/scope before running any scan, every time.",
                         ],
                         "common_mistakes": [
@@ -800,7 +800,7 @@ PATH_PROJECTS = {
                 "projects": [
                     {
                         "title": "Exploit and document OWASP Top 10 vulnerabilities in DVWA/Juice Shop using Burp Suite",
-                        "teaches": "hands-on web application penetration testing — intercepting and manipulating HTTP traffic with Burp Suite to find and exploit SQL injection, XSS, and broken access control",
+                        "teaches": "hands-on web application penetration testing, intercepting and manipulating HTTP traffic with Burp Suite to find and exploit SQL injection, XSS, and broken access control",
                         "prerequisites": ["Completion of the recon project", "Docker installed", "Basic understanding of HTTP requests"],
                         "expected_output": "A set of documented vulnerability findings (SQL injection, XSS, and an IDOR) against DVWA or Juice Shop, each with reproduction steps, evidence, and a remediation recommendation, tested across multiple security levels.",
                         "steps": [
@@ -835,7 +835,7 @@ PATH_PROJECTS = {
                 "projects": [
                     {
                         "title": "Run a full authorized penetration test against a multi-host lab and deliver a professional report",
-                        "teaches": "end-to-end penetration testing methodology (PTES) — chaining recon, exploitation with Metasploit, privilege escalation, lateral movement, and professional reporting, the way a real paid engagement is run",
+                        "teaches": "end-to-end penetration testing methodology (PTES), chaining recon, exploitation with Metasploit, privilege escalation, lateral movement, and professional reporting, the way a real paid engagement is run",
                         "prerequisites": ["Completion of the Burp Suite web exploitation project", "Working knowledge of Metasploit basics", "A written, defined scope for the lab"],
                         "expected_output": "A completed multi-host compromise (initial foothold, privilege escalation, and pivot to a second network segment) with full evidence, and a professional penetration test report containing an executive summary, technical findings with severity ratings, and remediation guidance.",
                         "steps": [
@@ -850,7 +850,7 @@ PATH_PROJECTS = {
                         "hints": [
                             "Keep a `scope.txt` open and re-check it before every exploitation attempt.",
                             "Metasploit's `sessions -l` and `route add` are how you pivot into a second network from a compromised host.",
-                            "LinPEAS/WinPEAS output is long — grep for the highlighted 'interesting' findings first instead of reading everything.",
+                            "LinPEAS/WinPEAS output is long, grep for the highlighted 'interesting' findings first instead of reading everything.",
                             "A report that only lists vulnerabilities without business impact and remediation isn't a real pentest report.",
                         ],
                         "common_mistakes": [
@@ -887,7 +887,7 @@ PATH_PROJECTS = {
                 "projects": [
                     {
                         "title": "Dockerize a simple web application and run it with Docker Compose",
-                        "teaches": "containerization fundamentals — writing a Dockerfile, building an image, and running multi-container apps with Docker Compose",
+                        "teaches": "containerization fundamentals, writing a Dockerfile, building an image, and running multi-container apps with Docker Compose",
                         "prerequisites": ["Basic Linux command-line usage", "A simple web app (or willingness to write a one-endpoint Flask app)"],
                         "expected_output": "A working multi-container app (web service + database/cache) started with a single `docker-compose up` command, with a small, properly ignored image.",
                         "steps": [
@@ -922,7 +922,7 @@ PATH_PROJECTS = {
                 "projects": [
                     {
                         "title": "Build a GitHub Actions CI/CD pipeline that tests, builds, and deploys a containerized app",
-                        "teaches": "real CI/CD practice — automatically running tests on every push, building a Docker image, and deploying it on merge",
+                        "teaches": "real CI/CD practice, automatically running tests on every push, building a Docker image, and deploying it on merge",
                         "prerequisites": ["Completion of the Docker/Compose project", "A GitHub account and repository", "Basic YAML syntax"],
                         "expected_output": "A GitHub Actions pipeline where every pull request runs automated tests, merges to main automatically build and push a tagged Docker image, and a passing pipeline is required before merge.",
                         "steps": [
@@ -957,7 +957,7 @@ PATH_PROJECTS = {
                 "projects": [
                     {
                         "title": "Deploy a multi-service app to Kubernetes with autoscaling, health checks, and monitoring",
-                        "teaches": "production-grade orchestration and reliability engineering — running containers at scale with Kubernetes, defining self-healing and autoscaling behavior, and observing system health",
+                        "teaches": "production-grade orchestration and reliability engineering, running containers at scale with Kubernetes, defining self-healing and autoscaling behavior, and observing system health",
                         "prerequisites": ["Completion of the CI/CD pipeline project", "Basic Kubernetes concepts (pods, deployments, services)", "minikube or a cloud Kubernetes cluster"],
                         "expected_output": "A running Kubernetes deployment with liveness/readiness probes, a working Horizontal Pod Autoscaler validated under load, Prometheus/Grafana dashboards showing real metrics, and a written runbook for diagnosing a crash-looping pod.",
                         "steps": [
@@ -971,7 +971,7 @@ PATH_PROJECTS = {
                         ],
                         "hints": [
                             "`kubectl describe pod <name>` and `kubectl logs <name> --previous` are the first two commands to run when a pod is crash-looping.",
-                            "Readiness probes control traffic routing while liveness probes control restarts — they serve different purposes.",
+                            "Readiness probes control traffic routing while liveness probes control restarts, they serve different purposes.",
                             "Set realistic resource requests/limits, or the scheduler and HPA will behave unpredictably.",
                             "`kubectl top pods` requires metrics-server to be installed in the cluster to work at all.",
                         ],
@@ -1023,7 +1023,7 @@ PATH_PROJECTS = {
                         ],
                         "hints": [
                             "Use =TRIM(A2) combined with =PROPER(A2) to normalize inconsistent text before deduping.",
-                            "Convert the Date column with DATEVALUE if dates were imported as text — check first with ISTEXT.",
+                            "Convert the Date column with DATEVALUE if dates were imported as text, check first with ISTEXT.",
                             "Freeze the header row so you don't lose track of columns while scrolling.",
                         ],
                         "common_mistakes": [
@@ -1038,7 +1038,7 @@ PATH_PROJECTS = {
             },
             {
                 "title": "Building Real Skills",
-                "summary": "Combine SQL and pandas to answer a real business question — customer churn — that a single spreadsheet can't handle well.",
+                "summary": "Combine SQL and pandas to answer a real business question, customer churn, that a single spreadsheet can't handle well.",
                 "skill_key": "python_data_wrangling",
                 "projects": [
                     {
@@ -1094,7 +1094,7 @@ PATH_PROJECTS = {
                             "A rolling z-score (value - rolling_mean)/rolling_std is more robust to seasonality than flagging revenue against a single global average.",
                             "In Tableau, use a calculated field with WINDOW_AVG and WINDOW_STDEV to replicate the pandas rolling stats natively in the dashboard.",
                             "Keep the anomaly threshold configurable as a parameter so stakeholders can tighten or loosen sensitivity themselves.",
-                            "Pair every chart with a one-line 'so what' insight — don't just show what happened.",
+                            "Pair every chart with a one-line 'so what' insight, don't just show what happened.",
                         ],
                         "common_mistakes": [
                             "Using a single global mean/std instead of a rolling window, causing normal seasonal peaks to be flagged as anomalies.",
@@ -1125,7 +1125,7 @@ PATH_PROJECTS = {
         "phases": [
             {
                 "title": "Foundations",
-                "summary": "Learn to design a normalized schema and load data into it reliably and repeatably — the core skill underneath every pipeline.",
+                "summary": "Learn to design a normalized schema and load data into it reliably and repeatably, the core skill underneath every pipeline.",
                 "skill_key": "sql_fundamentals_de",
                 "projects": [
                     {
@@ -1170,7 +1170,7 @@ PATH_PROJECTS = {
                         "steps": [
                             "Choose a public REST API with a timestamp/updated_at filter parameter (e.g., an open data API).",
                             "Write a Python function that requests only records updated since the stored watermark timestamp.",
-                            "Handle pagination — loop through pages until the API signals no more results.",
+                            "Handle pagination, loop through pages until the API signals no more results.",
                             "Add retry logic with exponential backoff for rate-limit (429) or transient errors.",
                             "Validate incoming records (required fields present, correct types) and quarantine bad rows instead of crashing.",
                             "Upsert (INSERT ... ON CONFLICT ... DO UPDATE) valid records into the warehouse table.",
@@ -1180,7 +1180,7 @@ PATH_PROJECTS = {
                         "hints": [
                             "Store the watermark in a small 'pipeline_state' table in the same database, not a local file, so it survives across environments.",
                             "Use exponential backoff (2**attempt) rather than a fixed sleep to recover gracefully from rate limits.",
-                            "Test incremental logic by running the pipeline twice in a row — the second run should process zero or near-zero rows.",
+                            "Test incremental logic by running the pipeline twice in a row, the second run should process zero or near-zero rows.",
                         ],
                         "common_mistakes": [
                             "Using 'now()' as the new watermark instead of the max updated_at actually seen in the batch, which can skip records if the API lags behind real time.",
@@ -1263,10 +1263,10 @@ PATH_PROJECTS = {
                             "Plot the loss curve over epochs and a scatter plot of predicted vs. actual prices on the test set.",
                         ],
                         "hints": [
-                            "Always normalize features before gradient descent — unscaled features (square footage in the thousands vs. bedroom count 1-5) cause the loss to diverge or converge extremely slowly.",
-                            "Use vectorized NumPy operations (X @ weights) instead of Python for-loops over rows — faster and less error-prone.",
+                            "Always normalize features before gradient descent, unscaled features (square footage in the thousands vs. bedroom count 1-5) cause the loss to diverge or converge extremely slowly.",
+                            "Use vectorized NumPy operations (X @ weights) instead of Python for-loops over rows, faster and less error-prone.",
                             "If your loss is increasing instead of decreasing, your learning rate is almost always too high.",
-                            "Check the shapes of your matrices at every step with .shape — mismatched shapes are the most common bug.",
+                            "Check the shapes of your matrices at every step with .shape, mismatched shapes are the most common bug.",
                         ],
                         "common_mistakes": [
                             "Forgetting to add a bias/intercept term, forcing the regression line through the origin.",
@@ -1289,20 +1289,20 @@ PATH_PROJECTS = {
                         "prerequisites": ["pandas data wrangling", "Basic supervised learning concepts", "scikit-learn basics"],
                         "expected_output": "A trained classification pipeline (e.g., RandomForestClassifier) on a churn dataset like Telco Customer Churn, with a cross-validated ROC-AUC score, a confusion matrix, and a feature importance chart, wrapped in a single sklearn Pipeline object.",
                         "steps": [
-                            "Load the Telco Customer Churn dataset (or similar) and check class balance — churn is usually imbalanced.",
+                            "Load the Telco Customer Churn dataset (or similar) and check class balance, churn is usually imbalanced.",
                             "Build a preprocessing pipeline using ColumnTransformer: OneHotEncoder for categoricals, StandardScaler for numerics.",
                             "Chain the preprocessor and a classifier (e.g., RandomForestClassifier) into a single sklearn Pipeline.",
                             "Use train_test_split with stratify=y to preserve class balance in train/test.",
                             "Run GridSearchCV or RandomizedSearchCV with StratifiedKFold over key hyperparameters (n_estimators, max_depth).",
-                            "Evaluate the final model on the held-out test set with precision, recall, F1, and ROC-AUC — not just accuracy.",
+                            "Evaluate the final model on the held-out test set with precision, recall, F1, and ROC-AUC, not just accuracy.",
                             "Plot a confusion matrix and the top 10 features by importance (feature_importances_ or permutation importance).",
                             "Write a short note on whether the model's false negatives (missed churners) are acceptable for the business use case.",
                         ],
                         "hints": [
-                            "With imbalanced churn data, accuracy is misleading — a model predicting 'no churn' for everyone can still hit 85% accuracy while being useless.",
+                            "With imbalanced churn data, accuracy is misleading, a model predicting 'no churn' for everyone can still hit 85% accuracy while being useless.",
                             "Wrap preprocessing in a Pipeline so cross-validation fits the scaler/encoder only on each training fold, avoiding leakage.",
                             "Use class_weight='balanced' or SMOTE if the churn class is small, and compare results with and without it.",
-                            "GridSearchCV can be slow — start with RandomizedSearchCV over a wider range, then narrow down.",
+                            "GridSearchCV can be slow, start with RandomizedSearchCV over a wider range, then narrow down.",
                         ],
                         "common_mistakes": [
                             "Fitting the scaler/encoder on the entire dataset before splitting, leaking test data statistics into training.",
@@ -1316,7 +1316,7 @@ PATH_PROJECTS = {
             },
             {
                 "title": "Advanced Practice",
-                "summary": "Fine-tune a real neural network with PyTorch and ship it as a working inference API — the full path from model to product.",
+                "summary": "Fine-tune a real neural network with PyTorch and ship it as a working inference API, the full path from model to product.",
                 "skill_key": "deep_learning_with_pytorch",
                 "projects": [
                     {
@@ -1335,8 +1335,8 @@ PATH_PROJECTS = {
                             "Wrap the inference function in a FastAPI POST /predict endpoint and test it locally on held-out images, documenting accuracy and latency.",
                         ],
                         "hints": [
-                            "Use transfer learning (a pretrained ResNet) rather than training from scratch — with a small dataset, training from scratch will badly overfit.",
-                            "Watch train vs. validation loss curves together — a widening gap means overfitting, which augmentation or dropout can help fix.",
+                            "Use transfer learning (a pretrained ResNet) rather than training from scratch, with a small dataset, training from scratch will badly overfit.",
+                            "Watch train vs. validation loss curves together, a widening gap means overfitting, which augmentation or dropout can help fix.",
                             "Set model.eval() and wrap inference in torch.no_grad() when serving predictions, since dropout/batchnorm behave differently in train mode.",
                             "Normalize input images at inference time with the exact same mean/std used during training, or predictions will be silently wrong.",
                         ],
@@ -1373,7 +1373,7 @@ PATH_PROJECTS = {
                     {
                         "title": "Conduct user interviews and build a persona for a simple app idea",
                         "teaches": "writing unbiased interview questions, running an interview without leading the participant, and synthesizing qualitative research into a persona",
-                        "prerequisites": ["None — a starting project", "Access to 3-5 people willing to be interviewed"],
+                        "prerequisites": ["None, a starting project", "Access to 3-5 people willing to be interviewed"],
                         "expected_output": "A written interview script, notes from 3-5 user interviews, and a one-page persona document summarizing goals, frustrations, and behaviors.",
                         "steps": [
                             "Pick a simple problem space (e.g., 'how people track personal expenses' or 'how students pick which classes to take').",
@@ -1385,9 +1385,9 @@ PATH_PROJECTS = {
                             "Write 3 key insights that will inform your next design decisions.",
                         ],
                         "hints": [
-                            "Ask about specific past behavior ('Tell me about the last time you...') rather than hypotheticals ('Would you use...') — people are unreliable predictors of their own future behavior.",
+                            "Ask about specific past behavior ('Tell me about the last time you...') rather than hypotheticals ('Would you use...'), people are unreliable predictors of their own future behavior.",
                             "Let silence sit for a few seconds before your next question; people often add their most honest thoughts there.",
-                            "One persona is enough for a first project — resist making five personas before you've validated even one.",
+                            "One persona is enough for a first project, resist making five personas before you've validated even one.",
                             "Record the interview (with permission) so you can focus on listening instead of frantic note-taking.",
                         ],
                         "common_mistakes": [
@@ -1421,10 +1421,10 @@ PATH_PROJECTS = {
                             "Get feedback from 2-3 people clicking through the prototype cold and note where they got confused.",
                         ],
                         "hints": [
-                            "Use Auto Layout on every component from the start — retrofitting it onto a finished design is much more painful.",
-                            "Name your layers and frames meaningfully (e.g., 'Screen 2 - Add Expense') — a messy layer panel makes prototyping links error-prone.",
+                            "Use Auto Layout on every component from the start, retrofitting it onto a finished design is much more painful.",
+                            "Name your layers and frames meaningfully (e.g., 'Screen 2 - Add Expense'), a messy layer panel makes prototyping links error-prone.",
                             "Use Figma variants for button states (default, pressed, disabled) instead of duplicating and manually editing each button.",
-                            "Test the prototype cold with someone who hasn't seen the flow before — you already know how to use it, so you won't notice confusing spots.",
+                            "Test the prototype cold with someone who hasn't seen the flow before, you already know how to use it, so you won't notice confusing spots.",
                         ],
                         "common_mistakes": [
                             "Designing every screen from scratch instead of using reusable components, so a small change like a button color requires editing dozens of screens by hand.",
@@ -1447,7 +1447,7 @@ PATH_PROJECTS = {
                         "prerequisites": ["A clickable Figma prototype", "Basic user research skills", "Ability to recruit 5 test participants"],
                         "expected_output": "A usability test plan, notes from 5 moderated sessions, a severity-rated findings report, and an updated Figma component (using variants) that fixes the highest-severity issue, with before/after documentation.",
                         "steps": [
-                            "Write a usability test plan with 3-4 realistic task scenarios (e.g., 'You want to see how much you spent on food this month — show me how you'd do that').",
+                            "Write a usability test plan with 3-4 realistic task scenarios (e.g., 'You want to see how much you spent on food this month, show me how you'd do that').",
                             "Define success metrics per task: completion, time on task, and number of errors or hesitations.",
                             "Recruit 5 participants matching your target persona (5 users typically surfaces the majority of usability issues).",
                             "Moderate each session: give the task, stay silent while they work, ask them to think aloud, and don't help unless they're fully stuck.",
@@ -1457,9 +1457,9 @@ PATH_PROJECTS = {
                             "Document the change: before/after screenshots, the finding that drove it, and the expected impact.",
                         ],
                         "hints": [
-                            "Stay silent during the task — the urge to jump in and explain is strong, but it destroys the data; note the struggle instead.",
+                            "Stay silent during the task, the urge to jump in and explain is strong, but it destroys the data; note the struggle instead.",
                             "'Think aloud' prompts ('What are you thinking right now?') surface far more than a post-task survey alone.",
-                            "Rate severity by combining frequency (how many of the 5 hit it) and impact (did it block completion or just slow them down) — don't treat every complaint as equally urgent.",
+                            "Rate severity by combining frequency (how many of the 5 hit it) and impact (did it block completion or just slow them down), don't treat every complaint as equally urgent.",
                             "Update the master component or variant, not a single instance, so the fix propagates everywhere it's used.",
                         ],
                         "common_mistakes": [
@@ -2012,7 +2012,7 @@ PATH_PROJECTS = {
                             "Test with at least 3 different sample leads to confirm each path fires correctly.",
                         ],
                         "hints": [
-                            "Use Zapier's Paths feature instead of chaining separate Zaps with Filters — it's far easier to debug one branching Zap than five linked ones.",
+                            "Use Zapier's Paths feature instead of chaining separate Zaps with Filters, it's far easier to debug one branching Zap than five linked ones.",
                             "Airtable linked records let you connect a Leads table to a Companies table instead of retyping company data every time.",
                             "Add a Zapier Delay step before follow-up emails so cold leads don't get contacted immediately after form submission.",
                             "Use Airtable's single-select field type for Status so downstream automations can reliably match on exact values.",
@@ -2041,7 +2041,7 @@ PATH_PROJECTS = {
                             "Basic understanding of REST APIs and webhooks",
                             "A Stripe account",
                         ],
-                        "expected_output": "A deployed, publicly accessible web app built in Bubble where users can sign up, log in, submit requests, pay via Stripe, and see real-time status updates — backed by a database and Make.com scenarios handling background automation and third-party API calls.",
+                        "expected_output": "A deployed, publicly accessible web app built in Bubble where users can sign up, log in, submit requests, pay via Stripe, and see real-time status updates, backed by a database and Make.com scenarios handling background automation and third-party API calls.",
                         "steps": [
                             "Design the data model in Bubble's native database: Users, Projects, Payments, Status.",
                             "Build the front-end in Bubble: signup/login using Bubble's built-in User authentication, a dashboard page, and a 'New Request' form.",
@@ -2054,8 +2054,8 @@ PATH_PROJECTS = {
                             "Document the system with a simple architecture diagram showing how Bubble, Make, the database, Stripe, and the external API connect.",
                         ],
                         "hints": [
-                            "Bubble's API Connector needs the external API's auth headers configured once — test each call individually there before wiring it into a workflow.",
-                            "Make.com's error handler routes (not just Zapier-style filters) let you retry, resume, or ignore failures per module — use them instead of hoping nothing ever fails.",
+                            "Bubble's API Connector needs the external API's auth headers configured once, test each call individually there before wiring it into a workflow.",
+                            "Make.com's error handler routes (not just Zapier-style filters) let you retry, resume, or ignore failures per module, use them instead of hoping nothing ever fails.",
                             "Keep Stripe in test mode with test card 4242 4242 4242 4242 until every workflow path is verified end-to-end.",
                             "Log every incoming webhook payload to a dedicated 'Logs' table during development so you can debug exactly what the external API sent back.",
                         ],
@@ -2108,7 +2108,7 @@ PATH_PROJECTS = {
                         "hints": [
                             "Event Viewer's 'Filter Current Log' narrows thousands of entries down to just Errors/Warnings from the last boot.",
                             "A disk at 100% usage in Task Manager with low read/write speed is a classic sign of a failing or full HDD, not just too many programs.",
-                            "Not every startup item should be disabled — antivirus and driver-related entries should stay enabled.",
+                            "Not every startup item should be disabled, antivirus and driver-related entries should stay enabled.",
                             "Compare boot time with a stopwatch from power-on to a usable desktop, not just from the login screen.",
                         ],
                         "common_mistakes": [
@@ -2146,8 +2146,8 @@ PATH_PROJECTS = {
                             "Close the ticket with a clear resolution summary a non-technical user could understand.",
                         ],
                         "hints": [
-                            "The gateway-then-8.8.8.8-then-domain ping sequence is the standard way to isolate whether it's your device, your network, or DNS — memorize that order.",
-                            "An IP address starting with 169.254.x.x means the device never got a DHCP lease (APIPA) — that's a strong, specific clue.",
+                            "The gateway-then-8.8.8.8-then-domain ping sequence is the standard way to isolate whether it's your device, your network, or DNS, memorize that order.",
+                            "An IP address starting with 169.254.x.x means the device never got a DHCP lease (APIPA), that's a strong, specific clue.",
                             "`nslookup google.com` tells you specifically whether DNS resolution is failing even when raw IP pings work fine.",
                             "Restarting the router should be a later step, not the first move, once you know whether the problem is local or upstream.",
                         ],
@@ -2168,7 +2168,7 @@ PATH_PROJECTS = {
                 "projects": [
                     {
                         "title": "Set Up and Support a Small-Office IT Environment: AD/M365 User Provisioning + Ticketing SLA System",
-                        "teaches": "end-to-end IT support operations — user lifecycle management, least-privilege access control, and running a ticketing system with SLAs and escalation, at a Tier 2 support level",
+                        "teaches": "end-to-end IT support operations, user lifecycle management, least-privilege access control, and running a ticketing system with SLAs and escalation, at a Tier 2 support level",
                         "prerequisites": [
                             "Networking troubleshooting experience",
                             "Free Microsoft 365 developer tenant or Azure AD trial",
@@ -2182,15 +2182,15 @@ PATH_PROJECTS = {
                             "Set up a ticketing system with categories (Access Request, Hardware, Software, Network) and define SLA response/resolution times per priority (e.g., P1 = 1hr response, P4 = 24hr).",
                             "Configure an escalation rule so tickets unresolved past their SLA auto-escalate to a Tier 2 queue/notification.",
                             "Simulate and resolve 5 realistic tickets end-to-end (new-hire provisioning, AD account lockout, printer not on network, missing SharePoint access).",
-                            "For each ticket, apply least-privilege principles — only add the user to the specific group required, not a broader admin group.",
+                            "For each ticket, apply least-privilege principles, only add the user to the specific group required, not a broader admin group.",
                             "Write a runbook: for the 3 most common ticket types, document standard diagnostic/resolution steps another tech could follow unaided.",
-                            "Run a mock offboarding — disable a departing employee's account, remove group memberships, revoke device access, and document it as a repeatable checklist.",
+                            "Run a mock offboarding, disable a departing employee's account, remove group memberships, revoke device access, and document it as a repeatable checklist.",
                         ],
                         "hints": [
-                            "Use Azure AD group-based access instead of assigning permissions to individuals one by one — it scales and is auditable.",
-                            "SLA timers should be based on ticket priority, not just creation time — a 'whole office down' ticket needs a very different SLA than a desktop-background question.",
+                            "Use Azure AD group-based access instead of assigning permissions to individuals one by one, it scales and is auditable.",
+                            "SLA timers should be based on ticket priority, not just creation time, a 'whole office down' ticket needs a very different SLA than a desktop-background question.",
                             "When offboarding, disable the account first rather than deleting it immediately, in case data or email access still needs to be transferred.",
-                            "Write runbooks as if a brand-new hire with zero context has to follow them — vague steps like 'fix the permissions' aren't useful.",
+                            "Write runbooks as if a brand-new hire with zero context has to follow them, vague steps like 'fix the permissions' aren't useful.",
                         ],
                         "common_mistakes": [
                             "Granting broad admin/global access to resolve a ticket quickly instead of the specific permission needed, creating a security risk.",
@@ -2226,7 +2226,7 @@ PATH_PROJECTS = {
                 "projects": [
                     {
                         "title": "Design and Diagram a Three-Tier Web Application Architecture",
-                        "teaches": "the fundamental building blocks of system design — presentation/application/data tiers — and how to communicate architecture visually",
+                        "teaches": "the fundamental building blocks of system design, presentation/application/data tiers, and how to communicate architecture visually",
                         "prerequisites": ["2+ years of software/IT experience", "Familiarity with basic web app concepts (frontend, backend, database)"],
                         "expected_output": "A clean architecture diagram (in draw.io or Lucidchart) of a three-tier web app, plus a one-page written rationale explaining each component choice.",
                         "steps": [
@@ -2239,10 +2239,10 @@ PATH_PROJECTS = {
                             "Write a one-page rationale document explaining each component choice as if presenting to a non-technical stakeholder.",
                         ],
                         "hints": [
-                            "Use standard cloud provider icon libraries (free in draw.io) instead of generic boxes — it signals fluency and helps other architects read the diagram.",
+                            "Use standard cloud provider icon libraries (free in draw.io) instead of generic boxes, it signals fluency and helps other architects read the diagram.",
                             "Always show the direction of data flow with arrows; an undirected diagram is ambiguous about which side calls which.",
                             "Justify the database choice based on the actual data shape and access pattern (read-heavy vs. write-heavy, structured vs. unstructured), not personal preference.",
-                            "Keep the diagram to one page — if it needs a second page, the scope is probably too broad for a foundational exercise.",
+                            "Keep the diagram to one page, if it needs a second page, the scope is probably too broad for a foundational exercise.",
                         ],
                         "common_mistakes": [
                             "Drawing a diagram with only one app server and no mention of redundancy, missing the most basic reliability concept.",
@@ -2256,12 +2256,12 @@ PATH_PROJECTS = {
             },
             {
                 "title": "Building Real Skills",
-                "summary": "Apply cloud-specific patterns — auto-scaling, multi-AZ redundancy, caching, and async processing — to design a realistic architecture for a growing SaaS product.",
+                "summary": "Apply cloud-specific patterns, auto-scaling, multi-AZ redundancy, caching, and async processing, to design a realistic architecture for a growing SaaS product.",
                 "skill_key": "cloud_architecture_patterns",
                 "projects": [
                     {
                         "title": "Architect a Multi-Region, Auto-Scaling AWS Deployment for a Growing SaaS Product",
-                        "teaches": "applying cloud-specific architecture patterns and trade-offs — auto-scaling, multi-AZ/region redundancy, managed services — to a realistic growth scenario",
+                        "teaches": "applying cloud-specific architecture patterns and trade-offs, auto-scaling, multi-AZ/region redundancy, managed services, to a realistic growth scenario",
                         "prerequisites": [
                             "Completed a basic three-tier architecture diagram",
                             "Familiarity with at least one cloud provider's console (AWS preferred)",
@@ -2279,8 +2279,8 @@ PATH_PROJECTS = {
                             "Document a failure plan: what happens if the auto-scaling group over-provisions, or the primary database AZ goes down.",
                         ],
                         "hints": [
-                            "Multi-AZ is about high availability (automatic failover within a region); multi-region is about disaster recovery and global latency — don't conflate the two when justifying your choice.",
-                            "Caching everything isn't free — identify hot, read-heavy, rarely-changing queries specifically, rather than caching the whole database layer.",
+                            "Multi-AZ is about high availability (automatic failover within a region); multi-region is about disaster recovery and global latency, don't conflate the two when justifying your choice.",
+                            "Caching everything isn't free, identify hot, read-heavy, rarely-changing queries specifically, rather than caching the whole database layer.",
                             "Scaling policies need both a scale-out AND scale-in condition with a cooldown, or you'll end up permanently over-provisioned and expensive.",
                             "The AWS Pricing Calculator forces you to confront real cost trade-offs (e.g., Aurora vs. RDS Postgres) instead of treating cloud capacity as infinite and free.",
                         ],
@@ -2301,7 +2301,7 @@ PATH_PROJECTS = {
                 "projects": [
                     {
                         "title": "Produce an Enterprise Architecture Decision Record for Migrating a Monolith to Microservices Across Multiple Business Domains",
-                        "teaches": "enterprise-level solutions architecture — cross-domain trade-off analysis, stakeholder alignment, and producing a formal Architecture Decision Record (ADR) for a high-stakes, org-wide migration",
+                        "teaches": "enterprise-level solutions architecture, cross-domain trade-off analysis, stakeholder alignment, and producing a formal Architecture Decision Record (ADR) for a high-stakes, org-wide migration",
                         "prerequisites": [
                             "Experience designing multi-tier cloud architectures",
                             "Understanding of microservices vs. monolith trade-offs",
@@ -2316,15 +2316,15 @@ PATH_PROJECTS = {
                             "Address cross-service data consistency by choosing and justifying a pattern (e.g., Saga) for a flow like place order -> reserve inventory -> charge payment -> confirm order.",
                             "Design the supporting cloud infrastructure: container orchestration (EKS/ECS/GKE), an API gateway, service mesh considerations, and per-service CI/CD pipelines.",
                             "Write a formal ADR covering context, decision, alternatives considered (e.g., a 'modular monolith' as a lower-risk alternative), and consequences of going with microservices.",
-                            "Build a phased migration roadmap using the Strangler Fig pattern — which service is extracted first and why, how monolith and new services coexist mid-transition, and rollback criteria per phase.",
+                            "Build a phased migration roadmap using the Strangler Fig pattern, which service is extracted first and why, how monolith and new services coexist mid-transition, and rollback criteria per phase.",
                             "Produce a risk register with at least 5 concrete risks (e.g., data-duplication drift, team's lack of distributed-systems experience, increased operational overhead) and mitigations for each.",
                             "Present the package as if to a CTO and engineering leadership, including a one-page executive summary of cost, timeline, and risk trade-offs in plain language.",
                         ],
                         "hints": [
-                            "Extract the least-coupled, highest-pain domain first under the Strangler Fig pattern (often Inventory or a reporting/read-heavy domain) — don't start with the most tightly coupled domain like Finance.",
-                            "The Saga pattern requires explicit compensating transactions (e.g., 'release inventory reservation' as the undo for 'reserve inventory') — a distributed transaction without a defined rollback path isn't a Saga, it's a bug waiting to happen.",
+                            "Extract the least-coupled, highest-pain domain first under the Strangler Fig pattern (often Inventory or a reporting/read-heavy domain), don't start with the most tightly coupled domain like Finance.",
+                            "The Saga pattern requires explicit compensating transactions (e.g., 'release inventory reservation' as the undo for 'reserve inventory'), a distributed transaction without a defined rollback path isn't a Saga, it's a bug waiting to happen.",
                             "A 'modular monolith' with clear internal boundaries is a legitimate, lower-risk alternative worth including in the ADR's alternatives-considered section, not every boundary needs its own database from day one.",
-                            "Executive audiences care about timeline, cost, and risk, not technology names — translate 'we chose async messaging' into 'this reduces the chance a Finance outage takes down order placement.'",
+                            "Executive audiences care about timeline, cost, and risk, not technology names, translate 'we chose async messaging' into 'this reduces the chance a Finance outage takes down order placement.'",
                         ],
                         "common_mistakes": [
                             "Proposing a 'big bang' full rewrite instead of an incremental strangler-fig migration, dramatically underestimating risk and business disruption.",

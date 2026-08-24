@@ -73,7 +73,7 @@ export default function MentorPage() {
                   <button
                     key={p}
                     onClick={() => sendMessage(p)}
-                    className="rounded-lg border border-white/10 bg-white/[0.03] px-3.5 py-2 text-left text-xs text-ink-300 transition-colors hover:border-white/20 hover:text-ink-100"
+                    className="rounded-lg border border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] px-3.5 py-2 text-left text-xs text-ink-300 transition-colors hover:border-[rgb(var(--fg-tint)/0.2)] hover:text-ink-100"
                   >
                     {p}
                   </button>
@@ -91,13 +91,13 @@ export default function MentorPage() {
               )}
               <div
                 className={`max-w-[75%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
-                  m.role === "user" ? "bg-accent text-white" : "bg-white/[0.05] text-ink-200"
+                  m.role === "user" ? "bg-accent text-white" : "bg-[rgb(var(--fg-tint)/0.05)] text-ink-200"
                 }`}
               >
                 {m.content}
               </div>
               {m.role === "user" && (
-                <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-white/[0.08] text-xs text-ink-300">
+                <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-[rgb(var(--fg-tint)/0.08)] text-xs text-ink-300">
                   {user ? initials(user.full_name) : <UserIcon className="h-3.5 w-3.5" />}
                 </div>
               )}
@@ -109,7 +109,7 @@ export default function MentorPage() {
               <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-accent/15 text-accent-light">
                 <Bot className="h-3.5 w-3.5" />
               </div>
-              <div className="flex items-center gap-1 rounded-2xl bg-white/[0.05] px-4 py-3">
+              <div className="flex items-center gap-1 rounded-2xl bg-[rgb(var(--fg-tint)/0.05)] px-4 py-3">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-ink-500" />
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-ink-500 [animation-delay:0.15s]" />
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-ink-500 [animation-delay:0.3s]" />
@@ -119,7 +119,7 @@ export default function MentorPage() {
         </div>
 
         {followUps.length > 0 && !sending && (
-          <div className="flex flex-wrap gap-2 border-t border-white/[0.06] px-6 py-3">
+          <div className="flex flex-wrap gap-2 border-t border-[rgb(var(--fg-tint)/0.06)] px-6 py-3">
             {followUps.map((f) => (
               <button
                 key={f}
@@ -143,7 +143,7 @@ export default function MentorPage() {
             e.preventDefault();
             sendMessage(input);
           }}
-          className="flex items-end gap-3 border-t border-white/[0.06] p-4"
+          className="flex items-end gap-3 border-t border-[rgb(var(--fg-tint)/0.06)] p-4"
         >
           <Textarea
             rows={1}

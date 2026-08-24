@@ -65,7 +65,7 @@ class LLMClient(abc.ABC):
 
 
 # --------------------------------------------------------------------------
-# Mock provider — realistic, input-driven, zero external dependency
+# Mock provider, realistic, input-driven, zero external dependency
 # --------------------------------------------------------------------------
 
 _BEGINNER_EXPLAINERS = {
@@ -127,7 +127,7 @@ class MockLLMProvider(LLMClient):
         if is_struggling:
             analogy = _ANALOGIES.get(topic, _ANALOGIES["default"])
             message = (
-                f"That's okay, {name} — this trips up almost everyone at first. "
+                f"That's okay, {name}, this trips up almost everyone at first. "
                 f"Let's set the technical definition aside for a second. {analogy} "
                 f"Once that clicks, the formal version will feel obvious. "
                 f"Want me to connect that back to {topic or 'the actual concept'} now, "
@@ -140,7 +140,7 @@ class MockLLMProvider(LLMClient):
             message = (
                 f"Good question. Here's the short answer {depth}: "
                 f"{_short_answer(topic)} "
-                f"Try applying that in your current project — if it doesn't click, paste what "
+                f"Try applying that in your current project. If it doesn't click, paste what "
                 f"you tried and I'll help you debug it rather than just giving you the fix."
             )
             struggle = None
@@ -173,7 +173,7 @@ class MockLLMProvider(LLMClient):
                 ProjectReviewFinding(
                     severity="must_fix",
                     comment=(
-                        "This submission is quite short for a full project review — I can only "
+                        "This submission is quite short for a full project review, so I can only "
                         "give high-level feedback. Paste your actual code or a fuller description "
                         "of what you built and how, and I'll give you line-level feedback."
                     ),
@@ -184,7 +184,7 @@ class MockLLMProvider(LLMClient):
                 ProjectReviewFinding(
                     severity="praise",
                     comment=(
-                        f"Good structure overall for '{project_title}' — it's clear you followed "
+                        f"Good structure overall for '{project_title}': it's clear you followed "
                         "the step-by-step guidance rather than skipping to a copy-pasted solution."
                     ),
                 )
@@ -195,7 +195,7 @@ class MockLLMProvider(LLMClient):
                         severity="should_fix",
                         comment=(
                             "I don't see explicit error handling. What happens if a required input "
-                            "is missing or a network call fails? Add a guard for that — it's exactly "
+                            "is missing or a network call fails? Add a guard for that: it's exactly "
                             "the kind of thing interviewers probe on."
                         ),
                     )
@@ -204,20 +204,20 @@ class MockLLMProvider(LLMClient):
                 findings.append(
                     ProjectReviewFinding(
                         severity="nice_to_have",
-                        comment="Consider adding one or two simple tests — even manual test notes in your README count and strengthen your portfolio write-up.",
+                        comment="Consider adding one or two simple tests, even manual test notes in your README count and strengthen your portfolio write-up.",
                     )
                 )
             findings.append(
                 ProjectReviewFinding(
                     severity="should_fix",
-                    comment="Add inline comments explaining *why*, not *what* — reviewers skim for reasoning, not restated code.",
+                    comment="Add inline comments explaining *why*, not *what*: reviewers skim for reasoning, not restated code.",
                 )
             )
 
         skills = project_context.get("skills_demonstrated") or [project_context.get("skill_hint", "problem solving")]
         overall = (
             f"Solid attempt at '{project_title}'. You're demonstrating real progress on "
-            f"{', '.join(skills[:2]) if skills else 'the core concept'} — a few targeted fixes "
+            f"{', '.join(skills[:2]) if skills else 'the core concept'}: a few targeted fixes "
             "below and this is portfolio-ready."
         )
         return ProjectReview(
@@ -242,7 +242,7 @@ class MockLLMProvider(LLMClient):
         readme = (
             f"# {project_title}\n\n## Overview\n{description}\n\n## What this demonstrates\n"
             + "\n".join(f"- {s}" for s in skills)
-            + "\n\n## How to run it\n_Add your setup/run instructions here._\n\n## What I'd improve next\n_Add 1-2 honest next steps — reviewers value this._\n"
+            + "\n\n## How to run it\n_Add your setup/run instructions here._\n\n## What I'd improve next\n_Add 1-2 honest next steps, reviewers value this._\n"
         )
         cv_bullet = (
             f"{_cv_verb(project_title)} {project_title.lower()}, applying {skills[0] if skills else 'core technical skills'} "
@@ -250,11 +250,11 @@ class MockLLMProvider(LLMClient):
         )
         linkedin = (
             f"🚀 Just finished building {project_title}! This project let me apply {skills_str} to a real "
-            f"scenario — {teaches}. Small step, but exactly the kind of hands-on work I want to keep doing. "
+            f"scenario, {teaches}. Small step, but exactly the kind of hands-on work I want to keep doing. "
             f"#buildinpublic #tech"
         )
         case_study = (
-            f"## {project_title} — Case Study\n\n**Problem:** {teaches}.\n\n**Approach:** "
+            f"## {project_title}, Case Study\n\n**Problem:** {teaches}.\n\n**Approach:** "
             f"Broke the problem into steps, applied {skills_str}, and iterated using feedback from "
             f"the AI project reviewer.\n\n**Outcome:** A working, demonstrable project added to my portfolio.\n\n"
             f"**What I'd do differently:** _fill in after reflection._"
@@ -276,11 +276,11 @@ def _cv_verb(title: str) -> str:
 _ANALOGIES = {
     "dns": (
         "Imagine you want to visit a friend's house but you only know their name, not their "
-        "address. DNS is the phonebook of the internet — it takes a name you understand, like "
+        "address. DNS is the phonebook of the internet, it takes a name you understand, like "
         "google.com, and looks up the actual numeric address computers use to find each other."
     ),
     "ip address": (
-        "Think of an IP address like a street address for a computer — it's how data knows "
+        "Think of an IP address like a street address for a computer, it's how data knows "
         "exactly where to be delivered on a network with millions of other computers."
     ),
     "tcp/ip": (
@@ -324,7 +324,7 @@ def _follow_up_questions(topic: str) -> list[str]:
 
 def _score_paths(profile: dict[str, Any], career_catalog: list[dict[str, Any]]) -> list[tuple[dict, int]]:
     """Deterministic heuristic scorer over the profile vector. Mirrors the
-    declarative `path_fit_rules` table in spirit — this mock keeps the logic
+    declarative `path_fit_rules` table in spirit, this mock keeps the logic
     inline so the assessment is demoable without seed data being present.
     """
     weights = {
@@ -401,16 +401,16 @@ def _build_recommendation(path: dict, score: int, tier: str, profile: dict) -> C
         tools=path.get("tools", []),
         earning_notes=path.get("earning_notes", "Entry-level pay varies significantly by country and remote status."),
         remote_potential_label=_remote_label(path.get("remote_potential", 70)),
-        recommended_next_step=f"Start Phase 1 of the {path.get('name', slug)} roadmap today — no prior experience required.",
+        recommended_next_step=f"Start Phase 1 of the {path.get('name', slug)} roadmap today, no prior experience required.",
     )
 
 
 def _remote_label(pct: int) -> str:
     if pct >= 80:
-        return "High — most entry-level roles in this field offer remote options."
+        return "High, most entry-level roles in this field offer remote options."
     if pct >= 50:
-        return "Moderate — remote roles exist but are more competitive early on."
-    return "Lower early on — often starts on-site before remote options open up."
+        return "Moderate, remote roles exist but are more competitive early on."
+    return "Lower early on, often starts on-site before remote options open up."
 
 
 def _build_career_dna(profile: dict[str, Any]) -> CareerDNA:
@@ -427,7 +427,7 @@ def _build_career_dna(profile: dict[str, Any]) -> CareerDNA:
         summary=(
             "Your answers show a profile that leans toward "
             + _dominant_trait(profile)
-            + " — that's a strong signal for the paths recommended below."
+            + ", that's a strong signal for the paths recommended below."
         ),
     )
 
@@ -447,13 +447,13 @@ def _dominant_trait(profile: dict[str, Any]) -> str:
 
 
 # --------------------------------------------------------------------------
-# Real provider — integration point
+# Real provider, integration point
 # --------------------------------------------------------------------------
 
 
 class AnthropicProvider(LLMClient):
     """Live provider using the Anthropic Messages API with structured
-    (JSON-schema constrained) outputs. This class is fully wired — the only
+    (JSON-schema constrained) outputs. This class is fully wired, the only
     thing standing between this and a live AI mentor is an API key in
     ANTHROPIC_API_KEY. See README.md 'Going live with real AI' section.
     """

@@ -101,7 +101,7 @@ export default function DashboardPage() {
               <div className="grid gap-4 sm:grid-cols-2">
                 <Card>
                   <CardContent className="p-5">
-                    <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white/[0.06] text-ink-300">
+                    <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-[rgb(var(--fg-tint)/0.06)] text-ink-300">
                       <MapIcon className="h-4 w-4" />
                     </div>
                     <p className="text-xs font-medium uppercase tracking-wide text-ink-500">Current project</p>
@@ -110,7 +110,7 @@ export default function DashboardPage() {
                 </Card>
                 <Card>
                   <CardContent className="p-5">
-                    <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white/[0.06] text-ink-300">
+                    <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-[rgb(var(--fg-tint)/0.06)] text-ink-300">
                       <Trophy className="h-4 w-4" />
                     </div>
                     <p className="text-xs font-medium uppercase tracking-wide text-ink-500">Upcoming milestone</p>
@@ -167,7 +167,7 @@ function TodayMissionCard({ mission }: { mission: NonNullable<Dashboard["today_m
           {tasks.map((task, i) => (
             <li
               key={i}
-              className="flex items-start gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-3 transition-colors hover:bg-white/[0.04]"
+              className="flex items-start gap-3 rounded-xl border border-[rgb(var(--fg-tint)/0.06)] bg-[rgb(var(--fg-tint)/0.02)] px-4 py-3 transition-colors hover:bg-[rgb(var(--fg-tint)/0.04)]"
             >
               <button
                 onClick={() =>
@@ -220,7 +220,7 @@ function ReadinessCard({ readiness }: { readiness: NonNullable<Dashboard["readin
           ))}
         </div>
         {readiness.next_actions.length > 0 && (
-          <div className="mt-5 border-t border-white/10 pt-4">
+          <div className="mt-5 border-t border-[rgb(var(--fg-tint)/0.1)] pt-4">
             <p className="mb-2 text-xs font-medium text-ink-300">What would move your score up:</p>
             <ul className="space-y-1.5 text-xs text-ink-500">
               {readiness.next_actions.map((a, i) => (

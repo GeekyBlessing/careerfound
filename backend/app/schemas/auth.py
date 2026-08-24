@@ -28,6 +28,27 @@ class GoogleAuthRequest(BaseModel):
     id_token: str
 
 
+class VerifyEmailRequest(BaseModel):
+    token: str
+
+
+class ForgotPasswordRequest(BaseModel):
+    email: EmailStr
+
+
+class ResetPasswordRequest(BaseModel):
+    token: str
+    new_password: str = Field(min_length=8, max_length=128)
+
+
+class EmailPreferencesUpdate(BaseModel):
+    marketing_opt_in: bool
+
+
+class MessageResponse(BaseModel):
+    message: str
+
+
 class UserOut(BaseModel):
     id: uuid.UUID
     email: str
@@ -41,6 +62,8 @@ class UserOut(BaseModel):
     beginner_mode: bool
     plan: str
     role: str
+    email_verified: bool = False
+    marketing_opt_in: bool = False
 
     model_config = {"from_attributes": True}
 

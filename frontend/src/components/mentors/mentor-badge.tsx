@@ -10,7 +10,7 @@ import type { Mentor } from "@/types";
 export function MentorBadge({ mentor, className }: { mentor: Mentor; className?: string }) {
   if (mentor.is_founding_mentor) {
     return (
-      <Badge tone="accent" className={className} title="One of the platform's first real mentors — not a verification claim.">
+      <Badge tone="accent" className={className} title="One of the platform's first real mentors, not a verification claim.">
         FOUNDING MENTOR
       </Badge>
     );

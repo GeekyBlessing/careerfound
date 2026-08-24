@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 type Tone = "neutral" | "accent" | "success" | "warning" | "danger";
 
 const toneClasses: Record<Tone, string> = {
-  neutral: "bg-white/[0.06] text-ink-300 border-white/10",
+  neutral: "bg-[rgb(var(--fg-tint)/0.06)] text-ink-300 border-[rgb(var(--fg-tint)/0.1)]",
   accent: "bg-accent/15 text-accent-light border-accent/30",
   success: "bg-success/15 text-success border-success/30",
   warning: "bg-warning/15 text-warning border-warning/30",

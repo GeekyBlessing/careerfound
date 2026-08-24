@@ -61,6 +61,6 @@ async def require_mentor(
     if mentor is None:
         raise HTTPException(
             status.HTTP_403_FORBIDDEN,
-            "No mentor profile is linked to this account yet — claim it first via POST /mentors/claim.",
+            "No mentor profile is linked to this account yet. Claim it first via POST /mentors/claim.",
         )
     return mentor

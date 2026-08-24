@@ -75,7 +75,7 @@ export function MentorRecommendationsPanel({ roadmapId }: { roadmapId: string })
         <div className="mb-4 space-y-2">
           <p className="text-xs font-medium text-ink-300">Added to your roadmap</p>
           {customItems.map((item) => (
-            <div key={item.id} className="flex items-start gap-2.5 rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-3">
+            <div key={item.id} className="flex items-start gap-2.5 rounded-xl border border-[rgb(var(--fg-tint)/0.06)] bg-[rgb(var(--fg-tint)/0.02)] px-4 py-3">
               <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-success" />
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
