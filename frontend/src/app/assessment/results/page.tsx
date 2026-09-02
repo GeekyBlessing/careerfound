@@ -97,7 +97,7 @@ function RecommendationCard({
   const meta = TIER_META[rec.tier];
   const Icon = meta.icon;
   return (
-    <Card className={rec.tier === "best_match" ? "border-accent/40 shadow-glow" : ""}>
+    <Card className={rec.tier === "best_match" ? "border-accent/40" : ""}>
       <CardContent className="flex h-full flex-col p-6">
         <Badge tone={meta.tone} className="w-fit gap-1">
           <Icon className="h-3 w-3" /> {meta.label}

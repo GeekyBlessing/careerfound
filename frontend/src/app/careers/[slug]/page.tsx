@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowRight, Clock, Globe, Wrench, Briefcase } from "lucide-react";
-import { AppShell } from "@/components/layout/app-shell";
+import { PublicShell } from "@/components/layout/public-shell";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -56,7 +56,7 @@ export default function CareerDetailPage() {
   }
 
   return (
-    <AppShell>
+    <PublicShell>
       {error && <Alert className="mb-4">{error}</Alert>}
 
       {!path && !error && (
@@ -103,9 +103,15 @@ export default function CareerDetailPage() {
               </Card>
             </div>
 
-            <div className="mt-4 flex items-center gap-2 text-xs text-ink-500">
-              <Wrench className="h-3.5 w-3.5" />
-              {path.tools.join(" · ")}
+            <div className="mt-6">
+              <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-ink-500">
+                <Wrench className="h-3.5 w-3.5" /> Key skills
+              </p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {path.tools.map((tool) => (
+                  <Badge key={tool}>{tool}</Badge>
+                ))}
+              </div>
             </div>
 
             <p className="mt-4 max-w-2xl text-xs leading-relaxed text-ink-500">{path.earning_notes}</p>
@@ -170,6 +176,6 @@ export default function CareerDetailPage() {
           <SmartMentorRecommendation pathSlug={path.slug} pathName={path.name} />
         </div>
       )}
-    </AppShell>
+    </PublicShell>
   );
 }

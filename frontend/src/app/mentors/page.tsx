@@ -4,7 +4,7 @@ import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Star, Briefcase, ArrowRight, X, UserPlus } from "lucide-react";
-import { AppShell } from "@/components/layout/app-shell";
+import { PublicShell } from "@/components/layout/public-shell";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -43,7 +43,7 @@ function MentorsPageInner() {
   }, [pathFilter]);
 
   return (
-    <AppShell>
+    <PublicShell>
       <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wider text-accent-light">Mentorship Marketplace</p>
@@ -128,6 +128,6 @@ function MentorsPageInner() {
           </Link>
         ))}
       </div>
-    </AppShell>
+    </PublicShell>
   );
 }

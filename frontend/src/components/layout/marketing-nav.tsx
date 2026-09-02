@@ -1,22 +1,25 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Menu, X, Compass } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
+import { cn } from "@/lib/utils";
 
 const links = [
-  { href: "#how-it-works", label: "How it works" },
-  { href: "#careers", label: "Careers" },
-  { href: "#mentor", label: "AI Mentor" },
-  { href: "#pricing", label: "Pricing" },
-  { href: "#faq", label: "FAQ" },
+  { href: "/how-it-works", label: "How it works" },
+  { href: "/careers", label: "Career paths" },
+  { href: "/mentors", label: "Mentors" },
+  { href: "/pricing", label: "Pricing" },
+  { href: "/faq", label: "FAQ" },
 ];
 
 export function MarketingNav() {
   const [open, setOpen] = useState(false);
   const { user } = useAuth();
+  const pathname = usePathname();
 
   return (
     <header className="sticky top-0 z-40 border-b border-[rgb(var(--fg-tint)/0.06)] bg-base-950/80 backdrop-blur-md">
@@ -30,9 +33,16 @@ export function MarketingNav() {
 
         <nav className="hidden items-center gap-7 md:flex">
           {links.map((l) => (
-            <a key={l.href} href={l.href} className="text-sm text-ink-300 transition-colors hover:text-ink-100">
+            <Link
+              key={l.href}
+              href={l.href}
+              className={cn(
+                "text-sm transition-colors hover:text-ink-100",
+                pathname === l.href ? "font-medium text-ink-100" : "text-ink-300"
+              )}
+            >
               {l.label}
-            </a>
+            </Link>
           ))}
         </nav>
 
@@ -62,9 +72,9 @@ export function MarketingNav() {
         <div className="border-t border-[rgb(var(--fg-tint)/0.06)] px-4 py-4 md:hidden">
           <nav className="flex flex-col gap-3">
             {links.map((l) => (
-              <a key={l.href} href={l.href} className="text-sm text-ink-300" onClick={() => setOpen(false)}>
+              <Link key={l.href} href={l.href} className="text-sm text-ink-300" onClick={() => setOpen(false)}>
                 {l.label}
-              </a>
+              </Link>
             ))}
             <div className="mt-2 flex flex-col gap-2">
               {user ? (

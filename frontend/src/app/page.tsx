@@ -2,118 +2,33 @@ import Link from "next/link";
 import {
   ArrowRight,
   Sparkles,
-  Compass,
-  Map,
-  Code2,
-  MessageCircle,
-  FolderGit2,
-  Users2,
-  Check,
   Shield,
   Cloud,
+  Code2,
   BarChart3,
   Server,
   Palette,
   Headphones,
+  Check,
 } from "lucide-react";
 import { MarketingNav } from "@/components/layout/marketing-nav";
 import { Footer } from "@/components/layout/footer";
+import { SectionHeading } from "@/components/marketing/section-heading";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { steps, pricingTiers, faqs } from "@/lib/marketing-content";
 
 const careerPreview = [
-  { name: "Cybersecurity", icon: Shield, blurb: "Protect systems and stop attackers before they cause damage." },
-  { name: "Software Engineering", icon: Code2, blurb: "Build the applications and systems people use every day." },
-  { name: "Cloud Engineering", icon: Cloud, blurb: "Run computing systems that live on the internet, not one machine." },
-  { name: "Data Analysis", icon: BarChart3, blurb: "Turn raw numbers into insights that drive decisions." },
-  { name: "Backend Engineering", icon: Server, blurb: "Build the servers and APIs that power an app behind the scenes." },
-  { name: "UI/UX Design", icon: Palette, blurb: "Design interfaces that are effortless for people to use." },
-  { name: "IT Support", icon: Headphones, blurb: "The most accessible first tech job, often a launchpad into more." },
-  { name: "+ 13 more paths", icon: Sparkles, blurb: "From DevOps to Product Management to AI/ML Engineering." },
-];
-
-const steps = [
-  {
-    title: "1. Discover your path",
-    body: "Answer honest questions about your time, budget, interests, and goals. Get a Best Match, Strong Alternative, and Wild Card, not a random guess.",
-    icon: Compass,
-  },
-  {
-    title: "2. Get a personalized roadmap",
-    body: "Phased lessons, exercises, and projects generated for your chosen path, not a static PDF everyone gets.",
-    icon: Map,
-  },
-  {
-    title: "3. Build real projects",
-    body: "Learn by shipping real projects (a password checker, a port scanner, a full-stack app) with AI feedback on every submission.",
-    icon: FolderGit2,
-  },
-  {
-    title: "4. Get job-ready",
-    body: "Track your Tech Readiness Score, practice real-world simulations, and build a portfolio that gets you interviews.",
-    icon: MessageCircle,
-  },
-];
-
-const pricingTiers = [
-  {
-    name: "Free",
-    price: "$0",
-    period: "forever",
-    description: "Everything you need to discover your path and start learning.",
-    features: ["Career discovery assessment", "Basic personalized roadmap", "Selected lessons per path", "Community access"],
-    cta: "Start free",
-    highlighted: false,
-  },
-  {
-    name: "Pro",
-    price: "$19",
-    period: "/month",
-    description: "The full accelerator, for people serious about landing a role.",
-    features: [
-      "Full AI Mentor access",
-      "Complete roadmap, all phases",
-      "Advanced projects + AI project reviewer",
-      "Portfolio builder",
-      "Mock interviews & readiness analysis",
-    ],
-    cta: "Find My Tech Path",
-    highlighted: true,
-  },
-  {
-    name: "Mentorship",
-    price: "Pay-per-session",
-    period: "",
-    description: "1:1 time with working professionals when you need a human.",
-    features: ["30-min consultations", "Portfolio & CV reviews", "Mock interviews", "Career guidance"],
-    cta: "Browse mentors",
-    highlighted: false,
-  },
-];
-
-const faqs = [
-  {
-    q: "I know nothing about tech. Is this actually for me?",
-    a: "Yes, that's specifically who CareerFound is built for. Turn on 'I Know Nothing' mode and every technical term gets a plain-language explanation before we use it.",
-  },
-  {
-    q: "How is this different from a course platform like Udemy or Coursera?",
-    a: "Those platforms hand you a catalog and hope you pick the right thing. CareerFound tells you what to do today, adapts your roadmap to your actual progress, and builds a portfolio and readiness score alongside your learning: it's a system, not a library.",
-  },
-  {
-    q: "What if I only have a smartphone and limited data?",
-    a: "CareerFound is mobile-first and designed for low-bandwidth use, with lightweight pages and downloadable lesson content for offline review.",
-  },
-  {
-    q: "Do I need to know what career I want before I start?",
-    a: "No, that's the whole point of the 'Find Your Tech Path' assessment. Most people start with zero clarity and leave with a specific, personalized recommendation.",
-  },
-  {
-    q: "Is the AI mentor a real person?",
-    a: "It's an AI trained to behave like a patient senior engineer, explaining simply, giving hints before answers, and adjusting to your level. Human mentors are available separately in the Mentorship Marketplace.",
-  },
+  { name: "Cybersecurity", slug: "cybersecurity", icon: Shield, blurb: "Protect systems and stop attackers before they cause damage." },
+  { name: "Software Engineering", slug: "software-engineering", icon: Code2, blurb: "Build the applications and systems people use every day." },
+  { name: "Cloud Engineering", slug: "cloud-engineering", icon: Cloud, blurb: "Run computing systems that live on the internet, not one machine." },
+  { name: "Data Analysis", slug: "data-analysis", icon: BarChart3, blurb: "Turn raw numbers into insights that drive decisions." },
+  { name: "Backend Engineering", slug: "backend-engineering", icon: Server, blurb: "Build the servers and APIs that power an app behind the scenes." },
+  { name: "UI/UX Design", slug: "ui-ux-design", icon: Palette, blurb: "Design interfaces that are effortless for people to use." },
+  { name: "IT Support", slug: "it-support", icon: Headphones, blurb: "The most accessible first tech job, often a launchpad into more." },
+  { name: "+ 14 more paths", slug: null, icon: Sparkles, blurb: "From DevOps to Product Management to AI/ML Engineering." },
 ];
 
 export default function LandingPage() {
@@ -125,7 +40,7 @@ export default function LandingPage() {
         <section className="relative overflow-hidden py-20 sm:py-28">
           <div
             className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[560px] opacity-40"
-            style={{ background: "radial-gradient(600px circle at 50% 0%, rgba(91,108,255,0.25), transparent 70%)" }}
+            style={{ background: "radial-gradient(600px circle at 50% 0%, rgba(93,111,52,0.28), transparent 70%)" }}
           />
           <div className="container-page text-center">
             <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.04)] px-3.5 py-1.5 text-xs font-medium text-ink-300 animate-fade-in">
@@ -145,11 +60,11 @@ export default function LandingPage() {
                   Find My Tech Path <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
-              <a href="#careers">
+              <Link href="/careers">
                 <Button size="lg" variant="secondary">
                   Explore Careers
                 </Button>
-              </a>
+              </Link>
             </div>
             <p className="mt-5 text-xs text-ink-500">No credit card required · Takes about 5 minutes</p>
           </div>
@@ -183,13 +98,15 @@ export default function LandingPage() {
             />
             <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {careerPreview.map((c) => (
-                <Card key={c.name} className="p-5">
-                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-[rgb(var(--fg-tint)/0.06)] text-ink-300">
-                    <c.icon className="h-4.5 w-4.5" />
-                  </div>
-                  <p className="text-sm font-semibold text-ink-100">{c.name}</p>
-                  <p className="mt-1.5 text-xs leading-relaxed text-ink-500">{c.blurb}</p>
-                </Card>
+                <Link key={c.name} href={c.slug ? `/careers/${c.slug}` : "/careers"}>
+                  <Card className="h-full p-5 transition-colors hover:bg-[rgb(var(--fg-tint)/0.045)]">
+                    <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-[rgb(var(--fg-tint)/0.06)] text-ink-300">
+                      <c.icon className="h-4.5 w-4.5" />
+                    </div>
+                    <p className="text-sm font-semibold text-ink-100">{c.name}</p>
+                    <p className="mt-1.5 text-xs leading-relaxed text-ink-500">{c.blurb}</p>
+                  </Card>
+                </Link>
               ))}
             </div>
           </div>
@@ -207,6 +124,7 @@ export default function LandingPage() {
                 struggling.
               </p>
               <div className="mt-6 space-y-3 rounded-xl border border-[rgb(var(--fg-tint)/0.1)] bg-base-950/60 p-4 text-sm">
+                <p className="text-[10px] font-medium uppercase tracking-wide text-ink-500">Example conversation</p>
                 <p className="text-ink-500">You: <span className="text-ink-300">&ldquo;I don&apos;t understand DNS.&rdquo;</span></p>
                 <p className="text-ink-300">
                   Mentor: <span className="text-ink-100">&ldquo;That&apos;s okay. Let&apos;s forget the technical
@@ -261,33 +179,13 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Success stories */}
-        <section className="py-20">
-          <div className="container-page">
-            <SectionHeading eyebrow="Success stories" title="People who had no idea where to start" />
-            <div className="mt-12 grid gap-5 sm:grid-cols-3">
-              {[
-                { name: "Amara, Lagos", quote: "I didn't know cybersecurity had entry points that didn't require a 4-year degree. The roadmap made it concrete week by week.", role: "Now: SOC Analyst (Tier 1)" },
-                { name: "Jordan, Austin", quote: "The AI mentor caught that I was stuck on the same concept for three days and adjusted my roadmap before I even asked for help.", role: "Now: Junior Software Engineer" },
-                { name: "Priya, Manila", quote: "The portfolio builder turned my messy project notes into something I was actually proud to put on LinkedIn.", role: "Now: Junior Cloud Security Analyst" },
-              ].map((s) => (
-                <Card key={s.name} className="p-6">
-                  <p className="text-sm italic leading-relaxed text-ink-300">&ldquo;{s.quote}&rdquo;</p>
-                  <p className="mt-4 text-sm font-medium text-ink-100">{s.name}</p>
-                  <p className="text-xs text-ink-500">{s.role}</p>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* Pricing */}
         <section id="pricing" className="py-20">
           <div className="container-page">
             <SectionHeading eyebrow="Pricing" title="Start free. Upgrade when you're ready to accelerate." />
             <div className="mt-12 grid gap-6 lg:grid-cols-3">
               {pricingTiers.map((tier) => (
-                <Card key={tier.name} className={cn("flex flex-col p-8", tier.highlighted && "border-accent/40 shadow-glow")}>
+                <Card key={tier.name} className={cn("flex flex-col p-8", tier.highlighted && "border-accent/40")}>
                   {tier.highlighted && <Badge tone="accent" className="mb-4 w-fit">Most popular</Badge>}
                   <h3 className="text-lg font-semibold text-ink-100">{tier.name}</h3>
                   <div className="mt-2 flex items-baseline gap-1">
@@ -303,7 +201,7 @@ export default function LandingPage() {
                       </li>
                     ))}
                   </ul>
-                  <Link href="/onboarding" className="mt-8">
+                  <Link href={tier.href} className="mt-8">
                     <Button variant={tier.highlighted ? "primary" : "secondary"} className="w-full">
                       {tier.cta}
                     </Button>
@@ -349,16 +247,6 @@ export default function LandingPage() {
       </main>
       <Footer />
     </>
-  );
-}
-
-function SectionHeading({ eyebrow, title, description }: { eyebrow: string; title: string; description?: string }) {
-  return (
-    <div className="mx-auto max-w-2xl text-center">
-      <p className="text-xs font-semibold uppercase tracking-wider text-accent-light">{eyebrow}</p>
-      <h2 className="mt-3 text-2xl font-semibold text-ink-100 sm:text-3xl">{title}</h2>
-      {description && <p className="mt-3 text-sm text-ink-500">{description}</p>}
-    </div>
   );
 }
 

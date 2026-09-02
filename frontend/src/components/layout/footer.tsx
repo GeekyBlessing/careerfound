@@ -20,23 +20,26 @@ export function Footer() {
           <div>
             <p className="mb-3 font-medium text-ink-100">Product</p>
             <ul className="space-y-2 text-ink-500">
-              <li><a href="#how-it-works" className="hover:text-ink-300">How it works</a></li>
-              <li><a href="#careers" className="hover:text-ink-300">Career paths</a></li>
-              <li><a href="#pricing" className="hover:text-ink-300">Pricing</a></li>
+              <li><Link href="/how-it-works" className="hover:text-ink-300">How it works</Link></li>
+              <li><Link href="/careers" className="hover:text-ink-300">Career paths</Link></li>
+              <li><Link href="/pricing" className="hover:text-ink-300">Pricing</Link></li>
+              <li><Link href="/mentors" className="hover:text-ink-300">Mentors</Link></li>
             </ul>
           </div>
           <div>
             <p className="mb-3 font-medium text-ink-100">Company</p>
             <ul className="space-y-2 text-ink-500">
-              <li><a href="#faq" className="hover:text-ink-300">FAQ</a></li>
-              <li><a href="#" className="hover:text-ink-300">Careers at CareerFound</a></li>
+              <li><Link href="/about" className="hover:text-ink-300">About</Link></li>
+              <li><Link href="/faq" className="hover:text-ink-300">FAQ</Link></li>
+              <li><Link href="/contact" className="hover:text-ink-300">Contact</Link></li>
+              <li><span className="cursor-default text-ink-500/60">Careers at CareerFound (coming soon)</span></li>
             </ul>
           </div>
           <div>
             <p className="mb-3 font-medium text-ink-100">Legal</p>
             <ul className="space-y-2 text-ink-500">
-              <li><a href="#" className="hover:text-ink-300">Privacy</a></li>
-              <li><a href="#" className="hover:text-ink-300">Terms</a></li>
+              <li><Link href="/privacy" className="hover:text-ink-300">Privacy</Link></li>
+              <li><Link href="/terms" className="hover:text-ink-300">Terms</Link></li>
             </ul>
           </div>
         </div>

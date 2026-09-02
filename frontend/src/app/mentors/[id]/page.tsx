@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Star, Briefcase, Globe, Video, Clock, Users, MessageCircle, Calendar, Sparkles, Compass } from "lucide-react";
-import { AppShell } from "@/components/layout/app-shell";
+import { PublicShell } from "@/components/layout/public-shell";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -53,7 +53,7 @@ export default function MentorProfilePage() {
   }, [mentorId]);
 
   return (
-    <AppShell>
+    <PublicShell>
       {error && <Alert className="mb-4">{error}</Alert>}
 
       {!mentor && !error && (
@@ -253,6 +253,6 @@ export default function MentorProfilePage() {
           </div>
         </div>
       )}
-    </AppShell>
+    </PublicShell>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, Sparkles, Compass } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -271,12 +272,12 @@ export default function OnboardingPage() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-4 py-12">
-      <div className="mb-8 flex items-center gap-2 font-semibold text-ink-100">
+      <Link href="/" className="mb-8 flex items-center gap-2 font-semibold text-ink-100">
         <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent">
           <Compass className="h-4 w-4 text-white" />
         </span>
         CareerFound
-      </div>
+      </Link>
 
       <div className="w-full max-w-lg">
         <div className="mb-6 h-1.5 w-full overflow-hidden rounded-full bg-[rgb(var(--fg-tint)/0.08)]">

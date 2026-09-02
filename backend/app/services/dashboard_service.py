@@ -113,7 +113,7 @@ async def build_dashboard(db: AsyncSession, user) -> dict:
 
     path = (await db.execute(select(CareerPath).where(CareerPath.id == roadmap.path_id))).scalar_one()
     mission = await get_or_generate_today_mission(db, user.id, path.id, path.name)
-    readiness = await readiness_service.compute_readiness(db, user.id)
+    readiness = await readiness_service.compute_readiness(db, user.id, path_id=path.id)
 
     current_project = None
     progress_map = await roadmap_service.get_progress_map(db, user.id)
