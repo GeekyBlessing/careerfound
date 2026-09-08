@@ -55,7 +55,7 @@ export default function LoginPage() {
             <div>
               <div className="flex items-center justify-between">
                 <Label htmlFor="password" className="mb-0">Password</Label>
-                <Link href="/forgot-password" className="mb-1.5 text-xs font-medium text-accent-light hover:underline">
+                <Link href="/forgot-password" className="focus-ring mb-1.5 rounded-sm text-xs font-medium text-accent-light hover:underline">
                   Forgot password?
                 </Link>
               </div>
@@ -68,7 +68,7 @@ export default function LoginPage() {
 
           <p className="mt-6 text-center text-sm text-ink-500">
             New to CareerFound?{" "}
-            <Link href="/onboarding" className="font-medium text-accent-light hover:underline">
+            <Link href="/onboarding" className="focus-ring rounded-sm font-medium text-accent-light hover:underline">
               Find your tech path
             </Link>
           </p>

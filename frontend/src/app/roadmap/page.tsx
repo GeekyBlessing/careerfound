@@ -104,6 +104,7 @@ function PhaseAccordion({ phase, defaultOpen }: { phase: PhaseItem; defaultOpen:
     <Card>
       <button
         onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
         className="flex w-full items-center justify-between gap-4 p-5 text-left focus-ring rounded-2xl"
       >
         <div className="min-w-0 flex-1">
@@ -166,7 +167,11 @@ function LessonRow({ lesson }: { lesson: LessonItem }) {
       <div className="flex items-start gap-3">
         <StatusIcon status={status} />
         <div className="min-w-0 flex-1">
-          <button className="text-left" onClick={() => setExpanded((e) => !e)}>
+          <button
+            className="w-full text-left focus-ring rounded-lg"
+            aria-expanded={expanded}
+            onClick={() => setExpanded((e) => !e)}
+          >
             <p className="flex items-center gap-2 text-sm font-medium text-ink-100">
               <BookOpen className="h-3.5 w-3.5 text-ink-500" /> {lesson.title}
             </p>
@@ -193,7 +198,7 @@ function ProjectRow({ project }: { project: ProjectItem }) {
   return (
     <Link
       href={`/projects/${project.id}`}
-      className="flex items-start gap-3 rounded-xl border border-[rgb(var(--fg-tint)/0.06)] bg-[rgb(var(--fg-tint)/0.015)] px-4 py-3 transition-colors hover:bg-[rgb(var(--fg-tint)/0.03)]"
+      className="flex items-start gap-3 rounded-xl border border-[rgb(var(--fg-tint)/0.06)] bg-[rgb(var(--fg-tint)/0.015)] px-4 py-3 transition-colors hover:bg-[rgb(var(--fg-tint)/0.03)] focus-ring"
     >
       <StatusIcon status={project.status} />
       <div className="min-w-0 flex-1">
@@ -211,7 +216,7 @@ function QuizRow({ quiz }: { quiz: QuizItem }) {
   return (
     <Link
       href={`/roadmap/quiz/${quiz.id}`}
-      className="flex items-start gap-3 rounded-xl border border-[rgb(var(--fg-tint)/0.06)] bg-[rgb(var(--fg-tint)/0.015)] px-4 py-3 transition-colors hover:bg-[rgb(var(--fg-tint)/0.03)]"
+      className="flex items-start gap-3 rounded-xl border border-[rgb(var(--fg-tint)/0.06)] bg-[rgb(var(--fg-tint)/0.015)] px-4 py-3 transition-colors hover:bg-[rgb(var(--fg-tint)/0.03)] focus-ring"
     >
       <StatusIcon status={quiz.status} />
       <div className="min-w-0 flex-1">

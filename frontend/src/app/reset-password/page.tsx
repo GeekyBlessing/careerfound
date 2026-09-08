@@ -67,8 +67,8 @@ function ResetPasswordInner() {
         </Link>
         <Card className="p-8">
           {done ? (
-            <div className="text-center">
-              <CheckCircle2 className="mx-auto mb-4 h-10 w-10 text-accent-light" />
+            <div className="text-center" role="status" aria-live="polite">
+              <CheckCircle2 className="mx-auto mb-4 h-10 w-10 text-accent-light" aria-hidden="true" />
               <h1 className="text-lg font-semibold text-ink-100">Password reset</h1>
               <p className="mt-2 text-sm text-ink-500">Taking you to log in...</p>
             </div>

@@ -97,18 +97,20 @@ export default function ApplyToMentorPage() {
           <CardContent className="space-y-4 p-6">
             {error && <Alert>{error}</Alert>}
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Full name">
-                <Input value={name} onChange={(e) => setName(e.target.value)} />
+              <Field label="Full name" required>
+                <Input value={name} onChange={(e) => setName(e.target.value)} required aria-required="true" />
               </Field>
-              <Field label="Email">
-                <Input value={email} onChange={(e) => setEmail(e.target.value)} type="email" />
+              <Field label="Email" required>
+                <Input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required aria-required="true" />
               </Field>
             </div>
-            <Field label="Headline">
+            <Field label="Headline" required>
               <Input
                 value={headline}
                 onChange={(e) => setHeadline(e.target.value)}
                 placeholder="e.g. Backend Engineer | Mentor"
+                required
+                aria-required="true"
               />
             </Field>
             <Field label="Bio">
@@ -117,14 +119,18 @@ export default function ApplyToMentorPage() {
             <Field label="Years of experience (optional)">
               <Input value={years} onChange={(e) => setYears(e.target.value)} type="number" min={0} className="max-w-[160px]" />
             </Field>
-            <Field label="Which career paths would you mentor?">
+            <fieldset className="m-0 border-0 p-0">
+              <legend className="mb-1.5 block w-full text-xs font-medium text-ink-300">
+                Which career paths would you mentor? <span className="text-danger">*</span>
+              </legend>
               <div className="flex flex-wrap gap-2">
                 {PATH_OPTIONS.map((slug) => (
                   <button
                     key={slug}
                     type="button"
+                    aria-pressed={paths.includes(slug)}
                     onClick={() => togglePath(slug)}
-                    className={`rounded-full border px-3 py-1 text-xs capitalize transition-colors ${
+                    className={`focus-ring rounded-full border px-3 py-1 text-xs capitalize transition-colors ${
                       paths.includes(slug)
                         ? "border-accent/40 bg-accent/15 text-accent-light"
                         : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] text-ink-400 hover:bg-[rgb(var(--fg-tint)/0.06)]"
@@ -134,7 +140,10 @@ export default function ApplyToMentorPage() {
                   </button>
                 ))}
               </div>
-            </Field>
+              {paths.length === 0 && (
+                <p className="mt-1.5 text-xs text-ink-500">Pick at least one career path.</p>
+              )}
+            </fieldset>
             <Button
               onClick={submit}
               loading={submitting}
@@ -150,10 +159,12 @@ export default function ApplyToMentorPage() {
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1.5 block text-xs font-medium text-ink-300">{label}</span>
+      <span className="mb-1.5 block text-xs font-medium text-ink-300">
+        {label} {required && <span className="text-danger">*</span>}
+      </span>
       {children}
     </label>
   );

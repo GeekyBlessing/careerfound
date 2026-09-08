@@ -55,7 +55,7 @@ export default function SignupPage() {
             {error && <Alert>{error}</Alert>}
             <div>
               <Label htmlFor="name">Full name</Label>
-              <Input id="name" required value={fullName} onChange={(e) => setFullName(e.target.value)} />
+              <Input id="name" autoComplete="name" required value={fullName} onChange={(e) => setFullName(e.target.value)} />
             </div>
             <div>
               <Label htmlFor="email">Email</Label>
@@ -73,7 +73,7 @@ export default function SignupPage() {
 
           <p className="mt-6 text-center text-sm text-ink-500">
             Already have an account?{" "}
-            <Link href="/login" className="font-medium text-accent-light hover:underline">
+            <Link href="/login" className="focus-ring rounded-sm font-medium text-accent-light hover:underline">
               Log in
             </Link>
           </p>

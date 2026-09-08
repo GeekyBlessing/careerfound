@@ -49,22 +49,22 @@ function MentorsPageInner() {
           <p className="text-xs font-semibold uppercase tracking-wider text-accent-light">Mentorship Marketplace</p>
           <h1 className="mt-1 text-2xl font-semibold text-ink-100">Real professionals, when you need a human</h1>
           <p className="mt-1 text-sm text-ink-500">
-            Booking is fully functional and stored, payment capture is a Phase 2 integration point (see docs), so
-            sessions are created in &ldquo;requested&rdquo; status without a real charge.
+            Booking requests are saved and sent to the mentor right away. Payment collection is coming soon, so
+            sessions are created as a request first, with no charge yet.
           </p>
           {pathFilter && (
             <div className="mt-3 flex items-center gap-2">
               <Badge tone="accent" className="capitalize">
                 {pathFilter.replace(/-/g, " ")}
               </Badge>
-              <Link href="/mentors" className="flex items-center gap-1 text-xs text-ink-500 hover:text-ink-300">
+              <Link href="/mentors" className="focus-ring flex items-center gap-1 rounded text-xs text-ink-500 hover:text-ink-300">
                 <X className="h-3 w-3" /> Clear filter
               </Link>
             </div>
           )}
         </div>
-        <Link href="/mentors/apply">
-          <Button variant="secondary" size="sm" className="gap-1.5">
+        <Link href="/mentors/apply" className="focus-ring inline-flex rounded-lg">
+          <Button variant="secondary" size="sm" className="gap-1.5" tabIndex={-1} aria-hidden="true">
             <UserPlus className="h-3.5 w-3.5" /> Apply to become a mentor
           </Button>
         </Link>
@@ -91,7 +91,12 @@ function MentorsPageInner() {
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {mentors.map((mentor) => (
-          <Link key={mentor.id} href={`/mentors/${mentor.id}`}>
+          <Link
+            key={mentor.id}
+            href={`/mentors/${mentor.id}`}
+            className="focus-ring block rounded-2xl"
+            aria-label={`View profile: ${mentor.display_name}`}
+          >
             <Card className="h-full transition-colors hover:bg-[rgb(var(--fg-tint)/0.045)]">
               <CardContent className="flex h-full flex-col p-6">
                 <div className="flex items-center gap-3">
@@ -120,7 +125,7 @@ function MentorsPageInner() {
                     {mentorPriceLabel(mentor)}
                   </span>
                 </div>
-                <Button size="sm" variant="secondary" className="mt-4 w-full gap-1.5">
+                <Button size="sm" variant="secondary" className="mt-4 w-full gap-1.5" tabIndex={-1} aria-hidden="true">
                   View profile <ArrowRight className="h-3.5 w-3.5" />
                 </Button>
               </CardContent>

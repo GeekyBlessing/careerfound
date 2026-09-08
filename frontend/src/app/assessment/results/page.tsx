@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { SkeletonCard } from "@/components/ui/skeleton";
+import { EmptyState } from "@/components/ui/empty-state";
 import { CareerDnaRadar } from "@/components/charts/career-dna-radar";
 import { api, ApiError } from "@/lib/api";
 import type { AssessmentResult, CareerRecommendation } from "@/types";
@@ -55,7 +56,7 @@ export default function AssessmentResultsPage() {
       </div>
 
       {loading && (
-        <div className="grid gap-5 lg:grid-cols-3">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           <SkeletonCard />
           <SkeletonCard />
           <SkeletonCard />
@@ -74,11 +75,24 @@ export default function AssessmentResultsPage() {
             </div>
           </Card>
 
-          <div className="grid gap-5 lg:grid-cols-3">
-            {result.recommendations.map((rec) => (
-              <RecommendationCard key={rec.path_slug} rec={rec} onStart={startRoadmap} starting={startingPath === rec.path_slug} />
-            ))}
-          </div>
+          {result.recommendations.length > 0 ? (
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {result.recommendations.map((rec) => (
+                <RecommendationCard key={rec.path_slug} rec={rec} onStart={startRoadmap} starting={startingPath === rec.path_slug} />
+              ))}
+            </div>
+          ) : (
+            <EmptyState
+              icon={Award}
+              title="No recommendations yet"
+              description="We couldn't match you to a path from these answers. Retake the assessment to try again."
+              action={
+                <Link href="/assessment">
+                  <Button>Retake the assessment</Button>
+                </Link>
+              }
+            />
+          )}
         </div>
       )}
     </AppShell>
@@ -102,7 +116,7 @@ function RecommendationCard({
         <Badge tone={meta.tone} className="w-fit gap-1">
           <Icon className="h-3 w-3" /> {meta.label}
         </Badge>
-        <h3 className="mt-3 text-lg font-semibold capitalize text-ink-100">{rec.path_slug.replace(/-/g, " ")}</h3>
+        <h2 className="mt-3 text-lg font-semibold capitalize text-ink-100">{rec.path_slug.replace(/-/g, " ")}</h2>
         <div className="mt-1 flex items-center gap-2 text-xs text-ink-500">
           <span>Fit score</span>
           <span className="font-semibold text-ink-300">{rec.fit_score}/100</span>

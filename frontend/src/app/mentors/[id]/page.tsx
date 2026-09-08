@@ -123,7 +123,7 @@ export default function MentorProfilePage() {
             </Card>
 
             <Card className="p-6">
-              <p className="mb-4 text-sm font-semibold text-ink-100">Reviews</p>
+              <h2 className="mb-4 text-sm font-semibold text-ink-100">Reviews</h2>
               {reviews.length === 0 && <p className="text-xs text-ink-500">No reviews yet.</p>}
               <div className="space-y-3">
                 {reviews.map((r) => (

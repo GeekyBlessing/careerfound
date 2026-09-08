@@ -10,6 +10,7 @@ import {
   Map as MapIcon,
   Trophy,
   Sparkles,
+  Clock,
 } from "lucide-react";
 import { AppShell, StreakBadge } from "@/components/layout/app-shell";
 import { Card, CardContent } from "@/components/ui/card";
@@ -158,7 +159,9 @@ function TodayMissionCard({ mission }: { mission: NonNullable<Dashboard["today_m
         <div className="flex items-center justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-accent-light">Today&apos;s mission</p>
-            <p className="mt-1 text-sm text-ink-500">⏱ {formatMinutes(mission.total_minutes)} total</p>
+            <p className="mt-1 flex items-center gap-1 text-sm text-ink-500">
+              <Clock className="h-3.5 w-3.5" /> {formatMinutes(mission.total_minutes)} total
+            </p>
           </div>
           <Badge tone="accent">{completedCount}/{tasks.length} done</Badge>
         </div>

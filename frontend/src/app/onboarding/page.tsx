@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input, Label } from "@/components/ui/input";
 import { Alert } from "@/components/ui/alert";
+import { ProgressBar } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
 import { api, ApiError } from "@/lib/api";
@@ -76,6 +77,7 @@ function OptionGrid<T extends string | number>({
         <button
           key={String(opt.value)}
           type="button"
+          aria-pressed={value === opt.value}
           onClick={() => onChange(opt.value)}
           className={cn(
             "rounded-xl border px-4 py-3.5 text-left text-sm font-medium transition-colors focus-ring",
@@ -96,6 +98,7 @@ function YesNo({ value, onChange }: { value: boolean | undefined; onChange: (v: 
     <div className="grid grid-cols-2 gap-3">
       <button
         type="button"
+        aria-pressed={value === true}
         onClick={() => onChange(true)}
         className={cn(
           "rounded-xl border px-4 py-3 text-sm font-medium transition-colors focus-ring",
@@ -106,6 +109,7 @@ function YesNo({ value, onChange }: { value: boolean | undefined; onChange: (v: 
       </button>
       <button
         type="button"
+        aria-pressed={value === false}
         onClick={() => onChange(false)}
         className={cn(
           "rounded-xl border px-4 py-3 text-sm font-medium transition-colors focus-ring",
@@ -232,6 +236,7 @@ export default function OnboardingPage() {
         <div className="grid grid-cols-2 gap-3">
           <button
             type="button"
+            aria-pressed={answers.enjoys_people === true}
             onClick={() => {
               update("enjoys_people", true);
               update("prefers_systems", false);
@@ -245,6 +250,7 @@ export default function OnboardingPage() {
           </button>
           <button
             type="button"
+            aria-pressed={answers.prefers_systems === true}
             onClick={() => {
               update("enjoys_people", false);
               update("prefers_systems", true);
@@ -280,9 +286,7 @@ export default function OnboardingPage() {
       </Link>
 
       <div className="w-full max-w-lg">
-        <div className="mb-6 h-1.5 w-full overflow-hidden rounded-full bg-[rgb(var(--fg-tint)/0.08)]">
-          <div className="h-full rounded-full bg-accent transition-all duration-500" style={{ width: `${progress}%` }} />
-        </div>
+        <ProgressBar value={progress} trackClassName="mb-6" />
 
         <Card className="p-8">
           <div className="mb-2 inline-flex items-center gap-1.5 text-xs font-medium text-accent-light">
@@ -301,16 +305,25 @@ export default function OnboardingPage() {
               {mode === "signup" && (
                 <div>
                   <Label htmlFor="fullName">Full name</Label>
-                  <Input id="fullName" value={fullName} onChange={(e) => setFullName(e.target.value)} />
+                  <Input id="fullName" autoComplete="name" required value={fullName} onChange={(e) => setFullName(e.target.value)} />
                 </div>
               )}
               <div>
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                <Input id="email" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
               </div>
               <div>
                 <Label htmlFor="password">Password</Label>
-                <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                <Input
+                  id="password"
+                  type="password"
+                  autoComplete={mode === "signup" ? "new-password" : "current-password"}
+                  required
+                  minLength={mode === "signup" ? 8 : undefined}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                {mode === "signup" && <p className="mt-1 text-xs text-ink-500">At least 8 characters.</p>}
               </div>
               <button
                 type="button"

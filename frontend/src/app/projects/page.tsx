@@ -6,9 +6,10 @@ import { Clock, LayoutGrid, Search, Wrench, ArrowRight } from "lucide-react";
 import { AppShell } from "@/components/layout/app-shell";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
+import { Input, Label } from "@/components/ui/input";
 import { Alert } from "@/components/ui/alert";
 import { SkeletonCard } from "@/components/ui/skeleton";
+import { EmptyState } from "@/components/ui/empty-state";
 import { api, ApiError } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import type { RoleProjectCatalogEntry, CareerProjectItem } from "@/types";
@@ -19,11 +20,21 @@ const TIER_TONE: Record<CareerProjectItem["difficulty_label"], "success" | "acce
   Expert: "danger",
 };
 
+type DifficultyFilter = "all" | CareerProjectItem["difficulty_label"];
+
+const DIFFICULTY_FILTERS: { key: DifficultyFilter; label: string }[] = [
+  { key: "all", label: "All levels" },
+  { key: "Beginner", label: "Beginner" },
+  { key: "Intermediate", label: "Intermediate" },
+  { key: "Expert", label: "Expert" },
+];
+
 export default function ProjectsByRolePage() {
   const [catalog, setCatalog] = useState<RoleProjectCatalogEntry[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [activeRole, setActiveRole] = useState<string | null>(null);
   const [query, setQuery] = useState("");
+  const [difficulty, setDifficulty] = useState<DifficultyFilter>("all");
 
   useEffect(() => {
     api
@@ -39,11 +50,12 @@ export default function ProjectsByRolePage() {
   const visibleProjects = useMemo(() => {
     if (!activeEntry) return [];
     const q = query.trim().toLowerCase();
-    if (!q) return activeEntry.projects;
-    return activeEntry.projects.filter(
-      (p) => p.title.toLowerCase().includes(q) || p.teaches.toLowerCase().includes(q)
-    );
-  }, [activeEntry, query]);
+    return activeEntry.projects.filter((p) => {
+      if (difficulty !== "all" && p.difficulty_label !== difficulty) return false;
+      if (!q) return true;
+      return p.title.toLowerCase().includes(q) || p.teaches.toLowerCase().includes(q);
+    });
+  }, [activeEntry, query, difficulty]);
 
   return (
     <AppShell>
@@ -82,6 +94,7 @@ export default function ProjectsByRolePage() {
                 <button
                   key={entry.path.slug}
                   onClick={() => setActiveRole(active ? null : entry.path.slug)}
+                  aria-pressed={active}
                   className={cn(
                     "focus-ring rounded-2xl border p-4 text-left transition-colors",
                     active
@@ -110,65 +123,101 @@ export default function ProjectsByRolePage() {
                 <h2 className="text-lg font-semibold text-ink-100">{activeEntry.path.name} projects</h2>
                 <p className="text-sm text-ink-500">{activeEntry.path.summary}</p>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                 <div className="relative">
-                  <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-500" />
+                  <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-500" aria-hidden="true" />
+                  <Label htmlFor="project-search" className="sr-only">
+                    Search projects
+                  </Label>
                   <Input
+                    id="project-search"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder="Search projects"
-                    className="w-56 pl-8"
+                    aria-label="Search projects"
+                    className="w-full pl-8 sm:w-56"
                   />
                 </div>
                 <Link
                   href={`/careers/${activeEntry.path.slug}`}
-                  className="focus-ring inline-flex items-center gap-1.5 whitespace-nowrap rounded-xl bg-accent px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-accent-dark"
+                  className="focus-ring inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-accent px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-accent-dark"
                 >
                   Start this roadmap <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               </div>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {visibleProjects.map((project) => (
-                <Card key={project.id} className="flex flex-col p-4">
-                  <div className="flex items-center justify-between gap-2">
-                    <Badge tone={TIER_TONE[project.difficulty_label]}>{project.difficulty_label}</Badge>
-                    <span className="flex items-center gap-1 text-[11px] text-ink-500">
-                      <Clock className="h-3 w-3" /> {project.estimated_duration}
-                    </span>
-                  </div>
-                  <p className="mt-3 text-sm font-semibold text-ink-100">{project.title}</p>
-                  <p className="mt-1.5 flex-1 text-xs leading-relaxed text-ink-500">{project.teaches}</p>
-                  {project.prerequisites.length > 0 && (
-                    <div className="mt-3">
-                      <p className="text-[11px] font-medium text-ink-300">Skills you&apos;ll use</p>
-                      <div className="mt-1.5 flex flex-wrap gap-1">
-                        {project.prerequisites.slice(0, 4).map((skill) => (
-                          <Badge key={skill} tone="neutral" className="text-[10px]">
-                            {skill}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
+            <div className="flex flex-wrap gap-1.5" role="group" aria-label="Filter by difficulty">
+              {DIFFICULTY_FILTERS.map((f) => (
+                <button
+                  key={f.key}
+                  onClick={() => setDifficulty(f.key)}
+                  aria-pressed={difficulty === f.key}
+                  className={cn(
+                    "focus-ring whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
+                    f.key === difficulty
+                      ? "border-accent/40 bg-accent/15 text-accent-light"
+                      : "border-[rgb(var(--fg-tint)/0.1)] text-ink-400 hover:border-[rgb(var(--fg-tint)/0.2)]"
                   )}
-                  {activeEntry.path.tools.length > 0 && (
-                    <p className="mt-3 flex items-center gap-1.5 text-[11px] text-ink-500">
-                      <Wrench className="h-3 w-3 shrink-0" />
-                      <span className="truncate">{activeEntry.path.tools.slice(0, 3).join(", ")}</span>
-                    </p>
-                  )}
-                </Card>
+                >
+                  {f.label}
+                </button>
               ))}
-              {visibleProjects.length === 0 && (
-                <p className="col-span-full text-sm text-ink-500">No projects match &quot;{query}&quot; in this role.</p>
-              )}
             </div>
+
+            {visibleProjects.length > 0 ? (
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {visibleProjects.map((project) => (
+                  <Card key={project.id} className="flex flex-col p-4">
+                    <div className="flex items-center justify-between gap-2">
+                      <Badge tone={TIER_TONE[project.difficulty_label]}>{project.difficulty_label}</Badge>
+                      <span className="flex items-center gap-1 text-[11px] text-ink-500">
+                        <Clock className="h-3 w-3" /> {project.estimated_duration}
+                      </span>
+                    </div>
+                    <p className="mt-3 text-sm font-semibold text-ink-100">{project.title}</p>
+                    <p className="mt-1.5 flex-1 text-xs leading-relaxed text-ink-500">{project.teaches}</p>
+                    {project.prerequisites.length > 0 && (
+                      <div className="mt-3">
+                        <p className="text-[11px] font-medium text-ink-300">Skills you&apos;ll use</p>
+                        <div className="mt-1.5 flex flex-wrap gap-1">
+                          {project.prerequisites.slice(0, 4).map((skill) => (
+                            <Badge key={skill} tone="neutral" className="text-[10px]">
+                              {skill}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {activeEntry.path.tools.length > 0 && (
+                      <p className="mt-3 flex items-center gap-1.5 text-[11px] text-ink-500">
+                        <Wrench className="h-3 w-3 shrink-0" />
+                        <span className="truncate">{activeEntry.path.tools.slice(0, 3).join(", ")}</span>
+                      </p>
+                    )}
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <EmptyState
+                icon={Search}
+                title="No projects match your filters"
+                description={`Try a different search term or difficulty level within ${activeEntry.path.name}.`}
+              />
+            )}
           </div>
         )}
 
-        {catalog && !activeEntry && (
-          <Alert>Pick a role above to see its full project list.</Alert>
+        {catalog && catalog.length > 0 && !activeEntry && (
+          <Alert variant="info">Pick a role above to see its full project list.</Alert>
+        )}
+
+        {catalog && catalog.length === 0 && (
+          <EmptyState
+            icon={LayoutGrid}
+            title="No projects available yet"
+            description="We're still building out role-based projects. Check back soon."
+          />
         )}
       </div>
     </AppShell>

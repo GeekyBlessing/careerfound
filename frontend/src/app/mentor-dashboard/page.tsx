@@ -128,17 +128,17 @@ export default function MentorDashboardPage() {
           </div>
           <p className="text-xs text-ink-500">{summary.note}</p>
 
-          <div className="flex gap-2 border-b border-[rgb(var(--fg-tint)/0.06)]">
-            <TabButton active={tab === "sessions"} onClick={() => setTab("sessions")}>
+          <div role="tablist" aria-label="Mentor dashboard sections" className="flex gap-2 border-b border-[rgb(var(--fg-tint)/0.06)]">
+            <TabButton id="sessions" active={tab === "sessions"} onClick={() => setTab("sessions")}>
               Sessions
             </TabButton>
-            <TabButton active={tab === "profile"} onClick={() => setTab("profile")}>
+            <TabButton id="profile" active={tab === "profile"} onClick={() => setTab("profile")}>
               Profile &amp; availability
             </TabButton>
           </div>
 
           {tab === "sessions" && (
-            <div className="space-y-3">
+            <div id="sessions-panel" role="tabpanel" aria-labelledby="tab-sessions" className="space-y-3">
               {sessions && sessions.length === 0 && (
                 <EmptyState icon={Calendar} title="No sessions yet" description="Booked sessions and questions will show up here." />
               )}
@@ -148,7 +148,11 @@ export default function MentorDashboardPage() {
             </div>
           )}
 
-          {tab === "profile" && <ProfileEditor mentor={mentor} onSaved={setMentor} />}
+          {tab === "profile" && (
+            <div id="profile-panel" role="tabpanel" aria-labelledby="tab-profile">
+              <ProfileEditor mentor={mentor} onSaved={setMentor} />
+            </div>
+          )}
         </div>
       )}
     </AppShell>
@@ -167,11 +171,25 @@ function StatCard({ icon: Icon, label, value }: { icon: React.ElementType; label
   );
 }
 
-function TabButton({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+function TabButton({
+  id,
+  active,
+  onClick,
+  children,
+}: {
+  id: string;
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
   return (
     <button
+      id={`tab-${id}`}
+      role="tab"
+      aria-selected={active}
+      aria-controls={`${id}-panel`}
       onClick={onClick}
-      className={`-mb-px border-b-2 px-3 py-2 text-sm font-medium transition-colors ${
+      className={`focus-ring -mb-px border-b-2 px-3 py-2 text-sm font-medium transition-colors ${
         active ? "border-accent text-accent-light" : "border-transparent text-ink-500 hover:text-ink-300"
       }`}
     >
@@ -368,7 +386,11 @@ function RecommendationsComposer({ sessionId }: { sessionId: string }) {
               <span className="text-ink-200">
                 {item.title} <span className="text-ink-500">({item.item_type})</span>
               </span>
-              <button onClick={() => removeItem(i)} className="text-ink-500 hover:text-danger">
+              <button
+                onClick={() => removeItem(i)}
+                aria-label={`Remove ${item.title}`}
+                className="focus-ring rounded text-ink-500 hover:text-danger"
+              >
                 <Trash2 className="h-3 w-3" />
               </button>
             </div>
@@ -377,11 +399,24 @@ function RecommendationsComposer({ sessionId }: { sessionId: string }) {
       )}
 
       <div className="grid gap-2 sm:grid-cols-[1fr_1fr_auto]">
-        <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Learn Linux fundamentals" className="text-xs" />
-        <Input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Short description" className="text-xs" />
+        <Input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="e.g. Learn Linux fundamentals"
+          aria-label="Recommendation title"
+          className="text-xs"
+        />
+        <Input
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="Short description"
+          aria-label="Recommendation description"
+          className="text-xs"
+        />
         <select
           value={itemType}
           onChange={(e) => setItemType(e.target.value as RecommendationItem["item_type"])}
+          aria-label="Recommendation type"
           className="rounded-xl border border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.04)] px-3 py-2.5 text-xs text-ink-100 focus-ring"
         >
           <option value="skill">Skill</option>
@@ -438,20 +473,26 @@ function ProfileEditor({ mentor, onSaved }: { mentor: Mentor; onSaved: (m: Mento
       <div className="space-y-4">
         {error && <Alert>{error}</Alert>}
         <div>
-          <Label>Headline</Label>
-          <Input value={headline} onChange={(e) => setHeadline(e.target.value)} />
+          <Label htmlFor="mentor-headline">Headline</Label>
+          <Input id="mentor-headline" value={headline} onChange={(e) => setHeadline(e.target.value)} />
         </div>
         <div>
-          <Label>Bio</Label>
-          <Textarea value={bio} onChange={(e) => setBio(e.target.value)} rows={4} />
+          <Label htmlFor="mentor-bio">Bio</Label>
+          <Textarea id="mentor-bio" value={bio} onChange={(e) => setBio(e.target.value)} rows={4} />
         </div>
         <div>
-          <Label>Value proposition (used in mentor recommendations)</Label>
-          <Textarea value={valueProposition} onChange={(e) => setValueProposition(e.target.value)} rows={2} />
+          <Label htmlFor="mentor-value-proposition">Value proposition (used in mentor recommendations)</Label>
+          <Textarea
+            id="mentor-value-proposition"
+            value={valueProposition}
+            onChange={(e) => setValueProposition(e.target.value)}
+            rows={2}
+          />
         </div>
         <div>
-          <Label>Years of experience</Label>
+          <Label htmlFor="mentor-years">Years of experience</Label>
           <Input
+            id="mentor-years"
             type="number"
             min={0}
             value={yearsExperience}
@@ -461,8 +502,13 @@ function ProfileEditor({ mentor, onSaved }: { mentor: Mentor; onSaved: (m: Mento
           />
         </div>
         <div>
-          <Label>Availability note</Label>
-          <Textarea value={availabilityNote} onChange={(e) => setAvailabilityNote(e.target.value)} rows={2} />
+          <Label htmlFor="mentor-availability">Availability note</Label>
+          <Textarea
+            id="mentor-availability"
+            value={availabilityNote}
+            onChange={(e) => setAvailabilityNote(e.target.value)}
+            rows={2}
+          />
           <p className="mt-1 text-xs text-ink-500">
             Free text, there&apos;s no live calendar/scheduling system yet, so this is what mentees see.
           </p>

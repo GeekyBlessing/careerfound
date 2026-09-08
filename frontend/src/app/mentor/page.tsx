@@ -60,7 +60,7 @@ export default function MentorPage() {
       </div>
 
       <Card className="flex h-[65vh] flex-col overflow-hidden">
-        <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto p-6">
+        <div ref={scrollRef} role="log" aria-live="polite" className="flex-1 space-y-4 overflow-y-auto p-6">
           {messages.length === 0 && (
             <div className="flex h-full flex-col items-center justify-center text-center">
               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent/15 text-accent-light">
@@ -73,7 +73,7 @@ export default function MentorPage() {
                   <button
                     key={p}
                     onClick={() => sendMessage(p)}
-                    className="rounded-lg border border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] px-3.5 py-2 text-left text-xs text-ink-300 transition-colors hover:border-[rgb(var(--fg-tint)/0.2)] hover:text-ink-100"
+                    className="focus-ring rounded-lg border border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] px-3.5 py-2 text-left text-xs text-ink-300 transition-colors hover:border-[rgb(var(--fg-tint)/0.2)] hover:text-ink-100"
                   >
                     {p}
                   </button>
@@ -124,7 +124,7 @@ export default function MentorPage() {
               <button
                 key={f}
                 onClick={() => sendMessage(f)}
-                className="flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-xs text-accent-light hover:bg-accent/15"
+                className="focus-ring flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-xs text-accent-light hover:bg-accent/15"
               >
                 <Sparkles className="h-3 w-3" /> {f}
               </button>

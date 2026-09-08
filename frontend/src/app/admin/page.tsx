@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { SkeletonCard } from "@/components/ui/skeleton";
+import { SkeletonCard, Skeleton } from "@/components/ui/skeleton";
 import { api, ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import type { MentorApplication } from "@/types";
@@ -68,7 +68,13 @@ export default function AdminPage() {
         <h1 className="mt-1 text-2xl font-semibold text-ink-100">Platform overview</h1>
       </div>
 
-      {loading && <SkeletonCard />}
+      {loading && (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
+        </div>
+      )}
       {error && <Alert>{error}</Alert>}
 
       {overview && (
@@ -93,9 +99,9 @@ export default function AdminPage() {
               <div className="space-y-3">
                 {overview.most_popular_paths.length === 0 && <p className="text-xs text-ink-500">No roadmaps started yet.</p>}
                 {overview.most_popular_paths.map((p) => (
-                  <div key={p.path} className="flex items-center justify-between text-sm">
-                    <span className="text-ink-300">{p.path}</span>
-                    <span className="text-ink-500">{p.roadmaps_started} started</span>
+                  <div key={p.path} className="flex items-center justify-between gap-3 text-sm">
+                    <span className="truncate text-ink-300">{p.path}</span>
+                    <span className="flex-shrink-0 text-ink-500">{p.roadmaps_started} started</span>
                   </div>
                 ))}
               </div>
@@ -141,10 +147,16 @@ function MentorApplicationsSection() {
       <CardContent className="p-6">
         <p className="mb-1 text-sm font-semibold text-ink-100">Pending mentor applications</p>
         <p className="mb-4 text-xs text-ink-500">
-          Approval creates a real, but explicitly unverified, mentor profile, no automated identity or expertise
+          Approval creates a real, but explicitly unverified, mentor profile. No automated identity or expertise
           check is performed.
         </p>
         {error && <Alert className="mb-4">{error}</Alert>}
+        {!applications && !error && (
+          <div className="space-y-3">
+            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-24 w-full" />
+          </div>
+        )}
         {applications && applications.length === 0 && <p className="text-xs text-ink-500">No pending applications.</p>}
         <div className="space-y-3">
           {applications?.map((app) => (
@@ -166,10 +178,23 @@ function MentorApplicationsSection() {
                   )}
                 </div>
                 <div className="flex flex-shrink-0 gap-2">
-                  <Button size="sm" onClick={() => act(app.id, "approve")} loading={actingId === app.id} className="gap-1">
+                  <Button
+                    size="sm"
+                    onClick={() => act(app.id, "approve")}
+                    loading={actingId === app.id}
+                    aria-label={`Approve ${app.applicant_name}'s mentor application`}
+                    className="gap-1"
+                  >
                     <Check className="h-3 w-3" /> Approve
                   </Button>
-                  <Button size="sm" variant="ghost" onClick={() => act(app.id, "reject")} loading={actingId === app.id} className="gap-1">
+                  <Button
+                    size="sm"
+                    variant="danger"
+                    onClick={() => act(app.id, "reject")}
+                    loading={actingId === app.id}
+                    aria-label={`Reject ${app.applicant_name}'s mentor application`}
+                    className="gap-1"
+                  >
                     <X className="h-3 w-3" /> Reject
                   </Button>
                 </div>

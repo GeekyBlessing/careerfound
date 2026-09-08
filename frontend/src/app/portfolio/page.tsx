@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { FolderGit2, Save, ExternalLink } from "lucide-react";
+import { FolderGit2, Save, Download } from "lucide-react";
 import { AppShell } from "@/components/layout/app-shell";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -63,7 +63,8 @@ export default function PortfolioPage() {
               <button
                 key={item.id}
                 onClick={() => setActiveId(item.id)}
-                className={`w-full rounded-xl border px-4 py-3 text-left text-sm transition-colors ${
+                aria-pressed={activeId === item.id}
+                className={`focus-ring w-full rounded-xl border px-4 py-3 text-left text-sm transition-colors ${
                   activeId === item.id ? "border-accent bg-accent/10 text-ink-100" : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.02)] text-ink-400 hover:text-ink-100"
                 }`}
               >
@@ -118,20 +119,26 @@ function PortfolioEditor({ item, onSaved }: { item: PortfolioItem; onSaved: (ite
         </div>
 
         <div>
-          <Label>Project description</Label>
-          <Textarea rows={3} value={description} onChange={(e) => setDescription(e.target.value)} />
+          <Label htmlFor="portfolio-description">Project description</Label>
+          <Textarea id="portfolio-description" rows={3} value={description} onChange={(e) => setDescription(e.target.value)} />
         </div>
         <div>
-          <Label>CV bullet</Label>
-          <Input value={cvBullet} onChange={(e) => setCvBullet(e.target.value)} />
+          <Label htmlFor="portfolio-cv-bullet">CV bullet</Label>
+          <Input id="portfolio-cv-bullet" value={cvBullet} onChange={(e) => setCvBullet(e.target.value)} />
         </div>
         <div>
-          <Label>LinkedIn post</Label>
-          <Textarea rows={3} value={linkedin} onChange={(e) => setLinkedin(e.target.value)} />
+          <Label htmlFor="portfolio-linkedin">LinkedIn post</Label>
+          <Textarea id="portfolio-linkedin" rows={3} value={linkedin} onChange={(e) => setLinkedin(e.target.value)} />
         </div>
         <div>
-          <Label>README draft</Label>
-          <Textarea rows={8} value={readme} onChange={(e) => setReadme(e.target.value)} className="font-mono text-xs" />
+          <Label htmlFor="portfolio-readme">README draft</Label>
+          <Textarea
+            id="portfolio-readme"
+            rows={8}
+            value={readme}
+            onChange={(e) => setReadme(e.target.value)}
+            className="font-mono text-xs"
+          />
         </div>
 
         {saved && <Alert variant="info">Saved.</Alert>}
@@ -143,9 +150,9 @@ function PortfolioEditor({ item, onSaved }: { item: PortfolioItem; onSaved: (ite
           <a
             href={`data:text/markdown;charset=utf-8,${encodeURIComponent(readme)}`}
             download={`${item.title.replace(/\s+/g, "-").toLowerCase()}-README.md`}
-            className="inline-flex items-center gap-1.5 text-xs text-ink-500 hover:text-ink-300"
+            className="focus-ring inline-flex items-center gap-1.5 rounded text-xs text-ink-500 hover:text-ink-300"
           >
-            <ExternalLink className="h-3.5 w-3.5" /> Download README.md
+            <Download className="h-3.5 w-3.5" /> Download README.md
           </a>
         </div>
       </CardContent>

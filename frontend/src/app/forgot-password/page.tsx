@@ -43,13 +43,13 @@ export default function ForgotPasswordPage() {
         <Card className="p-8">
           {submitted ? (
             <div className="text-center">
-              <MailCheck className="mx-auto mb-4 h-10 w-10 text-accent-light" />
+              <MailCheck className="mx-auto mb-4 h-10 w-10 text-accent-light" aria-hidden="true" />
               <h1 className="text-lg font-semibold text-ink-100">Check your email</h1>
               <p className="mt-2 text-sm text-ink-500">
                 If an account exists for <span className="text-ink-300">{email}</span>, a password reset link is on
                 its way. It expires in 1 hour.
               </p>
-              <Link href="/login" className="mt-6 block text-sm font-medium text-accent-light hover:underline">
+              <Link href="/login" className="focus-ring mt-6 block rounded-sm text-sm font-medium text-accent-light hover:underline">
                 Back to log in
               </Link>
             </div>
@@ -78,7 +78,7 @@ export default function ForgotPasswordPage() {
 
               <p className="mt-6 text-center text-sm text-ink-500">
                 Remembered it?{" "}
-                <Link href="/login" className="font-medium text-accent-light hover:underline">
+                <Link href="/login" className="focus-ring rounded-sm font-medium text-accent-light hover:underline">
                   Log in
                 </Link>
               </p>

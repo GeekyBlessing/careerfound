@@ -70,6 +70,7 @@ export default function RetakeAssessmentPage() {
                 <div className="mt-3 grid grid-cols-2 gap-3">
                   <button
                     type="button"
+                    aria-pressed={answers[q.key] === true}
                     onClick={() => setAnswers((a) => ({ ...a, [q.key]: true }))}
                     className={cn(
                       "rounded-xl border px-4 py-2.5 text-sm font-medium transition-colors focus-ring",
@@ -80,6 +81,7 @@ export default function RetakeAssessmentPage() {
                   </button>
                   <button
                     type="button"
+                    aria-pressed={answers[q.key] === false}
                     onClick={() => setAnswers((a) => ({ ...a, [q.key]: false }))}
                     className={cn(
                       "rounded-xl border px-4 py-2.5 text-sm font-medium transition-colors focus-ring",

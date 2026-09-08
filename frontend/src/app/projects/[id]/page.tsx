@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
   ArrowLeft,
+  ArrowRight,
   CheckCircle2,
   Lightbulb,
   AlertTriangle,
@@ -53,8 +54,10 @@ export default function ProjectDetailPage() {
   const [reviewError, setReviewError] = useState<string | null>(null);
 
   const [marking, setMarking] = useState(false);
+  const [completeError, setCompleteError] = useState<string | null>(null);
   const [portfolio, setPortfolio] = useState<PortfolioItem | null>(null);
   const [generating, setGenerating] = useState(false);
+  const [portfolioError, setPortfolioError] = useState<string | null>(null);
 
   useEffect(() => {
     api
@@ -83,11 +86,12 @@ export default function ProjectDetailPage() {
 
   async function markComplete() {
     setMarking(true);
+    setCompleteError(null);
     try {
       await api.post(`/projects/${params.id}/submit`);
       setProject((p) => (p ? { ...p, status: "completed" } : p));
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Couldn't mark this project complete.");
+      setCompleteError(err instanceof ApiError ? err.message : "Couldn't mark this project complete.");
     } finally {
       setMarking(false);
     }
@@ -95,11 +99,12 @@ export default function ProjectDetailPage() {
 
   async function generatePortfolio() {
     setGenerating(true);
+    setPortfolioError(null);
     try {
       const res = await api.post<PortfolioItem>("/portfolio/generate", { project_id: params.id, submission_text: submission });
       setPortfolio(res);
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Couldn't generate portfolio copy.");
+      setPortfolioError(err instanceof ApiError ? err.message : "Couldn't generate portfolio copy.");
     } finally {
       setGenerating(false);
     }
@@ -111,7 +116,18 @@ export default function ProjectDetailPage() {
         <ArrowLeft className="h-3.5 w-3.5" /> Back to roadmap
       </Button>
 
-      {loading && <SkeletonCard />}
+      {loading && (
+        <div className="grid gap-6 lg:grid-cols-3">
+          <div className="space-y-6 lg:col-span-2">
+            <SkeletonCard />
+            <SkeletonCard />
+          </div>
+          <div className="space-y-6">
+            <SkeletonCard />
+            <SkeletonCard />
+          </div>
+        </div>
+      )}
       {error && <Alert>{error}</Alert>}
 
       {project && (
@@ -123,7 +139,7 @@ export default function ProjectDetailPage() {
               </Badge>
             </div>
             <h1 className="mt-2 flex items-center gap-2 text-2xl font-semibold text-ink-100">
-              <FolderGit2 className="h-5 w-5 text-ink-500" /> {project.title}
+              <FolderGit2 className="h-5 w-5 text-ink-500" aria-hidden="true" /> {project.title}
             </h1>
           </div>
 
@@ -166,7 +182,10 @@ export default function ProjectDetailPage() {
                     <Section icon={Lightbulb} title="Hints">
                       <ul className="space-y-1.5 text-sm text-ink-400">
                         {project.hints.map((h, i) => (
-                          <li key={i}>💡 {h}</li>
+                          <li key={i} className="flex gap-2">
+                            <Lightbulb className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-accent-light" aria-hidden="true" />
+                            {h}
+                          </li>
                         ))}
                       </ul>
                     </Section>
@@ -176,7 +195,10 @@ export default function ProjectDetailPage() {
                     <Section icon={AlertTriangle} title="Common mistakes">
                       <ul className="space-y-1.5 text-sm text-ink-400">
                         {project.common_mistakes.map((m, i) => (
-                          <li key={i}>⚠️ {m}</li>
+                          <li key={i} className="flex gap-2">
+                            <AlertTriangle className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-warning" aria-hidden="true" />
+                            {m}
+                          </li>
                         ))}
                       </ul>
                     </Section>
@@ -232,6 +254,7 @@ export default function ProjectDetailPage() {
                 <CardContent className="p-6">
                   <p className="text-sm font-semibold text-ink-100">Ready to submit?</p>
                   <p className="mt-1 text-xs text-ink-500">Mark this project complete once you&apos;re happy with it.</p>
+                  {completeError && <Alert className="mt-3">{completeError}</Alert>}
                   <Button
                     className="mt-4 w-full"
                     variant={project.status === "completed" ? "secondary" : "primary"}
@@ -250,6 +273,7 @@ export default function ProjectDetailPage() {
                   <p className="mt-1 text-xs text-ink-500">
                     Auto-generate a project description, README, CV bullet, and LinkedIn post.
                   </p>
+                  {portfolioError && <Alert className="mt-3">{portfolioError}</Alert>}
                   <Button variant="secondary" className="mt-4 w-full gap-1.5" onClick={generatePortfolio} loading={generating}>
                     <Sparkles className="h-3.5 w-3.5" /> Generate portfolio copy
                   </Button>
@@ -257,8 +281,8 @@ export default function ProjectDetailPage() {
                   {portfolio && (
                     <div className="mt-4 space-y-3 rounded-xl border border-[rgb(var(--fg-tint)/0.1)] bg-base-950/60 p-3 text-xs">
                       <p className="text-ink-300">{portfolio.cv_bullet}</p>
-                      <Button variant="ghost" size="sm" className="w-full" onClick={() => router.push("/portfolio")}>
-                        Edit in Portfolio Builder →
+                      <Button variant="ghost" size="sm" className="w-full gap-1.5" onClick={() => router.push("/portfolio")}>
+                        Edit in Portfolio Builder <ArrowRight className="h-3.5 w-3.5" />
                       </Button>
                     </div>
                   )}
