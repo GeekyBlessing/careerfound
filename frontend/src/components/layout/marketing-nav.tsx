@@ -5,13 +5,17 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Menu, X, Compass } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ThemeToggleButton } from "@/components/ui/theme-toggle";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 
 const links = [
-  { href: "/how-it-works", label: "How it works" },
+  { href: "/", label: "Home" },
   { href: "/careers", label: "Career paths" },
-  { href: "/mentors", label: "Mentors" },
+  { href: "/projects", label: "Projects" },
+  { href: "/how-it-works", label: "How it works" },
+  { href: "/mentorship", label: "Mentorship" },
+  { href: "/consultation", label: "Consultation" },
   { href: "/pricing", label: "Pricing" },
   { href: "/faq", label: "FAQ" },
 ];
@@ -47,6 +51,7 @@ export function MarketingNav() {
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
+          <ThemeToggleButton />
           {user ? (
             <Button size="sm" onClick={() => (window.location.href = "/dashboard")}>
               Go to dashboard
@@ -63,9 +68,12 @@ export function MarketingNav() {
           )}
         </div>
 
-        <button className="md:hidden text-ink-300" onClick={() => setOpen(!open)} aria-label="Toggle menu">
-          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
+        <div className="flex items-center gap-1 md:hidden">
+          <ThemeToggleButton />
+          <button className="p-1.5 text-ink-300" onClick={() => setOpen(!open)} aria-label="Toggle menu">
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
       </div>
 
       {open && (

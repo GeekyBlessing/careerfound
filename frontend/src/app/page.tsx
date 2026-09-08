@@ -45,14 +45,15 @@ export default function LandingPage() {
           <div className="container-page text-center">
             <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.04)] px-3.5 py-1.5 text-xs font-medium text-ink-300 animate-fade-in">
               <Sparkles className="h-3.5 w-3.5 text-accent-light" />
-              AI career advisor · roadmap generator · project accelerator, in one place
+              A career platform for people breaking into tech
             </div>
             <h1 className="mx-auto max-w-3xl text-4xl font-semibold tracking-tight text-gradient sm:text-6xl animate-fade-in">
-              You don&apos;t need to know where to start. We&apos;ll help you find your path.
+              Discover your tech career. Build the skills to get there.
             </h1>
             <p className="mx-auto mt-6 max-w-xl text-base text-ink-300 sm:text-lg animate-fade-in">
-              Discover the right tech career, get a personalized roadmap, build real projects, and
-              become job-ready, one step at a time.
+              Find the tech career that actually fits you, follow a roadmap built for it, and build
+              real projects that prove you can do the work. When you want a second opinion, get
+              guidance from an AI mentor or from Toriola directly.
             </p>
             <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row animate-fade-in">
               <Link href="/onboarding">
@@ -116,12 +117,13 @@ export default function LandingPage() {
         <section id="mentor" className="py-20">
           <div className="container-page grid gap-6 lg:grid-cols-2">
             <Card className="p-8">
-              <Badge tone="accent">AI Mentor</Badge>
-              <h3 className="mt-4 text-xl font-semibold text-ink-100">A patient senior engineer, not a generic chatbot</h3>
+              <Badge tone="accent">AI Mentor · one of several features</Badge>
+              <h3 className="mt-4 text-xl font-semibold text-ink-100">An AI powered learning assistant, on call whenever you&apos;re stuck</h3>
               <p className="mt-3 text-sm leading-relaxed text-ink-500">
-                Gives hints before answers, explains with real-world analogies before jargon, reviews
-                your code, runs mock interviews, and adjusts your roadmap when it notices you&apos;re
-                struggling.
+                It&apos;s software, not a person: it gives hints before answers, explains with
+                real-world analogies before jargon, reviews your code, runs mock interviews, and
+                adjusts your roadmap when it notices you&apos;re struggling. For a real professional&apos;s
+                perspective, human mentorship and consultation are one message away.
               </p>
               <div className="mt-6 space-y-3 rounded-xl border border-[rgb(var(--fg-tint)/0.1)] bg-base-950/60 p-4 text-sm">
                 <p className="text-[10px] font-medium uppercase tracking-wide text-ink-500">Example conversation</p>
@@ -166,16 +168,61 @@ export default function LandingPage() {
               </p>
             </Card>
             <Card className="p-8">
-              <Badge tone="accent">Mentorship Marketplace</Badge>
-              <h3 className="mt-4 text-xl font-semibold text-ink-100">Real professionals, when you need a human</h3>
+              <Badge tone="accent">Mentor marketplace</Badge>
+              <h3 className="mt-4 text-xl font-semibold text-ink-100">A wider pool of working professionals</h3>
               <p className="mt-3 text-sm leading-relaxed text-ink-500">
-                Book 30-minute sessions for portfolio reviews, mock interviews, and career guidance
-                with working professionals, filtered by the exact career path you&apos;re pursuing.
+                Book short sessions for portfolio reviews, mock interviews, and career guidance with
+                working professionals across the community, filtered by the exact career path
+                you&apos;re pursuing. Separate from Toriola&apos;s own 1:1 mentorship below.
               </p>
               <Link href="/mentors" className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline">
                 Browse mentors <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </Card>
+          </div>
+        </section>
+
+        {/* Outcomes */}
+        <section className="py-20">
+          <div className="container-page">
+            <SectionHeading
+              eyebrow="What CareerFound is built for"
+              title="What we're designed to help you achieve"
+              description="CareerFound is built around these outcomes. They're the goal we design toward, not a guarantee or a claim about any specific user."
+            />
+            <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {[
+                {
+                  title: "Clarity on a path",
+                  body: "Stop guessing which tech career fits you and start with one that matches how you actually think and work.",
+                },
+                {
+                  title: "A roadmap you can follow",
+                  body: "A staged plan for your chosen path, beginner through advanced, so you always know what to focus on next.",
+                },
+                {
+                  title: "A portfolio of real work",
+                  body: "Projects you actually build and can show, not just courses you watched.",
+                },
+                {
+                  title: "Interview readiness",
+                  body: "Practice with the AI mentor and preparation material built around the questions your target role actually asks.",
+                },
+                {
+                  title: "Access to human guidance",
+                  body: "A path to a real conversation, whether that's the mentor marketplace or 1:1 mentorship with Toriola, when software isn't enough.",
+                },
+                {
+                  title: "Momentum, not overwhelm",
+                  body: "One clear next step at a time instead of a hundred open tabs and no plan.",
+                },
+              ].map((o) => (
+                <Card key={o.title} className="p-6">
+                  <h3 className="text-sm font-semibold text-ink-100">{o.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-ink-500">{o.body}</p>
+                </Card>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -186,12 +233,17 @@ export default function LandingPage() {
             <div className="mt-12 grid gap-6 lg:grid-cols-3">
               {pricingTiers.map((tier) => (
                 <Card key={tier.name} className={cn("flex flex-col p-8", tier.highlighted && "border-accent/40")}>
-                  {tier.highlighted && <Badge tone="accent" className="mb-4 w-fit">Most popular</Badge>}
+                  {tier.paid ? (
+                    <Badge tone="warning" className="mb-4 w-fit">Paid service</Badge>
+                  ) : tier.highlighted ? (
+                    <Badge tone="accent" className="mb-4 w-fit">Most popular</Badge>
+                  ) : null}
                   <h3 className="text-lg font-semibold text-ink-100">{tier.name}</h3>
                   <div className="mt-2 flex items-baseline gap-1">
                     <span className="text-3xl font-semibold text-ink-100">{tier.price}</span>
                     <span className="text-sm text-ink-500">{tier.period}</span>
                   </div>
+                  {tier.priceAlt && <p className="mt-0.5 text-xs text-ink-500">or {tier.priceAlt}</p>}
                   <p className="mt-3 text-sm text-ink-500">{tier.description}</p>
                   <ul className="mt-6 flex-1 space-y-2.5 text-sm text-ink-300">
                     {tier.features.map((f) => (

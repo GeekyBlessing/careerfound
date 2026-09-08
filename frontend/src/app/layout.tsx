@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { AuthProvider } from "@/lib/auth";
 import { ThemeProvider } from "@/lib/theme";
+import { buildThemeInitScript } from "@/lib/theme-constants";
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {
@@ -10,9 +11,9 @@ export const metadata: Metadata = {
 };
 
 // Runs before React hydrates so the correct theme class is on <html> from
-// the very first paint (no light-then-dark flash). Mirrors the logic in
-// lib/theme.tsx's applyTheme/initial-theme resolution; keep both in sync.
-const themeInitScript = `(function(){try{var t=localStorage.getItem("careerfound-theme");if(!t){t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}if(t==="dark"){document.documentElement.classList.add("dark");}}catch(e){}})();`;
+// the very first paint (no light-then-dark flash). Generated from the same
+// source as lib/theme.tsx's resolution logic, see lib/theme-constants.ts.
+const themeInitScript = buildThemeInitScript();
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

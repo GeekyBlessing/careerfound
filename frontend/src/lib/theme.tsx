@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { THEME_STORAGE_KEY } from "@/lib/theme-constants";
 
 export type Theme = "light" | "dark";
 
@@ -12,12 +13,12 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
-const STORAGE_KEY = "careerfound-theme";
+const STORAGE_KEY = THEME_STORAGE_KEY;
 
-// Applies the class to <html> synchronously; also called from the inline
-// anti-flash script in layout.tsx before React hydrates, so this exact
-// logic is duplicated there in plain JS. Keep the two in sync if this
-// changes.
+// Applies the class to <html> synchronously; the inline anti-flash script
+// in layout.tsx runs the same resolution before React hydrates, both are
+// generated from lib/theme-constants.ts so the storage key and order can't
+// drift between the two.
 function applyTheme(theme: Theme) {
   const root = document.documentElement;
   if (theme === "dark") {
