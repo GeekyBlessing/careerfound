@@ -2,7 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowRight, Clock, Globe, Wrench, Briefcase } from "lucide-react";
+import {
+  ArrowRight,
+  Award,
+  Briefcase,
+  BookOpen,
+  Clock,
+  GraduationCap,
+  Globe,
+  MessageCircleQuestion,
+  Wrench,
+} from "lucide-react";
 import { PublicShell } from "@/components/layout/public-shell";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -11,7 +21,7 @@ import { Alert } from "@/components/ui/alert";
 import { SkeletonCard } from "@/components/ui/skeleton";
 import { SmartMentorRecommendation } from "@/components/mentors/smart-mentor-recommendation";
 import { api, ApiError } from "@/lib/api";
-import type { CareerPath, CareerProjectItem } from "@/types";
+import type { CareerPath, CareerProjectItem, RoadmapOutline } from "@/types";
 
 const TIER_ORDER: CareerProjectItem["difficulty_label"][] = ["Beginner", "Intermediate", "Expert"];
 const TIER_TONE: Record<CareerProjectItem["difficulty_label"], "success" | "accent" | "danger"> = {
@@ -19,6 +29,12 @@ const TIER_TONE: Record<CareerProjectItem["difficulty_label"], "success" | "acce
   Intermediate: "accent",
   Expert: "danger",
 };
+
+const ROADMAP_TIERS: { key: keyof RoadmapOutline; label: string; tone: "success" | "accent" | "danger" }[] = [
+  { key: "beginner", label: "Beginner", tone: "success" },
+  { key: "intermediate", label: "Intermediate", tone: "accent" },
+  { key: "advanced", label: "Advanced", tone: "danger" },
+];
 
 export default function CareerDetailPage() {
   const params = useParams<{ slug: string }>();
@@ -103,9 +119,24 @@ export default function CareerDetailPage() {
               </Card>
             </div>
 
+            {path.skills_required.length > 0 && (
+              <div className="mt-6">
+                <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-ink-500">
+                  <GraduationCap className="h-3.5 w-3.5" /> Skills you&apos;ll build
+                </p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {path.skills_required.map((skill) => (
+                    <Badge key={skill} tone="accent">
+                      {skill}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div className="mt-6">
               <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-ink-500">
-                <Wrench className="h-3.5 w-3.5" /> Key skills
+                <Wrench className="h-3.5 w-3.5" /> Tools &amp; technologies
               </p>
               <div className="mt-2 flex flex-wrap gap-2">
                 {path.tools.map((tool) => (
@@ -120,6 +151,39 @@ export default function CareerDetailPage() {
               Start this roadmap <ArrowRight className="h-3.5 w-3.5" />
             </Button>
           </div>
+
+          {(path.roadmap_outline.beginner.length > 0 ||
+            path.roadmap_outline.intermediate.length > 0 ||
+            path.roadmap_outline.advanced.length > 0) && (
+            <div>
+              <h2 className="mb-1 text-lg font-semibold text-ink-100">Your roadmap, stage by stage</h2>
+              <p className="mb-5 text-sm text-ink-500">
+                What to focus on at each stage. Pair this with the projects below to know what to learn and what
+                to build next.
+              </p>
+              <div className="grid gap-4 lg:grid-cols-3">
+                {ROADMAP_TIERS.map((tier) => {
+                  const items = path.roadmap_outline[tier.key];
+                  if (!items || items.length === 0) return null;
+                  return (
+                    <Card key={tier.key} className="p-4">
+                      <Badge tone={tier.tone} className="w-fit">
+                        {tier.label}
+                      </Badge>
+                      <ul className="mt-3 space-y-2">
+                        {items.map((item) => (
+                          <li key={item} className="flex gap-2 text-xs leading-relaxed text-ink-400">
+                            <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-accent" aria-hidden="true" />
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </Card>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           <div>
             <h2 className="mb-1 text-lg font-semibold text-ink-100">What you&apos;ll actually build</h2>
@@ -172,6 +236,59 @@ export default function CareerDetailPage() {
               </div>
             )}
           </div>
+
+          {(path.certifications.length > 0 || path.interview_prep.length > 0 || path.learning_resources.length > 0) && (
+            <div>
+              <h2 className="mb-1 text-lg font-semibold text-ink-100">Getting job ready</h2>
+              <p className="mb-5 text-sm text-ink-500">
+                Certifications worth pursuing, what to expect in interviews, and where to go deeper.
+              </p>
+              <div className="space-y-3">
+                {path.certifications.length > 0 && (
+                  <details className="group rounded-xl border border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] p-5 open:bg-[rgb(var(--fg-tint)/0.05)]">
+                    <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-medium text-ink-100 marker:content-none">
+                      <Award className="h-4 w-4 text-accent-light" /> Certifications worth pursuing
+                    </summary>
+                    <ul className="mt-3 space-y-1.5">
+                      {path.certifications.map((cert) => (
+                        <li key={cert} className="text-sm leading-relaxed text-ink-500">
+                          {cert}
+                        </li>
+                      ))}
+                    </ul>
+                  </details>
+                )}
+                {path.interview_prep.length > 0 && (
+                  <details className="group rounded-xl border border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] p-5 open:bg-[rgb(var(--fg-tint)/0.05)]">
+                    <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-medium text-ink-100 marker:content-none">
+                      <MessageCircleQuestion className="h-4 w-4 text-accent-light" /> Interview prep
+                    </summary>
+                    <ul className="mt-3 space-y-1.5">
+                      {path.interview_prep.map((q) => (
+                        <li key={q} className="text-sm leading-relaxed text-ink-500">
+                          {q}
+                        </li>
+                      ))}
+                    </ul>
+                  </details>
+                )}
+                {path.learning_resources.length > 0 && (
+                  <details className="group rounded-xl border border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] p-5 open:bg-[rgb(var(--fg-tint)/0.05)]">
+                    <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-medium text-ink-100 marker:content-none">
+                      <BookOpen className="h-4 w-4 text-accent-light" /> Recommended learning resources
+                    </summary>
+                    <ul className="mt-3 space-y-2.5">
+                      {path.learning_resources.map((r) => (
+                        <li key={r.label} className="text-sm leading-relaxed text-ink-500">
+                          <span className="font-medium text-ink-300">{r.label}:</span> {r.note}
+                        </li>
+                      ))}
+                    </ul>
+                  </details>
+                )}
+              </div>
+            </div>
+          )}
 
           <SmartMentorRecommendation pathSlug={path.slug} pathName={path.name} />
         </div>

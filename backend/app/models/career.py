@@ -22,6 +22,22 @@ class CareerPath(Base, UUIDMixin, TimestampMixin):
     icon: Mapped[str] = mapped_column(String(32), default="sparkles")
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
+    # Career-directory depth fields. These are deliberately kept separate
+    # from `tools` (which is tools/technologies) and `entry_roles` (job
+    # titles): `skills_required` is the underlying competencies (e.g.
+    # "Networking fundamentals"), distinct from the software you use them
+    # in. `roadmap_outline` is a short, real, per-tier "what to focus on"
+    # guide, not a substitute for the full lesson/exercise/quiz curriculum
+    # that only 2 paths have today (see docs/PHASE_2.md item #5) — every
+    # path gets this lighter outline, not every path gets full lessons.
+    skills_required: Mapped[list] = mapped_column(JSON, default=list)
+    certifications: Mapped[list] = mapped_column(JSON, default=list)
+    interview_prep: Mapped[list] = mapped_column(JSON, default=list)
+    # list[{"label": str, "note": str}]
+    learning_resources: Mapped[list] = mapped_column(JSON, default=list)
+    # {"beginner": list[str], "intermediate": list[str], "advanced": list[str]}
+    roadmap_outline: Mapped[dict] = mapped_column(JSON, default=dict)
+
 
 class PathFitRule(Base, UUIDMixin, TimestampMixin):
     """Declarative scoring rule: how much a given profile trait/answer should

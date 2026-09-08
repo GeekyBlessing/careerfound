@@ -15,6 +15,17 @@ export interface User {
   marketing_opt_in: boolean;
 }
 
+export interface LearningResource {
+  label: string;
+  note: string;
+}
+
+export interface RoadmapOutline {
+  beginner: string[];
+  intermediate: string[];
+  advanced: string[];
+}
+
 export interface CareerPath {
   id: string;
   slug: string;
@@ -28,6 +39,11 @@ export interface CareerPath {
   remote_potential: number;
   earning_notes: string;
   icon: string;
+  skills_required: string[];
+  certifications: string[];
+  interview_prep: string[];
+  learning_resources: LearningResource[];
+  roadmap_outline: RoadmapOutline;
 }
 
 export interface SkillTransfer {

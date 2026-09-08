@@ -1,8 +1,16 @@
-"""Full career path catalog — all 20 paths from the product spec, with real,
+"""Full career path catalog — all 21 paths from the product spec, with real,
 non-lorem-ipsum copy. Two paths (cybersecurity, software-engineering) get a
 complete phased roadmap in seed_data.py; the rest are fully browsable/
 assessable today and clearly marked as "roadmap content coming soon" if a
 user tries to generate a roadmap for them.
+
+Every path also carries directory-depth fields (skills_required,
+certifications, interview_prep, learning_resources, roadmap_outline) so the
+career directory page can show real, path-specific guidance beyond the
+short summary. These are deliberately a compact outline, not a substitute
+for the full lesson/exercise/quiz curriculum that only the two paths above
+have (see docs/PHASE_2.md item #5). Certifications and learning resources
+are limited to real, well-known, verifiable names, not invented programs.
 """
 
 CAREER_PATHS = [
@@ -17,6 +25,15 @@ CAREER_PATHS = [
         remote_potential=75,
         earning_notes="Entry-level SOC roles commonly start in the $45k-$70k range in the US (lower in many regions, higher with certifications); pay grows quickly with 1-2 years of experience.",
         icon="shield",
+        skills_required=["Networking fundamentals (TCP/IP, DNS, HTTP)", "Linux command line", "Recognizing common attack patterns", "Log analysis and pattern recognition", "Basic scripting for automation"],
+        certifications=["CompTIA Security+", "CompTIA Network+", "Google Cybersecurity Professional Certificate"],
+        interview_prep=["Explain the difference between symmetric and asymmetric encryption", "Walk through how you'd triage a phishing report", "What is the CIA triad and why does it matter", "Describe how you'd investigate unusual outbound traffic from a server", "How do you stay current on new vulnerabilities"],
+        learning_resources=[{"label": "TryHackMe", "note": "Free, guided, hands-on security labs built for beginners."}, {"label": "OWASP", "note": "Open, free reference for common web application vulnerabilities."}, {"label": "Professor Messer", "note": "Free video courses covering Security+ exam material."}],
+        roadmap_outline={
+            "beginner": ["Learn how networks and the internet actually work (TCP/IP, DNS, HTTP)", "Get comfortable working in a Linux terminal", "Understand the CIA triad and common attack types", "Set up a home lab with a virtual machine"],
+            "intermediate": ["Practice reading and triaging SIEM alerts", "Learn packet analysis with Wireshark", "Study for and take CompTIA Security+", "Start applying to SOC Analyst Tier 1 roles or internships"],
+            "advanced": ["Pick a specialization: SOC, cloud security, or penetration testing", "Enter a CTF (Capture the Flag) competition", "Document real investigations for your portfolio", "Pursue a track-specific certification"],
+        },
     ),
     dict(
         slug="software-engineering",
@@ -29,6 +46,15 @@ CAREER_PATHS = [
         remote_potential=85,
         earning_notes="Entry-level roles vary hugely by market, commonly $55k-$95k in the US, with strong remote demand globally for developers who can demonstrate real projects.",
         icon="code",
+        skills_required=["Programming fundamentals (variables, loops, functions)", "Data structures and algorithms basics", "Version control with Git", "Reading and debugging error messages", "Working with APIs and databases"],
+        certifications=[],
+        interview_prep=["Solve a basic array or string manipulation problem out loud", "Explain the difference between a list and a dictionary/object", "Walk through how you'd debug a failing test", "Describe a project you built and a tradeoff you made", "What's the difference between GET and POST requests"],
+        learning_resources=[{"label": "The Odin Project", "note": "Free, project-based full-stack curriculum."}, {"label": "freeCodeCamp", "note": "Free, structured coding curriculum with certifications."}, {"label": "MDN Web Docs", "note": "The standard free reference for JavaScript and web fundamentals."}],
+        roadmap_outline={
+            "beginner": ["Learn one language deeply (Python or JavaScript) rather than several shallowly", "Practice with small daily coding exercises", "Learn Git and push your first project to GitHub", "Build a simple command-line or to-do app end to end"],
+            "intermediate": ["Learn SQL and connect an app to a real database", "Build and consume a REST API", "Study core data structures and algorithms", "Contribute to an open-source project or build with a teammate"],
+            "advanced": ["Build a full project with authentication, a database, and deployment", "Practice whiteboard-style problem solving under time pressure", "Write tests for your own code", "Start applying and iterating on your resume from real feedback"],
+        },
     ),
     dict(
         slug="frontend-development", name="Frontend Development",
@@ -39,6 +65,15 @@ CAREER_PATHS = [
         tools=["HTML/CSS", "JavaScript", "React", "Git"], remote_potential=85,
         earning_notes="Often one of the more accessible entry points into software, with strong freelance/remote demand.",
         icon="layout",
+        skills_required=["Semantic HTML and accessible markup", "CSS layout (Flexbox, Grid, responsive design)", "JavaScript fundamentals and the DOM", "Component-based UI thinking (React)", "Reading a design file (Figma) and building it accurately"],
+        certifications=[],
+        interview_prep=["Build a responsive card layout live", "Explain the CSS box model", "What happens when you type a URL and press enter", "How would you make a page accessible to a screen reader user", "Debug a layout that looks broken on mobile"],
+        learning_resources=[{"label": "MDN Web Docs", "note": "The standard free reference for HTML, CSS, and JavaScript."}, {"label": "freeCodeCamp", "note": "Free, structured frontend curriculum with certifications."}, {"label": "React official docs", "note": "Free, official, and kept current with modern React patterns."}],
+        roadmap_outline={
+            "beginner": ["Learn semantic HTML and CSS layout (Flexbox and Grid)", "Practice turning static designs into pixel-accurate pages", "Learn JavaScript fundamentals and DOM manipulation", "Make three small pages fully responsive on mobile"],
+            "intermediate": ["Learn React components, props, and state", "Practice fetching and displaying real API data", "Learn basic accessibility (labels, alt text, keyboard navigation)", "Build a small multi-page app with routing"],
+            "advanced": ["Learn state management patterns for larger apps", "Optimize a real page for performance (images, bundle size)", "Write a few component tests", "Polish a portfolio site that showcases your best 2-3 projects"],
+        },
     ),
     dict(
         slug="backend-engineering", name="Backend Engineering",
@@ -49,6 +84,15 @@ CAREER_PATHS = [
         tools=["Python/Node.js", "SQL", "REST/GraphQL", "Docker basics"], remote_potential=85,
         earning_notes="Backend roles often pay slightly above average entry-level dev salaries due to systems complexity.",
         icon="server",
+        skills_required=["Server-side programming (Python or Node.js)", "Relational database design and SQL", "API design (REST)", "Authentication and authorization basics", "Reading logs and debugging server errors"],
+        certifications=[],
+        interview_prep=["Design a database schema for a simple booking system", "Explain the difference between SQL and NoSQL, and when you'd use each", "What is an API rate limit and why does it exist", "Walk through how a user's password should be stored", "Debug a slow database query"],
+        learning_resources=[{"label": "freeCodeCamp", "note": "Free backend and API development curriculum."}, {"label": "PostgreSQL official docs", "note": "Free, official documentation for one of the most-used open-source databases."}, {"label": "roadmap.sh", "note": "Free, community-maintained backend learning roadmap."}],
+        roadmap_outline={
+            "beginner": ["Learn a server-side language (Python or Node.js) and write small scripts", "Learn relational database basics and write real SQL queries", "Build a simple CRUD API with one resource", "Learn how HTTP requests and status codes work"],
+            "intermediate": ["Add authentication (login, sessions or tokens) to an API", "Design a multi-table database schema with real relationships", "Learn to containerize an app with Docker", "Write basic automated tests for your endpoints"],
+            "advanced": ["Design an API that handles pagination, filtering, and errors gracefully", "Learn caching and basic performance tuning", "Deploy a real backend service and monitor its logs", "Document your API clearly for another developer to use"],
+        },
     ),
     dict(
         slug="full-stack-development", name="Full-Stack Development",
@@ -59,6 +103,15 @@ CAREER_PATHS = [
         tools=["JavaScript/TypeScript", "React", "Node.js", "SQL"], remote_potential=85,
         earning_notes="Versatility is valued by smaller companies and startups especially; pay is competitive with backend roles.",
         icon="layers",
+        skills_required=["Frontend fundamentals (HTML, CSS, JavaScript, React)", "Backend fundamentals (APIs, databases)", "Connecting a frontend to a real backend end to end", "Basic deployment and hosting", "Debugging across the whole stack, not just one layer"],
+        certifications=[],
+        interview_prep=["Walk through the full request path from a button click to a database write", "How would you structure a new full-stack project from scratch", "Explain how you'd handle a bug that only shows up in production", "What tradeoffs would you make for a fast MVP versus a scalable system", "Describe your process for choosing a tech stack"],
+        learning_resources=[{"label": "The Odin Project", "note": "Free, project-based full-stack curriculum."}, {"label": "freeCodeCamp", "note": "Free full-stack curriculum covering both frontend and backend."}, {"label": "roadmap.sh", "note": "Free, community-maintained full-stack learning roadmap."}],
+        roadmap_outline={
+            "beginner": ["Get comfortable with HTML, CSS, and JavaScript basics", "Learn a backend language and build a simple API", "Connect a basic frontend to that API", "Learn Git well enough to work without fear of losing changes"],
+            "intermediate": ["Build one full app end to end: frontend, backend, and a real database", "Add authentication across the whole app", "Deploy the app somewhere real (not just localhost)", "Learn to read and fix bugs that span both frontend and backend"],
+            "advanced": ["Build a second, more ambitious full-stack project solo", "Practice explaining architecture decisions clearly", "Add tests across both frontend and backend", "Polish a portfolio that shows range across the stack"],
+        },
     ),
     dict(
         slug="cloud-engineering", name="Cloud Engineering",
@@ -69,6 +122,15 @@ CAREER_PATHS = [
         tools=["AWS/Azure/GCP basics", "Linux", "Terraform", "Docker"], remote_potential=80,
         earning_notes="Cloud certifications (e.g. AWS Cloud Practitioner) meaningfully boost entry-level offers.",
         icon="cloud",
+        skills_required=["Cloud fundamentals (compute, storage, networking)", "Linux administration basics", "Infrastructure as code (Terraform)", "Understanding cost and scaling tradeoffs", "Basic scripting for automation"],
+        certifications=["AWS Certified Cloud Practitioner", "AWS Certified Solutions Architect - Associate", "Microsoft Certified: Azure Fundamentals"],
+        interview_prep=["Explain the difference between IaaS, PaaS, and SaaS", "How would you design a system to survive one server going down", "What is infrastructure as code and why use it", "Walk through how you'd troubleshoot a service that's unreachable", "How do you keep cloud costs under control"],
+        learning_resources=[{"label": "AWS Skill Builder", "note": "AWS's own free training, including Cloud Practitioner prep."}, {"label": "Microsoft Learn", "note": "Free, official Azure training paths."}, {"label": "Terraform official docs", "note": "Free, official documentation for infrastructure as code."}],
+        roadmap_outline={
+            "beginner": ["Learn core cloud concepts: compute, storage, networking", "Get comfortable navigating one provider's console (AWS, Azure, or GCP)", "Learn Linux basics if you haven't already", "Study for and take a foundational cloud certification"],
+            "intermediate": ["Learn infrastructure as code with Terraform", "Deploy a small real app to the cloud yourself", "Learn Docker and containerization basics", "Understand IAM (identity and access management) fundamentals"],
+            "advanced": ["Design a small system for reliability (backups, redundancy)", "Learn basic cost monitoring and optimization", "Pursue an associate-level cloud certification", "Document a cloud architecture you designed for your portfolio"],
+        },
     ),
     dict(
         slug="cloud-security", name="Cloud Security",
@@ -79,6 +141,15 @@ CAREER_PATHS = [
         tools=["AWS/Azure security tools", "IAM", "Linux", "Python"], remote_potential=75,
         earning_notes="A growing, higher-paying specialization once foundational cloud + security skills are in place.",
         icon="lock",
+        skills_required=["Cloud fundamentals across at least one major provider", "Identity and access management (IAM)", "Common cloud misconfiguration patterns", "Security monitoring and alerting", "Networking and firewall fundamentals"],
+        certifications=["CompTIA Security+", "AWS Certified Security - Specialty", "AWS Certified Cloud Practitioner"],
+        interview_prep=["What's the most common cause of a cloud data breach in your view, and why", "Explain least-privilege access and why it matters", "How would you audit an S3 bucket (or equivalent) for exposure", "Describe how you'd respond to a suspicious IAM role change", "What's the shared responsibility model in cloud security"],
+        learning_resources=[{"label": "AWS Skill Builder", "note": "Includes free cloud security fundamentals training."}, {"label": "OWASP", "note": "Free reference material that applies directly to cloud-hosted applications."}, {"label": "Center for Internet Security (CIS) Benchmarks", "note": "Free, widely used cloud security configuration baselines."}],
+        roadmap_outline={
+            "beginner": ["Build solid cloud fundamentals first (compute, storage, networking, IAM)", "Learn common cloud misconfiguration patterns", "Practice reading cloud security alerts and logs", "Study foundational security concepts (CIA triad, least privilege)"],
+            "intermediate": ["Learn to audit IAM policies and permissions", "Practice with a provider's native security tools (e.g. GuardDuty, Security Center)", "Study for a foundational security or cloud certification", "Understand encryption at rest and in transit"],
+            "advanced": ["Learn incident response specific to cloud environments", "Pursue a specialty cloud security certification", "Practice threat modeling a real cloud architecture", "Document a cloud security review for your portfolio"],
+        },
     ),
     dict(
         slug="soc-analysis", name="SOC Analysis",
@@ -89,6 +160,15 @@ CAREER_PATHS = [
         tools=["SIEM (Splunk)", "Linux basics", "Networking fundamentals"], remote_potential=60,
         earning_notes="One of the more accessible entry points into cybersecurity; often the first rung on the ladder.",
         icon="monitor",
+        skills_required=["Reading and triaging SIEM alerts", "Networking fundamentals", "Recognizing common attack signatures", "Clear incident documentation and communication", "Staying calm and methodical under time pressure"],
+        certifications=["CompTIA Security+", "CompTIA Network+"],
+        interview_prep=["Walk through how you'd triage a burst of failed login alerts", "What's the difference between a false positive and a true negative", "How would you escalate an incident you can't resolve yourself", "Explain what a SIEM does in plain language", "Describe a systematic process for investigating an alert"],
+        learning_resources=[{"label": "TryHackMe", "note": "Free SOC-analyst-focused learning paths and labs."}, {"label": "Splunk Free", "note": "Splunk's free tier, enough to practice real SIEM queries."}, {"label": "Professor Messer", "note": "Free video courses covering Security+ exam material."}],
+        roadmap_outline={
+            "beginner": ["Learn networking fundamentals (TCP/IP, DNS, common ports)", "Get familiar with a SIEM tool using its free tier", "Learn to recognize common attack signatures in logs", "Study foundational security concepts"],
+            "intermediate": ["Practice triaging realistic alert scenarios end to end", "Learn to write clear incident notes and handoffs", "Study for and take CompTIA Security+", "Shadow or study real SOC playbooks and escalation paths"],
+            "advanced": ["Practice faster, more confident triage under time pressure", "Learn basic threat intelligence concepts", "Start building toward Tier 2 responsibilities (deeper investigation)", "Document a few investigations for your portfolio"],
+        },
     ),
     dict(
         slug="penetration-testing", name="Penetration Testing",
@@ -99,6 +179,15 @@ CAREER_PATHS = [
         tools=["Kali Linux", "Burp Suite", "Python", "Metasploit"], remote_potential=65,
         earning_notes="Usually requires 1-2 years of foundational security experience first; pay rises quickly once certified.",
         icon="crosshair",
+        skills_required=["Networking and web application fundamentals", "Common vulnerability classes (OWASP Top 10)", "Scripting for exploit development and automation", "Methodical, ethical testing process", "Clear vulnerability reporting and communication"],
+        certifications=["CompTIA Security+", "eJPT (eLearnSecurity Junior Penetration Tester)", "OSCP (longer-term goal, not a beginner certification)"],
+        interview_prep=["Walk through your process for testing a login form", "Explain SQL injection to a non-technical stakeholder", "What's the difference between a vulnerability scan and a penetration test", "How would you responsibly disclose a finding", "Describe the OWASP Top 10 and why it matters"],
+        learning_resources=[{"label": "TryHackMe", "note": "Free, guided offensive-security labs for beginners."}, {"label": "OWASP", "note": "Free reference for the vulnerability classes penetration testers look for."}, {"label": "Hack The Box (free tier)", "note": "Free-tier hands-on penetration testing practice targets."}],
+        roadmap_outline={
+            "beginner": ["Build strong networking and web fundamentals first", "Learn the OWASP Top 10 vulnerability classes", "Practice on beginner-friendly legal lab platforms", "Get comfortable with Linux and basic scripting"],
+            "intermediate": ["Learn a proxy tool (Burp Suite) for web app testing", "Practice writing clear, professional vulnerability reports", "Study for and take an entry-level offensive security certification", "Understand the legal and ethical boundaries of testing"],
+            "advanced": ["Practice on harder, realistic lab environments", "Specialize (web apps, networks, or mobile)", "Work toward a recognized advanced certification", "Build a portfolio of anonymized, permission-based findings"],
+        },
     ),
     dict(
         slug="devops", name="DevOps",
@@ -109,6 +198,15 @@ CAREER_PATHS = [
         tools=["Docker", "CI/CD (GitHub Actions)", "Linux", "Cloud basics"], remote_potential=80,
         earning_notes="Often a step taken after some software or sysadmin experience, but increasingly a direct entry path.",
         icon="git-branch",
+        skills_required=["Linux administration", "CI/CD pipeline design", "Containerization (Docker)", "Infrastructure as code basics", "Monitoring and incident response fundamentals"],
+        certifications=["AWS Certified Cloud Practitioner", "Docker Certified Associate", "Certified Kubernetes Administrator (longer-term goal)"],
+        interview_prep=["Walk through what happens when a developer pushes code to your pipeline", "Explain the difference between continuous integration and continuous deployment", "How would you debug a failing deployment", "What's the value of infrastructure as code", "Describe how you'd set up monitoring for a new service"],
+        learning_resources=[{"label": "Docker official docs", "note": "Free, official documentation and getting-started guides."}, {"label": "GitHub Actions docs", "note": "Free, official documentation for building CI/CD pipelines."}, {"label": "roadmap.sh", "note": "Free, community-maintained DevOps learning roadmap."}],
+        roadmap_outline={
+            "beginner": ["Get solid with Linux fundamentals and shell scripting", "Learn Docker and containerize a simple app", "Set up a basic CI pipeline for a personal project", "Learn Git workflows used in team environments"],
+            "intermediate": ["Build a full CI/CD pipeline: test, build, deploy", "Learn infrastructure as code basics (Terraform)", "Get comfortable with one cloud provider's core services", "Learn basic monitoring and logging setup"],
+            "advanced": ["Learn container orchestration basics (Kubernetes concepts)", "Practice incident response and rollback strategies", "Pursue a cloud or container certification", "Document a pipeline you built end to end for your portfolio"],
+        },
     ),
     dict(
         slug="data-analysis", name="Data Analysis",
@@ -119,6 +217,15 @@ CAREER_PATHS = [
         tools=["SQL", "Excel/Sheets", "Python (pandas)", "Tableau/Looker"], remote_potential=75,
         earning_notes="A common, accessible entry point into the broader data field.",
         icon="bar-chart",
+        skills_required=["SQL querying and joins", "Spreadsheet analysis", "Data cleaning and validation", "Basic statistics", "Turning findings into a clear narrative for non-technical people"],
+        certifications=["Google Data Analytics Professional Certificate", "Microsoft Certified: Power BI Data Analyst Associate"],
+        interview_prep=["Walk through how you'd clean a messy dataset", "Write a SQL query to find the top customers by revenue", "How would you explain a statistical finding to a non-technical stakeholder", "What's the difference between correlation and causation", "Describe a time data changed a decision you or a team made"],
+        learning_resources=[{"label": "Mode SQL Tutorial", "note": "Free, widely used interactive SQL tutorial."}, {"label": "Kaggle Learn", "note": "Free short courses in Python, pandas, and data analysis."}, {"label": "freeCodeCamp", "note": "Free data analysis with Python curriculum."}],
+        roadmap_outline={
+            "beginner": ["Learn SQL well enough to join and filter real tables", "Get comfortable with spreadsheet formulas and pivot tables", "Learn basic descriptive statistics", "Practice cleaning a genuinely messy public dataset"],
+            "intermediate": ["Learn Python with pandas for larger analysis", "Build your first dashboard in a BI tool (Tableau or Looker Studio)", "Practice turning an analysis into a short written or visual summary", "Work through a real, public dataset end to end"],
+            "advanced": ["Learn to design your own analysis from an open-ended business question", "Practice presenting findings clearly to a non-technical audience", "Build 2-3 portfolio-quality dashboards or reports", "Learn basic A/B testing concepts"],
+        },
     ),
     dict(
         slug="data-engineering", name="Data Engineering",
@@ -129,6 +236,15 @@ CAREER_PATHS = [
         tools=["SQL", "Python", "Airflow", "Cloud data warehouses"], remote_potential=80,
         earning_notes="Higher entry-level pay than data analysis due to engineering complexity.",
         icon="database",
+        skills_required=["Advanced SQL and database design", "Python for data pipelines", "ETL/ELT pipeline design", "Cloud data warehouse fundamentals", "Data quality and validation practices"],
+        certifications=["Google Cloud Professional Data Engineer (longer-term goal)", "AWS Certified Data Analytics - Specialty"],
+        interview_prep=["Design a pipeline that moves data from an API into a warehouse daily", "Explain the difference between ETL and ELT", "How would you handle a pipeline that partially fails", "What's data quality validation and why does it matter", "Walk through how you'd design a schema for slowly changing data"],
+        learning_resources=[{"label": "Apache Airflow official docs", "note": "Free, official documentation for the most widely used pipeline orchestration tool."}, {"label": "Google Cloud Skills Boost", "note": "Includes free introductory data engineering training."}, {"label": "Kaggle Learn", "note": "Free short courses covering SQL and data pipelines."}],
+        roadmap_outline={
+            "beginner": ["Get strong with SQL and relational database design first", "Learn Python for scripting data movement", "Understand the difference between ETL and ELT", "Build a simple script that moves data from one source to another"],
+            "intermediate": ["Learn a pipeline orchestration tool (Airflow)", "Work with a cloud data warehouse (BigQuery, Redshift, or Snowflake)", "Add data quality checks to a pipeline you built", "Learn to handle schema changes without breaking downstream data"],
+            "advanced": ["Design a multi-step pipeline with monitoring and alerting", "Learn basic data modeling for analytics (star schema)", "Practice explaining pipeline design tradeoffs", "Document a full pipeline project for your portfolio"],
+        },
     ),
     dict(
         slug="ai-ml-engineering", name="AI/ML Engineering",
@@ -139,6 +255,15 @@ CAREER_PATHS = [
         tools=["Python", "NumPy/pandas", "scikit-learn", "PyTorch basics"], remote_potential=75,
         earning_notes="Highly competitive entry-level field; strong math/stats foundation pays off significantly.",
         icon="cpu",
+        skills_required=["Python for data science", "Linear algebra and statistics fundamentals", "Classical machine learning (regression, classification)", "Model evaluation and avoiding overfitting", "Basic neural networks and deep learning concepts"],
+        certifications=["DeepLearning.AI Machine Learning Specialization", "Google TensorFlow Developer Certificate"],
+        interview_prep=["Explain overfitting and how you'd detect it", "Walk through how you'd approach a new classification problem", "What's the difference between supervised and unsupervised learning", "How would you explain a model's prediction to a non-technical stakeholder", "Describe a project where your first model didn't work and what you changed"],
+        learning_resources=[{"label": "Google Machine Learning Crash Course", "note": "Free, official introductory ML course from Google."}, {"label": "Kaggle Learn", "note": "Free short courses in Python, pandas, and machine learning."}, {"label": "scikit-learn official docs", "note": "Free, official documentation with extensive real examples."}],
+        roadmap_outline={
+            "beginner": ["Build strong Python and pandas fundamentals first", "Learn core statistics and linear algebra concepts as you need them", "Learn classical ML models (regression, decision trees) with scikit-learn", "Complete a full, simple prediction project on a public dataset"],
+            "intermediate": ["Learn model evaluation properly (train/test splits, cross-validation, metrics)", "Study overfitting, underfitting, and regularization", "Get an introduction to neural networks", "Enter a beginner-friendly Kaggle competition"],
+            "advanced": ["Learn a deep learning framework (PyTorch) for a specific problem type", "Practice deploying a trained model behind a simple API", "Study how to explain model limitations honestly to stakeholders", "Build 2-3 portfolio projects that show a full ML workflow"],
+        },
     ),
     dict(
         slug="product-design", name="Product Design",
@@ -149,6 +274,15 @@ CAREER_PATHS = [
         tools=["Figma", "User research basics", "Prototyping"], remote_potential=80,
         earning_notes="A strong portfolio matters more than credentials for entry-level roles.",
         icon="figma",
+        skills_required=["User research fundamentals", "Wireframing and prototyping", "Visual design principles", "Design systems thinking", "Communicating and defending design decisions"],
+        certifications=["Google UX Design Professional Certificate"],
+        interview_prep=["Walk through your design process for a recent project", "How do you decide when a design is 'done enough' to ship", "Describe a time user research changed your design", "How would you design an empty state for a to-do app", "Critique a design decision in a product you use"],
+        learning_resources=[{"label": "Figma's own free tutorials", "note": "Free, official tutorials for the industry-standard design tool."}, {"label": "Laws of UX", "note": "A free, widely referenced site on UX design principles."}, {"label": "Nielsen Norman Group articles", "note": "Free articles from a well-known UX research organization."}],
+        roadmap_outline={
+            "beginner": ["Learn Figma well enough to build a real screen from scratch", "Learn core UX principles (hierarchy, consistency, feedback)", "Study a few products you use and critique their design decisions", "Redesign one small, real product screen as practice"],
+            "intermediate": ["Learn basic user research methods (interviews, usability testing)", "Design a small end-to-end flow, not just a single screen", "Build a simple design system (colors, type, components)", "Get feedback on your work from other designers"],
+            "advanced": ["Take on a full case study from problem to shipped design", "Practice presenting and defending design decisions clearly", "Learn to collaborate closely with engineers on handoff", "Build a portfolio of 3-4 strong, well-documented case studies"],
+        },
     ),
     dict(
         slug="ui-ux-design", name="UI/UX Design",
@@ -159,6 +293,15 @@ CAREER_PATHS = [
         tools=["Figma", "Usability testing", "Design systems"], remote_potential=80,
         earning_notes="Similar to product design; portfolio-driven hiring.",
         icon="pen-tool",
+        skills_required=["Visual design fundamentals (typography, color, spacing)", "Interaction design and usability principles", "Wireframing and high-fidelity prototyping", "Basic usability testing", "Accessibility fundamentals"],
+        certifications=["Google UX Design Professional Certificate"],
+        interview_prep=["Walk through how you'd design a sign-up flow with fewer drop-offs", "What makes an interface accessible, beyond just color contrast", "How do you balance visual polish with usability", "Describe a usability test you ran or would run", "Critique the navigation of an app you use daily"],
+        learning_resources=[{"label": "Laws of UX", "note": "A free, widely referenced site on UX design principles."}, {"label": "Figma's own free tutorials", "note": "Free, official tutorials for the industry-standard design tool."}, {"label": "WebAIM", "note": "Free, well-known resource for web accessibility fundamentals."}],
+        roadmap_outline={
+            "beginner": ["Learn visual design fundamentals: typography, color, spacing", "Learn Figma and build a few practice screens", "Study usability principles through real app examples", "Learn basic accessibility guidelines"],
+            "intermediate": ["Design a complete flow (not just one screen) for a real problem", "Run a small usability test, even informally with friends", "Build a simple reusable component set", "Get comfortable presenting your design rationale"],
+            "advanced": ["Take on a full case study end to end", "Practice designing for edge cases: errors, empty states, loading", "Collaborate with a developer to see a design actually shipped", "Build a portfolio of 3-4 strong, well-documented case studies"],
+        },
     ),
     dict(
         slug="product-management", name="Product Management",
@@ -169,6 +312,15 @@ CAREER_PATHS = [
         tools=["Roadmapping tools", "Analytics basics", "User research"], remote_potential=70,
         earning_notes="Often hired from adjacent roles (support, engineering, design) rather than as a pure first job.",
         icon="target",
+        skills_required=["Prioritization frameworks", "Writing clear product requirements", "Basic data analysis and metrics literacy", "Stakeholder communication", "User research fundamentals"],
+        certifications=["Google Project Management Professional Certificate"],
+        interview_prep=["Walk through how you'd prioritize a backlog with limited engineering time", "Pick a product you use and suggest one improvement, with reasoning", "How would you measure whether a new feature succeeded", "Describe how you'd handle disagreement between engineering and design", "Write a one-paragraph spec for a simple feature, live"],
+        learning_resources=[{"label": "Product School's free resources", "note": "Free articles and guides on core PM concepts."}, {"label": "Reforge's public blog", "note": "Free, widely respected product management writing."}, {"label": "Google's free PM certificate materials", "note": "Free official project/product management training."}],
+        roadmap_outline={
+            "beginner": ["Learn core PM vocabulary: roadmap, backlog, spec, metrics", "Study a product you use closely and map its user flows", "Learn a basic prioritization framework (e.g. RICE)", "Write a short spec for a feature idea, even a fictional one"],
+            "intermediate": ["Learn to read and interpret basic product analytics", "Practice writing user stories and acceptance criteria", "Shadow or study how a real team plans a sprint", "Get comfortable presenting a plan and defending tradeoffs"],
+            "advanced": ["Run a small, real project end to end if you can (even a side project)", "Practice stakeholder communication under disagreement", "Learn to define and track success metrics for a launch", "Build a portfolio of 2-3 well-reasoned case studies"],
+        },
     ),
     dict(
         slug="technical-writing", name="Technical Writing",
@@ -179,6 +331,15 @@ CAREER_PATHS = [
         tools=["Markdown", "Docs-as-code tools", "API documentation"], remote_potential=90,
         earning_notes="One of the most remote-friendly entry points into tech.",
         icon="file-text",
+        skills_required=["Clear, concise technical writing", "Understanding of the product/API you're documenting", "Information structuring and navigation design", "Basic Markdown and docs-as-code workflows", "Working with subject-matter experts to extract accurate information"],
+        certifications=[],
+        interview_prep=["Rewrite a confusing paragraph of technical text, live", "How do you decide what to include and what to leave out of a doc", "Describe how you'd document an API you've never used before", "What makes documentation genuinely usable versus just complete", "How do you keep docs from going stale as a product changes"],
+        learning_resources=[{"label": "Google's Technical Writing courses", "note": "Free, official introductory technical writing courses from Google."}, {"label": "Write the Docs", "note": "A free, well-known community and guide for technical writers."}, {"label": "MDN Web Docs", "note": "A widely cited example of clear, well-structured technical documentation."}],
+        roadmap_outline={
+            "beginner": ["Learn Markdown and basic docs-as-code tools", "Study a few examples of documentation you find genuinely clear", "Practice rewriting confusing instructions in plain language", "Document a simple tool or process you already understand well"],
+            "intermediate": ["Document a real open-source project's setup process", "Learn to structure a doc set (getting started, guides, reference)", "Practice interviewing a subject-matter expert to extract accurate info", "Get feedback from someone unfamiliar with the topic"],
+            "advanced": ["Write full API reference documentation for a real project", "Learn basic information architecture for larger doc sites", "Practice maintaining docs alongside a changing codebase", "Build a portfolio of 3-4 strong writing samples across formats"],
+        },
     ),
     dict(
         slug="qa-engineering", name="QA Engineering",
@@ -189,6 +350,15 @@ CAREER_PATHS = [
         tools=["Test case design", "Selenium/Playwright basics", "Bug tracking tools"], remote_potential=75,
         earning_notes="A practical, accessible entry point into a software team.",
         icon="check-circle",
+        skills_required=["Test case design and edge-case thinking", "Manual testing methodology", "Basic test automation (Selenium or Playwright)", "Clear, reproducible bug reporting", "Reading requirements and spotting ambiguity"],
+        certifications=["ISTQB Foundation Level"],
+        interview_prep=["Write test cases for a login form, including edge cases", "How do you decide what to automate versus test manually", "Describe how you'd write a clear, reproducible bug report", "What's the difference between a bug and a feature request", "Walk through your process for testing a new feature with no spec"],
+        learning_resources=[{"label": "Playwright official docs", "note": "Free, official documentation for a modern, widely used test automation tool."}, {"label": "ISTQB syllabus", "note": "The free, official study syllabus for the standard QA certification."}, {"label": "Ministry of Testing", "note": "A well-known free community and resource hub for testers."}],
+        roadmap_outline={
+            "beginner": ["Learn manual test case design and edge-case thinking", "Practice writing clear, reproducible bug reports", "Learn to read a spec or user story and find ambiguity", "Test a real app thoroughly as practice"],
+            "intermediate": ["Learn a test automation tool (Playwright or Selenium)", "Automate a handful of your manual test cases", "Learn to use a bug tracking tool like a real team would", "Study the testing pyramid (unit, integration, end-to-end)"],
+            "advanced": ["Build a small automated test suite for a real project", "Learn basic API testing, not just UI testing", "Practice prioritizing what to test under time pressure", "Document your testing approach for your portfolio"],
+        },
     ),
     dict(
         slug="no-code-automation", name="No-Code/Automation",
@@ -199,6 +369,15 @@ CAREER_PATHS = [
         tools=["Zapier/Make", "Airtable", "Webflow/Bubble"], remote_potential=85,
         earning_notes="Fast to learn, often freelance-friendly; strong option for very limited time budgets.",
         icon="zap",
+        skills_required=["Workflow and process thinking", "Connecting apps via APIs without writing code", "Database/spreadsheet structuring (Airtable)", "Basic logic (conditionals, triggers)", "Client or stakeholder communication for freelance work"],
+        certifications=[],
+        interview_prep=["Walk through how you'd automate a repetitive manual task", "What's a trigger versus an action in an automation tool", "Describe a no-code project you built and a problem you hit", "How would you decide when a task actually needs custom code instead", "How do you handle an automation that fails silently"],
+        learning_resources=[{"label": "Zapier's own free guides", "note": "Free, official tutorials for the most widely used automation tool."}, {"label": "Airtable's own free tutorials", "note": "Free, official tutorials for structuring data without code."}, {"label": "Makerpad (community resources)", "note": "A well-known no-code learning community with free content."}],
+        roadmap_outline={
+            "beginner": ["Learn one automation tool deeply (Zapier or Make) rather than several shallowly", "Learn Airtable for structuring data without a traditional database", "Automate one real repetitive task in your own life or work", "Learn basic conditional logic within these tools"],
+            "intermediate": ["Build a small internal tool for a real (even personal) use case", "Learn to connect three or more apps in one working automation", "Practice explaining a workflow to someone non-technical", "Learn a simple no-code app builder (Webflow or Bubble)"],
+            "advanced": ["Build a small end-to-end no-code product, not just a workflow", "Practice scoping and pricing freelance automation work", "Learn to debug automations that fail partway through", "Document 2-3 case studies for your portfolio"],
+        },
     ),
     dict(
         slug="it-support", name="IT Support",
@@ -209,6 +388,15 @@ CAREER_PATHS = [
         tools=["Windows/Mac fundamentals", "Networking basics", "Ticketing systems"], remote_potential=45,
         earning_notes="Often the most accessible first tech job with no prior experience, a common launchpad into other paths.",
         icon="headphones",
+        skills_required=["Operating system troubleshooting (Windows and Mac)", "Basic networking (Wi-Fi, printers, connectivity issues)", "Clear, patient communication with non-technical users", "Ticketing and documentation habits", "Systematic problem-solving under time pressure"],
+        certifications=["CompTIA A+", "Google IT Support Professional Certificate"],
+        interview_prep=["Walk through how you'd troubleshoot a laptop that won't connect to Wi-Fi", "How do you handle a frustrated user on the phone", "Describe your process for prioritizing multiple open tickets", "What steps would you take before escalating an issue", "Explain a technical fix in plain language, live"],
+        learning_resources=[{"label": "Google IT Support Professional Certificate", "note": "Free to audit, widely recognized introductory IT support training."}, {"label": "Professor Messer", "note": "Free video courses covering CompTIA A+ exam material."}, {"label": "CompTIA's own free resources", "note": "Official free study material for A+ certification."}],
+        roadmap_outline={
+            "beginner": ["Learn Windows and Mac fundamentals: settings, updates, file systems", "Learn basic networking troubleshooting (Wi-Fi, printers, connectivity)", "Practice clear, patient written and verbal communication", "Study for CompTIA A+"],
+            "intermediate": ["Learn to use a ticketing system and document issues clearly", "Practice remote troubleshooting scenarios", "Learn basic account and access management", "Take CompTIA A+ if ready"],
+            "advanced": ["Learn basic scripting to automate repetitive fixes", "Study a specialization to move toward next (security, networking, or cloud)", "Practice explaining fixes clearly to non-technical people", "Document a handful of resolved tickets as portfolio examples"],
+        },
     ),
     dict(
         slug="solutions-architecture", name="Solutions Architecture",
@@ -219,5 +407,14 @@ CAREER_PATHS = [
         tools=["Cloud platforms", "System design", "Cross-domain fundamentals"], remote_potential=70,
         earning_notes="Not usually a first job, a senior-track destination after backend, cloud, or DevOps experience.",
         icon="git-merge",
+        skills_required=["System design and architecture tradeoffs", "Cross-domain fluency (backend, cloud, networking, security)", "Cost and scaling analysis", "Stakeholder communication and technical documentation", "Evaluating build-versus-buy decisions"],
+        certifications=["AWS Certified Solutions Architect - Associate", "AWS Certified Solutions Architect - Professional (longer-term goal)"],
+        interview_prep=["Design a system to handle a sudden 10x traffic spike", "Walk through the tradeoffs between a monolith and microservices", "How would you evaluate whether to build or buy a component", "Explain a past architecture decision you made and what you'd change", "How do you communicate architecture decisions to non-technical stakeholders"],
+        learning_resources=[{"label": "AWS Well-Architected Framework", "note": "Free, official guidance on cloud architecture best practices."}, {"label": "System Design Primer (open-source)", "note": "A free, widely used open-source guide to system design fundamentals."}, {"label": "AWS Skill Builder", "note": "Free training toward Solutions Architect certification."}],
+        roadmap_outline={
+            "beginner": ["Build real depth first in backend, cloud, or DevOps, this isn't a first path", "Learn system design fundamentals (load balancing, caching, databases at scale)", "Study real-world architecture case studies", "Get comfortable with one cloud provider's full service catalog"],
+            "intermediate": ["Practice designing systems for specific constraints (cost, latency, reliability)", "Learn to document architecture clearly for other engineers", "Study for an associate-level solutions architect certification", "Review and critique real production architectures where you can"],
+            "advanced": ["Lead or co-design a real system architecture at work", "Practice communicating tradeoffs to non-technical stakeholders", "Pursue a professional-level architecture certification", "Document 2-3 architecture case studies for your portfolio"],
+        },
     ),
 ]
