@@ -11,24 +11,33 @@ import { pricingTiers } from "@/lib/marketing-content";
 
 export const metadata: Metadata = {
   title: "Pricing | CareerFound",
-  description: "Start free. Pro and paid mentorship pricing, explained honestly, no hidden checkout.",
+  description: "Free to start. Real, paid pricing for 1:1 mentorship and career consultation, explained honestly.",
 };
 
 export default function PricingPage() {
   return (
     <PublicShell>
       <div className="py-8 sm:py-12">
-        <SectionHeading eyebrow="Pricing" title="Start free. Upgrade when you're ready to accelerate." />
+        <SectionHeading
+          eyebrow="Pricing"
+          title="Start free. Bring in a human when you're ready."
+          description="The assessment, roadmap, and projects are free. 1:1 mentorship and the career consultation are paid, real services, priced clearly below."
+        />
 
         <div className="mt-14 grid gap-6 lg:grid-cols-3">
           {pricingTiers.map((tier) => (
             <Card key={tier.name} className={cn("flex flex-col p-8", tier.highlighted && "border-accent/40")}>
-              {tier.highlighted && <Badge tone="accent" className="mb-4 w-fit">Most popular</Badge>}
+              {tier.paid ? (
+                <Badge tone="warning" className="mb-4 w-fit">Paid service</Badge>
+              ) : tier.highlighted ? (
+                <Badge tone="accent" className="mb-4 w-fit">Most popular</Badge>
+              ) : null}
               <h3 className="text-lg font-semibold text-ink-100">{tier.name}</h3>
               <div className="mt-2 flex items-baseline gap-1">
                 <span className="text-3xl font-semibold text-ink-100">{tier.price}</span>
                 <span className="text-sm text-ink-500">{tier.period}</span>
               </div>
+              {tier.priceAlt && <p className="mt-0.5 text-xs text-ink-500">or {tier.priceAlt}</p>}
               <p className="mt-3 text-sm text-ink-500">{tier.description}</p>
               <ul className="mt-6 flex-1 space-y-2.5 text-sm text-ink-300">
                 {tier.features.map((f) => (
@@ -48,9 +57,9 @@ export default function PricingPage() {
         </div>
 
         <p className="mx-auto mt-10 max-w-xl text-center text-sm text-ink-500">
-          Pro billing is not live yet, the tier above shows the plan we&apos;re building toward. Everyone gets
-          the Free tier today. Mentorship sessions are booked and confirmed for real, payment capture is a
-          Phase 2 integration point, so founding sessions are free.
+          Mentorship and consultation requests go to the CareerFound team directly, nothing is charged
+          automatically. A broader paid Pro plan (deeper AI features on the free tools above) is still being
+          built and isn&apos;t billable yet.
         </p>
       </div>
     </PublicShell>

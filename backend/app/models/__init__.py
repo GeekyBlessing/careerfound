@@ -43,4 +43,5 @@ from app.models.roadmap import (  # noqa: F401
     SkillEdge,
     SkillNode,
 )
+from app.models.service_request import ServiceRequest, ServiceRequestType  # noqa: F401
 from app.models.user import User  # noqa: F401

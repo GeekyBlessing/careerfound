@@ -320,3 +320,49 @@ async def send_product_email(user: User, *, subject: str, heading: str, body_htm
         show_preferences_link=True,
     )
     return await send_email(EmailMessage(to=user.email, subject=subject, html=html, text=text, category="product"))
+
+
+_SERVICE_LABELS = {"mentorship": "1:1 Career Mentorship", "consultation": "Career Consultation"}
+
+
+async def send_service_request_confirmation(*, name: str, email: str, service: str) -> bool:
+    """Confirms receipt of a paid-service request (mentorship or
+    consultation) to the person who submitted it. This is a request, not a
+    payment confirmation, no payment has been taken, that's made explicit
+    in the copy since there is no live payment processor connected yet."""
+    first_name = name.split(" ")[0] if name else "there"
+    service_label = _SERVICE_LABELS.get(service, service)
+    html, text = render_email(
+        preheader=f"We received your {service_label} request.",
+        heading="Got your request",
+        body_html=f"""
+            <p style="margin: 0 0 12px;">Hi {first_name},</p>
+            <p style="margin: 0 0 12px;">Thanks for requesting <strong>{service_label}</strong> with CareerFound. This is not a payment confirmation, nothing has been charged. We'll reply personally by email to arrange payment and scheduling.</p>
+            <p style="margin: 0;">If anything changes on your end in the meantime, just reply to this email.</p>
+        """,
+        footer_note="You're receiving this because you requested a paid CareerFound service.",
+    )
+    return await send_email(
+        EmailMessage(to=email, subject=f"We received your {service_label} request", html=html, text=text)
+    )
+
+
+async def send_service_request_notification(*, name: str, email: str, service: str, message: str) -> bool:
+    """Internal notification so a new paid-service lead is actually seen,
+    sent to settings.EMAIL_REPLY_TO (the team inbox), not to the requester.
+    """
+    service_label = _SERVICE_LABELS.get(service, service)
+    safe_message = message.strip() or "(no message provided)"
+    html, text = render_email(
+        preheader=f"New {service_label} request from {name}.",
+        heading="New service request",
+        body_html=f"""
+            <p style="margin: 0 0 12px;"><strong>{service_label}</strong> requested by {name} ({email}).</p>
+            <p style="margin: 0 0 6px; color: {_MUTED}; font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em;">Message</p>
+            <p style="margin: 0; white-space: pre-wrap;">{safe_message}</p>
+        """,
+        footer_note="Internal notification, sent to the CareerFound team inbox.",
+    )
+    return await send_email(
+        EmailMessage(to=settings.EMAIL_REPLY_TO, subject=f"New {service_label} request: {name}", html=html, text=text)
+    )
