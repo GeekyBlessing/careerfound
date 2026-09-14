@@ -24,6 +24,9 @@ frontend/coverage/
 frontend/next-env.d.ts
 frontend/tsconfig.tsbuildinfo
 
+# Vercel CLI project link (local machine only, not shared config)
+.vercel/
+
 # Secrets that get generated/dropped in the working directory, never committed
 .render_jwt_secret.txt
 
