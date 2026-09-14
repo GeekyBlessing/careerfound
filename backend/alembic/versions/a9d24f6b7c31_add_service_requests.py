@@ -9,6 +9,7 @@ from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
+from sqlalchemy.dialects import postgresql
 
 from app.db.base import GUID
 
@@ -24,7 +25,18 @@ def upgrade() -> None:
     if 'service_requests' in sa.inspect(bind).get_table_names():
         return
 
-    service_request_type = sa.Enum('mentorship', 'consultation', name='servicerequesttype')
+    # Use the Postgres-native postgresql.ENUM with create_type=False, not
+    # the generic sa.Enum — the generic wrapper doesn't reliably propagate
+    # create_type to the Postgres dialect impl it adapts into, so
+    # op.create_table below still emits its own CREATE TYPE for this
+    # column and collides with the type this migration just created
+    # explicitly two lines up, failing every single run with "type
+    # already exists" — not just on a partially applied database. Same
+    # pattern as applicationstatus in
+    # ab1589948938_add_mentor_marketplace_v2_tables_and_.py.
+    service_request_type = postgresql.ENUM(
+        'mentorship', 'consultation', name='servicerequesttype', create_type=False
+    )
     service_request_type.create(bind, checkfirst=True)
 
     op.create_table(
@@ -43,4 +55,4 @@ def upgrade() -> None:
 def downgrade() -> None:
     op.drop_index('ix_service_requests_email', table_name='service_requests')
     op.drop_table('service_requests')
-    sa.Enum(name='servicerequesttype').drop(op.get_bind(), checkfirst=True)
+    postgresql.ENUM(name='servicerequesttype').drop(op.get_bind(), checkfirst=True)
