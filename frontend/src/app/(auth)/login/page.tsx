@@ -72,9 +72,6 @@ export default function LoginPage() {
               Find your tech path
             </Link>
           </p>
-          <p className="mt-2 text-center text-xs text-ink-500">
-            Demo account: demo@careerfound.dev / DemoPass123!
-          </p>
         </Card>
       </div>
     </div>
