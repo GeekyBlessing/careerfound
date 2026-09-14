@@ -54,11 +54,30 @@ ROADMAP_CONTENT = {
 }
 
 
+# Directory-depth fields added to CareerPath after the 21 paths were
+# already seeded in production (see f3a7c1d92e40_add_career_directory_depth_fields).
+# Rows created before that migration exist in `existing` below and get
+# skipped entirely by the "already seeded" check, so without this list
+# they'd keep their empty defaults forever. Backfilled from CAREER_PATHS
+# only when still empty, so a real admin edit is never overwritten.
+CAREER_PATH_DEPTH_FIELDS = [
+    "skills_required",
+    "certifications",
+    "interview_prep",
+    "learning_resources",
+    "roadmap_outline",
+]
+
+
 async def seed_career_paths(db: AsyncSession) -> dict[str, CareerPath]:
     result = await db.execute(select(CareerPath))
     existing = {p.slug: p for p in result.scalars().all()}
     for data in CAREER_PATHS:
         if data["slug"] in existing:
+            path = existing[data["slug"]]
+            for field in CAREER_PATH_DEPTH_FIELDS:
+                if not getattr(path, field) and data.get(field):
+                    setattr(path, field, data[field])
             continue
         path = CareerPath(**data)
         db.add(path)
