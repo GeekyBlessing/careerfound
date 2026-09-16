@@ -104,8 +104,14 @@ function MentorsPageInner() {
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-semibold text-ink-100">{mentor.display_name}</p>
                     <div className="flex items-center gap-1 text-xs text-ink-500">
-                      <Star className="h-3 w-3 fill-warning text-warning" />
-                      {mentor.rating_count > 0 ? `${mentor.rating_avg.toFixed(1)} (${mentor.rating_count})` : "No ratings yet"}
+                      {mentor.is_demo ? (
+                        "Demo profile, not a real rating"
+                      ) : (
+                        <>
+                          <Star className="h-3 w-3 fill-warning text-warning" />
+                          {mentor.rating_count > 0 ? `${mentor.rating_avg.toFixed(1)} (${mentor.rating_count})` : "No ratings yet"}
+                        </>
+                      )}
                     </div>
                   </div>
                   <MentorBadge mentor={mentor} />

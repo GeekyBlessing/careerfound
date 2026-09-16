@@ -19,6 +19,7 @@ export default function MentorshipPage() {
     <PublicShell>
       <div className="py-8 sm:py-12">
         <SectionHeading
+          as="h1"
           eyebrow="1:1 Career Mentorship"
           title="Direct mentorship, for two months"
           description="This is a paid, hands-on mentorship program with Toriola, CareerFound's founder, not a marketplace booking with a stranger."

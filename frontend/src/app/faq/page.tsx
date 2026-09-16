@@ -13,7 +13,7 @@ export default function FAQPage() {
   return (
     <PublicShell>
       <div className="mx-auto max-w-3xl py-8 sm:py-12">
-        <SectionHeading eyebrow="FAQ" title="Questions people ask before starting" />
+        <SectionHeading as="h1" eyebrow="FAQ" title="Questions people ask before starting" />
         <div className="mt-10 space-y-3">
           {faqs.map((f) => (
             <details

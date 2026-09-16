@@ -15,7 +15,7 @@ export default function AboutPage() {
   return (
     <PublicShell>
       <div className="mx-auto max-w-2xl py-8 sm:py-12">
-        <SectionHeading eyebrow="About" title="Why CareerFound exists" />
+        <SectionHeading as="h1" eyebrow="About" title="Why CareerFound exists" />
 
         <div className="mt-10 space-y-6 text-sm leading-relaxed text-ink-300">
           <p>

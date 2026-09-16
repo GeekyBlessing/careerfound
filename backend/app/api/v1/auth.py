@@ -53,7 +53,8 @@ async def login(payload: LoginRequest, request: Request, db: AsyncSession = Depe
 
 
 @router.post("/refresh", response_model=TokenResponse)
-async def refresh(payload: RefreshRequest, db: AsyncSession = Depends(get_db)):
+async def refresh(payload: RefreshRequest, request: Request, db: AsyncSession = Depends(get_db)):
+    limiter.check(f"refresh:{_client_ip(request)}", settings.AUTH_RATE_LIMIT_PER_MINUTE)
     try:
         data = decode_token(payload.refresh_token)
     except ValueError as exc:

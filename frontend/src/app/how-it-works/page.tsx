@@ -17,6 +17,7 @@ export default function HowItWorksPage() {
     <PublicShell>
       <div className="py-8 sm:py-12">
         <SectionHeading
+          as="h1"
           eyebrow="How it works"
           title="From confused to job-ready, one clear step at a time"
           description="No guessing, no generic course catalog. Every step builds on the last."

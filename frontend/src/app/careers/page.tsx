@@ -62,6 +62,7 @@ export default function CareersListPage() {
     <PublicShell>
       <div className="py-8 sm:py-12">
         <SectionHeading
+          as="h1"
           eyebrow="Career paths"
           title={paths ? `${paths.length} tech careers, one honest assessment to find yours` : "Tech careers, one honest assessment to find yours"}
           description="Browse the full directory, or take the assessment for a recommendation based on how you actually think and work."

@@ -15,7 +15,7 @@ export default function ContactPage() {
   return (
     <PublicShell>
       <div className="mx-auto max-w-xl py-8 sm:py-12">
-        <SectionHeading eyebrow="Contact" title="Get in touch" />
+        <SectionHeading as="h1" eyebrow="Contact" title="Get in touch" />
 
         <Card className="mt-10">
           <CardContent className="p-8 text-center">

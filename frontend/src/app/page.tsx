@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -32,6 +33,13 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { steps, pricingTiers, faqs } from "@/lib/marketing-content";
+
+export const metadata: Metadata = {
+  title: "CareerFound: Find your tech career, step by step",
+  description:
+    "Discover your tech career, get a personalized roadmap, build real projects, and become job-ready. Start with a free honest assessment, no credit card required.",
+  alternates: { canonical: "/" },
+};
 
 const careerPreview = [
   { name: "Cybersecurity", slug: "cybersecurity", icon: Shield, blurb: "Protect systems and stop attackers before they cause damage." },

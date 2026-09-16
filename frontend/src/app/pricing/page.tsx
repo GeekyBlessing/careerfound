@@ -19,6 +19,7 @@ export default function PricingPage() {
     <PublicShell>
       <div className="py-8 sm:py-12">
         <SectionHeading
+          as="h1"
           eyebrow="Pricing"
           title="Start free. Bring in a human when you're ready."
           description="The assessment, roadmap, and projects are free. 1:1 mentorship and the career consultation are paid, real services, priced clearly below."
@@ -44,7 +45,7 @@ export default function PricingPage() {
               <h3 className="text-lg font-semibold tracking-tight text-ink-100">{tier.name}</h3>
               <div className="mt-2 flex items-baseline gap-1">
                 <span className="text-3xl font-semibold text-ink-100">{tier.price}</span>
-                <span className="text-sm text-ink-500">{tier.period}</span>
+                <span className="text-sm text-ink-500">/ {tier.period}</span>
               </div>
               {tier.priceAlt && <p className="mt-0.5 text-xs text-ink-500">or {tier.priceAlt}</p>}
               <p className="mt-3 text-sm text-ink-500">{tier.description}</p>

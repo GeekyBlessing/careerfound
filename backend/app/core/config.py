@@ -8,7 +8,10 @@ secrets or provider keys elsewhere in the codebase.
 from functools import lru_cache
 from typing import Literal
 
+from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+_INSECURE_DEFAULT_JWT_SECRET = "CHANGE_ME_INSECURE_DEV_ONLY_SECRET"
 
 
 class Settings(BaseSettings):
@@ -40,7 +43,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "sqlite+aiosqlite:///./careerfound.db"
 
     # --- Auth / security ---
-    JWT_SECRET_KEY: str = "CHANGE_ME_INSECURE_DEV_ONLY_SECRET"
+    JWT_SECRET_KEY: str = _INSECURE_DEFAULT_JWT_SECRET
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 24h
     REFRESH_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 30  # 30d
@@ -99,6 +102,20 @@ class Settings(BaseSettings):
         """Parsed form of FRONTEND_ORIGIN — one origin or a comma-separated
         list — for passing straight to CORSMiddleware(allow_origins=...)."""
         return [origin.strip() for origin in self.FRONTEND_ORIGIN.split(",") if origin.strip()]
+
+    @model_validator(mode="after")
+    def _refuse_insecure_secrets_in_production(self) -> "Settings":
+        """Fail fast at startup rather than silently signing every JWT with a
+        publicly-known secret. This is deliberately a hard crash, not a log
+        warning: a production deploy with the default JWT_SECRET_KEY means
+        anyone can forge a valid access token for any user."""
+        if self.ENVIRONMENT == "production" and self.JWT_SECRET_KEY == _INSECURE_DEFAULT_JWT_SECRET:
+            raise RuntimeError(
+                "JWT_SECRET_KEY is still set to the insecure development default while "
+                "ENVIRONMENT=production. Set a real, random JWT_SECRET_KEY environment "
+                "variable (e.g. `openssl rand -hex 32`) before starting this service."
+            )
+        return self
 
 
 @lru_cache

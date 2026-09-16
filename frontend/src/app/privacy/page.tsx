@@ -12,7 +12,7 @@ export default function PrivacyPage() {
   return (
     <PublicShell>
       <div className="mx-auto max-w-2xl py-8 sm:py-12">
-        <SectionHeading eyebrow="Privacy" title="Privacy policy" />
+        <SectionHeading as="h1" eyebrow="Privacy" title="Privacy policy" />
 
         <Alert variant="info" className="mt-8">
           This page is a plain-language description of what CareerFound actually collects and does today, written

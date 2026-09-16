@@ -19,6 +19,7 @@ export default function ConsultationPage() {
     <PublicShell>
       <div className="py-8 sm:py-12">
         <SectionHeading
+          as="h1"
           eyebrow="Career Consultation"
           title="One focused conversation, 30 minutes"
           description="For when you have one specific question or decision and want a straight answer, not an ongoing program."

@@ -12,7 +12,7 @@ export default function TermsPage() {
   return (
     <PublicShell>
       <div className="mx-auto max-w-2xl py-8 sm:py-12">
-        <SectionHeading eyebrow="Terms" title="Terms of use" />
+        <SectionHeading as="h1" eyebrow="Terms" title="Terms of use" />
 
         <Alert variant="info" className="mt-8">
           This is a plain-language description of the terms today, written by the team, not a lawyer. It will be

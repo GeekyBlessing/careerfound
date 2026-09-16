@@ -77,13 +77,19 @@ export default function MentorProfilePage() {
                   </div>
                   <p className="mt-1 text-sm text-ink-300">{mentor.headline}</p>
                   <div className="mt-2 flex items-center gap-1 text-xs text-ink-500">
-                    <Star className="h-3.5 w-3.5 fill-warning text-warning" />
-                    {mentor.rating_count > 0 ? (
-                      <span>
-                        {mentor.rating_avg.toFixed(1)} ({mentor.rating_count} review{mentor.rating_count === 1 ? "" : "s"})
-                      </span>
+                    {mentor.is_demo ? (
+                      <span>Demo profile, not a real rating</span>
                     ) : (
-                      <span>No ratings yet</span>
+                      <>
+                        <Star className="h-3.5 w-3.5 fill-warning text-warning" />
+                        {mentor.rating_count > 0 ? (
+                          <span>
+                            {mentor.rating_avg.toFixed(1)} ({mentor.rating_count} review{mentor.rating_count === 1 ? "" : "s"})
+                          </span>
+                        ) : (
+                          <span>No ratings yet</span>
+                        )}
+                      </>
                     )}
                     <span className="mx-1">·</span>
                     <Users className="h-3.5 w-3.5" />
