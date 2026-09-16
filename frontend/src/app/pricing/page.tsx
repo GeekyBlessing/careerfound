@@ -67,8 +67,8 @@ export default function PricingPage() {
 
         <p className="mx-auto mt-10 max-w-xl text-center text-sm text-ink-500">
           Mentorship and consultation requests go to the CareerFound team directly, nothing is charged
-          automatically. A broader paid Pro plan (deeper AI features on the free tools above) is still being
-          built and isn&apos;t billable yet.
+          automatically. A broader paid Pro plan (deeper AI features on the free tools above, planned at
+          $10/month) is still being built and isn&apos;t billable yet.
         </p>
       </div>
     </PublicShell>

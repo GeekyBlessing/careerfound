@@ -57,7 +57,7 @@ export default function QuizPage() {
         <Card>
           <CardContent className="p-6">
             <Badge tone="accent">Checkpoint</Badge>
-            <h1 className="mt-3 text-xl font-semibold text-ink-100">{quiz.title}</h1>
+            <h1 className="mt-3 text-xl font-semibold tracking-tight text-ink-100">{quiz.title}</h1>
             <p className="mt-1 text-sm text-ink-500">Pass at {quiz.passing_score}% to complete this checkpoint.</p>
 
             <div className="mt-6 space-y-6">
@@ -72,10 +72,10 @@ export default function QuizPage() {
                         key={opt}
                         onClick={() => setSelected((s) => ({ ...s, [q.id]: opt }))}
                         className={cn(
-                          "w-full rounded-lg border px-4 py-2.5 text-left text-sm transition-colors focus-ring",
+                          "w-full rounded-lg border px-4 py-2.5 text-left text-sm transition-all duration-150 ease-smooth focus-ring active:translate-y-px",
                           selected[q.id] === opt
-                            ? "border-accent bg-accent/15 text-accent-light"
-                            : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.02)] text-ink-300 hover:border-[rgb(var(--fg-tint)/0.2)]"
+                            ? "border-accent bg-accent/15 text-accent-light shadow-xs"
+                            : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.02)] text-ink-300 hover:border-[rgb(var(--fg-tint)/0.2)] hover:bg-[rgb(var(--fg-tint)/0.04)]"
                         )}
                       >
                         {opt}
@@ -99,14 +99,18 @@ export default function QuizPage() {
       )}
 
       {result && quiz && (
-        <Card>
+        <Card className="animate-fade-in-up shadow-raised">
           <CardContent className="flex flex-col items-center p-10 text-center">
             {result.score >= quiz.passing_score ? (
-              <CheckCircle2 className="h-10 w-10 text-success" />
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-success/12 text-success">
+                <CheckCircle2 className="h-8 w-8" />
+              </div>
             ) : (
-              <XCircle className="h-10 w-10 text-danger" />
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-danger/12 text-danger">
+                <XCircle className="h-8 w-8" />
+              </div>
             )}
-            <h2 className="mt-4 text-xl font-semibold text-ink-100">
+            <h2 className="mt-4 text-xl font-semibold tracking-tight text-ink-100">
               {result.score >= quiz.passing_score ? "Checkpoint passed!" : "Not quite yet"}
             </h2>
             <p className="mt-1 text-sm text-ink-500">You scored {result.score}% (passing: {quiz.passing_score}%)</p>

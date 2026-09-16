@@ -19,7 +19,7 @@ export default function ContactPage() {
 
         <Card className="mt-10">
           <CardContent className="p-8 text-center">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-accent/15 text-accent-light">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-accent/12 text-accent-light">
               <Mail className="h-5 w-5" />
             </div>
             <p className="mt-4 text-sm text-ink-500">

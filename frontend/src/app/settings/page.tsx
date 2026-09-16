@@ -45,17 +45,19 @@ export default function SettingsPage() {
     <AppShell>
       <div className="mx-auto max-w-2xl space-y-6">
         <div>
-          <h1 className="text-2xl font-semibold text-ink-100">Settings</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-ink-100">Settings</h1>
           <p className="mt-1 text-sm text-ink-500">Manage your profile and how CareerFound looks for you.</p>
         </div>
 
         <Card>
           <CardHeader className="flex flex-row items-center gap-2">
-            <UserIcon className="h-4 w-4 text-accent" />
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent/12 text-accent-light">
+              <UserIcon className="h-3.5 w-3.5" />
+            </span>
             <CardTitle>Profile</CardTitle>
           </CardHeader>
           <CardContent className="flex items-center gap-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-accent/20 text-lg font-semibold text-accent-light">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-accent/20 text-lg font-semibold text-accent-light shadow-xs">
               {user ? initials(user.full_name) : "?"}
             </div>
             <div className="min-w-0">
@@ -70,7 +72,9 @@ export default function SettingsPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center gap-2">
-            <Mail className="h-4 w-4 text-accent" />
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent/12 text-accent-light">
+              <Mail className="h-3.5 w-3.5" />
+            </span>
             <CardTitle>Email</CardTitle>
           </CardHeader>
           <CardContent className="space-y-5">
@@ -123,7 +127,9 @@ export default function SettingsPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center gap-2">
-            <Palette className="h-4 w-4 text-accent" />
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent/12 text-accent-light">
+              <Palette className="h-3.5 w-3.5" />
+            </span>
             <CardTitle>Appearance</CardTitle>
             <CardDescription className="mt-0 ml-auto">Light or dark mode</CardDescription>
           </CardHeader>
@@ -137,7 +143,9 @@ export default function SettingsPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center gap-2">
-            <Shield className="h-4 w-4 text-accent" />
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent/12 text-accent-light">
+              <Shield className="h-3.5 w-3.5" />
+            </span>
             <CardTitle>Account</CardTitle>
           </CardHeader>
           <CardContent>
@@ -147,6 +155,12 @@ export default function SettingsPage() {
             <p className="mt-1 text-sm text-ink-400">
               Role: <span className="font-medium text-ink-100 capitalize">{user?.role ?? "member"}</span>
             </p>
+            {user?.plan !== "pro" && (
+              <p className="mt-4 rounded-lg bg-[rgb(var(--fg-tint)/0.04)] px-3 py-2.5 text-xs leading-relaxed text-ink-500">
+                Pro (deeper AI features on top of the free tools above) is still being built. Planned at $10/month,
+                it isn&apos;t billable yet, so nothing will be charged.
+              </p>
+            )}
           </CardContent>
         </Card>
       </div>

@@ -57,7 +57,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-base-950">
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-[rgb(var(--fg-tint)/0.06)] bg-base-900/60 lg:flex">
         <div className="flex h-16 items-center gap-2 px-6 font-semibold text-ink-100">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent">
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent shadow-xs">
             <Compass className="h-4 w-4 text-white" />
           </span>
           CareerFound
@@ -70,8 +70,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
-                  active ? "bg-accent/15 text-accent-light" : "text-ink-300 hover:bg-[rgb(var(--fg-tint)/0.05)] hover:text-ink-100"
+                  "focus-ring flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150 ease-smooth",
+                  active ? "bg-accent/15 text-accent-light shadow-xs" : "text-ink-300 hover:bg-[rgb(var(--fg-tint)/0.05)] hover:text-ink-100"
                 )}
               >
                 <item.icon className="h-4 w-4" />
@@ -83,8 +83,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <Link
               href="/mentor-dashboard"
               className={cn(
-                "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
-                pathname?.startsWith("/mentor-dashboard") ? "bg-accent/15 text-accent-light" : "text-ink-300 hover:bg-[rgb(var(--fg-tint)/0.05)] hover:text-ink-100"
+                "focus-ring flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150 ease-smooth",
+                pathname?.startsWith("/mentor-dashboard") ? "bg-accent/15 text-accent-light shadow-xs" : "text-ink-300 hover:bg-[rgb(var(--fg-tint)/0.05)] hover:text-ink-100"
               )}
             >
               <GraduationCap className="h-4 w-4" />
@@ -95,8 +95,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <Link
               href="/admin"
               className={cn(
-                "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
-                pathname?.startsWith("/admin") ? "bg-accent/15 text-accent-light" : "text-ink-300 hover:bg-[rgb(var(--fg-tint)/0.05)] hover:text-ink-100"
+                "focus-ring flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150 ease-smooth",
+                pathname?.startsWith("/admin") ? "bg-accent/15 text-accent-light shadow-xs" : "text-ink-300 hover:bg-[rgb(var(--fg-tint)/0.05)] hover:text-ink-100"
               )}
             >
               <GraduationCap className="h-4 w-4" />
@@ -108,10 +108,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-3">
             <Link
               href="/settings"
-              className="flex min-w-0 flex-1 items-center gap-3 rounded-lg focus-ring"
+              className="focus-ring flex min-w-0 flex-1 items-center gap-3 rounded-lg"
               title="Settings and profile"
             >
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent/20 text-sm font-semibold text-accent-light">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent/20 text-sm font-semibold text-accent-light shadow-xs">
                 {initials(user.full_name)}
               </span>
               <span className="min-w-0 flex-1">
@@ -142,7 +142,7 @@ function VerificationBanner() {
   const [dismissed, setDismissed] = useState(false);
   if (dismissed) return null;
   return (
-    <div className="mb-6 flex items-center gap-3 rounded-xl border border-warning/30 bg-warning/10 px-4 py-3 text-sm text-warning">
+    <div className="mb-6 flex animate-fade-in-up items-center gap-3 rounded-xl border border-warning/30 bg-warning/10 px-4 py-3 text-sm text-warning">
       <MailWarning className="h-4 w-4 flex-shrink-0" />
       <p className="flex-1">
         Please verify your email address.{" "}
@@ -167,8 +167,8 @@ function MobileTopBar() {
   if (!user) return null;
   return (
     <div className="flex h-14 items-center justify-between border-b border-[rgb(var(--fg-tint)/0.06)] px-4 lg:hidden">
-      <Link href="/dashboard" className="flex items-center gap-2 font-semibold text-ink-100">
-        <span className="flex h-6 w-6 items-center justify-center rounded-md bg-accent">
+      <Link href="/dashboard" className="focus-ring flex items-center gap-2 rounded-lg font-semibold text-ink-100">
+        <span className="flex h-6 w-6 items-center justify-center rounded-md bg-accent shadow-xs">
           <Compass className="h-3.5 w-3.5 text-white" />
         </span>
         CareerFound

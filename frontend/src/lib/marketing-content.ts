@@ -143,7 +143,7 @@ export const faqs = [
   },
   {
     q: "Is CareerFound free?",
-    a: "The assessment, a personalized roadmap, and a real set of lessons and projects per path are free with no time limit. 1:1 mentorship and the career consultation are paid services with the pricing above; a broader paid Pro tier is still being built and isn't billable yet.",
+    a: "The assessment, a personalized roadmap, and a real set of lessons and projects per path are free with no time limit. 1:1 mentorship and the career consultation are paid services with the pricing above; a broader paid Pro tier (planned at $10/month) is still being built and isn't billable yet.",
   },
   {
     q: "How can I contact CareerFound?",

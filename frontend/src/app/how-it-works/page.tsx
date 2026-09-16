@@ -25,11 +25,11 @@ export default function HowItWorksPage() {
         <div className="mx-auto mt-14 max-w-2xl space-y-6">
           {steps.map((s, i) => (
             <Card key={s.title} className="flex gap-5 p-6">
-              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-accent/15 text-accent-light">
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-accent/12 text-accent-light">
                 <s.icon className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="text-sm font-semibold text-ink-100">{s.title.replace(/^\d+\.\s*/, "")}</h3>
+                <h3 className="text-sm font-semibold tracking-tight text-ink-100">{s.title.replace(/^\d+\.\s*/, "")}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-ink-500">{s.body}</p>
               </div>
               {i < steps.length - 1 && <span className="sr-only">Then:</span>}

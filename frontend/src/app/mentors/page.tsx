@@ -46,8 +46,8 @@ function MentorsPageInner() {
     <PublicShell>
       <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-accent-light">Mentorship Marketplace</p>
-          <h1 className="mt-1 text-2xl font-semibold text-ink-100">Real professionals, when you need a human</h1>
+          <p className="eyebrow">Mentorship Marketplace</p>
+          <h1 className="mt-1 text-2xl font-semibold tracking-tight text-ink-100">Real professionals, when you need a human</h1>
           <p className="mt-1 text-sm text-ink-500">
             Booking requests are saved and sent to the mentor right away. Payment collection is coming soon, so
             sessions are created as a request first, with no charge yet.
@@ -97,7 +97,7 @@ function MentorsPageInner() {
             className="focus-ring block rounded-2xl"
             aria-label={`View profile: ${mentor.display_name}`}
           >
-            <Card className="h-full transition-colors hover:bg-[rgb(var(--fg-tint)/0.045)]">
+            <Card interactive className="h-full">
               <CardContent className="flex h-full flex-col p-6">
                 <div className="flex items-center gap-3">
                   <MentorAvatar displayName={mentor.display_name} avatarUrl={mentor.avatar_url} />

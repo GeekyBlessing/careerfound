@@ -62,8 +62,8 @@ export default function RoadmapPage() {
         <div className="space-y-8">
           <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-accent-light">Your roadmap</p>
-              <h1 className="mt-1 text-2xl font-semibold text-ink-100">{roadmap.path_name}</h1>
+              <p className="eyebrow">Your roadmap</p>
+              <h1 className="mt-1 text-2xl font-semibold tracking-tight text-ink-100">{roadmap.path_name}</h1>
             </div>
             {skillGraph && (
               <Button variant="secondary" size="sm" className="gap-1.5" onClick={() => setShowGraph((s) => !s)}>
@@ -105,7 +105,7 @@ function PhaseAccordion({ phase, defaultOpen }: { phase: PhaseItem; defaultOpen:
       <button
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
-        className="flex w-full items-center justify-between gap-4 p-5 text-left focus-ring rounded-2xl"
+        className="focus-ring flex w-full items-center justify-between gap-4 rounded-2xl p-5 text-left transition-colors hover:bg-[rgb(var(--fg-tint)/0.02)]"
       >
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
@@ -117,7 +117,7 @@ function PhaseAccordion({ phase, defaultOpen }: { phase: PhaseItem; defaultOpen:
             <ProgressBar value={phase.progress_pct} tone={phase.progress_pct === 100 ? "success" : "accent"} />
           </div>
         </div>
-        <ChevronDown className={cn("h-4 w-4 flex-shrink-0 text-ink-500 transition-transform", open && "rotate-180")} />
+        <ChevronDown className={cn("h-4 w-4 flex-shrink-0 text-ink-500 transition-transform duration-200", open && "rotate-180")} />
       </button>
 
       {open && (
@@ -178,7 +178,7 @@ function LessonRow({ lesson }: { lesson: LessonItem }) {
             <p className="mt-0.5 text-xs text-ink-500">{lesson.est_minutes} min · {lesson.concept_summary}</p>
           </button>
           {expanded && (
-            <div className="mt-3 space-y-2 rounded-lg bg-base-950/60 p-3 text-xs leading-relaxed text-ink-400">
+            <div className="mt-3 animate-fade-in-up space-y-2 rounded-lg bg-base-950/60 p-3 text-xs leading-relaxed text-ink-400">
               <p className="italic text-ink-500">{lesson.beginner_explainer}</p>
               <div className="whitespace-pre-wrap text-ink-300">{lesson.content_md}</div>
             </div>
