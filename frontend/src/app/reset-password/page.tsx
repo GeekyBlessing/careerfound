@@ -57,24 +57,25 @@ function ResetPasswordInner() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4">
+      <div className="bg-dot-grid pointer-events-none absolute inset-x-0 top-0 -z-10 h-[420px]" />
       <div className="w-full max-w-sm">
-        <Link href="/" className="mb-8 flex items-center justify-center gap-2 font-semibold text-ink-100">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent">
+        <Link href="/" className="focus-ring mb-8 flex items-center justify-center gap-2 rounded-lg font-semibold text-ink-100">
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent shadow-xs">
             <Compass className="h-4 w-4 text-white" />
           </span>
           CareerFound
         </Link>
-        <Card className="p-8">
+        <Card className="animate-fade-in-up p-8 shadow-raised">
           {done ? (
             <div className="text-center" role="status" aria-live="polite">
               <CheckCircle2 className="mx-auto mb-4 h-10 w-10 text-accent-light" aria-hidden="true" />
-              <h1 className="text-lg font-semibold text-ink-100">Password reset</h1>
+              <h1 className="text-lg font-semibold tracking-tight text-ink-100">Password reset</h1>
               <p className="mt-2 text-sm text-ink-500">Taking you to log in...</p>
             </div>
           ) : (
             <>
-              <h1 className="text-lg font-semibold text-ink-100">Choose a new password</h1>
+              <h1 className="text-lg font-semibold tracking-tight text-ink-100">Choose a new password</h1>
               <p className="mt-1 text-sm text-ink-500">This link can only be used once.</p>
 
               <form onSubmit={handleSubmit} className="mt-6 space-y-4">

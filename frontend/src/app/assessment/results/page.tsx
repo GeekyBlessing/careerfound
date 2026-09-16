@@ -12,6 +12,7 @@ import { Alert } from "@/components/ui/alert";
 import { SkeletonCard } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
 import { CareerDnaRadar } from "@/components/charts/career-dna-radar";
+import { cn } from "@/lib/utils";
 import { api, ApiError } from "@/lib/api";
 import type { AssessmentResult, CareerRecommendation } from "@/types";
 
@@ -50,8 +51,8 @@ export default function AssessmentResultsPage() {
   return (
     <AppShell>
       <div className="mb-8">
-        <p className="text-xs font-semibold uppercase tracking-wider text-accent-light">Your results</p>
-        <h1 className="mt-1 text-2xl font-semibold text-ink-100">We found your strongest paths</h1>
+        <p className="eyebrow">Your results</p>
+        <h1 className="mt-1 text-2xl font-semibold tracking-tight text-ink-100">We found your strongest paths</h1>
         <p className="mt-1 text-sm text-ink-500">Based on your answers, not a generic list, your specific fit.</p>
       </div>
 
@@ -66,8 +67,8 @@ export default function AssessmentResultsPage() {
       {error && <Alert>{error}</Alert>}
 
       {result && (
-        <div className="space-y-8">
-          <Card className="grid gap-8 p-8 lg:grid-cols-[280px_1fr] lg:items-center">
+        <div className="animate-fade-in-up space-y-8">
+          <Card className="grid gap-8 p-8 shadow-raised lg:grid-cols-[280px_1fr] lg:items-center">
             <CareerDnaRadar dna={result.career_dna} />
             <div>
               <Badge tone="accent">Your Career DNA</Badge>
@@ -110,13 +111,22 @@ function RecommendationCard({
 }) {
   const meta = TIER_META[rec.tier];
   const Icon = meta.icon;
+  const isBestMatch = rec.tier === "best_match";
   return (
-    <Card className={rec.tier === "best_match" ? "border-accent/40" : ""}>
+    <Card
+      className={cn(
+        "relative",
+        isBestMatch && "border-accent/40 shadow-raised lg:-translate-y-1.5"
+      )}
+    >
+      {isBestMatch && (
+        <div className="absolute inset-x-0 -top-px mx-auto h-px w-2/3 bg-gradient-to-r from-transparent via-accent-light to-transparent" />
+      )}
       <CardContent className="flex h-full flex-col p-6">
         <Badge tone={meta.tone} className="w-fit gap-1">
           <Icon className="h-3 w-3" /> {meta.label}
         </Badge>
-        <h2 className="mt-3 text-lg font-semibold capitalize text-ink-100">{rec.path_slug.replace(/-/g, " ")}</h2>
+        <h2 className="mt-3 text-lg font-semibold capitalize tracking-tight text-ink-100">{rec.path_slug.replace(/-/g, " ")}</h2>
         <div className="mt-1 flex items-center gap-2 text-xs text-ink-500">
           <span>Fit score</span>
           <span className="font-semibold text-ink-300">{rec.fit_score}/100</span>

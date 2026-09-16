@@ -11,16 +11,18 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantClasses: Record<Variant, string> = {
-  primary: "bg-accent text-white hover:bg-accent-dark",
-  secondary: "bg-[rgb(var(--fg-tint)/0.06)] text-ink-100 hover:bg-[rgb(var(--fg-tint)/0.1)] border border-[rgb(var(--fg-tint)/0.1)]",
-  ghost: "bg-transparent text-ink-300 hover:text-ink-100 hover:bg-[rgb(var(--fg-tint)/0.05)]",
-  danger: "bg-danger/90 text-white hover:bg-danger",
+  primary:
+    "bg-accent text-white shadow-xs hover:bg-accent-dark hover:shadow-card active:shadow-none active:translate-y-px",
+  secondary:
+    "bg-[rgb(var(--fg-tint)/0.06)] text-ink-100 border border-[rgb(var(--fg-tint)/0.12)] hover:bg-[rgb(var(--fg-tint)/0.1)] hover:border-[rgb(var(--fg-tint)/0.18)] active:translate-y-px",
+  ghost: "bg-transparent text-ink-300 hover:text-ink-100 hover:bg-[rgb(var(--fg-tint)/0.05)] active:translate-y-px",
+  danger: "bg-danger/90 text-white shadow-xs hover:bg-danger hover:shadow-card active:translate-y-px",
 };
 
 const sizeClasses: Record<Size, string> = {
   sm: "text-sm px-3 py-1.5 rounded-lg gap-1.5",
   md: "text-sm px-4 py-2.5 rounded-xl gap-2",
-  lg: "text-base px-6 py-3 rounded-xl gap-2",
+  lg: "text-base px-6 py-3.5 rounded-xl gap-2",
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -30,7 +32,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || loading}
         className={cn(
-          "inline-flex items-center justify-center font-medium transition-all duration-150 focus-ring disabled:opacity-50 disabled:cursor-not-allowed",
+          "inline-flex items-center justify-center font-medium transition-all duration-150 ease-smooth focus-ring disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:hover:translate-y-0",
           variantClasses[variant],
           sizeClasses[size],
           className

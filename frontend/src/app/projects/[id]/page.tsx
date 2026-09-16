@@ -138,7 +138,7 @@ export default function ProjectDetailPage() {
                 {project.status === "completed" ? "Completed" : `Difficulty ${project.difficulty}/5`}
               </Badge>
             </div>
-            <h1 className="mt-2 flex items-center gap-2 text-2xl font-semibold text-ink-100">
+            <h1 className="mt-2 flex items-center gap-2 text-2xl font-semibold tracking-tight text-ink-100">
               <FolderGit2 className="h-5 w-5 text-ink-500" aria-hidden="true" /> {project.title}
             </h1>
           </div>
@@ -208,9 +208,10 @@ export default function ProjectDetailPage() {
 
               <Card>
                 <CardContent className="p-6">
-                  <p className="mb-1 flex items-center gap-2 text-sm font-semibold text-ink-100">
-                    <Sparkles className="h-4 w-4 text-accent-light" /> AI Project Reviewer
-                  </p>
+                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-accent/12 text-accent-light">
+                    <Sparkles className="h-4.5 w-4.5" />
+                  </div>
+                  <p className="mb-1 text-sm font-semibold text-ink-100">AI Project Reviewer</p>
                   <p className="mb-4 text-xs text-ink-500">
                     Paste your code or a description of what you built for structured, senior-engineer-style feedback.
                   </p>
@@ -227,7 +228,7 @@ export default function ProjectDetailPage() {
                   </Button>
 
                   {review && (
-                    <div className="mt-6 space-y-4 border-t border-[rgb(var(--fg-tint)/0.1)] pt-5">
+                    <div className="mt-6 animate-fade-in-up space-y-4 border-t border-[rgb(var(--fg-tint)/0.1)] pt-5">
                       <p className="text-sm text-ink-300">{review.overall_assessment}</p>
                       <div className="space-y-2">
                         {review.findings.map((f, i) => (
@@ -252,6 +253,9 @@ export default function ProjectDetailPage() {
             <div className="space-y-6">
               <Card>
                 <CardContent className="p-6">
+                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-accent/12 text-accent-light">
+                    <CheckCircle2 className="h-4.5 w-4.5" />
+                  </div>
                   <p className="text-sm font-semibold text-ink-100">Ready to submit?</p>
                   <p className="mt-1 text-xs text-ink-500">Mark this project complete once you&apos;re happy with it.</p>
                   {completeError && <Alert className="mt-3">{completeError}</Alert>}
@@ -269,6 +273,9 @@ export default function ProjectDetailPage() {
 
               <Card>
                 <CardContent className="p-6">
+                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-accent/12 text-accent-light">
+                    <FolderGit2 className="h-4.5 w-4.5" />
+                  </div>
                   <p className="text-sm font-semibold text-ink-100">Add to portfolio</p>
                   <p className="mt-1 text-xs text-ink-500">
                     Auto-generate a project description, README, CV bullet, and LinkedIn post.
@@ -279,7 +286,7 @@ export default function ProjectDetailPage() {
                   </Button>
 
                   {portfolio && (
-                    <div className="mt-4 space-y-3 rounded-xl border border-[rgb(var(--fg-tint)/0.1)] bg-base-950/60 p-3 text-xs">
+                    <div className="mt-4 animate-fade-in-up space-y-3 rounded-xl border border-[rgb(var(--fg-tint)/0.1)] bg-base-950/60 p-3 text-xs">
                       <p className="text-ink-300">{portfolio.cv_bullet}</p>
                       <Button variant="ghost" size="sm" className="w-full gap-1.5" onClick={() => router.push("/portfolio")}>
                         Edit in Portfolio Builder <ArrowRight className="h-3.5 w-3.5" />

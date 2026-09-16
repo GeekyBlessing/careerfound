@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Clock, LayoutGrid, Search, Wrench, ArrowRight } from "lucide-react";
 import { AppShell } from "@/components/layout/app-shell";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input, Label } from "@/components/ui/input";
@@ -61,10 +62,10 @@ export default function ProjectsByRolePage() {
     <AppShell>
       <div className="space-y-8">
         <div>
-          <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-accent-light">
+          <p className="eyebrow">
             <LayoutGrid className="h-3.5 w-3.5" /> Project discovery
           </p>
-          <h1 className="mt-1 text-2xl font-semibold text-ink-100">Projects by role</h1>
+          <h1 className="mt-1 text-2xl font-semibold tracking-tight text-ink-100">Projects by role</h1>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-400">
             Browse real, hands-on projects organized by career role. Pick a role to see what you would actually
             build, at every difficulty level, before you commit to a roadmap.
@@ -96,10 +97,10 @@ export default function ProjectsByRolePage() {
                   onClick={() => setActiveRole(active ? null : entry.path.slug)}
                   aria-pressed={active}
                   className={cn(
-                    "focus-ring rounded-2xl border p-4 text-left transition-colors",
+                    "focus-ring rounded-2xl border p-4 text-left transition-all duration-150 ease-smooth active:translate-y-px",
                     active
-                      ? "border-accent/40 bg-accent/10"
-                      : "border-[rgb(var(--fg-tint)/0.08)] bg-[rgb(var(--fg-tint)/0.03)] hover:border-[rgb(var(--fg-tint)/0.16)]"
+                      ? "border-accent/40 bg-accent/10 shadow-xs"
+                      : "border-[rgb(var(--fg-tint)/0.08)] bg-[rgb(var(--fg-tint)/0.03)] hover:border-[rgb(var(--fg-tint)/0.16)] hover:bg-[rgb(var(--fg-tint)/0.05)]"
                   )}
                 >
                   <p className={cn("text-sm font-semibold", active ? "text-accent-light" : "text-ink-100")}>{entry.path.name}</p>
@@ -120,7 +121,7 @@ export default function ProjectsByRolePage() {
           <div className="space-y-4">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h2 className="text-lg font-semibold text-ink-100">{activeEntry.path.name} projects</h2>
+                <h2 className="text-lg font-semibold tracking-tight text-ink-100">{activeEntry.path.name} projects</h2>
                 <p className="text-sm text-ink-500">{activeEntry.path.summary}</p>
               </div>
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
@@ -138,11 +139,10 @@ export default function ProjectsByRolePage() {
                     className="w-full pl-8 sm:w-56"
                   />
                 </div>
-                <Link
-                  href={`/careers/${activeEntry.path.slug}`}
-                  className="focus-ring inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-accent px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-accent-dark"
-                >
-                  Start this roadmap <ArrowRight className="h-3.5 w-3.5" />
+                <Link href={`/careers/${activeEntry.path.slug}`}>
+                  <Button className="w-full gap-1.5 whitespace-nowrap sm:w-auto">
+                    Start this roadmap <ArrowRight className="h-3.5 w-3.5" />
+                  </Button>
                 </Link>
               </div>
             </div>
@@ -154,10 +154,10 @@ export default function ProjectsByRolePage() {
                   onClick={() => setDifficulty(f.key)}
                   aria-pressed={difficulty === f.key}
                   className={cn(
-                    "focus-ring whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
+                    "focus-ring whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-medium transition-all duration-150 ease-smooth active:translate-y-px",
                     f.key === difficulty
-                      ? "border-accent/40 bg-accent/15 text-accent-light"
-                      : "border-[rgb(var(--fg-tint)/0.1)] text-ink-400 hover:border-[rgb(var(--fg-tint)/0.2)]"
+                      ? "border-accent/40 bg-accent/15 text-accent-light shadow-xs"
+                      : "border-[rgb(var(--fg-tint)/0.1)] text-ink-400 hover:border-[rgb(var(--fg-tint)/0.2)] hover:bg-[rgb(var(--fg-tint)/0.04)]"
                   )}
                 >
                   {f.label}
@@ -168,7 +168,7 @@ export default function ProjectsByRolePage() {
             {visibleProjects.length > 0 ? (
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {visibleProjects.map((project) => (
-                  <Card key={project.id} className="flex flex-col p-4">
+                  <Card key={project.id} className="flex flex-col p-4 transition-shadow duration-200 hover:shadow-card">
                     <div className="flex items-center justify-between gap-2">
                       <Badge tone={TIER_TONE[project.difficulty_label]}>{project.difficulty_label}</Badge>
                       <span className="flex items-center gap-1 text-[11px] text-ink-500">

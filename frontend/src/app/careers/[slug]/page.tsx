@@ -7,6 +7,7 @@ import {
   Award,
   Briefcase,
   BookOpen,
+  ChevronDown,
   Clock,
   GraduationCap,
   Globe,
@@ -85,8 +86,8 @@ export default function CareerDetailPage() {
       {path && (
         <div className="space-y-8">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-accent-light">Career path</p>
-            <h1 className="mt-1 text-2xl font-semibold text-ink-100">{path.name}</h1>
+            <p className="eyebrow">Career path</p>
+            <h1 className="mt-1 text-2xl font-semibold tracking-tight text-ink-100">{path.name}</h1>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-400">{path.summary}</p>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-500">{path.beginner_summary}</p>
 
@@ -101,21 +102,30 @@ export default function CareerDetailPage() {
             <div className="mt-6 grid gap-4 sm:grid-cols-3">
               <Card className="p-4">
                 <div className="flex items-center gap-2 text-xs text-ink-500">
-                  <Clock className="h-3.5 w-3.5" /> Typical timeline
+                  <span className="flex h-6 w-6 items-center justify-center rounded-md bg-accent/12 text-accent-light">
+                    <Clock className="h-3.5 w-3.5" />
+                  </span>
+                  Typical timeline
                 </div>
-                <p className="mt-1 text-sm font-semibold text-ink-100">~{path.avg_timeline_weeks} weeks</p>
+                <p className="mt-2 text-sm font-semibold text-ink-100">~{path.avg_timeline_weeks} weeks</p>
               </Card>
               <Card className="p-4">
                 <div className="flex items-center gap-2 text-xs text-ink-500">
-                  <Globe className="h-3.5 w-3.5" /> Remote potential
+                  <span className="flex h-6 w-6 items-center justify-center rounded-md bg-accent/12 text-accent-light">
+                    <Globe className="h-3.5 w-3.5" />
+                  </span>
+                  Remote potential
                 </div>
-                <p className="mt-1 text-sm font-semibold text-ink-100">{path.remote_potential}%</p>
+                <p className="mt-2 text-sm font-semibold text-ink-100">{path.remote_potential}%</p>
               </Card>
               <Card className="p-4">
                 <div className="flex items-center gap-2 text-xs text-ink-500">
-                  <Briefcase className="h-3.5 w-3.5" /> Difficulty
+                  <span className="flex h-6 w-6 items-center justify-center rounded-md bg-accent/12 text-accent-light">
+                    <Briefcase className="h-3.5 w-3.5" />
+                  </span>
+                  Difficulty
                 </div>
-                <p className="mt-1 text-sm font-semibold text-ink-100">{path.difficulty}/5</p>
+                <p className="mt-2 text-sm font-semibold text-ink-100">{path.difficulty}/5</p>
               </Card>
             </div>
 
@@ -156,7 +166,7 @@ export default function CareerDetailPage() {
             path.roadmap_outline.intermediate.length > 0 ||
             path.roadmap_outline.advanced.length > 0) && (
             <div>
-              <h2 className="mb-1 text-lg font-semibold text-ink-100">Your roadmap, stage by stage</h2>
+              <h2 className="mb-1 text-lg font-semibold tracking-tight text-ink-100">Your roadmap, stage by stage</h2>
               <p className="mb-5 text-sm text-ink-500">
                 What to focus on at each stage. Pair this with the projects below to know what to learn and what
                 to build next.
@@ -186,7 +196,7 @@ export default function CareerDetailPage() {
           )}
 
           <div>
-            <h2 className="mb-1 text-lg font-semibold text-ink-100">What you&apos;ll actually build</h2>
+            <h2 className="mb-1 text-lg font-semibold tracking-tight text-ink-100">What you&apos;ll actually build</h2>
             <p className="mb-5 text-sm text-ink-500">
               Real projects at every level, not a video course. Each one has step-by-step guidance, hints, and
               common mistakes to avoid.
@@ -239,15 +249,18 @@ export default function CareerDetailPage() {
 
           {(path.certifications.length > 0 || path.interview_prep.length > 0 || path.learning_resources.length > 0) && (
             <div>
-              <h2 className="mb-1 text-lg font-semibold text-ink-100">Getting job ready</h2>
+              <h2 className="mb-1 text-lg font-semibold tracking-tight text-ink-100">Getting job ready</h2>
               <p className="mb-5 text-sm text-ink-500">
                 Certifications worth pursuing, what to expect in interviews, and where to go deeper.
               </p>
               <div className="space-y-3">
                 {path.certifications.length > 0 && (
-                  <details className="group rounded-xl border border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] p-5 open:bg-[rgb(var(--fg-tint)/0.05)]">
-                    <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-medium text-ink-100 marker:content-none">
-                      <Award className="h-4 w-4 text-accent-light" /> Certifications worth pursuing
+                  <details className="group rounded-xl border border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] p-5 transition-colors open:bg-[rgb(var(--fg-tint)/0.05)]">
+                    <summary className="focus-ring flex cursor-pointer list-none items-center justify-between gap-2 rounded-lg text-sm font-medium text-ink-100 marker:content-none">
+                      <span className="flex items-center gap-2">
+                        <Award className="h-4 w-4 text-accent-light" /> Certifications worth pursuing
+                      </span>
+                      <ChevronDown className="h-4 w-4 flex-shrink-0 text-ink-500 transition-transform duration-200 group-open:rotate-180" />
                     </summary>
                     <ul className="mt-3 space-y-1.5">
                       {path.certifications.map((cert) => (
@@ -259,9 +272,12 @@ export default function CareerDetailPage() {
                   </details>
                 )}
                 {path.interview_prep.length > 0 && (
-                  <details className="group rounded-xl border border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] p-5 open:bg-[rgb(var(--fg-tint)/0.05)]">
-                    <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-medium text-ink-100 marker:content-none">
-                      <MessageCircleQuestion className="h-4 w-4 text-accent-light" /> Interview prep
+                  <details className="group rounded-xl border border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] p-5 transition-colors open:bg-[rgb(var(--fg-tint)/0.05)]">
+                    <summary className="focus-ring flex cursor-pointer list-none items-center justify-between gap-2 rounded-lg text-sm font-medium text-ink-100 marker:content-none">
+                      <span className="flex items-center gap-2">
+                        <MessageCircleQuestion className="h-4 w-4 text-accent-light" /> Interview prep
+                      </span>
+                      <ChevronDown className="h-4 w-4 flex-shrink-0 text-ink-500 transition-transform duration-200 group-open:rotate-180" />
                     </summary>
                     <ul className="mt-3 space-y-1.5">
                       {path.interview_prep.map((q) => (
@@ -273,9 +289,12 @@ export default function CareerDetailPage() {
                   </details>
                 )}
                 {path.learning_resources.length > 0 && (
-                  <details className="group rounded-xl border border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] p-5 open:bg-[rgb(var(--fg-tint)/0.05)]">
-                    <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-medium text-ink-100 marker:content-none">
-                      <BookOpen className="h-4 w-4 text-accent-light" /> Recommended learning resources
+                  <details className="group rounded-xl border border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] p-5 transition-colors open:bg-[rgb(var(--fg-tint)/0.05)]">
+                    <summary className="focus-ring flex cursor-pointer list-none items-center justify-between gap-2 rounded-lg text-sm font-medium text-ink-100 marker:content-none">
+                      <span className="flex items-center gap-2">
+                        <BookOpen className="h-4 w-4 text-accent-light" /> Recommended learning resources
+                      </span>
+                      <ChevronDown className="h-4 w-4 flex-shrink-0 text-ink-500 transition-transform duration-200 group-open:rotate-180" />
                     </summary>
                     <ul className="mt-3 space-y-2.5">
                       {path.learning_resources.map((r) => (

@@ -80,10 +80,10 @@ function OptionGrid<T extends string | number>({
           aria-pressed={value === opt.value}
           onClick={() => onChange(opt.value)}
           className={cn(
-            "rounded-xl border px-4 py-3.5 text-left text-sm font-medium transition-colors focus-ring",
+            "rounded-xl border px-4 py-3.5 text-left text-sm font-medium transition-all duration-150 ease-smooth focus-ring active:translate-y-px",
             value === opt.value
-              ? "border-accent bg-accent/15 text-accent-light"
-              : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] text-ink-300 hover:border-[rgb(var(--fg-tint)/0.2)] hover:text-ink-100"
+              ? "border-accent bg-accent/15 text-accent-light shadow-xs"
+              : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] text-ink-300 hover:border-[rgb(var(--fg-tint)/0.2)] hover:bg-[rgb(var(--fg-tint)/0.05)] hover:text-ink-100"
           )}
         >
           {opt.label}
@@ -101,8 +101,8 @@ function YesNo({ value, onChange }: { value: boolean | undefined; onChange: (v: 
         aria-pressed={value === true}
         onClick={() => onChange(true)}
         className={cn(
-          "rounded-xl border px-4 py-3 text-sm font-medium transition-colors focus-ring",
-          value === true ? "border-accent bg-accent/15 text-accent-light" : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] text-ink-300 hover:text-ink-100"
+          "rounded-xl border px-4 py-3 text-sm font-medium transition-all duration-150 ease-smooth focus-ring active:translate-y-px",
+          value === true ? "border-accent bg-accent/15 text-accent-light shadow-xs" : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] text-ink-300 hover:bg-[rgb(var(--fg-tint)/0.05)] hover:text-ink-100"
         )}
       >
         Yes
@@ -112,8 +112,8 @@ function YesNo({ value, onChange }: { value: boolean | undefined; onChange: (v: 
         aria-pressed={value === false}
         onClick={() => onChange(false)}
         className={cn(
-          "rounded-xl border px-4 py-3 text-sm font-medium transition-colors focus-ring",
-          value === false ? "border-accent bg-accent/15 text-accent-light" : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] text-ink-300 hover:text-ink-100"
+          "rounded-xl border px-4 py-3 text-sm font-medium transition-all duration-150 ease-smooth focus-ring active:translate-y-px",
+          value === false ? "border-accent bg-accent/15 text-accent-light shadow-xs" : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] text-ink-300 hover:bg-[rgb(var(--fg-tint)/0.05)] hover:text-ink-100"
         )}
       >
         Not really
@@ -242,8 +242,8 @@ export default function OnboardingPage() {
               update("prefers_systems", false);
             }}
             className={cn(
-              "rounded-xl border px-4 py-3.5 text-sm font-medium transition-colors focus-ring",
-              answers.enjoys_people === true ? "border-accent bg-accent/15 text-accent-light" : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] text-ink-300 hover:text-ink-100"
+              "rounded-xl border px-4 py-3.5 text-sm font-medium transition-all duration-150 ease-smooth focus-ring active:translate-y-px",
+              answers.enjoys_people === true ? "border-accent bg-accent/15 text-accent-light shadow-xs" : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] text-ink-300 hover:bg-[rgb(var(--fg-tint)/0.05)] hover:text-ink-100"
             )}
           >
             People
@@ -256,8 +256,8 @@ export default function OnboardingPage() {
               update("prefers_systems", true);
             }}
             className={cn(
-              "rounded-xl border px-4 py-3.5 text-sm font-medium transition-colors focus-ring",
-              answers.prefers_systems === true ? "border-accent bg-accent/15 text-accent-light" : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] text-ink-300 hover:text-ink-100"
+              "rounded-xl border px-4 py-3.5 text-sm font-medium transition-all duration-150 ease-smooth focus-ring active:translate-y-px",
+              answers.prefers_systems === true ? "border-accent bg-accent/15 text-accent-light shadow-xs" : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] text-ink-300 hover:bg-[rgb(var(--fg-tint)/0.05)] hover:text-ink-100"
             )}
           >
             Systems
@@ -277,24 +277,30 @@ export default function OnboardingPage() {
   const current = steps[step] ?? steps[0]!;
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center px-4 py-12">
-      <Link href="/" className="mb-8 flex items-center gap-2 font-semibold text-ink-100">
-        <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent">
+    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 py-12">
+      <div className="bg-dot-grid pointer-events-none absolute inset-x-0 top-0 -z-10 h-[420px]" />
+      <Link href="/" className="mb-8 flex items-center gap-2 font-semibold text-ink-100 focus-ring rounded-lg">
+        <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent shadow-xs">
           <Compass className="h-4 w-4 text-white" />
         </span>
         CareerFound
       </Link>
 
       <div className="w-full max-w-lg">
-        <ProgressBar value={progress} trackClassName="mb-6" />
-
-        <Card className="p-8">
-          <div className="mb-2 inline-flex items-center gap-1.5 text-xs font-medium text-accent-light">
+        <div className="mb-2 flex items-center justify-between text-xs font-medium text-ink-500">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-accent/20 bg-accent/10 px-2.5 py-1 text-accent-light">
             <Sparkles className="h-3.5 w-3.5" />
             Step {step + 1} of {steps.length}
+          </span>
+          <span>{progress}% complete</span>
+        </div>
+        <ProgressBar value={progress} trackClassName="mb-6" />
+
+        <Card className="p-8 shadow-raised">
+          <div key={step} className="animate-fade-in-up">
+            <h1 className="text-xl font-semibold tracking-tight text-ink-100">{current.title}</h1>
+            <div className="mt-5">{current.body}</div>
           </div>
-          <h1 className="text-xl font-semibold text-ink-100">{current.title}</h1>
-          <div className="mt-5">{current.body}</div>
 
           {isLastStep && !user && (
             <div className="mt-6 space-y-3 border-t border-[rgb(var(--fg-tint)/0.1)] pt-6">

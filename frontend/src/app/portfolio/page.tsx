@@ -36,8 +36,8 @@ export default function PortfolioPage() {
   return (
     <AppShell>
       <div className="mb-6">
-        <p className="text-xs font-semibold uppercase tracking-wider text-accent-light">Portfolio Builder</p>
-        <h1 className="mt-1 text-2xl font-semibold text-ink-100">Your projects, written up like proof</h1>
+        <p className="eyebrow">Portfolio Builder</p>
+        <h1 className="mt-1 text-2xl font-semibold tracking-tight text-ink-100">Your projects, written up like proof</h1>
       </div>
 
       {loading && <SkeletonCard />}
@@ -64,8 +64,8 @@ export default function PortfolioPage() {
                 key={item.id}
                 onClick={() => setActiveId(item.id)}
                 aria-pressed={activeId === item.id}
-                className={`focus-ring w-full rounded-xl border px-4 py-3 text-left text-sm transition-colors ${
-                  activeId === item.id ? "border-accent bg-accent/10 text-ink-100" : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.02)] text-ink-400 hover:text-ink-100"
+                className={`focus-ring w-full rounded-xl border px-4 py-3 text-left text-sm transition-all duration-150 ease-smooth active:translate-y-px ${
+                  activeId === item.id ? "border-accent bg-accent/10 text-ink-100 shadow-xs" : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.02)] text-ink-400 hover:bg-[rgb(var(--fg-tint)/0.04)] hover:text-ink-100"
                 }`}
               >
                 <p className="font-medium">{item.title}</p>
@@ -110,7 +110,7 @@ function PortfolioEditor({ item, onSaved }: { item: PortfolioItem; onSaved: (ite
     <Card>
       <CardContent className="space-y-5 p-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-ink-100">{item.title}</h2>
+          <h2 className="text-lg font-semibold tracking-tight text-ink-100">{item.title}</h2>
           <div className="flex flex-wrap gap-1.5">
             {item.skills_demonstrated.map((s) => (
               <Badge key={s}>{s}</Badge>
@@ -141,7 +141,7 @@ function PortfolioEditor({ item, onSaved }: { item: PortfolioItem; onSaved: (ite
           />
         </div>
 
-        {saved && <Alert variant="info">Saved.</Alert>}
+        {saved && <Alert variant="info" className="animate-fade-in-up">Saved.</Alert>}
 
         <div className="flex items-center gap-3">
           <Button onClick={save} loading={saving} className="gap-1.5">

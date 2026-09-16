@@ -85,10 +85,10 @@ export default function CareersListPage() {
                   key={f.key}
                   onClick={() => setDifficulty(f.key)}
                   className={cn(
-                    "focus-ring whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
+                    "focus-ring whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-medium transition-all duration-150 ease-smooth active:translate-y-px",
                     f.key === difficulty
-                      ? "border-accent/40 bg-accent/15 text-accent-light"
-                      : "border-[rgb(var(--fg-tint)/0.1)] text-ink-400 hover:border-[rgb(var(--fg-tint)/0.2)]"
+                      ? "border-accent/40 bg-accent/15 text-accent-light shadow-xs"
+                      : "border-[rgb(var(--fg-tint)/0.1)] text-ink-400 hover:border-[rgb(var(--fg-tint)/0.2)] hover:bg-[rgb(var(--fg-tint)/0.04)]"
                   )}
                 >
                   {f.label}
@@ -119,7 +119,7 @@ export default function CareersListPage() {
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {visiblePaths.map((path) => (
               <Link key={path.id} href={`/careers/${path.slug}`}>
-                <Card className="flex h-full flex-col p-6 transition-colors hover:bg-[rgb(var(--fg-tint)/0.045)]">
+                <Card interactive className="flex h-full flex-col p-6">
                   <div className="flex items-start justify-between gap-3">
                     <p className="text-sm font-semibold text-ink-100">{path.name}</p>
                     <span className="flex flex-shrink-0 items-center gap-1 text-xs text-ink-500">

@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { Check } from "lucide-react";
+import { Check, MessageCircleQuestion } from "lucide-react";
 import { PublicShell } from "@/components/layout/public-shell";
 import { SectionHeading } from "@/components/marketing/section-heading";
 import { ServiceRequestForm } from "@/components/marketing/service-request-form";
 import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { pricingTiers } from "@/lib/marketing-content";
 
 export const metadata: Metadata = {
@@ -24,7 +25,10 @@ export default function ConsultationPage() {
         />
 
         <div className="mx-auto mt-10 grid max-w-4xl gap-8 lg:grid-cols-5">
-          <div className="lg:col-span-3">
+          <Card className="p-8 lg:col-span-3">
+            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/12 text-accent-light">
+              <MessageCircleQuestion className="h-5 w-5" />
+            </div>
             <Badge tone="warning" className="mb-4 w-fit">Paid service</Badge>
             <div className="flex items-baseline gap-2">
               <span className="text-3xl font-semibold text-ink-100">{tier.price}</span>
@@ -46,7 +50,7 @@ export default function ConsultationPage() {
               Submitting the form sends a request, it does not charge you. We&apos;ll reply by email to arrange
               payment and a time.
             </p>
-          </div>
+          </Card>
 
           <div className="lg:col-span-2">
             <ServiceRequestForm service="consultation" serviceLabel="Career Consultation" />

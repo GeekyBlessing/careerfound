@@ -44,29 +44,30 @@ function VerifyEmailInner() {
   }, [token]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4">
+      <div className="bg-dot-grid pointer-events-none absolute inset-x-0 top-0 -z-10 h-[420px]" />
       <div className="w-full max-w-sm">
-        <Link href="/" className="mb-8 flex items-center justify-center gap-2 font-semibold text-ink-100">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent">
+        <Link href="/" className="focus-ring mb-8 flex items-center justify-center gap-2 rounded-lg font-semibold text-ink-100">
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent shadow-xs">
             <Compass className="h-4 w-4 text-white" />
           </span>
           CareerFound
         </Link>
-        <Card className="p-8 text-center" role="status" aria-live="polite">
+        <Card className="animate-fade-in-up p-8 text-center shadow-raised" role="status" aria-live="polite">
           {status === "loading" && (
             <>
               <div
                 className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-accent border-t-transparent"
                 aria-hidden="true"
               />
-              <h1 className="text-lg font-semibold text-ink-100">Verifying your email</h1>
+              <h1 className="text-lg font-semibold tracking-tight text-ink-100">Verifying your email</h1>
               <p className="mt-1 text-sm text-ink-500">This will just take a second.</p>
             </>
           )}
           {status === "success" && (
             <>
               <CheckCircle2 className="mx-auto mb-4 h-10 w-10 text-accent-light" aria-hidden="true" />
-              <h1 className="text-lg font-semibold text-ink-100">Email verified</h1>
+              <h1 className="text-lg font-semibold tracking-tight text-ink-100">Email verified</h1>
               <p className="mt-1 text-sm text-ink-500">Your CareerFound account is confirmed.</p>
               <Link href={user ? "/dashboard" : "/login"}>
                 <Button className="mt-6 w-full">{user ? "Go to dashboard" : "Log in"}</Button>
@@ -76,7 +77,7 @@ function VerifyEmailInner() {
           {status === "error" && (
             <>
               <XCircle className="mx-auto mb-4 h-10 w-10 text-danger" aria-hidden="true" />
-              <h1 className="text-lg font-semibold text-ink-100">Couldn&apos;t verify your email</h1>
+              <h1 className="text-lg font-semibold tracking-tight text-ink-100">Couldn&apos;t verify your email</h1>
               <p className="mt-1 text-sm text-ink-500">{error}</p>
               <Link href="/settings">
                 <Button variant="secondary" className="mt-6 w-full">

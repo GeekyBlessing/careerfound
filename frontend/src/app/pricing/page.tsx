@@ -26,13 +26,22 @@ export default function PricingPage() {
 
         <div className="mt-14 grid gap-6 lg:grid-cols-3">
           {pricingTiers.map((tier) => (
-            <Card key={tier.name} className={cn("flex flex-col p-8", tier.highlighted && "border-accent/40")}>
+            <Card
+              key={tier.name}
+              className={cn(
+                "relative flex flex-col p-8",
+                tier.highlighted && "border-accent/40 shadow-raised sm:-translate-y-2"
+              )}
+            >
+              {tier.highlighted && (
+                <div className="absolute inset-x-0 -top-px mx-auto h-px w-2/3 bg-gradient-to-r from-transparent via-accent-light to-transparent" />
+              )}
               {tier.paid ? (
                 <Badge tone="warning" className="mb-4 w-fit">Paid service</Badge>
               ) : tier.highlighted ? (
                 <Badge tone="accent" className="mb-4 w-fit">Most popular</Badge>
               ) : null}
-              <h3 className="text-lg font-semibold text-ink-100">{tier.name}</h3>
+              <h3 className="text-lg font-semibold tracking-tight text-ink-100">{tier.name}</h3>
               <div className="mt-2 flex items-baseline gap-1">
                 <span className="text-3xl font-semibold text-ink-100">{tier.price}</span>
                 <span className="text-sm text-ink-500">{tier.period}</span>

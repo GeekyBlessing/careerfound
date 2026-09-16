@@ -54,12 +54,12 @@ export default function MentorPage() {
   return (
     <AppShell>
       <div className="mb-6">
-        <p className="text-xs font-semibold uppercase tracking-wider text-accent-light">AI Mentor</p>
-        <h1 className="mt-1 text-2xl font-semibold text-ink-100">Your patient senior engineer</h1>
+        <p className="eyebrow">AI Mentor · software, on call 24/7</p>
+        <h1 className="mt-1 text-2xl font-semibold tracking-tight text-ink-100">Your patient senior engineer</h1>
         <p className="mt-1 text-sm text-ink-500">Explains simply, gives hints before answers, and remembers where you&apos;re stuck.</p>
       </div>
 
-      <Card className="flex h-[65vh] flex-col overflow-hidden">
+      <Card className="flex h-[65vh] flex-col overflow-hidden shadow-raised">
         <div ref={scrollRef} role="log" aria-live="polite" className="flex-1 space-y-4 overflow-y-auto p-6">
           {messages.length === 0 && (
             <div className="flex h-full flex-col items-center justify-center text-center">
@@ -73,7 +73,7 @@ export default function MentorPage() {
                   <button
                     key={p}
                     onClick={() => sendMessage(p)}
-                    className="focus-ring rounded-lg border border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] px-3.5 py-2 text-left text-xs text-ink-300 transition-colors hover:border-[rgb(var(--fg-tint)/0.2)] hover:text-ink-100"
+                    className="focus-ring rounded-lg border border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] px-3.5 py-2 text-left text-xs text-ink-300 transition-all duration-150 ease-smooth hover:border-[rgb(var(--fg-tint)/0.2)] hover:bg-[rgb(var(--fg-tint)/0.05)] hover:text-ink-100 active:translate-y-px"
                   >
                     {p}
                   </button>
@@ -83,7 +83,7 @@ export default function MentorPage() {
           )}
 
           {messages.map((m, i) => (
-            <div key={i} className={`flex gap-3 ${m.role === "user" ? "justify-end" : ""}`}>
+            <div key={i} className={`flex animate-fade-in-up gap-3 ${m.role === "user" ? "justify-end" : ""}`}>
               {m.role === "assistant" && (
                 <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-accent/15 text-accent-light">
                   <Bot className="h-3.5 w-3.5" />
@@ -124,7 +124,7 @@ export default function MentorPage() {
               <button
                 key={f}
                 onClick={() => sendMessage(f)}
-                className="focus-ring flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-xs text-accent-light hover:bg-accent/15"
+                className="focus-ring flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-xs text-accent-light transition-all duration-150 ease-smooth hover:bg-accent/15 active:translate-y-px"
               >
                 <Sparkles className="h-3 w-3" /> {f}
               </button>

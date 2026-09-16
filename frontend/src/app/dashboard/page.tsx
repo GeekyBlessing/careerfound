@@ -73,7 +73,7 @@ export default function DashboardPage() {
         <div className="space-y-8">
           <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
             <div>
-              <h1 className="text-2xl font-semibold text-ink-100">{dashboard.greeting}</h1>
+              <h1 className="text-2xl font-semibold tracking-tight text-ink-100">{dashboard.greeting}</h1>
               <p className="mt-1 text-sm text-ink-500">
                 On track: <span className="text-ink-300">{dashboard.path_name}</span>
               </p>
@@ -102,7 +102,7 @@ export default function DashboardPage() {
               <div className="grid gap-4 sm:grid-cols-2">
                 <Card>
                   <CardContent className="p-5">
-                    <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-[rgb(var(--fg-tint)/0.06)] text-ink-300">
+                    <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-accent/12 text-accent-light">
                       <MapIcon className="h-4 w-4" />
                     </div>
                     <p className="text-xs font-medium uppercase tracking-wide text-ink-500">Current project</p>
@@ -111,7 +111,7 @@ export default function DashboardPage() {
                 </Card>
                 <Card>
                   <CardContent className="p-5">
-                    <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-[rgb(var(--fg-tint)/0.06)] text-ink-300">
+                    <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-accent/12 text-accent-light">
                       <Trophy className="h-4 w-4" />
                     </div>
                     <p className="text-xs font-medium uppercase tracking-wide text-ink-500">Upcoming milestone</p>
@@ -125,7 +125,7 @@ export default function DashboardPage() {
               {dashboard.readiness && <ReadinessCard readiness={dashboard.readiness} />}
               <Card>
                 <CardContent className="p-6">
-                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-accent/15 text-accent-light">
+                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-accent/12 text-accent-light">
                     <MessageCircle className="h-4 w-4" />
                   </div>
                   <p className="text-sm font-semibold text-ink-100">Stuck on something?</p>
@@ -158,7 +158,7 @@ function TodayMissionCard({ mission }: { mission: NonNullable<Dashboard["today_m
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-accent-light">Today&apos;s mission</p>
+            <p className="eyebrow">Today&apos;s mission</p>
             <p className="mt-1 flex items-center gap-1 text-sm text-ink-500">
               <Clock className="h-3.5 w-3.5" /> {formatMinutes(mission.total_minutes)} total
             </p>
@@ -207,7 +207,7 @@ function ReadinessCard({ readiness }: { readiness: NonNullable<Dashboard["readin
   return (
     <Card>
       <CardContent className="p-6">
-        <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">Tech Readiness Score</p>
+        <p className="eyebrow">Tech Readiness Score</p>
         <div className="mt-4 flex items-center justify-center">
           <RadialProgress value={readiness.overall} size={120} label="/ 100" />
         </div>
@@ -225,9 +225,12 @@ function ReadinessCard({ readiness }: { readiness: NonNullable<Dashboard["readin
         {readiness.next_actions.length > 0 && (
           <div className="mt-5 border-t border-[rgb(var(--fg-tint)/0.1)] pt-4">
             <p className="mb-2 text-xs font-medium text-ink-300">What would move your score up:</p>
-            <ul className="space-y-1.5 text-xs text-ink-500">
+            <ul className="space-y-2 text-xs text-ink-500">
               {readiness.next_actions.map((a, i) => (
-                <li key={i}>• {a}</li>
+                <li key={i} className="flex gap-2">
+                  <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-accent" aria-hidden="true" />
+                  {a}
+                </li>
               ))}
             </ul>
           </div>

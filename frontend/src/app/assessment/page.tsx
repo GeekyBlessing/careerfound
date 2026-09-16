@@ -53,10 +53,10 @@ export default function RetakeAssessmentPage() {
     <AppShell>
       <div className="mx-auto max-w-xl">
         <div className="mb-6 text-center">
-          <p className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-accent-light">
+          <p className="eyebrow justify-center">
             <Sparkles className="h-3.5 w-3.5" /> Find Your Tech Path
           </p>
-          <h1 className="mt-2 text-2xl font-semibold text-ink-100">Retake your assessment</h1>
+          <h1 className="mt-2 text-2xl font-semibold tracking-tight text-ink-100">Retake your assessment</h1>
           <p className="mt-1 text-sm text-ink-500">Answers update your recommendations, your progress stays untouched.</p>
         </div>
 
@@ -73,8 +73,8 @@ export default function RetakeAssessmentPage() {
                     aria-pressed={answers[q.key] === true}
                     onClick={() => setAnswers((a) => ({ ...a, [q.key]: true }))}
                     className={cn(
-                      "rounded-xl border px-4 py-2.5 text-sm font-medium transition-colors focus-ring",
-                      answers[q.key] === true ? "border-accent bg-accent/15 text-accent-light" : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] text-ink-300"
+                      "rounded-xl border px-4 py-2.5 text-sm font-medium transition-all duration-150 ease-smooth focus-ring active:translate-y-px",
+                      answers[q.key] === true ? "border-accent bg-accent/15 text-accent-light shadow-xs" : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] text-ink-300 hover:bg-[rgb(var(--fg-tint)/0.05)] hover:text-ink-100"
                     )}
                   >
                     Yes
@@ -84,8 +84,8 @@ export default function RetakeAssessmentPage() {
                     aria-pressed={answers[q.key] === false}
                     onClick={() => setAnswers((a) => ({ ...a, [q.key]: false }))}
                     className={cn(
-                      "rounded-xl border px-4 py-2.5 text-sm font-medium transition-colors focus-ring",
-                      answers[q.key] === false ? "border-accent bg-accent/15 text-accent-light" : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] text-ink-300"
+                      "rounded-xl border px-4 py-2.5 text-sm font-medium transition-all duration-150 ease-smooth focus-ring active:translate-y-px",
+                      answers[q.key] === false ? "border-accent bg-accent/15 text-accent-light shadow-xs" : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] text-ink-300 hover:bg-[rgb(var(--fg-tint)/0.05)] hover:text-ink-100"
                     )}
                   >
                     Not really

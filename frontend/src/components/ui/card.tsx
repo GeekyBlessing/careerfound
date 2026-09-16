@@ -1,10 +1,16 @@
 import { cn } from "@/lib/utils";
 
-export function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Adds the shared hover-lift treatment, for cards that are themselves clickable (usually wrapped in a Link). */
+  interactive?: boolean;
+}
+
+export function Card({ className, interactive, ...props }: CardProps) {
   return (
     <div
       className={cn(
         "rounded-2xl border border-[rgb(var(--fg-tint)/0.08)] bg-[rgb(var(--fg-tint)/0.03)] shadow-card",
+        interactive && "card-interactive cursor-pointer",
         className
       )}
       {...props}

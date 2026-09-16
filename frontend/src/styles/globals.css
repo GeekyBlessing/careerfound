@@ -88,6 +88,35 @@ body {
   @apply outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-base-950;
 }
 
+/* A very fine dot grid, used once behind the hero instead of a gradient
+   blob: reads as "engineered product" rather than decoration, and stays
+   nearly invisible so it never competes with the copy on top of it. */
+.bg-dot-grid {
+  background-image: radial-gradient(rgb(var(--fg-tint) / 0.14) 1px, transparent 1px);
+  background-size: 24px 24px;
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black 40%, transparent 100%);
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black 40%, transparent 100%);
+}
+
+/* Shared hover/press treatment for anything clickable presented as a card
+   (career cards, project cards, path cards): a small lift plus a border
+   tint, applied the same way everywhere so the whole app feels like one
+   system rather than every page inventing its own hover state. */
+.card-interactive {
+  @apply transition-all duration-200 ease-smooth hover:-translate-y-0.5 hover:border-accent/25 hover:shadow-raised active:translate-y-0 active:shadow-xs;
+}
+
+/* The connecting line behind a horizontal step tracker (Discover -> Find
+   your path -> Roadmap -> Build -> Job ready). One reusable primitive
+   instead of every section hand-rolling its own flow diagram. */
+.step-track {
+  background: linear-gradient(90deg, rgb(var(--color-accent-light) / 0.5), rgb(var(--color-accent-light) / 0.08));
+}
+
+.eyebrow {
+  @apply inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-accent-light;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

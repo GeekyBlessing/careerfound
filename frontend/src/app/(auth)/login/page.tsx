@@ -34,16 +34,17 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4">
+      <div className="bg-dot-grid pointer-events-none absolute inset-x-0 top-0 -z-10 h-[420px]" />
       <div className="w-full max-w-sm">
-        <Link href="/" className="mb-8 flex items-center justify-center gap-2 font-semibold text-ink-100">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent">
+        <Link href="/" className="focus-ring mb-8 flex items-center justify-center gap-2 rounded-lg font-semibold text-ink-100">
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent shadow-xs">
             <Compass className="h-4 w-4 text-white" />
           </span>
           CareerFound
         </Link>
-        <Card className="p-8">
-          <h1 className="text-lg font-semibold text-ink-100">Welcome back</h1>
+        <Card className="animate-fade-in-up p-8 shadow-raised">
+          <h1 className="text-lg font-semibold tracking-tight text-ink-100">Welcome back</h1>
           <p className="mt-1 text-sm text-ink-500">Log in to continue your roadmap.</p>
 
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">

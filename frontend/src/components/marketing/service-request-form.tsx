@@ -41,7 +41,7 @@ export function ServiceRequestForm({ service, serviceLabel }: { service: Service
 
   if (submitted) {
     return (
-      <Card className="p-8 text-center">
+      <Card className="animate-fade-in-up p-8 text-center shadow-raised">
         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-success/15 text-success">
           <CheckCircle2 className="h-5 w-5" />
         </div>
@@ -55,7 +55,7 @@ export function ServiceRequestForm({ service, serviceLabel }: { service: Service
   }
 
   return (
-    <Card className="p-6 sm:p-8">
+    <Card className="p-6 shadow-raised sm:p-8">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <Label htmlFor="service-request-name">Name</Label>

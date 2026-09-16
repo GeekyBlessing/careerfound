@@ -32,19 +32,20 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4">
+      <div className="bg-dot-grid pointer-events-none absolute inset-x-0 top-0 -z-10 h-[420px]" />
       <div className="w-full max-w-sm">
-        <Link href="/" className="mb-8 flex items-center justify-center gap-2 font-semibold text-ink-100">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent">
+        <Link href="/" className="focus-ring mb-8 flex items-center justify-center gap-2 rounded-lg font-semibold text-ink-100">
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent shadow-xs">
             <Compass className="h-4 w-4 text-white" />
           </span>
           CareerFound
         </Link>
-        <Card className="p-8">
+        <Card className="animate-fade-in-up p-8 shadow-raised">
           {submitted ? (
             <div className="text-center">
               <MailCheck className="mx-auto mb-4 h-10 w-10 text-accent-light" aria-hidden="true" />
-              <h1 className="text-lg font-semibold text-ink-100">Check your email</h1>
+              <h1 className="text-lg font-semibold tracking-tight text-ink-100">Check your email</h1>
               <p className="mt-2 text-sm text-ink-500">
                 If an account exists for <span className="text-ink-300">{email}</span>, a password reset link is on
                 its way. It expires in 1 hour.
@@ -55,7 +56,7 @@ export default function ForgotPasswordPage() {
             </div>
           ) : (
             <>
-              <h1 className="text-lg font-semibold text-ink-100">Reset your password</h1>
+              <h1 className="text-lg font-semibold tracking-tight text-ink-100">Reset your password</h1>
               <p className="mt-1 text-sm text-ink-500">Enter your email and we&apos;ll send you a reset link.</p>
 
               <form onSubmit={handleSubmit} className="mt-6 space-y-4">
