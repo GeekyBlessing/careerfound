@@ -31,6 +31,8 @@ async def generate_portfolio(
         item = await portfolio_service.generate_portfolio_item(db, user, payload.project_id, payload.submission_text)
     except ValueError as exc:
         raise HTTPException(status.HTTP_404_NOT_FOUND, str(exc)) from exc
+    except PermissionError as exc:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, str(exc)) from exc
     return item
 
 

@@ -118,17 +118,28 @@ async def compute_readiness(db: AsyncSession, user_id: uuid.UUID, path_id: uuid.
 
     next_actions = _next_actions(knowledge_pct, projects_pct, portfolio_pct, interview_pct, practical_pct)
 
-    score = ReadinessScore(
-        user_id=user_id,
-        overall=overall,
-        knowledge_pct=knowledge_pct,
-        projects_pct=projects_pct,
-        portfolio_pct=portfolio_pct,
-        interview_pct=interview_pct,
-        practical_pct=practical_pct,
-        next_actions=next_actions,
-    )
-    db.add(score)
+    # This is called on every dashboard/readiness-score view, so it must not
+    # insert a fresh row per view (that grew the table unbounded with no
+    # code anywhere ever reading the history back). Nothing in the app
+    # relies on a row-per-computation trail, so update the user's existing
+    # row in place and only insert the first time.
+    score = (
+        await db.execute(
+            select(ReadinessScore).where(ReadinessScore.user_id == user_id).order_by(ReadinessScore.created_at.desc())
+        )
+    ).scalars().first()
+    if score is None:
+        score = ReadinessScore(user_id=user_id)
+        db.add(score)
+
+    score.overall = overall
+    score.knowledge_pct = knowledge_pct
+    score.projects_pct = projects_pct
+    score.portfolio_pct = portfolio_pct
+    score.interview_pct = interview_pct
+    score.practical_pct = practical_pct
+    score.next_actions = next_actions
+
     await db.commit()
     await db.refresh(score)
     return score

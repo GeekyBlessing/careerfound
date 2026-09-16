@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { Send, Sparkles, Bot, User as UserIcon } from "lucide-react";
 import { AppShell } from "@/components/layout/app-shell";
 import { Card } from "@/components/ui/card";
@@ -57,6 +58,11 @@ export default function MentorPage() {
         <p className="eyebrow">AI Mentor · software, on call 24/7</p>
         <h1 className="mt-1 text-2xl font-semibold tracking-tight text-ink-100">Your patient senior engineer</h1>
         <p className="mt-1 text-sm text-ink-500">Explains simply, gives hints before answers, and remembers where you&apos;re stuck.</p>
+        <p className="mt-2 text-xs leading-relaxed text-ink-500">
+          This is software, not a licensed counselor or a human mentor, and it can get things wrong. For a real
+          person&apos;s perspective, <Link href="/mentorship" className="underline hover:text-ink-300">1:1 mentorship</Link> or a{" "}
+          <Link href="/consultation" className="underline hover:text-ink-300">career consultation</Link> is one click away.
+        </p>
       </div>
 
       <Card className="flex h-[65vh] flex-col overflow-hidden shadow-raised">

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import {
   ArrowRight,
@@ -228,17 +229,19 @@ export default function CareerDetailPage() {
                         {tier}
                       </Badge>
                       {tierProjects.map((project) => (
-                        <Card key={project.id} className="p-4">
-                          <p className="text-sm font-semibold text-ink-100">{project.title}</p>
-                          <p className="mt-1.5 text-xs leading-relaxed text-ink-500">{project.teaches}</p>
-                          <p className="mt-2 text-[11px] text-ink-500">
-                            <span className="text-ink-300">You&apos;ll produce:</span> {project.expected_output}
-                          </p>
-                          <div className="mt-3 flex items-center gap-1.5 text-[11px] text-ink-500">
-                            <Clock className="h-3 w-3" />
-                            {project.estimated_duration}
-                          </div>
-                        </Card>
+                        <Link key={project.id} href={`/projects/${project.id}`} className="focus-ring block rounded-2xl">
+                          <Card interactive className="p-4">
+                            <p className="text-sm font-semibold text-ink-100">{project.title}</p>
+                            <p className="mt-1.5 text-xs leading-relaxed text-ink-500">{project.teaches}</p>
+                            <p className="mt-2 text-[11px] text-ink-500">
+                              <span className="text-ink-300">You&apos;ll produce:</span> {project.expected_output}
+                            </p>
+                            <div className="mt-3 flex items-center gap-1.5 text-[11px] text-ink-500">
+                              <Clock className="h-3 w-3" />
+                              {project.estimated_duration}
+                            </div>
+                          </Card>
+                        </Link>
                       ))}
                     </div>
                   );

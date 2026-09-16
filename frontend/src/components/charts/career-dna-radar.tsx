@@ -31,7 +31,12 @@ export function CareerDnaRadar({ dna, size = 280 }: { dna: CareerDNA; size?: num
 
   return (
     <div className="flex flex-col items-center">
-      <svg width={size} height={size}>
+      <svg
+        viewBox={`0 0 ${size} ${size}`}
+        style={{ width: "100%", maxWidth: size, height: "auto" }}
+        role="img"
+        aria-label="Career DNA radar chart"
+      >
         {rings.map((ring) => {
           const pts = AXES.map((_, i) => pointFor(i, AXES.length, maxRadius * ring, center));
           return (

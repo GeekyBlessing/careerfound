@@ -143,6 +143,20 @@ async def build_dashboard(db: AsyncSession, user) -> dict:
             next_phase = phase.title
             break
 
+    # The mission's task list is cached for the whole day (get_or_generate_today_mission
+    # above), but "done" must reflect whatever's actually completed right now, not the
+    # moment the mission was generated — otherwise finishing a lesson/project elsewhere
+    # in the app wouldn't be reflected here until tomorrow's mission regenerates. Since
+    # progress_map is already loaded above, recompute "done" from it by ref_id rather
+    # than trusting a stale flag (there wasn't one being set at all before this fix, so
+    # the frontend's own checkbox toggle was the only thing ever marking a task "done",
+    # and that toggle never touched the database).
+    live_tasks = [
+        {**task, "done": progress_map.get(task.get("ref_id") or "") == ProgressStatus.completed}
+        for task in mission.tasks
+    ]
+    next_task = next((t for t in live_tasks if not t["done"]), None)
+
     return {
         "greeting": greeting,
         "has_active_roadmap": True,
@@ -150,8 +164,8 @@ async def build_dashboard(db: AsyncSession, user) -> dict:
         "path_slug": path.slug,
         "today_mission": {
             "date": mission.date.isoformat(),
-            "total_minutes": sum(t["est_minutes"] for t in mission.tasks),
-            "tasks": mission.tasks,
+            "total_minutes": sum(t["est_minutes"] for t in live_tasks),
+            "tasks": live_tasks,
             "rationale": mission.rationale_text,
         },
         "readiness": {
@@ -166,5 +180,5 @@ async def build_dashboard(db: AsyncSession, user) -> dict:
         "current_streak_days": streak_days,
         "current_project_title": current_project,
         "upcoming_milestone": next_phase,
-        "recommended_next_action": mission.tasks[0]["title"] if mission.tasks else "You're all caught up for today.",
+        "recommended_next_action": next_task["title"] if next_task else "You're all caught up for today.",
     }

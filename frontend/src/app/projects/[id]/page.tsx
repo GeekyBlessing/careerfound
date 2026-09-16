@@ -278,10 +278,18 @@ export default function ProjectDetailPage() {
                   </div>
                   <p className="text-sm font-semibold text-ink-100">Add to portfolio</p>
                   <p className="mt-1 text-xs text-ink-500">
-                    Auto-generate a project description, README, CV bullet, and LinkedIn post.
+                    {project.status === "completed"
+                      ? "Auto-generate a project description, README, CV bullet, and LinkedIn post."
+                      : "Mark the project complete first, this only generates copy for work you've actually finished."}
                   </p>
                   {portfolioError && <Alert className="mt-3">{portfolioError}</Alert>}
-                  <Button variant="secondary" className="mt-4 w-full gap-1.5" onClick={generatePortfolio} loading={generating}>
+                  <Button
+                    variant="secondary"
+                    className="mt-4 w-full gap-1.5"
+                    onClick={generatePortfolio}
+                    loading={generating}
+                    disabled={project.status !== "completed"}
+                  >
                     <Sparkles className="h-3.5 w-3.5" /> Generate portfolio copy
                   </Button>
 

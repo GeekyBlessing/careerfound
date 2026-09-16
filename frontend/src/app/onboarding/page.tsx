@@ -143,7 +143,10 @@ export default function OnboardingPage() {
     setAnswers((a) => ({ ...a, [key]: value }));
   }
 
-  const progress = useMemo(() => Math.round((step / TOTAL_STEPS) * 100), [step]);
+  // step is zero-indexed, so add 1 before dividing, otherwise the bar reads
+  // 90% on the final step while the "Step 10 of 10" label beside it reads
+  // done, which looks broken/contradictory.
+  const progress = useMemo(() => Math.round(((step + 1) / TOTAL_STEPS) * 100), [step]);
 
   async function handleFinalSubmit() {
     setError(null);

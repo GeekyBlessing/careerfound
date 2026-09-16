@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.ai.client import get_llm_client
 from app.models.portfolio import PortfolioItem
+from app.models.progress import ProgressStatus, UserProgress
 from app.models.roadmap import Project
 from app.models.user import User
 
@@ -13,6 +14,17 @@ async def generate_portfolio_item(db: AsyncSession, user: User, project_id: uuid
     project = (await db.execute(select(Project).where(Project.id == project_id))).scalar_one_or_none()
     if project is None:
         raise ValueError("Project not found.")
+
+    # A portfolio entry is presented as the user's own finished work, so it
+    # must not be generatable for a project they haven't actually completed
+    # (this would otherwise let a user showcase work they never did).
+    progress = (
+        await db.execute(
+            select(UserProgress).where(UserProgress.user_id == user.id, UserProgress.project_id == project_id)
+        )
+    ).scalar_one_or_none()
+    if progress is None or progress.status != ProgressStatus.completed:
+        raise PermissionError("Mark this project complete before adding it to your portfolio.")
 
     llm = get_llm_client()
     context = {"teaches": project.teaches, "skills_demonstrated": []}

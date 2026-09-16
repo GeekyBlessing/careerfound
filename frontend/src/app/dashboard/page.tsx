@@ -149,8 +149,20 @@ export default function DashboardPage() {
   );
 }
 
+/** Where a mission task can actually be worked on. Projects have their own
+ * standalone page; lessons/exercises/quizzes don't yet, so they route to the
+ * roadmap phase accordion that contains them rather than a dead end. */
+function missionTaskHref(task: MissionTask): string {
+  if (task.type === "challenge" && task.ref_id) return `/projects/${task.ref_id}`;
+  return "/roadmap";
+}
+
 function TodayMissionCard({ mission }: { mission: NonNullable<Dashboard["today_mission"]> }) {
-  const [tasks, setTasks] = useState<MissionTask[]>(mission.tasks);
+  // `done` comes from the backend, recomputed against the user's real
+  // progress on every dashboard load, it is not a client-side toggle: there
+  // is no per-task "mark done" action here, completion only happens on the
+  // actual lesson/exercise/project/quiz, this card just reflects it.
+  const tasks = mission.tasks;
   const completedCount = tasks.filter((t) => t.done).length;
 
   return (
@@ -168,28 +180,24 @@ function TodayMissionCard({ mission }: { mission: NonNullable<Dashboard["today_m
 
         <ul className="mt-5 space-y-2.5">
           {tasks.map((task, i) => (
-            <li
-              key={i}
-              className="flex items-start gap-3 rounded-xl border border-[rgb(var(--fg-tint)/0.06)] bg-[rgb(var(--fg-tint)/0.02)] px-4 py-3 transition-colors hover:bg-[rgb(var(--fg-tint)/0.04)]"
-            >
-              <button
-                onClick={() =>
-                  setTasks((prev) => prev.map((t, idx) => (idx === i ? { ...t, done: !t.done } : t)))
-                }
-                className="mt-0.5 flex-shrink-0 text-ink-500 hover:text-accent-light focus-ring rounded-full"
-                aria-label={task.done ? "Mark as not done" : "Mark as done"}
+            <li key={i}>
+              <Link
+                href={missionTaskHref(task)}
+                className="focus-ring flex items-start gap-3 rounded-xl border border-[rgb(var(--fg-tint)/0.06)] bg-[rgb(var(--fg-tint)/0.02)] px-4 py-3 transition-colors hover:bg-[rgb(var(--fg-tint)/0.04)]"
               >
-                {task.done ? <CheckCircle2 className="h-5 w-5 text-success" /> : <Circle className="h-5 w-5" />}
-              </button>
-              <div className="min-w-0 flex-1">
-                <p className={`text-sm font-medium ${task.done ? "text-ink-500 line-through" : "text-ink-100"}`}>
-                  {task.title}
-                </p>
-                <div className="mt-1 flex items-center gap-2 text-xs text-ink-500">
-                  <Badge className="capitalize">{task.type}</Badge>
-                  <span>{task.est_minutes} min</span>
+                <span className="mt-0.5 flex-shrink-0 text-ink-500">
+                  {task.done ? <CheckCircle2 className="h-5 w-5 text-success" /> : <Circle className="h-5 w-5" />}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className={`text-sm font-medium ${task.done ? "text-ink-500 line-through" : "text-ink-100"}`}>
+                    {task.title}
+                  </p>
+                  <div className="mt-1 flex items-center gap-2 text-xs text-ink-500">
+                    <Badge className="capitalize">{task.type}</Badge>
+                    <span>{task.est_minutes} min</span>
+                  </div>
                 </div>
-              </div>
+              </Link>
             </li>
           ))}
         </ul>

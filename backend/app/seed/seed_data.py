@@ -4,7 +4,7 @@ Idempotent seed script. Run with:
     python -m app.seed.seed_data
 
 Populates:
-- The full 20-path career catalog
+- The full 21-path career catalog
 - Two fully-authored roadmaps (Cybersecurity, Software Engineering) with
   phases, lessons, exercises, projects, quizzes, and a skill dependency graph
 - Real-world simulation scenarios

@@ -168,34 +168,36 @@ export default function ProjectsByRolePage() {
             {visibleProjects.length > 0 ? (
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {visibleProjects.map((project) => (
-                  <Card key={project.id} className="flex flex-col p-4 transition-shadow duration-200 hover:shadow-card">
-                    <div className="flex items-center justify-between gap-2">
-                      <Badge tone={TIER_TONE[project.difficulty_label]}>{project.difficulty_label}</Badge>
-                      <span className="flex items-center gap-1 text-[11px] text-ink-500">
-                        <Clock className="h-3 w-3" /> {project.estimated_duration}
-                      </span>
-                    </div>
-                    <p className="mt-3 text-sm font-semibold text-ink-100">{project.title}</p>
-                    <p className="mt-1.5 flex-1 text-xs leading-relaxed text-ink-500">{project.teaches}</p>
-                    {project.prerequisites.length > 0 && (
-                      <div className="mt-3">
-                        <p className="text-[11px] font-medium text-ink-300">Skills you&apos;ll use</p>
-                        <div className="mt-1.5 flex flex-wrap gap-1">
-                          {project.prerequisites.slice(0, 4).map((skill) => (
-                            <Badge key={skill} tone="neutral" className="text-[10px]">
-                              {skill}
-                            </Badge>
-                          ))}
-                        </div>
+                  <Link key={project.id} href={`/projects/${project.id}`} className="focus-ring block rounded-2xl">
+                    <Card interactive className="flex h-full flex-col p-4">
+                      <div className="flex items-center justify-between gap-2">
+                        <Badge tone={TIER_TONE[project.difficulty_label]}>{project.difficulty_label}</Badge>
+                        <span className="flex items-center gap-1 text-[11px] text-ink-500">
+                          <Clock className="h-3 w-3" /> {project.estimated_duration}
+                        </span>
                       </div>
-                    )}
-                    {activeEntry.path.tools.length > 0 && (
-                      <p className="mt-3 flex items-center gap-1.5 text-[11px] text-ink-500">
-                        <Wrench className="h-3 w-3 shrink-0" />
-                        <span className="truncate">{activeEntry.path.tools.slice(0, 3).join(", ")}</span>
-                      </p>
-                    )}
-                  </Card>
+                      <p className="mt-3 text-sm font-semibold text-ink-100">{project.title}</p>
+                      <p className="mt-1.5 flex-1 text-xs leading-relaxed text-ink-500">{project.teaches}</p>
+                      {project.prerequisites.length > 0 && (
+                        <div className="mt-3">
+                          <p className="text-[11px] font-medium text-ink-300">Skills you&apos;ll use</p>
+                          <div className="mt-1.5 flex flex-wrap gap-1">
+                            {project.prerequisites.slice(0, 4).map((skill) => (
+                              <Badge key={skill} tone="neutral" className="text-[10px]">
+                                {skill}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {activeEntry.path.tools.length > 0 && (
+                        <p className="mt-3 flex items-center gap-1.5 text-[11px] text-ink-500">
+                          <Wrench className="h-3 w-3 shrink-0" />
+                          <span className="truncate">{activeEntry.path.tools.slice(0, 3).join(", ")}</span>
+                        </p>
+                      )}
+                    </Card>
+                  </Link>
                 ))}
               </div>
             ) : (
