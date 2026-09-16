@@ -18,6 +18,7 @@ const STATIC_ROUTES = [
   "/mentors",
   "/privacy",
   "/terms",
+  "/refund-policy",
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

@@ -40,6 +40,7 @@ export function Footer() {
             <ul className="space-y-2 text-ink-500">
               <li><Link href="/privacy" className="focus-ring rounded-sm transition-colors hover:text-ink-300">Privacy</Link></li>
               <li><Link href="/terms" className="focus-ring rounded-sm transition-colors hover:text-ink-300">Terms</Link></li>
+              <li><Link href="/refund-policy" className="focus-ring rounded-sm transition-colors hover:text-ink-300">Refunds</Link></li>
             </ul>
           </div>
         </div>

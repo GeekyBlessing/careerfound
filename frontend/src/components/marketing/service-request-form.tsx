@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input, Textarea, Label } from "@/components/ui/input";
 import { Alert } from "@/components/ui/alert";
 import { api, ApiError } from "@/lib/api";
+import { track } from "@/lib/analytics";
 
 type Service = "mentorship" | "consultation";
 
@@ -32,6 +33,7 @@ export function ServiceRequestForm({ service, serviceLabel }: { service: Service
     try {
       await api.post("/service-requests", { name, email, service, message }, { auth: false });
       setSubmitted(true);
+      track("service_request_submitted", { service });
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Couldn't send that, please try again.");
     } finally {

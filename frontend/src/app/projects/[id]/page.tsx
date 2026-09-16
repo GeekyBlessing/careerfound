@@ -21,6 +21,7 @@ import { Textarea } from "@/components/ui/input";
 import { Alert } from "@/components/ui/alert";
 import { SkeletonCard } from "@/components/ui/skeleton";
 import { api, ApiError } from "@/lib/api";
+import { track } from "@/lib/analytics";
 import type { ProjectItem, PortfolioItem } from "@/types";
 
 interface ReviewFinding {
@@ -90,6 +91,7 @@ export default function ProjectDetailPage() {
     try {
       await api.post(`/projects/${params.id}/submit`);
       setProject((p) => (p ? { ...p, status: "completed" } : p));
+      track("project_completed");
     } catch (err) {
       setCompleteError(err instanceof ApiError ? err.message : "Couldn't mark this project complete.");
     } finally {
@@ -103,6 +105,7 @@ export default function ProjectDetailPage() {
     try {
       const res = await api.post<PortfolioItem>("/portfolio/generate", { project_id: params.id, submission_text: submission });
       setPortfolio(res);
+      track("portfolio_item_generated");
     } catch (err) {
       setPortfolioError(err instanceof ApiError ? err.message : "Couldn't generate portfolio copy.");
     } finally {

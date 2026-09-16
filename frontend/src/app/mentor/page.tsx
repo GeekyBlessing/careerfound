@@ -11,6 +11,7 @@ import { Alert } from "@/components/ui/alert";
 import { api, ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { initials } from "@/lib/utils";
+import { track } from "@/lib/analytics";
 import type { MentorChatMessage, MentorChatResponse } from "@/types";
 
 const STARTER_PROMPTS = [
@@ -45,6 +46,7 @@ export default function MentorPage() {
       setConversationId(res.conversation_id);
       setMessages(res.history);
       setFollowUps(res.follow_up_questions);
+      track("ai_mentor_message_sent");
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Couldn't reach the AI Mentor right now.");
     } finally {

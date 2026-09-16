@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api, clearTokens, getToken, setTokens } from "@/lib/api";
+import { track } from "@/lib/analytics";
 import type { User } from "@/types";
 
 interface AuthContextValue {
@@ -64,6 +65,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setTokens(tokens.access_token, tokens.refresh_token);
     const me = await api.get<User>("/users/me");
     setUser(me);
+    track("signup_completed");
   }, []);
 
   const logout = useCallback(() => {

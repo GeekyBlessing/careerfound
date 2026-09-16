@@ -12,6 +12,7 @@ import { ProgressBar } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
 import { api, ApiError } from "@/lib/api";
+import { track } from "@/lib/analytics";
 
 type Answers = {
   persona?: string;
@@ -172,6 +173,7 @@ export default function OnboardingPage() {
       });
 
       await api.post("/assessment", { answers });
+      track("assessment_completed");
       router.push("/assessment/results");
     } catch (err) {
       if (err instanceof ApiError) setError(err.message);
