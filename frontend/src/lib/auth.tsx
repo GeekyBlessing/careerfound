@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { api, clearTokens, getToken, setTokens } from "@/lib/api";
+import { api, ApiError, clearTokens, getToken, setTokens } from "@/lib/api";
 import { track } from "@/lib/analytics";
 import type { User } from "@/types";
 
@@ -32,9 +32,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const me = await api.get<User>("/users/me");
       setUser(me);
-    } catch {
-      clearTokens();
-      setUser(null);
+    } catch (err) {
+      // `api.get` already retries a 401 once after a silent token refresh
+      // (see lib/api.ts), so a 401 that still reaches here means the
+      // session really is over — clear it and sign the user out. Any other
+      // error (network blip, a transient 500) is not proof the session is
+      // invalid, so don't punish the user with a forced logout for it;
+      // leave their existing auth state alone and just stop loading.
+      if (err instanceof ApiError && err.status === 401) {
+        clearTokens();
+        setUser(null);
+      }
     } finally {
       setLoading(false);
     }

@@ -2,6 +2,7 @@ import logging
 from datetime import datetime, timedelta, timezone
 
 from sqlalchemy import select, update
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.security import create_token, generate_secure_token, hash_password, hash_token, verify_password
@@ -31,7 +32,17 @@ async def register_user(db: AsyncSession, payload: RegisterRequest) -> User:
         full_name=payload.full_name.strip(),
     )
     db.add(user)
-    await db.commit()
+    try:
+        await db.commit()
+    except IntegrityError:
+        # The SELECT above is a plain read with no row lock, so two
+        # concurrent registrations for the same email can both pass it and
+        # then race to commit — the DB's own unique constraint on
+        # users.email is what actually catches that, not the check above.
+        # Without this, the loser gets a raw 500 instead of the same clean
+        # "already exists" message the check above normally produces.
+        await db.rollback()
+        raise AuthError("An account with this email already exists.")
     await db.refresh(user)
 
     # Email delivery is best-effort and must never fail registration itself,

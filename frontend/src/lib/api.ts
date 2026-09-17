@@ -47,7 +47,31 @@ interface RequestOptions extends RequestInit {
   auth?: boolean;
 }
 
-async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
+// Shared across concurrent requests so N simultaneous 401s trigger exactly
+// one POST /auth/refresh, not N of them.
+let refreshInFlight: Promise<boolean> | null = null;
+
+async function refreshAccessToken(): Promise<boolean> {
+  const refreshToken = typeof window === "undefined" ? null : window.localStorage.getItem(REFRESH_KEY);
+  if (!refreshToken) return false;
+  try {
+    const res = await fetch(`${API_BASE}/auth/refresh`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refresh_token: refreshToken }),
+    });
+    if (!res.ok) return false;
+    const body = await res.json().catch(() => null);
+    const data = body && typeof body === "object" && "data" in body ? body.data : body;
+    if (!data?.access_token || !data?.refresh_token) return false;
+    setTokens(data.access_token, data.refresh_token);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function request<T>(path: string, options: RequestOptions = {}, isRetryAfterRefresh = false): Promise<T> {
   const { auth = true, headers, ...rest } = options;
   const finalHeaders: Record<string, string> = {
     "Content-Type": "application/json",
@@ -67,6 +91,22 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   const body = isJson ? await res.json() : null;
 
   if (!res.ok) {
+    // A 401 on an authenticated request usually just means the short-lived
+    // access token expired, not that the user's session is actually over.
+    // Try the refresh token once, silently, and retry the original request
+    // before giving up — otherwise every user gets logged out every 24h
+    // (ACCESS_TOKEN_EXPIRE_MINUTES) instead of the 30-day refresh token
+    // ever doing anything. Skip this for /auth/refresh itself and for
+    // unauthenticated calls (auth: false), where a 401 is a real answer
+    // (e.g. wrong login password), not an expired-token situation.
+    if (res.status === 401 && auth && !isRetryAfterRefresh && path !== "/auth/refresh") {
+      refreshInFlight = refreshInFlight ?? refreshAccessToken().finally(() => (refreshInFlight = null));
+      const refreshed = await refreshInFlight;
+      if (refreshed) {
+        return request<T>(path, options, true);
+      }
+      clearTokens();
+    }
     const message = body?.error?.message || body?.detail || `Request failed (${res.status})`;
     const code = body?.error?.code || "unknown_error";
     throw new ApiError(message, res.status, code);
