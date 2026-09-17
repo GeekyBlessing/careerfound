@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Compass, MailCheck } from "lucide-react";
+import { MailCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { Alert } from "@/components/ui/alert";
 import { Card } from "@/components/ui/card";
+import { BrandTile } from "@/components/brand/logo";
 import { api, ApiError } from "@/lib/api";
 
 export default function ForgotPasswordPage() {
@@ -33,12 +34,10 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4">
-      <div className="bg-dot-grid pointer-events-none absolute inset-x-0 top-0 -z-10 h-[420px]" />
+      <div className="bg-contour pointer-events-none absolute inset-x-0 top-0 -z-10 h-[420px]" />
       <div className="w-full max-w-sm">
-        <Link href="/" className="focus-ring mb-8 flex items-center justify-center gap-2 rounded-lg font-semibold text-ink-100">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent shadow-xs">
-            <Compass className="h-4 w-4 text-white" />
-          </span>
+        <Link href="/" className="focus-ring mb-8 flex items-center justify-center gap-2 rounded-lg font-display font-semibold text-ink-100">
+          <BrandTile className="h-7 w-7" />
           CareerFound
         </Link>
         <Card className="animate-fade-in-up p-8 shadow-raised">

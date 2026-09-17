@@ -12,6 +12,7 @@ import {
   ListOrdered,
   Sparkles,
   FolderGit2,
+  Clock,
 } from "lucide-react";
 import { AppShell } from "@/components/layout/app-shell";
 import { Card, CardContent } from "@/components/ui/card";
@@ -20,6 +21,8 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/input";
 import { Alert } from "@/components/ui/alert";
 import { SkeletonCard } from "@/components/ui/skeleton";
+import { IconTile } from "@/components/ui/icon-tile";
+import { DifficultyMeter } from "@/components/ui/difficulty-meter";
 import { api, ApiError } from "@/lib/api";
 import { track } from "@/lib/analytics";
 import type { ProjectItem, PortfolioItem } from "@/types";
@@ -138,12 +141,21 @@ export default function ProjectDetailPage() {
           <div>
             <div className="flex items-center gap-2">
               <Badge tone={project.status === "completed" ? "success" : "accent"}>
-                {project.status === "completed" ? "Completed" : `Difficulty ${project.difficulty}/5`}
+                {project.status === "completed" ? "Completed" : project.difficulty_label}
               </Badge>
             </div>
-            <h1 className="mt-2 flex items-center gap-2 text-2xl font-semibold tracking-tight text-ink-100">
+            <h1 className="mt-2 flex items-center gap-2 font-display text-h1 font-semibold tracking-tight text-ink-100">
               <FolderGit2 className="h-5 w-5 text-ink-500" aria-hidden="true" /> {project.title}
             </h1>
+            <div className="mt-3 flex flex-wrap items-center gap-5 border-t border-[rgb(var(--fg-tint)/0.07)] pt-3">
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-medium uppercase tracking-wide text-ink-500">Difficulty</span>
+                <DifficultyMeter level={project.difficulty} />
+              </div>
+              <span className="flex items-center gap-1.5 text-xs text-ink-400">
+                <Clock className="h-3.5 w-3.5" /> {project.estimated_duration}
+              </span>
+            </div>
           </div>
 
           <div className="grid gap-6 lg:grid-cols-3">
@@ -211,9 +223,7 @@ export default function ProjectDetailPage() {
 
               <Card>
                 <CardContent className="p-6">
-                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-accent/12 text-accent-light">
-                    <Sparkles className="h-4.5 w-4.5" />
-                  </div>
+                  <IconTile icon={Sparkles} size="sm" className="mb-3" />
                   <p className="mb-1 text-sm font-semibold text-ink-100">AI Project Reviewer</p>
                   <p className="mb-4 text-xs text-ink-500">
                     Paste your code or a description of what you built for structured, senior-engineer-style feedback.
@@ -256,9 +266,7 @@ export default function ProjectDetailPage() {
             <div className="space-y-6">
               <Card>
                 <CardContent className="p-6">
-                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-accent/12 text-accent-light">
-                    <CheckCircle2 className="h-4.5 w-4.5" />
-                  </div>
+                  <IconTile icon={CheckCircle2} size="sm" className="mb-3" />
                   <p className="text-sm font-semibold text-ink-100">Ready to submit?</p>
                   <p className="mt-1 text-xs text-ink-500">Mark this project complete once you&apos;re happy with it.</p>
                   {completeError && <Alert className="mt-3">{completeError}</Alert>}
@@ -276,9 +284,7 @@ export default function ProjectDetailPage() {
 
               <Card>
                 <CardContent className="p-6">
-                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-accent/12 text-accent-light">
-                    <FolderGit2 className="h-4.5 w-4.5" />
-                  </div>
+                  <IconTile icon={FolderGit2} size="sm" className="mb-3" />
                   <p className="text-sm font-semibold text-ink-100">Add to portfolio</p>
                   <p className="mt-1 text-xs text-ink-500">
                     {project.status === "completed"

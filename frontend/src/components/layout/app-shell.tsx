@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
-  Compass,
   LayoutDashboard,
   Map,
   MessageCircle,
@@ -23,6 +22,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
 import { initials } from "@/lib/utils";
 import { ThemeToggleButton } from "@/components/ui/theme-toggle";
+import { BrandTile } from "@/components/brand/logo";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -56,10 +56,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-base-950">
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-[rgb(var(--fg-tint)/0.06)] bg-base-900/60 lg:flex">
-        <div className="flex h-16 items-center gap-2 px-6 font-semibold text-ink-100">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent shadow-xs">
-            <Compass className="h-4 w-4 text-white" />
-          </span>
+        <div className="flex h-16 items-center gap-2 px-6 font-display font-semibold text-ink-100">
+          <BrandTile className="h-7 w-7" />
           CareerFound
         </div>
         <nav className="flex-1 space-y-1 px-3 py-4">
@@ -167,10 +165,8 @@ function MobileTopBar() {
   if (!user) return null;
   return (
     <div className="flex h-14 items-center justify-between border-b border-[rgb(var(--fg-tint)/0.06)] px-4 lg:hidden">
-      <Link href="/dashboard" className="focus-ring flex items-center gap-2 rounded-lg font-semibold text-ink-100">
-        <span className="flex h-6 w-6 items-center justify-center rounded-md bg-accent shadow-xs">
-          <Compass className="h-3.5 w-3.5 text-white" />
-        </span>
+      <Link href="/dashboard" className="focus-ring flex items-center gap-2 rounded-lg font-display font-semibold text-ink-100">
+        <BrandTile className="h-6 w-6 rounded-md" />
         CareerFound
       </Link>
       <div className="flex items-center gap-1">

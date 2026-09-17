@@ -46,11 +46,29 @@ const config: Config = {
           DEFAULT: "rgb(var(--color-warm) / <alpha-value>)",
           light: "rgb(var(--color-warm-light) / <alpha-value>)",
         },
+        // A very pale wash of the brand green (a supporting tone, not the
+        // button-strength accent) used for backgrounds that should feel
+        // "green as a material" rather than neutral gray with a green
+        // button dropped on top - the hero rail, the best-match reveal
+        // frame, a highlighted stat tile.
+        mist: "rgb(var(--color-accent-mist) / <alpha-value>)",
       },
       fontFamily: {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
         display: ["var(--font-display)", "Georgia", "serif"],
         mono: ["var(--font-mono)", "ui-monospace", "monospace"],
+      },
+      // A named type scale so "which size is this" is a deliberate choice
+      // tied to a role (display/h1/h2/h3/label) instead of every heading
+      // reaching for whichever text-2xl/3xl felt right in the moment. Sizes
+      // are additive - existing text-sm/text-xs usage across the app is
+      // untouched, this scale is for headings and metadata going forward.
+      fontSize: {
+        display: ["3rem", { lineHeight: "1.05", letterSpacing: "-0.02em" }],
+        h1: ["2rem", { lineHeight: "1.15", letterSpacing: "-0.015em" }],
+        h2: ["1.375rem", { lineHeight: "1.25", letterSpacing: "-0.01em" }],
+        h3: ["1.0625rem", { lineHeight: "1.35" }],
+        label: ["0.6875rem", { lineHeight: "1.4", letterSpacing: "0.09em" }],
       },
       borderRadius: {
         xl: "0.875rem",

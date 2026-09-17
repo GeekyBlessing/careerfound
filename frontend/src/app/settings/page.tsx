@@ -8,6 +8,7 @@ import { ThemeToggleSegmented } from "@/components/ui/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
+import { IconTile } from "@/components/ui/icon-tile";
 import { useAuth } from "@/lib/auth";
 import { initials } from "@/lib/utils";
 import { api, ApiError } from "@/lib/api";
@@ -45,15 +46,13 @@ export default function SettingsPage() {
     <AppShell>
       <div className="mx-auto max-w-2xl space-y-6">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-ink-100">Settings</h1>
+          <h1 className="font-display text-h1 font-semibold tracking-tight text-ink-100">Settings</h1>
           <p className="mt-1 text-sm text-ink-500">Manage your profile and how CareerFound looks for you.</p>
         </div>
 
         <Card>
           <CardHeader className="flex flex-row items-center gap-2">
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent/12 text-accent-light">
-              <UserIcon className="h-3.5 w-3.5" />
-            </span>
+            <IconTile icon={UserIcon} size="sm" />
             <CardTitle>Profile</CardTitle>
           </CardHeader>
           <CardContent className="flex items-center gap-4">
@@ -72,9 +71,7 @@ export default function SettingsPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center gap-2">
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent/12 text-accent-light">
-              <Mail className="h-3.5 w-3.5" />
-            </span>
+            <IconTile icon={Mail} size="sm" />
             <CardTitle>Email</CardTitle>
           </CardHeader>
           <CardContent className="space-y-5">
@@ -127,9 +124,7 @@ export default function SettingsPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center gap-2">
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent/12 text-accent-light">
-              <Palette className="h-3.5 w-3.5" />
-            </span>
+            <IconTile icon={Palette} size="sm" />
             <CardTitle>Appearance</CardTitle>
             <CardDescription className="mt-0 ml-auto">Light or dark mode</CardDescription>
           </CardHeader>
@@ -143,9 +138,7 @@ export default function SettingsPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center gap-2">
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent/12 text-accent-light">
-              <Shield className="h-3.5 w-3.5" />
-            </span>
+            <IconTile icon={Shield} size="sm" />
             <CardTitle>Account</CardTitle>
           </CardHeader>
           <CardContent>

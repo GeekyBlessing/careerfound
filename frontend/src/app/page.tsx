@@ -16,7 +16,6 @@ import {
   Target,
   Hammer,
   Trophy,
-  Bot,
   FolderGit2,
   Users,
   Map,
@@ -32,6 +31,8 @@ import { PathTrack, type PathWaypoint } from "@/components/marketing/path-track"
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { IconTile } from "@/components/ui/icon-tile";
+import { BrandTile } from "@/components/brand/logo";
 import { cn } from "@/lib/utils";
 import { steps, pricingTiers, faqs } from "@/lib/marketing-content";
 
@@ -123,7 +124,7 @@ export default function LandingPage() {
         </section>
 
         {/* Career paths */}
-        <section id="careers" className="py-20">
+        <section id="careers" className="bg-mist/60 py-20">
           <div className="container-page">
             <SectionHeading
               eyebrow="Career paths"
@@ -134,9 +135,7 @@ export default function LandingPage() {
               {careerPreview.map((c) => (
                 <Link key={c.name} href={c.slug ? `/careers/${c.slug}` : "/careers"}>
                   <Card interactive className="h-full p-5">
-                    <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-accent/12 text-accent-light">
-                      <c.icon className="h-4.5 w-4.5" />
-                    </div>
+                    <IconTile icon={c.icon} size="sm" className="mb-3" />
                     <p className="font-display text-sm font-semibold tracking-tight text-ink-100">{c.name}</p>
                     <p className="mt-1.5 text-xs leading-relaxed text-ink-500">{c.blurb}</p>
                   </Card>
@@ -150,11 +149,9 @@ export default function LandingPage() {
         <section id="mentor" className="py-20">
           <div className="container-page grid gap-6 lg:grid-cols-2">
             <Card className="p-8">
-              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/12 text-accent-light">
-                <Bot className="h-5 w-5" />
-              </div>
+              <BrandTile className="mb-4 h-10 w-10" />
               <Badge tone="accent">AI Mentor · one of several features</Badge>
-              <h3 className="mt-4 text-xl font-semibold text-ink-100">An AI powered learning assistant, on call whenever you&apos;re stuck</h3>
+              <h3 className="mt-4 text-h2 font-display font-semibold text-ink-100">An AI powered learning assistant, on call whenever you&apos;re stuck</h3>
               <p className="mt-3 text-sm leading-relaxed text-ink-500">
                 It&apos;s software, not a person: it gives hints before answers, explains with
                 real-world analogies before jargon, reviews your code, runs mock interviews, and
@@ -172,11 +169,9 @@ export default function LandingPage() {
               </div>
             </Card>
             <Card className="p-8">
-              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/12 text-accent-light">
-                <Hammer className="h-5 w-5" />
-              </div>
+              <IconTile icon={Hammer} className="mb-4" />
               <Badge tone="accent">Project-first learning</Badge>
-              <h3 className="mt-4 text-xl font-semibold text-ink-100">Learn by shipping, not by watching</h3>
+              <h3 className="mt-4 text-h2 font-display font-semibold text-ink-100">Learn by shipping, not by watching</h3>
               <p className="mt-3 text-sm leading-relaxed text-ink-500">
                 Every path is built around progressively harder real projects (a password-strength
                 checker, a Python port scanner, a mini SOC dashboard), each with step-by-step
@@ -198,11 +193,9 @@ export default function LandingPage() {
         <section className="py-20">
           <div className="container-page grid gap-6 lg:grid-cols-2">
             <Card className="p-8">
-              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/12 text-accent-light">
-                <FolderGit2 className="h-5 w-5" />
-              </div>
+              <IconTile icon={FolderGit2} className="mb-4" />
               <Badge tone="accent">Portfolio Builder</Badge>
-              <h3 className="mt-4 text-xl font-semibold text-ink-100">Turn projects into proof, automatically</h3>
+              <h3 className="mt-4 text-h2 font-display font-semibold text-ink-100">Turn projects into proof, automatically</h3>
               <p className="mt-3 text-sm leading-relaxed text-ink-500">
                 Instead of &ldquo;Built a Python scanner,&rdquo; get: &ldquo;Developed a multithreaded
                 TCP port scanner in Python capable of identifying exposed services across target
@@ -210,11 +203,9 @@ export default function LandingPage() {
               </p>
             </Card>
             <Card className="p-8">
-              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/12 text-accent-light">
-                <Users className="h-5 w-5" />
-              </div>
+              <IconTile icon={Users} className="mb-4" />
               <Badge tone="accent">Mentor marketplace</Badge>
-              <h3 className="mt-4 text-xl font-semibold text-ink-100">A wider pool of working professionals</h3>
+              <h3 className="mt-4 text-h2 font-display font-semibold text-ink-100">A wider pool of working professionals</h3>
               <p className="mt-3 text-sm leading-relaxed text-ink-500">
                 Book short sessions for portfolio reviews, mock interviews, and career guidance with
                 working professionals across the community, filtered by the exact career path
@@ -228,7 +219,7 @@ export default function LandingPage() {
         </section>
 
         {/* Outcomes */}
-        <section className="py-20">
+        <section className="bg-mist/60 py-20">
           <div className="container-page">
             <SectionHeading
               eyebrow="What CareerFound is built for"
@@ -269,10 +260,8 @@ export default function LandingPage() {
                 },
               ].map((o) => (
                 <Card key={o.title} className="p-6">
-                  <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/12 text-accent-light">
-                    <o.icon className="h-5 w-5" />
-                  </div>
-                  <h3 className="text-sm font-semibold text-ink-100">{o.title}</h3>
+                  <IconTile icon={o.icon} className="mb-4" />
+                  <h3 className="text-h3 font-display font-semibold text-ink-100">{o.title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-ink-500">{o.body}</p>
                 </Card>
               ))}

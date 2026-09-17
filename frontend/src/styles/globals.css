@@ -54,6 +54,12 @@
   --color-warm: 180 90 42;
   --color-warm-light: 150 74 32;
 
+  /* A supporting green tone: a very pale sage wash, several steps lighter
+     than --color-accent, for backgrounds that should read as "part of the
+     brand's green system" rather than the neutral gray tint used for plain
+     cards. */
+  --color-accent-mist: 237 241 231;
+
   /* A subtle foreground-tinted overlay used for hairline borders and soft
      card highlights, black-tinted on a light page, white-tinted on a dark
      page, so the exact opacity value in each usage (e.g. /[0.06]) keeps
@@ -78,6 +84,8 @@
 
   --color-warm: 224 138 88;
   --color-warm-light: 235 163 116;
+
+  --color-accent-mist: 22 28 18;
 
   --fg-tint: 255 255 255;
 }

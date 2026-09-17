@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Menu, X, Compass } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggleButton } from "@/components/ui/theme-toggle";
+import { BrandTile } from "@/components/brand/logo";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 
@@ -28,10 +29,8 @@ export function MarketingNav() {
   return (
     <header className="sticky top-0 z-40 border-b border-[rgb(var(--fg-tint)/0.07)] bg-base-950/85 backdrop-blur-md">
       <div className="container-page flex h-16 items-center justify-between">
-        <Link href="/" className="focus-ring flex items-center gap-2 rounded-lg font-semibold tracking-tight text-ink-100">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent shadow-xs">
-            <Compass className="h-4 w-4 text-white" />
-          </span>
+        <Link href="/" className="focus-ring flex items-center gap-2 rounded-lg font-display font-semibold tracking-tight text-ink-100">
+          <BrandTile className="h-7 w-7" />
           CareerFound
         </Link>
 

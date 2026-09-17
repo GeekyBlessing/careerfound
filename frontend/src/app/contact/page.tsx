@@ -5,6 +5,7 @@ import { PublicShell } from "@/components/layout/public-shell";
 import { SectionHeading } from "@/components/marketing/section-heading";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { IconTile } from "@/components/ui/icon-tile";
 
 export const metadata: Metadata = {
   title: "Contact | CareerFound",
@@ -19,9 +20,7 @@ export default function ContactPage() {
 
         <Card className="mt-10">
           <CardContent className="p-8 text-center">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-accent/12 text-accent-light">
-              <Mail className="h-5 w-5" />
-            </div>
+            <IconTile icon={Mail} size="lg" className="mx-auto" />
             <p className="mt-4 text-sm text-ink-500">
               We&apos;re a small, early-stage team. For questions, feedback, or an issue with your account, email
               us directly and we&apos;ll get back to you.

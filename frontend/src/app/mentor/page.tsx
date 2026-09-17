@@ -2,28 +2,25 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Send, Sparkles, Compass, User as UserIcon } from "lucide-react";
+import { Send, Sparkles, User as UserIcon } from "lucide-react";
 import { AppShell } from "@/components/layout/app-shell";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/input";
 import { Alert } from "@/components/ui/alert";
+import { BrandTile } from "@/components/brand/logo";
 import { api, ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { initials } from "@/lib/utils";
 import { track } from "@/lib/analytics";
 import type { Dashboard, MentorChatMessage, MentorChatResponse } from "@/types";
 
-/** The CareerFound compass mark, standing in for a generic robot-head icon
- * so the mentor reads as "CareerFound, talking to you" rather than a
- * bolted-on ChatGPT widget. */
+/** The real CareerFound mark, standing in for a generic robot-head icon so
+ * the mentor visibly reads as "CareerFound, talking to you" rather than a
+ * bolted-on ChatGPT widget with its own separate brand. */
 function MentorMark({ size = "h-7 w-7" }: { size?: string }) {
-  return (
-    <div className={`flex ${size} flex-shrink-0 items-center justify-center rounded-lg bg-accent text-white`}>
-      <Compass className="h-3.5 w-3.5" />
-    </div>
-  );
+  return <BrandTile className={size} />;
 }
 
 const STARTER_PROMPTS = [

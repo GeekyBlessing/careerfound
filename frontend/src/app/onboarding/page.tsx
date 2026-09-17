@@ -3,11 +3,12 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ArrowRight, Check, Compass } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input, Label } from "@/components/ui/input";
 import { Alert } from "@/components/ui/alert";
+import { BrandTile } from "@/components/brand/logo";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
 import { api, ApiError } from "@/lib/api";
@@ -284,10 +285,8 @@ export default function OnboardingPage() {
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 py-12">
       <div className="bg-contour pointer-events-none absolute inset-x-0 top-0 -z-10 h-[420px]" />
-      <Link href="/" className="mb-8 flex items-center gap-2 font-semibold text-ink-100 focus-ring rounded-lg">
-        <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent shadow-xs">
-          <Compass className="h-4 w-4 text-white" />
-        </span>
+      <Link href="/" className="mb-8 flex items-center gap-2 font-display font-semibold text-ink-100 focus-ring rounded-lg">
+        <BrandTile className="h-7 w-7" />
         CareerFound
       </Link>
 

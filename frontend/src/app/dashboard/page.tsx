@@ -17,6 +17,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ReadinessDial } from "@/components/ui/progress";
+import { IconTile } from "@/components/ui/icon-tile";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Alert } from "@/components/ui/alert";
@@ -103,18 +104,14 @@ export default function DashboardPage() {
               <div className="grid gap-4 sm:grid-cols-2">
                 <Card>
                   <CardContent className="p-5">
-                    <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-accent/12 text-accent-light">
-                      <MapIcon className="h-4 w-4" />
-                    </div>
+                    <IconTile icon={MapIcon} size="sm" className="mb-2" />
                     <p className="text-xs font-medium uppercase tracking-wide text-ink-500">Current project</p>
                     <p className="mt-1 text-sm text-ink-100">{dashboard.current_project_title || "All caught up"}</p>
                   </CardContent>
                 </Card>
                 <Card>
                   <CardContent className="p-5">
-                    <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-accent/12 text-accent-light">
-                      <Trophy className="h-4 w-4" />
-                    </div>
+                    <IconTile icon={Trophy} size="sm" className="mb-2" />
                     <p className="text-xs font-medium uppercase tracking-wide text-ink-500">Upcoming milestone</p>
                     <p className="mt-1 text-sm text-ink-100">{dashboard.upcoming_milestone || "Final phase!"}</p>
                   </CardContent>
@@ -126,9 +123,7 @@ export default function DashboardPage() {
               {dashboard.readiness && <ReadinessCard readiness={dashboard.readiness} />}
               <Card>
                 <CardContent className="p-6">
-                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-accent/12 text-accent-light">
-                    <MessageCircle className="h-4 w-4" />
-                  </div>
+                  <IconTile icon={MessageCircle} size="sm" className="mb-3" />
                   <p className="text-sm font-semibold text-ink-100">Stuck on something?</p>
                   <p className="mt-1 text-xs text-ink-500">Your AI Mentor gives hints, not just answers.</p>
                   <Link href="/mentor">

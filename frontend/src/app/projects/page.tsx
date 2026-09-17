@@ -65,7 +65,7 @@ export default function ProjectsByRolePage() {
           <p className="eyebrow">
             <LayoutGrid className="h-3.5 w-3.5" /> Project discovery
           </p>
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight text-ink-100">Projects by role</h1>
+          <h1 className="mt-1 font-display text-h1 font-semibold tracking-tight text-ink-100">Projects by role</h1>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-400">
             Browse real, hands-on projects organized by career role. Pick a role to see what you would actually
             build, at every difficulty level, before you commit to a roadmap.
@@ -176,7 +176,7 @@ export default function ProjectsByRolePage() {
                           <Clock className="h-3 w-3" /> {project.estimated_duration}
                         </span>
                       </div>
-                      <p className="mt-3 text-sm font-semibold text-ink-100">{project.title}</p>
+                      <p className="mt-3 font-display text-sm font-semibold tracking-tight text-ink-100">{project.title}</p>
                       <p className="mt-1.5 flex-1 text-xs leading-relaxed text-ink-500">{project.teaches}</p>
                       {project.prerequisites.length > 0 && (
                         <div className="mt-3">

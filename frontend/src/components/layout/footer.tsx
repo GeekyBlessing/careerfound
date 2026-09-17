@@ -1,15 +1,13 @@
 import Link from "next/link";
-import { Compass } from "lucide-react";
+import { BrandTile } from "@/components/brand/logo";
 
 export function Footer() {
   return (
     <footer className="border-t border-[rgb(var(--fg-tint)/0.06)] py-12">
       <div className="container-page flex flex-col items-start justify-between gap-8 md:flex-row">
         <div>
-          <Link href="/" className="focus-ring flex items-center gap-2 rounded-lg font-semibold text-ink-100">
-            <span className="flex h-6 w-6 items-center justify-center rounded-md bg-accent shadow-xs">
-              <Compass className="h-3.5 w-3.5 text-white" />
-            </span>
+          <Link href="/" className="focus-ring flex items-center gap-2 rounded-lg font-display font-semibold text-ink-100">
+            <BrandTile className="h-6 w-6 rounded-md" />
             CareerFound
           </Link>
           <p className="mt-3 max-w-xs text-sm text-ink-500">

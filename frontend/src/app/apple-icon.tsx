@@ -1,14 +1,12 @@
 import { ImageResponse } from "next/og";
 import { BRAND_MARK_VIEWBOX, MARK_CONNECTOR, MARK_DIAMOND_FOUNDATION, MARK_DIAMOND_PROGRESS } from "@/lib/brand-mark";
 
-export const size = { width: 32, height: 32 };
+// iOS home-screen icon. iOS applies its own corner rounding, so this fills
+// edge-to-edge with the brand tile rather than pre-rounding the corners.
+export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
 
-// The real CareerFound mark (two ascending waypoint diamonds, see
-// src/lib/brand-mark.ts) on the brand-green tile, replacing the old
-// generic compass glyph so the browser tab icon matches the actual logo
-// used in the nav/app-shell rather than a stand-in.
-export default function Icon() {
+export default function AppleIcon() {
   return new ImageResponse(
     (
       <div
@@ -19,10 +17,9 @@ export default function Icon() {
           alignItems: "center",
           justifyContent: "center",
           background: "#5D6F34",
-          borderRadius: 7,
         }}
       >
-        <svg width="20" height="20" viewBox={BRAND_MARK_VIEWBOX}>
+        <svg width="112" height="112" viewBox={BRAND_MARK_VIEWBOX}>
           <line
             x1={MARK_CONNECTOR.x1}
             y1={MARK_CONNECTOR.y1}
