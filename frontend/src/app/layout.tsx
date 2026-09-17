@@ -2,6 +2,16 @@ import type { Metadata } from "next";
 import { AuthProvider } from "@/lib/auth";
 import { ThemeProvider } from "@/lib/theme";
 import { buildThemeInitScript } from "@/lib/theme-constants";
+// Self-hosted (via @fontsource, not a runtime Google Fonts request): see
+// the comment in globals.css above --font-sans for why. Each import below
+// just registers @font-face rules; the actual family names are wired to
+// --font-sans/--font-display/--font-mono in globals.css.
+import "@fontsource-variable/inter";
+import "@fontsource-variable/fraunces/wght.css";
+import "@fontsource/jetbrains-mono/400.css";
+import "@fontsource/jetbrains-mono/500.css";
+import "@fontsource/jetbrains-mono/600.css";
+import "@fontsource/jetbrains-mono/700.css";
 import "@/styles/globals.css";
 
 const SITE_URL = "https://www.mycareerfound.com";

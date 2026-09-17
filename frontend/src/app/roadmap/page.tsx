@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ChevronDown, CheckCircle2, Circle, BookOpen, FolderGit2, ListChecks, Network } from "lucide-react";
+import { ChevronDown, CheckCircle2, Circle, BookOpen, FolderGit2, ListChecks, Network, Flag } from "lucide-react";
 import { AppShell } from "@/components/layout/app-shell";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -12,6 +12,7 @@ import { SkeletonCard } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Alert } from "@/components/ui/alert";
 import { SkillGraphView } from "@/components/charts/skill-graph-view";
+import { PathTrack, type PathWaypoint } from "@/components/marketing/path-track";
 import { SmartMentorRecommendation } from "@/components/mentors/smart-mentor-recommendation";
 import { MentorRecommendationsPanel } from "@/components/mentors/mentor-recommendations-panel";
 import { api, ApiError } from "@/lib/api";
@@ -82,6 +83,18 @@ export default function RoadmapPage() {
             </Card>
           )}
 
+          {/* The roadmap-as-a-journey overview: one waypoint per phase, done
+              phases behind, the first not-yet-complete phase marked "you
+              are here", the rest still ahead. The accordions below still
+              carry all the real interaction (lessons/projects/quizzes);
+              this is a map of the same data, not a replacement for it. */}
+          <Card>
+            <CardContent className="p-6">
+              <p className="eyebrow">Your journey on this path</p>
+              <PathTrack waypoints={phaseWaypoints(roadmap.phases)} orientation="vertical" className="mt-5" />
+            </CardContent>
+          </Card>
+
           <div className="space-y-4">
             {roadmap.phases.map((phase, i) => (
               <PhaseAccordion key={phase.id} phase={phase} defaultOpen={i === 0 || (phase.progress_pct > 0 && phase.progress_pct < 100)} />
@@ -95,6 +108,15 @@ export default function RoadmapPage() {
       )}
     </AppShell>
   );
+}
+
+function phaseWaypoints(phases: PhaseItem[]): PathWaypoint[] {
+  const firstIncomplete = phases.findIndex((p) => p.progress_pct < 100);
+  return phases.map((phase, i) => ({
+    icon: Flag,
+    label: phase.title,
+    state: phase.progress_pct === 100 ? "done" : i === firstIncomplete ? "active" : "upcoming",
+  }));
 }
 
 function PhaseAccordion({ phase, defaultOpen }: { phase: PhaseItem; defaultOpen: boolean }) {

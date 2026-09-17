@@ -37,9 +37,19 @@ const config: Config = {
         success: "#33C481",
         warning: "#E8A63C",
         danger: "#E15B5B",
+        // Warm secondary brand color (clay/terracotta): reserved for
+        // signature moments (the "Best Match" reveal, readiness-score
+        // accents, hero waypoints) rather than general UI, so it stays a
+        // deliberate accent instead of turning into a second competing
+        // brand color everywhere.
+        warm: {
+          DEFAULT: "rgb(var(--color-warm) / <alpha-value>)",
+          light: "rgb(var(--color-warm-light) / <alpha-value>)",
+        },
       },
       fontFamily: {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "Georgia", "serif"],
         mono: ["var(--font-mono)", "ui-monospace", "monospace"],
       },
       borderRadius: {
@@ -64,6 +74,11 @@ const config: Config = {
         "fill-bar": { from: { width: "0%" }, to: { width: "var(--fill-to)" } },
         "scale-in": { from: { opacity: "0", transform: "scale(0.96)" }, to: { opacity: "1", transform: "scale(1)" } },
         "pop-in": { "0%": { opacity: "0", transform: "scale(0.9)" }, "60%": { opacity: "1", transform: "scale(1.03)" }, "100%": { transform: "scale(1)" } },
+        // A slow, subtle dash-offset crawl for the hero/roadmap path line,
+        // suggesting motion along the route without being a distracting
+        // loop. Disabled globally under prefers-reduced-motion (see the
+        // media query at the bottom of globals.css).
+        "path-flow": { to: { strokeDashoffset: "-24" } },
       },
       animation: {
         "fade-in": "fade-in 220ms ease-out",
@@ -71,6 +86,7 @@ const config: Config = {
         "fill-bar": "fill-bar 700ms cubic-bezier(0.16,1,0.3,1)",
         "scale-in": "scale-in 180ms ease-out",
         "pop-in": "pop-in 360ms cubic-bezier(0.16,1,0.3,1)",
+        "path-flow": "path-flow 1.6s linear infinite",
       },
       transitionTimingFunction: {
         smooth: "cubic-bezier(0.16,1,0.3,1)",

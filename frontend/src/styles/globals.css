@@ -6,9 +6,22 @@
    .dark (toggled by the theme provider in lib/theme.tsx). Every color
    below is an "R G B" triplet (no commas, no rgb() wrapper) so Tailwind's
    rgb(var(--x) / <alpha-value>) pattern in tailwind.config.ts can still
-   apply opacity modifiers like bg-base-950/60. */
+   apply opacity modifiers like bg-base-950/60.
+
+   Font families: Inter (--font-sans) carries body copy and UI chrome.
+   Fraunces (--font-display) is the display face for headings and "reveal"
+   moments (hero, results, section titles) - an editorial serif, deliberately
+   not another geometric SaaS sans, so CareerFound reads as its own product.
+   JetBrains Mono (--font-mono) carries technical/metadata text (eyebrows,
+   step counters, stat readouts) so labels feel like instrumentation rather
+   than decoration. All three are self-hosted via @fontsource (imported in
+   app/layout.tsx), not fetched from Google Fonts at request time - this
+   file used to reference "Inter"/"JetBrains Mono" by name with no
+   @font-face backing them at all, so every deployed page was silently
+   rendering in the visitor's system font regardless of theme. */
 :root {
-  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-sans: "Inter Variable", system-ui, -apple-system, sans-serif;
+  --font-display: "Fraunces Variable", Georgia, serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
   /* base = backgrounds, brightness-ordered the same way in both themes:
@@ -32,6 +45,15 @@
      one is theme-aware. */
   --color-accent-light: 77 93 40;
 
+  /* Warm secondary: CareerFound's second brand color, used sparingly and
+     deliberately (the "Best Match" reveal, readiness-score accents, the
+     hero waypoint marker) so it reads as a signature moment rather than a
+     second UI color competing with green everywhere. A clay/terracotta
+     tone pairs with the olive-green accent without turning into a
+     generic purple-blue SaaS gradient. */
+  --color-warm: 180 90 42;
+  --color-warm-light: 150 74 32;
+
   /* A subtle foreground-tinted overlay used for hairline borders and soft
      card highlights, black-tinted on a light page, white-tinted on a dark
      page, so the exact opacity value in each usage (e.g. /[0.06]) keeps
@@ -53,6 +75,9 @@
   --color-ink-700: 75 79 90;
 
   --color-accent-light: 165 199 96;
+
+  --color-warm: 224 138 88;
+  --color-warm-light: 235 163 116;
 
   --fg-tint: 255 255 255;
 }
@@ -88,9 +113,23 @@ body {
   @apply outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-base-950;
 }
 
-/* A very fine dot grid, used once behind the hero instead of a gradient
-   blob: reads as "engineered product" rather than decoration, and stays
-   nearly invisible so it never competes with the copy on top of it. */
+/* CareerFound's signature background: faint topographic contour lines,
+   like elevation bands on a map. It stands in for the dot-grid + gradient
+   blob every other section used to reach for, and it's a deliberate nod to
+   the "find your path" idea instead of decoration for its own sake. Drawn
+   once as a tiled SVG (cheaper than a huge inline gradient stack) and
+   masked so it fades out at the edges rather than hard-cutting off. */
+.bg-contour {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320' viewBox='0 0 320 320'%3E%3Cg fill='none' stroke='rgb(var(--fg-tint))' stroke-opacity='0.14' stroke-width='1'%3E%3Cpath d='M-20 40 Q 80 10, 180 45 T 360 30'/%3E%3Cpath d='M-20 90 Q 90 55, 190 95 T 360 82'/%3E%3Cpath d='M-20 140 Q 70 108, 170 145 T 360 132'/%3E%3Cpath d='M-20 190 Q 100 158, 200 196 T 360 182'/%3E%3Cpath d='M-20 240 Q 85 205, 185 244 T 360 230'/%3E%3Cpath d='M-20 290 Q 95 258, 195 294 T 360 280'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 320px 320px;
+  background-repeat: repeat;
+  -webkit-mask-image: radial-gradient(ellipse 75% 65% at 50% 0%, black 35%, transparent 100%);
+  mask-image: radial-gradient(ellipse 75% 65% at 50% 0%, black 35%, transparent 100%);
+}
+
+/* Legacy alias kept so any not-yet-migrated usage still renders something
+   reasonable rather than a missing background; new work should use
+   .bg-contour above. */
 .bg-dot-grid {
   background-image: radial-gradient(rgb(var(--fg-tint) / 0.14) 1px, transparent 1px);
   background-size: 24px 24px;
@@ -113,8 +152,20 @@ body {
   background: linear-gradient(90deg, rgb(var(--color-accent-light) / 0.5), rgb(var(--color-accent-light) / 0.08));
 }
 
+/* Waypoint marker used by <PathTrack> (src/components/marketing/path-track.tsx)
+   and anywhere else that needs a "you are here" node on a journey line:
+   a diamond rather than a plain circle, so CareerFound's progression
+   visuals read as their own shape language, not a copy of a generic
+   stepper component. */
+.path-node {
+  @apply relative flex items-center justify-center rounded-[0.5rem] rotate-45 border transition-colors duration-200;
+}
+.path-node > * {
+  @apply -rotate-45;
+}
+
 .eyebrow {
-  @apply inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-accent-light;
+  @apply inline-flex items-center gap-1.5 font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-accent-light;
 }
 
 @media (prefers-reduced-motion: reduce) {

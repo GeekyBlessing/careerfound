@@ -12,7 +12,6 @@ import { Alert } from "@/components/ui/alert";
 import { SkeletonCard } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
 import { CareerDnaRadar } from "@/components/charts/career-dna-radar";
-import { cn } from "@/lib/utils";
 import { api, ApiError } from "@/lib/api";
 import type { AssessmentResult, CareerRecommendation } from "@/types";
 
@@ -37,6 +36,9 @@ export default function AssessmentResultsPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  const bestMatch = result?.recommendations.find((r) => r.tier === "best_match");
+  const otherRecs = result?.recommendations.filter((r) => r.tier !== "best_match") ?? [];
+
   async function startRoadmap(slug: string) {
     setStartingPath(slug);
     try {
@@ -52,7 +54,9 @@ export default function AssessmentResultsPage() {
     <AppShell>
       <div className="mb-8">
         <p className="eyebrow">Your results</p>
-        <h1 className="mt-1 text-2xl font-semibold tracking-tight text-ink-100">We found your strongest paths</h1>
+        <h1 className="mt-1 font-display text-2xl font-semibold tracking-tight text-ink-100 sm:text-3xl">
+          We found your strongest paths
+        </h1>
         <p className="mt-1 text-sm text-ink-500">Based on your answers, not a generic list, your specific fit.</p>
       </div>
 
@@ -77,10 +81,15 @@ export default function AssessmentResultsPage() {
           </Card>
 
           {result.recommendations.length > 0 ? (
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {result.recommendations.map((rec) => (
-                <RecommendationCard key={rec.path_slug} rec={rec} onStart={startRoadmap} starting={startingPath === rec.path_slug} />
-              ))}
+            <div className="space-y-6">
+              {bestMatch && <BestMatchReveal rec={bestMatch} onStart={startRoadmap} starting={startingPath === bestMatch.path_slug} />}
+              {otherRecs.length > 0 && (
+                <div className="grid gap-5 sm:grid-cols-2">
+                  {otherRecs.map((rec) => (
+                    <RecommendationCard key={rec.path_slug} rec={rec} onStart={startRoadmap} starting={startingPath === rec.path_slug} />
+                  ))}
+                </div>
+              )}
             </div>
           ) : (
             <EmptyState
@@ -111,17 +120,8 @@ function RecommendationCard({
 }) {
   const meta = TIER_META[rec.tier];
   const Icon = meta.icon;
-  const isBestMatch = rec.tier === "best_match";
   return (
-    <Card
-      className={cn(
-        "relative",
-        isBestMatch && "border-accent/40 shadow-raised lg:-translate-y-1.5"
-      )}
-    >
-      {isBestMatch && (
-        <div className="absolute inset-x-0 -top-px mx-auto h-px w-2/3 bg-gradient-to-r from-transparent via-accent-light to-transparent" />
-      )}
+    <Card className="relative">
       <CardContent className="flex h-full flex-col p-6">
         <Badge tone={meta.tone} className="w-fit gap-1">
           <Icon className="h-3 w-3" /> {meta.label}
@@ -172,6 +172,91 @@ function RecommendationCard({
             <Users className="h-3.5 w-3.5" /> See projects &amp; mentors
           </Button>
         </Link>
+      </CardContent>
+    </Card>
+  );
+}
+
+/**
+ * The one screen the brief specifically asks to make memorable: the Best
+ * Match shouldn't look like "one of three similar cards", it should feel
+ * like the answer the whole assessment was building toward. Full-width,
+ * pops in on arrival (animate-pop-in, otherwise unused in the codebase),
+ * leads with the fit score as a large mono readout rather than a small
+ * "72/100" line, and uses the warm secondary accent (reserved for exactly
+ * this kind of signature moment) instead of the standard green Badge tone.
+ */
+function BestMatchReveal({
+  rec,
+  onStart,
+  starting,
+}: {
+  rec: CareerRecommendation;
+  onStart: (slug: string) => void;
+  starting: boolean;
+}) {
+  return (
+    <Card className="relative animate-pop-in overflow-hidden border-warm/35 shadow-raised">
+      <div className="bg-contour pointer-events-none absolute inset-0 -z-10 opacity-60" />
+      <CardContent className="grid gap-8 p-8 lg:grid-cols-[1fr_auto] lg:items-center">
+        <div>
+          <Badge tone="warm" className="w-fit gap-1.5">
+            <Award className="h-3 w-3" /> Best Match
+          </Badge>
+          <h2 className="mt-4 font-display text-3xl font-semibold capitalize tracking-tight text-ink-100 sm:text-4xl">
+            {rec.path_slug.replace(/-/g, " ")}
+          </h2>
+          <p className="mt-4 max-w-xl text-sm leading-relaxed text-ink-300">{rec.why_it_fits}</p>
+
+          <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2 font-mono text-[11px] uppercase tracking-wide text-ink-500">
+            <span><span className="text-ink-300">Difficulty</span> {rec.difficulty_label}</span>
+            <span><span className="text-ink-300">Timeline</span> {rec.timeline_label}</span>
+            <span><span className="text-ink-300">Remote</span> {rec.remote_potential_label}</span>
+          </div>
+
+          {rec.transferable_skills.length > 0 && (
+            <div className="mt-5">
+              <p className="mb-1.5 text-xs font-medium text-ink-300">Why this fits you specifically</p>
+              <ul className="space-y-1 text-xs text-ink-500">
+                {rec.transferable_skills.map((s) => (
+                  <li key={s.skill}>
+                    <span className="text-ink-300">{s.skill}:</span> {s.why_it_transfers}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <div className="mt-5 flex flex-wrap gap-1.5">
+            {rec.entry_roles.map((r) => (
+              <Badge key={r}>{r}</Badge>
+            ))}
+          </div>
+          <p className="mt-4 text-xs text-ink-500">{rec.earning_notes}</p>
+
+          <div className="mt-6 flex flex-col gap-2.5 sm:flex-row">
+            <Button onClick={() => onStart(rec.path_slug)} loading={starting} className="gap-1.5">
+              {rec.recommended_next_step} <ArrowRight className="h-3.5 w-3.5" />
+            </Button>
+            <Link href={`/careers/${rec.path_slug}`}>
+              <Button variant="secondary" className="gap-1.5">
+                <Users className="h-3.5 w-3.5" /> See projects &amp; mentors
+              </Button>
+            </Link>
+          </div>
+        </div>
+
+        {/* The fit score as the visual anchor of the reveal: a big mono
+            numeral rather than a small inline "72/100" line, in a diamond
+            frame matching the PathTrack waypoint language used elsewhere. */}
+        <div className="flex flex-col items-center justify-self-center">
+          <div className="path-node h-28 w-28 border-warm/40 bg-warm/10 text-warm">
+            <div className="flex flex-col items-center">
+              <span className="font-mono text-3xl font-semibold leading-none">{rec.fit_score}</span>
+              <span className="mt-1 text-[9px] uppercase tracking-wide text-ink-500">/ 100 fit</span>
+            </div>
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

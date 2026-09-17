@@ -11,10 +11,16 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantClasses: Record<Variant, string> = {
+  // The primary CTA is CareerFound's single most-repeated visual moment
+  // (hero, every paywall, every card footer), so it carries the brand's
+  // signature touch: a resting glow (shadow-glow, otherwise unused in the
+  // codebase before this) instead of a flat shadow, and any trailing icon
+  // (ArrowRight, mainly) nudges forward on hover/focus - a small, purposeful
+  // "this leads somewhere" cue rather than a generic color-swap hover.
   primary:
-    "bg-accent text-white shadow-xs hover:bg-accent-dark hover:shadow-card active:shadow-none active:translate-y-px",
+    "bg-accent text-white shadow-glow hover:bg-accent-dark hover:shadow-card active:shadow-none active:translate-y-px [&>svg:last-child]:transition-transform [&>svg:last-child]:duration-200 hover:[&>svg:last-child]:translate-x-0.5",
   secondary:
-    "bg-[rgb(var(--fg-tint)/0.06)] text-ink-100 border border-[rgb(var(--fg-tint)/0.12)] hover:bg-[rgb(var(--fg-tint)/0.1)] hover:border-[rgb(var(--fg-tint)/0.18)] active:translate-y-px",
+    "bg-transparent text-ink-100 border border-[rgb(var(--fg-tint)/0.14)] hover:border-accent/40 hover:text-accent-light active:translate-y-px",
   ghost: "bg-transparent text-ink-300 hover:text-ink-100 hover:bg-[rgb(var(--fg-tint)/0.05)] active:translate-y-px",
   danger: "bg-danger/90 text-white shadow-xs hover:bg-danger hover:shadow-card active:translate-y-px",
 };

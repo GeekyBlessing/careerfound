@@ -2,11 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Search, Signal } from "lucide-react";
+import { ArrowRight, Search } from "lucide-react";
 import { PublicShell } from "@/components/layout/public-shell";
 import { SectionHeading } from "@/components/marketing/section-heading";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { DifficultyMeter } from "@/components/ui/difficulty-meter";
 import { Input } from "@/components/ui/input";
 import { Alert } from "@/components/ui/alert";
 import { SkeletonCard } from "@/components/ui/skeleton";
@@ -121,21 +122,21 @@ export default function CareersListPage() {
             {visiblePaths.map((path) => (
               <Link key={path.id} href={`/careers/${path.slug}`}>
                 <Card interactive className="flex h-full flex-col p-6">
-                  <div className="flex items-start justify-between gap-3">
-                    <p className="text-sm font-semibold text-ink-100">{path.name}</p>
-                    <span className="flex flex-shrink-0 items-center gap-1 text-xs text-ink-500">
-                      <Signal className="h-3 w-3" /> {path.difficulty}/5
-                    </span>
-                  </div>
+                  <p className="font-display text-base font-semibold tracking-tight text-ink-100">{path.name}</p>
                   <p className="mt-2 flex-1 text-xs leading-relaxed text-ink-500">{path.summary}</p>
                   <div className="mt-3 flex flex-wrap gap-1.5">
                     {path.entry_roles.slice(0, 2).map((r) => (
                       <Badge key={r}>{r}</Badge>
                     ))}
                   </div>
-                  <span className="mt-4 flex items-center gap-1.5 text-xs font-medium text-accent-light">
-                    Explore career <ArrowRight className="h-3 w-3" />
-                  </span>
+                  <div className="mt-4 flex items-center justify-between border-t border-[rgb(var(--fg-tint)/0.06)] pt-3">
+                    <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-wide text-ink-500">
+                      <DifficultyMeter level={path.difficulty} /> {path.difficulty}/5
+                    </span>
+                    <span className="flex items-center gap-1 text-xs font-medium text-accent-light">
+                      Explore <ArrowRight className="h-3 w-3" />
+                    </span>
+                  </div>
                 </Card>
               </Link>
             ))}

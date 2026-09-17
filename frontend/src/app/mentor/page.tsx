@@ -2,9 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Send, Sparkles, Bot, User as UserIcon } from "lucide-react";
+import { Send, Sparkles, Compass, User as UserIcon } from "lucide-react";
 import { AppShell } from "@/components/layout/app-shell";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/input";
 import { Alert } from "@/components/ui/alert";
@@ -12,7 +13,18 @@ import { api, ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { initials } from "@/lib/utils";
 import { track } from "@/lib/analytics";
-import type { MentorChatMessage, MentorChatResponse } from "@/types";
+import type { Dashboard, MentorChatMessage, MentorChatResponse } from "@/types";
+
+/** The CareerFound compass mark, standing in for a generic robot-head icon
+ * so the mentor reads as "CareerFound, talking to you" rather than a
+ * bolted-on ChatGPT widget. */
+function MentorMark({ size = "h-7 w-7" }: { size?: string }) {
+  return (
+    <div className={`flex ${size} flex-shrink-0 items-center justify-center rounded-lg bg-accent text-white`}>
+      <Compass className="h-3.5 w-3.5" />
+    </div>
+  );
+}
 
 const STARTER_PROMPTS = [
   "I don't understand DNS",
@@ -29,11 +41,22 @@ export default function MentorPage() {
   const [followUps, setFollowUps] = useState<string[]>([]);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [pathName, setPathName] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages]);
+
+  // Purely cosmetic context (what path the mentor's advice is grounded in),
+  // fetched separately from the chat itself so a failure here never blocks
+  // the mentor from working - it just means the context chip stays hidden.
+  useEffect(() => {
+    api
+      .get<Dashboard>("/dashboard")
+      .then((d) => setPathName(d.has_active_roadmap ? d.path_name ?? null : null))
+      .catch(() => undefined);
+  }, []);
 
   async function sendMessage(text: string) {
     if (!text.trim()) return;
@@ -57,8 +80,11 @@ export default function MentorPage() {
   return (
     <AppShell>
       <div className="mb-6">
-        <p className="eyebrow">AI Mentor · software, on call 24/7</p>
-        <h1 className="mt-1 text-2xl font-semibold tracking-tight text-ink-100">Your patient senior engineer</h1>
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="eyebrow">AI Mentor · software, on call 24/7</p>
+          {pathName && <Badge tone="accent">Grounded in your {pathName} path</Badge>}
+        </div>
+        <h1 className="mt-1 font-display text-2xl font-semibold tracking-tight text-ink-100">Your patient senior engineer</h1>
         <p className="mt-1 text-sm text-ink-500">Explains simply, gives hints before answers, and remembers where you&apos;re stuck.</p>
         <p className="mt-2 text-xs leading-relaxed text-ink-500">
           This is software, not a licensed counselor or a human mentor, and it can get things wrong. For a real
@@ -71,9 +97,7 @@ export default function MentorPage() {
         <div ref={scrollRef} role="log" aria-live="polite" className="flex-1 space-y-4 overflow-y-auto p-6">
           {messages.length === 0 && (
             <div className="flex h-full flex-col items-center justify-center text-center">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent/15 text-accent-light">
-                <Bot className="h-5 w-5" />
-              </div>
+              <MentorMark size="mb-4 h-12 w-12" />
               <p className="text-sm font-medium text-ink-100">Ask me anything about your roadmap</p>
               <p className="mt-1 max-w-xs text-xs text-ink-500">I&apos;ll explain with plain language first, then build up to the technical version.</p>
               <div className="mt-6 grid gap-2 sm:grid-cols-2">
@@ -92,18 +116,19 @@ export default function MentorPage() {
 
           {messages.map((m, i) => (
             <div key={i} className={`flex animate-fade-in-up gap-3 ${m.role === "user" ? "justify-end" : ""}`}>
-              {m.role === "assistant" && (
-                <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-accent/15 text-accent-light">
-                  <Bot className="h-3.5 w-3.5" />
+              {m.role === "assistant" && <MentorMark />}
+              {/* Assistant replies are a left-bordered note block, not a
+                  rounded chat bubble - deliberately not the ChatGPT look.
+                  User messages keep a simple accent pill since it's their
+                  own words reflected back, not the part that needs to feel
+                  distinct from a generic chat product. */}
+              {m.role === "assistant" ? (
+                <div className="max-w-[75%] rounded-lg border-l-2 border-accent/40 bg-[rgb(var(--fg-tint)/0.03)] px-4 py-2.5 text-sm leading-relaxed text-ink-200">
+                  {m.content}
                 </div>
+              ) : (
+                <div className="max-w-[75%] rounded-2xl bg-accent px-4 py-2.5 text-sm leading-relaxed text-white">{m.content}</div>
               )}
-              <div
-                className={`max-w-[75%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
-                  m.role === "user" ? "bg-accent text-white" : "bg-[rgb(var(--fg-tint)/0.05)] text-ink-200"
-                }`}
-              >
-                {m.content}
-              </div>
               {m.role === "user" && (
                 <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-[rgb(var(--fg-tint)/0.08)] text-xs text-ink-300">
                   {user ? initials(user.full_name) : <UserIcon className="h-3.5 w-3.5" />}
@@ -114,10 +139,8 @@ export default function MentorPage() {
 
           {sending && (
             <div className="flex gap-3">
-              <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-accent/15 text-accent-light">
-                <Bot className="h-3.5 w-3.5" />
-              </div>
-              <div className="flex items-center gap-1 rounded-2xl bg-[rgb(var(--fg-tint)/0.05)] px-4 py-3">
+              <MentorMark />
+              <div className="flex items-center gap-1 rounded-lg border-l-2 border-accent/40 bg-[rgb(var(--fg-tint)/0.03)] px-4 py-3">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-ink-500" />
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-ink-500 [animation-delay:0.15s]" />
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-ink-500 [animation-delay:0.3s]" />

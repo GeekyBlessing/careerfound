@@ -44,18 +44,22 @@ export function CareerDnaRadar({ dna, size = 280 }: { dna: CareerDNA; size?: num
               key={ring}
               points={pts.map((p) => `${p.x},${p.y}`).join(" ")}
               fill="none"
-              stroke="rgba(255,255,255,0.08)"
+              stroke="rgb(var(--fg-tint) / 0.1)"
               strokeWidth={1}
             />
           );
         })}
         {AXES.map((_, i) => {
           const p = pointFor(i, AXES.length, maxRadius, center);
-          return <line key={i} x1={center} y1={center} x2={p.x} y2={p.y} stroke="rgba(255,255,255,0.08)" strokeWidth={1} />;
+          return <line key={i} x1={center} y1={center} x2={p.x} y2={p.y} stroke="rgb(var(--fg-tint) / 0.1)" strokeWidth={1} />;
         })}
-        <polygon points={polygonPath} fill="rgba(91,108,255,0.28)" stroke="#5B6CFF" strokeWidth={2} />
+        {/* Brand-colored (not a generic chart-library blue/purple): the
+            filled shape uses the accent green, vertices use the warm
+            secondary so the six data points still read clearly against the
+            green fill. */}
+        <polygon points={polygonPath} fill="rgb(var(--color-accent-light) / 0.28)" stroke="rgb(var(--color-accent-light))" strokeWidth={2} />
         {dataPoints.map((p, i) => (
-          <circle key={i} cx={p.x} cy={p.y} r={3} fill="#8A93FF" />
+          <circle key={i} cx={p.x} cy={p.y} r={3} fill="rgb(var(--color-warm))" />
         ))}
         {AXES.map((axis, i) => {
           const labelPoint = pointFor(i, AXES.length, maxRadius + 22, center);

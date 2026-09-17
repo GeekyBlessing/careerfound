@@ -18,6 +18,7 @@ import {
 import { PublicShell } from "@/components/layout/public-shell";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { DifficultyMeter } from "@/components/ui/difficulty-meter";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { SkeletonCard } from "@/components/ui/skeleton";
@@ -88,7 +89,7 @@ export default function CareerDetailPage() {
         <div className="space-y-8">
           <div>
             <p className="eyebrow">Career path</p>
-            <h1 className="mt-1 text-2xl font-semibold tracking-tight text-ink-100">{path.name}</h1>
+            <h1 className="mt-1 font-display text-2xl font-semibold tracking-tight text-ink-100 sm:text-3xl">{path.name}</h1>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-400">{path.summary}</p>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-500">{path.beginner_summary}</p>
 
@@ -126,7 +127,9 @@ export default function CareerDetailPage() {
                   </span>
                   Difficulty
                 </div>
-                <p className="mt-2 text-sm font-semibold text-ink-100">{path.difficulty}/5</p>
+                <p className="mt-2 flex items-center gap-2 text-sm font-semibold text-ink-100">
+                  <DifficultyMeter level={path.difficulty} /> {path.difficulty}/5
+                </p>
               </Card>
             </div>
 

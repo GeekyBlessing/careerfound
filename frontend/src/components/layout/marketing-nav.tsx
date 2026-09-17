@@ -41,7 +41,7 @@ export function MarketingNav() {
               key={l.href}
               href={l.href}
               className={cn(
-                "focus-ring relative rounded-lg px-3 py-2 text-sm transition-colors hover:text-ink-100",
+                "focus-ring relative whitespace-nowrap rounded-lg px-2.5 py-2 text-sm transition-colors hover:text-ink-100",
                 pathname === l.href ? "font-medium text-ink-100" : "text-ink-300"
               )}
             >

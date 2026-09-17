@@ -3,12 +3,11 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ArrowRight, Sparkles, Compass } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Compass } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input, Label } from "@/components/ui/input";
 import { Alert } from "@/components/ui/alert";
-import { ProgressBar } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
 import { api, ApiError } from "@/lib/api";
@@ -81,13 +80,14 @@ function OptionGrid<T extends string | number>({
           aria-pressed={value === opt.value}
           onClick={() => onChange(opt.value)}
           className={cn(
-            "rounded-xl border px-4 py-3.5 text-left text-sm font-medium transition-all duration-150 ease-smooth focus-ring active:translate-y-px",
+            "flex items-center justify-between gap-2 rounded-xl border px-4 py-3.5 text-left text-sm font-medium transition-all duration-150 ease-smooth focus-ring active:translate-y-px",
             value === opt.value
               ? "border-accent bg-accent/15 text-accent-light shadow-xs"
               : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] text-ink-300 hover:border-[rgb(var(--fg-tint)/0.2)] hover:bg-[rgb(var(--fg-tint)/0.05)] hover:text-ink-100"
           )}
         >
           {opt.label}
+          {value === opt.value && <Check className="h-3.5 w-3.5 shrink-0" />}
         </button>
       ))}
     </div>
@@ -102,22 +102,22 @@ function YesNo({ value, onChange }: { value: boolean | undefined; onChange: (v: 
         aria-pressed={value === true}
         onClick={() => onChange(true)}
         className={cn(
-          "rounded-xl border px-4 py-3 text-sm font-medium transition-all duration-150 ease-smooth focus-ring active:translate-y-px",
+          "flex items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-medium transition-all duration-150 ease-smooth focus-ring active:translate-y-px",
           value === true ? "border-accent bg-accent/15 text-accent-light shadow-xs" : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] text-ink-300 hover:bg-[rgb(var(--fg-tint)/0.05)] hover:text-ink-100"
         )}
       >
-        Yes
+        Yes {value === true && <Check className="h-3.5 w-3.5" />}
       </button>
       <button
         type="button"
         aria-pressed={value === false}
         onClick={() => onChange(false)}
         className={cn(
-          "rounded-xl border px-4 py-3 text-sm font-medium transition-all duration-150 ease-smooth focus-ring active:translate-y-px",
+          "flex items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-medium transition-all duration-150 ease-smooth focus-ring active:translate-y-px",
           value === false ? "border-accent bg-accent/15 text-accent-light shadow-xs" : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] text-ink-300 hover:bg-[rgb(var(--fg-tint)/0.05)] hover:text-ink-100"
         )}
       >
-        Not really
+        Not really {value === false && <Check className="h-3.5 w-3.5" />}
       </button>
     </div>
   );
@@ -283,7 +283,7 @@ export default function OnboardingPage() {
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 py-12">
-      <div className="bg-dot-grid pointer-events-none absolute inset-x-0 top-0 -z-10 h-[420px]" />
+      <div className="bg-contour pointer-events-none absolute inset-x-0 top-0 -z-10 h-[420px]" />
       <Link href="/" className="mb-8 flex items-center gap-2 font-semibold text-ink-100 focus-ring rounded-lg">
         <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent shadow-xs">
           <Compass className="h-4 w-4 text-white" />
@@ -292,18 +292,29 @@ export default function OnboardingPage() {
       </Link>
 
       <div className="w-full max-w-lg">
-        <div className="mb-2 flex items-center justify-between text-xs font-medium text-ink-500">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-accent/20 bg-accent/10 px-2.5 py-1 text-accent-light">
-            <Sparkles className="h-3.5 w-3.5" />
-            Step {step + 1} of {steps.length}
-          </span>
-          <span>{progress}% complete</span>
+        {/* A waypoint-dot tracker instead of a plain progress bar - one
+            small diamond per question, same node language as the hero and
+            roadmap, so the assessment reads as a path being walked rather
+            than a form being filled in. */}
+        <div className="mb-3 flex items-center justify-between font-mono text-[11px] uppercase tracking-wide text-ink-500">
+          <span>Step {step + 1} / {steps.length}</span>
+          <span className="text-accent-light">{progress}% complete</span>
         </div>
-        <ProgressBar value={progress} trackClassName="mb-6" />
+        <ol className="mb-6 flex items-center gap-1.5" aria-hidden="true">
+          {steps.map((_, i) => (
+            <li
+              key={i}
+              className={cn(
+                "h-1.5 flex-1 rounded-full transition-colors duration-300",
+                i < step ? "bg-accent/50" : i === step ? "bg-accent-light" : "bg-[rgb(var(--fg-tint)/0.08)]"
+              )}
+            />
+          ))}
+        </ol>
 
         <Card className="p-8 shadow-raised">
           <div key={step} className="animate-fade-in-up">
-            <h1 className="text-xl font-semibold tracking-tight text-ink-100">{current.title}</h1>
+            <h1 className="font-display text-2xl font-semibold tracking-tight text-ink-100">{current.title}</h1>
             <div className="mt-5">{current.body}</div>
           </div>
 

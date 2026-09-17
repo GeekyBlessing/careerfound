@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-type Tone = "neutral" | "accent" | "success" | "warning" | "danger";
+type Tone = "neutral" | "accent" | "success" | "warning" | "danger" | "warm";
 
 const toneClasses: Record<Tone, string> = {
   neutral: "bg-[rgb(var(--fg-tint)/0.06)] text-ink-300 border-[rgb(var(--fg-tint)/0.1)]",
@@ -8,6 +8,9 @@ const toneClasses: Record<Tone, string> = {
   success: "bg-success/15 text-success border-success/30",
   warning: "bg-warning/15 text-warning border-warning/30",
   danger: "bg-danger/15 text-danger border-danger/30",
+  // Reserved for signature moments (the Best Match reveal) - see
+  // globals.css's note on the warm secondary accent.
+  warm: "bg-warm/15 text-warm border-warm/35",
 };
 
 export function Badge({

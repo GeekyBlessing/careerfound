@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import {
   ArrowRight,
-  Sparkles,
   Shield,
   Cloud,
   Code2,
@@ -13,13 +12,13 @@ import {
   Check,
   ChevronDown,
   Compass,
-  Route,
+  Sparkles,
+  Target,
   Hammer,
   Trophy,
   Bot,
   FolderGit2,
   Users,
-  Target,
   Map,
   Briefcase,
   MessageCircle,
@@ -28,6 +27,8 @@ import {
 import { MarketingNav } from "@/components/layout/marketing-nav";
 import { Footer } from "@/components/layout/footer";
 import { SectionHeading } from "@/components/marketing/section-heading";
+import { JourneySteps } from "@/components/marketing/journey-steps";
+import { PathTrack, type PathWaypoint } from "@/components/marketing/path-track";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -52,12 +53,16 @@ const careerPreview = [
   { name: "+ 14 more paths", slug: null, icon: Sparkles, blurb: "From DevOps to Product Management to AI/ML Engineering." },
 ];
 
-const journeySteps = [
-  { icon: Compass, label: "Discover yourself" },
-  { icon: Sparkles, label: "Find your career" },
-  { icon: Route, label: "Get your roadmap" },
-  { icon: Hammer, label: "Build real projects" },
-  { icon: Trophy, label: "Become job-ready" },
+// The hero's signature visual: the whole CareerFound experience compressed
+// into four waypoints. "active" on the first node because every new visitor
+// starts at Discover - this is the same <PathTrack> primitive the onboarding
+// stepper and roadmap phase tracker reuse, so the "you're on a path" idea is
+// consistent everywhere progress shows up, not a one-off hero illustration.
+const heroWaypoints: PathWaypoint[] = [
+  { icon: Compass, label: "Discover", state: "active" },
+  { icon: Target, label: "Choose", state: "upcoming" },
+  { icon: Hammer, label: "Build", state: "upcoming" },
+  { icon: Trophy, label: "Job-ready", state: "upcoming" },
 ];
 
 export default function LandingPage() {
@@ -66,19 +71,15 @@ export default function LandingPage() {
       <MarketingNav />
       <main>
         {/* Hero */}
-        <section className="relative overflow-hidden py-20 sm:py-28">
-          <div className="bg-dot-grid pointer-events-none absolute inset-x-0 top-0 -z-10 h-[520px]" />
-          <div
-            className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[480px] opacity-30"
-            style={{ background: "radial-gradient(560px circle at 50% 0%, rgba(93,111,52,0.22), transparent 70%)" }}
-          />
+        <section className="relative overflow-hidden py-16 sm:py-28">
+          <div className="bg-contour pointer-events-none absolute inset-x-0 top-0 -z-10 h-[520px]" />
           <div className="container-page text-center">
-            <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.04)] px-3.5 py-1.5 text-xs font-medium text-ink-300 animate-fade-in">
-              <Sparkles className="h-3.5 w-3.5 text-accent-light" />
-              A career platform for people breaking into tech
-            </div>
-            <h1 className="mx-auto max-w-3xl text-4xl font-semibold tracking-tightest text-gradient sm:text-6xl animate-fade-in">
-              Discover your tech career. Build the skills to get there.
+            <p className="eyebrow justify-center gap-2 text-ink-400">
+              <span className="h-1.5 w-1.5 rounded-full bg-accent-light" aria-hidden="true" />
+              Career discovery, for people breaking into tech
+            </p>
+            <h1 className="mx-auto mt-5 max-w-3xl font-display text-4xl font-semibold tracking-tight text-gradient sm:text-6xl animate-fade-in">
+              Find your tech career. Build the proof you did the work.
             </h1>
             <p className="mx-auto mt-6 max-w-xl text-base text-ink-300 sm:text-lg animate-fade-in">
               Find the tech career that actually fits you, follow a roadmap built for it, and build
@@ -99,32 +100,17 @@ export default function LandingPage() {
             </div>
             <p className="mt-5 text-xs text-ink-500">No credit card required, takes about 5 minutes</p>
 
-            {/* The path through CareerFound, made visible up front rather than
-                left implicit across five different sections. */}
-            <div className="mx-auto mt-16 hidden max-w-3xl items-center sm:flex animate-fade-in-up">
-              {journeySteps.map((step, i) => (
-                <div key={step.label} className="flex flex-1 items-center last:flex-none">
-                  <div className="flex flex-col items-center gap-2">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full border border-accent/25 bg-[rgb(var(--fg-tint)/0.04)] text-accent-light">
-                      <step.icon className="h-4 w-4" />
-                    </div>
-                    <p className="whitespace-nowrap text-[11px] font-medium text-ink-400">{step.label}</p>
-                  </div>
-                  {i < journeySteps.length - 1 && <div className="step-track mx-2 h-px flex-1 -translate-y-3" />}
-                </div>
-              ))}
-            </div>
-            <div className="mx-auto mt-8 flex max-w-xs flex-col gap-3 sm:hidden">
-              {journeySteps.map((step, i) => (
-                <div key={step.label} className="flex items-center gap-3">
-                  <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-accent/25 bg-[rgb(var(--fg-tint)/0.04)] text-accent-light">
-                    <step.icon className="h-3.5 w-3.5" />
-                  </div>
-                  <p className="text-xs font-medium text-ink-400">{step.label}</p>
-                  {i < journeySteps.length - 1 && <span className="sr-only">, then</span>}
-                </div>
-              ))}
-            </div>
+            {/* The whole product compressed into one visual: where a new
+                visitor is (Discover) and the three waypoints still ahead.
+                Same <PathTrack> primitive reused by onboarding and the
+                roadmap, so this isn't a one-off hero illustration. */}
+            <PathTrack waypoints={heroWaypoints} className="mx-auto mt-16 hidden max-w-lg sm:flex animate-fade-in-up" />
+            <PathTrack
+              waypoints={heroWaypoints}
+              orientation="vertical"
+              size="sm"
+              className="mx-auto mt-10 max-w-[220px] items-start text-left sm:hidden"
+            />
           </div>
         </section>
 
@@ -132,20 +118,7 @@ export default function LandingPage() {
         <section id="how-it-works" className="py-20">
           <div className="container-page">
             <SectionHeading eyebrow="How it works" title="From confused to job-ready, one clear step at a time" />
-            <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {steps.map((s, i) => (
-                <Card key={s.title} className="relative p-6">
-                  <span className="absolute right-5 top-5 text-2xl font-semibold text-ink-700">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/12 text-accent-light">
-                    <s.icon className="h-5 w-5" />
-                  </div>
-                  <h3 className="text-sm font-semibold text-ink-100">{s.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-ink-500">{s.body}</p>
-                </Card>
-              ))}
-            </div>
+            <JourneySteps steps={steps} className="mt-14" />
           </div>
         </section>
 
@@ -164,7 +137,7 @@ export default function LandingPage() {
                     <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-accent/12 text-accent-light">
                       <c.icon className="h-4.5 w-4.5" />
                     </div>
-                    <p className="text-sm font-semibold text-ink-100">{c.name}</p>
+                    <p className="font-display text-sm font-semibold tracking-tight text-ink-100">{c.name}</p>
                     <p className="mt-1.5 text-xs leading-relaxed text-ink-500">{c.blurb}</p>
                   </Card>
                 </Link>
@@ -379,9 +352,9 @@ export default function LandingPage() {
         <section className="relative overflow-hidden py-20">
           <div className="container-page">
             <Card className="relative flex flex-col items-center gap-6 overflow-hidden px-8 py-16 text-center">
-              <div className="bg-dot-grid pointer-events-none absolute inset-x-0 top-0 -z-10 h-full opacity-70" />
+              <div className="bg-contour pointer-events-none absolute inset-x-0 top-0 -z-10 h-full opacity-70" />
               <p className="eyebrow">Ready when you are</p>
-              <h2 className="max-w-lg text-2xl font-semibold tracking-tight text-ink-100 sm:text-3xl">
+              <h2 className="max-w-lg font-display text-2xl font-semibold tracking-tight text-ink-100 sm:text-3xl">
                 Your next step is one honest assessment away.
               </h2>
               <Link href="/onboarding">
