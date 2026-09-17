@@ -1,14 +1,34 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ArrowRight, Check } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Award,
+  Briefcase,
+  Check,
+  Compass,
+  GraduationCap,
+  Globe,
+  Hammer,
+  Laptop,
+  Layers,
+  type LucideIcon,
+  Map,
+  RefreshCw,
+  Rocket,
+  Smartphone,
+  Sparkles,
+  Target,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input, Label } from "@/components/ui/input";
 import { Alert } from "@/components/ui/alert";
 import { BrandTile } from "@/components/brand/logo";
+import { PathTrack, type PathWaypoint } from "@/components/marketing/path-track";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
 import { api, ApiError } from "@/lib/api";
@@ -34,26 +54,26 @@ type Answers = {
 };
 
 const PERSONA_OPTIONS = [
-  { value: "student", label: "Student" },
-  { value: "graduate", label: "Graduate" },
-  { value: "working", label: "Working full-time" },
-  { value: "switcher", label: "Career switcher" },
-  { value: "entrepreneur", label: "Entrepreneur" },
-  { value: "other", label: "Other" },
+  { value: "student", label: "Student", icon: GraduationCap },
+  { value: "graduate", label: "Graduate", icon: Award },
+  { value: "working", label: "Working full-time", icon: Briefcase },
+  { value: "switcher", label: "Career switcher", icon: RefreshCw },
+  { value: "entrepreneur", label: "Entrepreneur", icon: Rocket },
+  { value: "other", label: "Other", icon: Sparkles },
 ];
 
 const GOAL_OPTIONS = [
-  { value: "job", label: "Get a job" },
-  { value: "freelance", label: "Freelance" },
-  { value: "startup", label: "Build a startup" },
-  { value: "remote", label: "Remote career" },
-  { value: "explore", label: "Explore tech" },
+  { value: "job", label: "Get a job", icon: Briefcase },
+  { value: "freelance", label: "Freelance", icon: Laptop },
+  { value: "startup", label: "Build a startup", icon: Rocket },
+  { value: "remote", label: "Remote career", icon: Globe },
+  { value: "explore", label: "Explore tech", icon: Compass },
 ];
 
 const DEVICE_OPTIONS = [
-  { value: "laptop", label: "Laptop" },
-  { value: "smartphone", label: "Smartphone" },
-  { value: "both", label: "Both" },
+  { value: "laptop", label: "Laptop", icon: Laptop },
+  { value: "smartphone", label: "Smartphone", icon: Smartphone },
+  { value: "both", label: "Both", icon: Layers },
 ];
 
 const TIME_OPTIONS = [
@@ -68,7 +88,7 @@ function OptionGrid<T extends string | number>({
   value,
   onChange,
 }: {
-  options: { value: T; label: string }[];
+  options: { value: T; label: string; icon?: LucideIcon }[];
   value: T | undefined;
   onChange: (v: T) => void;
 }) {
@@ -81,13 +101,20 @@ function OptionGrid<T extends string | number>({
           aria-pressed={value === opt.value}
           onClick={() => onChange(opt.value)}
           className={cn(
-            "flex items-center justify-between gap-2 rounded-xl border px-4 py-3.5 text-left text-sm font-medium transition-all duration-150 ease-smooth focus-ring active:translate-y-px",
+            "flex min-h-[52px] items-center justify-between gap-2 rounded-xl border px-4 py-3.5 text-left text-sm font-medium transition-all duration-150 ease-smooth focus-ring active:scale-[0.98]",
             value === opt.value
               ? "border-accent bg-accent/15 text-accent-light shadow-xs"
               : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] text-ink-300 hover:border-[rgb(var(--fg-tint)/0.2)] hover:bg-[rgb(var(--fg-tint)/0.05)] hover:text-ink-100"
           )}
         >
-          {opt.label}
+          <span className="flex items-center gap-2.5">
+            {opt.icon && (
+              <opt.icon
+                className={cn("h-4 w-4 shrink-0", value === opt.value ? "text-accent-light" : "text-ink-500")}
+              />
+            )}
+            {opt.label}
+          </span>
           {value === opt.value && <Check className="h-3.5 w-3.5 shrink-0" />}
         </button>
       ))}
@@ -103,7 +130,7 @@ function YesNo({ value, onChange }: { value: boolean | undefined; onChange: (v: 
         aria-pressed={value === true}
         onClick={() => onChange(true)}
         className={cn(
-          "flex items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-medium transition-all duration-150 ease-smooth focus-ring active:translate-y-px",
+          "flex min-h-[52px] items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-medium transition-all duration-150 ease-smooth focus-ring active:scale-[0.98]",
           value === true ? "border-accent bg-accent/15 text-accent-light shadow-xs" : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] text-ink-300 hover:bg-[rgb(var(--fg-tint)/0.05)] hover:text-ink-100"
         )}
       >
@@ -114,7 +141,7 @@ function YesNo({ value, onChange }: { value: boolean | undefined; onChange: (v: 
         aria-pressed={value === false}
         onClick={() => onChange(false)}
         className={cn(
-          "flex items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-medium transition-all duration-150 ease-smooth focus-ring active:translate-y-px",
+          "flex min-h-[52px] items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-medium transition-all duration-150 ease-smooth focus-ring active:scale-[0.98]",
           value === false ? "border-accent bg-accent/15 text-accent-light shadow-xs" : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] text-ink-300 hover:bg-[rgb(var(--fg-tint)/0.05)] hover:text-ink-100"
         )}
       >
@@ -124,7 +151,17 @@ function YesNo({ value, onChange }: { value: boolean | undefined; onChange: (v: 
   );
 }
 
-const TOTAL_STEPS = 10;
+// The overall CareerFound journey. Onboarding is entirely the DISCOVER
+// stage, so it stays fixed for the whole flow rather than advancing with
+// `step` - it's a map of where this flow sits in the bigger picture, not a
+// second progress bar competing with the step tracker below it.
+const JOURNEY_WAYPOINTS: PathWaypoint[] = [
+  { label: "Discover", icon: Compass, state: "active" },
+  { label: "Match", icon: Target, state: "upcoming" },
+  { label: "Roadmap", icon: Map, state: "upcoming" },
+  { label: "Build", icon: Hammer, state: "upcoming" },
+  { label: "Job-ready", icon: Award, state: "upcoming" },
+];
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -145,12 +182,11 @@ export default function OnboardingPage() {
     setAnswers((a) => ({ ...a, [key]: value }));
   }
 
-  // step is zero-indexed, so add 1 before dividing, otherwise the bar reads
-  // 90% on the final step while the "Step 10 of 10" label beside it reads
-  // done, which looks broken/contradictory.
-  const progress = useMemo(() => Math.round(((step + 1) / TOTAL_STEPS) * 100), [step]);
-
   async function handleFinalSubmit() {
+    // Defense in depth: the Button component already disables itself while
+    // `loading` is true, but guard the handler itself too in case it's ever
+    // triggered from a second code path (e.g. a keyboard submit).
+    if (submitting) return;
     setError(null);
     setSubmitting(true);
     try {
@@ -191,7 +227,8 @@ export default function OnboardingPage() {
       body: (
         <p className="text-sm leading-relaxed text-ink-500">
           Answer a few honest questions, there are no wrong answers. It takes about 5 minutes,
-          and at the end we&apos;ll tell you exactly which tech careers fit you, and why.
+          and we&apos;ll recommend the tech careers that best match your interests, strengths, working style,
+          and goals, and explain why.
         </p>
       ),
       canContinue: true,
@@ -248,11 +285,11 @@ export default function OnboardingPage() {
               update("prefers_systems", false);
             }}
             className={cn(
-              "rounded-xl border px-4 py-3.5 text-sm font-medium transition-all duration-150 ease-smooth focus-ring active:translate-y-px",
+              "flex min-h-[52px] items-center justify-center gap-2 rounded-xl border px-4 py-3.5 text-sm font-medium transition-all duration-150 ease-smooth focus-ring active:scale-[0.98]",
               answers.enjoys_people === true ? "border-accent bg-accent/15 text-accent-light shadow-xs" : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] text-ink-300 hover:bg-[rgb(var(--fg-tint)/0.05)] hover:text-ink-100"
             )}
           >
-            People
+            People {answers.enjoys_people === true && <Check className="h-3.5 w-3.5" />}
           </button>
           <button
             type="button"
@@ -262,11 +299,11 @@ export default function OnboardingPage() {
               update("prefers_systems", true);
             }}
             className={cn(
-              "rounded-xl border px-4 py-3.5 text-sm font-medium transition-all duration-150 ease-smooth focus-ring active:translate-y-px",
+              "flex min-h-[52px] items-center justify-center gap-2 rounded-xl border px-4 py-3.5 text-sm font-medium transition-all duration-150 ease-smooth focus-ring active:scale-[0.98]",
               answers.prefers_systems === true ? "border-accent bg-accent/15 text-accent-light shadow-xs" : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] text-ink-300 hover:bg-[rgb(var(--fg-tint)/0.05)] hover:text-ink-100"
             )}
           >
-            Systems
+            Systems {answers.prefers_systems === true && <Check className="h-3.5 w-3.5" />}
           </button>
         </div>
       ),
@@ -282,22 +319,33 @@ export default function OnboardingPage() {
   const isLastStep = step === steps.length - 1;
   const current = steps[step] ?? steps[0]!;
 
+  const stepLabel = String(step + 1).padStart(2, "0");
+  const totalLabel = String(steps.length).padStart(2, "0");
+
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 py-12">
+    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 py-8 sm:py-12">
       <div className="bg-contour pointer-events-none absolute inset-x-0 top-0 -z-10 h-[420px]" />
-      <Link href="/" className="mb-8 flex items-center gap-2 font-display font-semibold text-ink-100 focus-ring rounded-lg">
+      <Link href="/" className="mb-6 flex items-center gap-2 font-display font-semibold text-ink-100 focus-ring rounded-lg sm:mb-8">
         <BrandTile className="h-7 w-7" />
         CareerFound
       </Link>
 
       <div className="w-full max-w-lg">
+        {/* The bigger CareerFound journey (Discover -> Match -> Roadmap ->
+            Build -> Job-ready), kept small and fixed on Discover for the
+            whole flow. This is context, not a second progress bar - the
+            step tracker just below is what actually advances. */}
+        <PathTrack waypoints={JOURNEY_WAYPOINTS} size="sm" className="mb-6 sm:mb-8" />
+
         {/* A waypoint-dot tracker instead of a plain progress bar - one
             small diamond per question, same node language as the hero and
             roadmap, so the assessment reads as a path being walked rather
             than a form being filled in. */}
-        <div className="mb-3 flex items-center justify-between font-mono text-[11px] uppercase tracking-wide text-ink-500">
-          <span>Step {step + 1} / {steps.length}</span>
-          <span className="text-accent-light">{progress}% complete</span>
+        <div className="mb-3 flex items-center justify-between">
+          <span className="font-mono text-[11px] uppercase tracking-wide text-ink-500">
+            {stepLabel} / {totalLabel}
+          </span>
+          <span className="text-xs text-ink-500">Your career path is taking shape.</span>
         </div>
         <ol className="mb-6 flex items-center gap-1.5" aria-hidden="true">
           {steps.map((_, i) => (
@@ -311,7 +359,7 @@ export default function OnboardingPage() {
           ))}
         </ol>
 
-        <Card className="p-8 shadow-raised">
+        <Card className="p-6 shadow-raised sm:p-8">
           <div key={step} className="animate-fade-in-up">
             <h1 className="font-display text-2xl font-semibold tracking-tight text-ink-100">{current.title}</h1>
             <div className="mt-5">{current.body}</div>

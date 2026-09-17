@@ -163,6 +163,13 @@ function RecommendationCard({
 
         <p className="mt-4 text-xs text-ink-500">{rec.earning_notes}</p>
 
+        {rec.example_projects.length > 0 && (
+          <div className="mt-4">
+            <p className="mb-1.5 text-xs font-medium text-ink-300">Recommended first project</p>
+            <p className="text-xs leading-relaxed text-ink-500">{rec.example_projects[0]}</p>
+          </div>
+        )}
+
         <div className="mt-6 flex-1" />
         <Button onClick={() => onStart(rec.path_slug)} loading={starting} className="mt-2 w-full gap-1.5">
           {rec.recommended_next_step} <ArrowRight className="h-3.5 w-3.5" />
@@ -233,6 +240,13 @@ function BestMatchReveal({
             ))}
           </div>
           <p className="mt-4 text-xs text-ink-500">{rec.earning_notes}</p>
+
+          {rec.example_projects.length > 0 && (
+            <div className="mt-5">
+              <p className="mb-1.5 text-xs font-medium text-ink-300">Recommended first project</p>
+              <p className="text-xs leading-relaxed text-ink-500">{rec.example_projects[0]}</p>
+            </div>
+          )}
 
           <div className="mt-6 flex flex-col gap-2.5 sm:flex-row">
             <Button onClick={() => onStart(rec.path_slug)} loading={starting} className="gap-1.5">
