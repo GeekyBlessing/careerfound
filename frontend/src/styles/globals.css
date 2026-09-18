@@ -229,6 +229,14 @@ body {
   opacity: 0.5;
 }
 
+/* Shallow perspective container for layered device compositions (hero,
+   roadmap, projects showcases): lets a tilted/offset screen read as real
+   depth instead of a flat rotation. Tailwind has no perspective utility by
+   default, so this is the one bit of plain CSS the device layering needs. */
+.perspective-scene {
+  perspective: 1600px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

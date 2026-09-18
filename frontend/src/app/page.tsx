@@ -17,7 +17,6 @@ import {
   Users,
   Map,
   Briefcase,
-  MessageCircle,
   Gauge,
   Bot,
   CheckCircle2,
@@ -25,21 +24,26 @@ import {
   FileText,
   Award,
   GitCommit,
+  Sparkles,
+  Laptop,
+  Rocket,
+  Globe,
 } from "lucide-react";
 import { MarketingNav } from "@/components/layout/marketing-nav";
 import { Footer } from "@/components/layout/footer";
 import { SectionHeading } from "@/components/marketing/section-heading";
 import { SectionDivider } from "@/components/marketing/section-divider";
-import { JourneySteps } from "@/components/marketing/journey-steps";
 import { CareerExplorerSearch } from "@/components/marketing/career-explorer-search";
 import { InterfaceFrame } from "@/components/marketing/interface-frame";
+import { PhoneFrame } from "@/components/marketing/phone-frame";
+import { Reveal } from "@/components/marketing/reveal";
 import { PathTrack, type PathWaypoint } from "@/components/marketing/path-track";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DifficultyMeter } from "@/components/ui/difficulty-meter";
 import { cn } from "@/lib/utils";
-import { steps, pricingTiers, faqs } from "@/lib/marketing-content";
+import { pricingTiers, faqs } from "@/lib/marketing-content";
 import { CAREER_CATEGORIES, CAREER_PATH_COUNT } from "@/lib/career-categories";
 
 export const metadata: Metadata = {
@@ -137,6 +141,20 @@ const CATALOGUE: {
 const FEATURED_CAREER = CATALOGUE[0]!;
 const SECONDARY_CAREERS = CATALOGUE.slice(1, 4);
 
+// The Discover scene's device-frame excerpt: the real third onboarding
+// question and its real options, copied verbatim from
+// frontend/src/app/onboarding/page.tsx's GOAL_OPTIONS/steps array, not
+// written for this page. Presented as "03 / 10" to match the real step
+// count onboarding actually walks a new user through.
+const ASSESSMENT_QUESTION = "What are you hoping to achieve?";
+const ASSESSMENT_OPTIONS: { label: string; icon: typeof Briefcase }[] = [
+  { label: "Get a job", icon: Briefcase },
+  { label: "Freelance", icon: Laptop },
+  { label: "Build a startup", icon: Rocket },
+  { label: "Remote career", icon: Globe },
+  { label: "Explore tech", icon: Compass },
+];
+
 // The homepage's "Build" stage: the same six-stage shape the roadmap page
 // itself uses (discover, then a staged phase progression to job-ready),
 // with real phase titles from the Cybersecurity roadmap
@@ -202,13 +220,16 @@ const PORTFOLIO_ENTRIES = [
   { title: "Build a weather lookup app using a public API", path: "Software Engineering", status: "Draft", icon: GitCommit },
 ];
 
-const OUTCOMES = [
-  { title: "Clarity on a path", body: "Stop guessing which tech career fits you and start with one that matches how you actually think and work.", icon: Target },
-  { title: "A roadmap you can follow", body: "A staged plan for your chosen path, beginner through advanced, so you always know what to focus on next.", icon: Map },
-  { title: "A portfolio of real work", body: "Projects you actually build and can show, not just courses you watched.", icon: Briefcase },
-  { title: "Interview readiness", body: "Practice with the AI mentor and preparation material built around the questions your target role actually asks.", icon: MessageCircle },
-  { title: "Access to human guidance", body: "A path to a real conversation, whether that's the mentor marketplace or 1:1 mentorship with Toriola, when software isn't enough.", icon: Users },
-  { title: "Momentum, not overwhelm", body: "One clear next step at a time instead of a hundred open tabs and no plan.", icon: Gauge },
+// Career readiness: the same five-stage shape as the hero/roadmap journey,
+// reduced to its plainest typographic form for the closing transition
+// (Learn -> Build -> Prove -> Apply -> Get hired), each stage tied to a
+// real page rather than a decorative label.
+const READINESS_STAGES: { label: string; body: string; href: string }[] = [
+  { label: "Learn", body: "A staged roadmap for your path", href: "/roadmap" },
+  { label: "Build", body: "Real projects, not just lessons", href: "/projects" },
+  { label: "Prove", body: "A portfolio of finished work", href: "/portfolio" },
+  { label: "Apply", body: "Interview prep and AI feedback", href: "/mentor" },
+  { label: "Get hired", body: "A Tech Readiness Score you can track", href: "/assessment/results" },
 ];
 
 export default function LandingPage() {
@@ -263,23 +284,52 @@ export default function LandingPage() {
               <p className="mt-5 text-xs text-ink-500">No credit card required, takes about 5 minutes</p>
             </div>
 
-            {/* Layered composition: a small offset stat chip sits behind
-                the main panel (negative margin + slight rotation) so the
-                hero reads as an assembled editorial spread rather than one
-                flat bordered box. Both pieces show real, sourced numbers,
-                not decorative filler. */}
-            <div className="relative pb-10 pr-6 sm:pb-14 sm:pr-10">
-              <InterfaceFrame label="Your Career Path">
-                <div className="p-6">
-                  <PathTrack waypoints={heroWaypoints} orientation="vertical" size="sm" />
-                </div>
-              </InterfaceFrame>
+            {/* Layered device composition, not a single flat card: a real
+                assessment screen sits tilted behind, the journey panel
+                sits in front and slightly counter-rotated, and a small
+                offset stat chip anchors the bottom corner. perspective-scene
+                gives the tilt real depth instead of a flat CSS rotation. */}
+            <Reveal className="perspective-scene relative pb-14 pl-8 pr-6 pt-4 sm:pb-20 sm:pl-16 sm:pr-10">
+              <div className="absolute -left-2 top-6 hidden -rotate-6 sm:block lg:-left-6">
+                <PhoneFrame label="Assessment, 03 / 10">
+                  <div className="flex h-full flex-col justify-between p-4">
+                    <div>
+                      <p className="font-mono text-[9px] uppercase tracking-wide text-ink-500">03 / 10</p>
+                      <p className="mt-2 text-sm font-semibold leading-snug text-ink-100">{ASSESSMENT_QUESTION}</p>
+                    </div>
+                    <div className="space-y-1.5">
+                      {ASSESSMENT_OPTIONS.slice(0, 3).map((o, i) => (
+                        <div
+                          key={o.label}
+                          className={cn(
+                            "flex items-center gap-2 rounded-lg border px-2.5 py-2 text-[11px] font-medium",
+                            i === 0
+                              ? "border-accent bg-accent/15 text-accent-light"
+                              : "border-[rgb(var(--fg-tint)/0.1)] text-ink-400"
+                          )}
+                        >
+                          <o.icon className="h-3 w-3 flex-shrink-0" />
+                          {o.label}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </PhoneFrame>
+              </div>
 
-              <div className="absolute -bottom-2 -right-2 hidden w-40 -rotate-2 rounded-xl border border-[rgb(var(--fg-tint)/0.12)] bg-warm/12 p-4 shadow-raised sm:block">
+              <div className="relative translate-x-2 rotate-2 sm:translate-x-6">
+                <InterfaceFrame label="Your Career Path">
+                  <div className="p-6">
+                    <PathTrack waypoints={heroWaypoints} orientation="vertical" size="sm" />
+                  </div>
+                </InterfaceFrame>
+              </div>
+
+              <div className="absolute -bottom-4 right-0 hidden w-40 -rotate-2 rounded-xl border border-[rgb(var(--fg-tint)/0.12)] bg-warm/12 p-4 shadow-raised sm:block">
                 <p className="font-display text-2xl font-semibold text-ink-100">{CAREER_PATH_COUNT}</p>
                 <p className="mt-0.5 text-xs leading-snug text-ink-500">real tech career paths, each with its own roadmap</p>
               </div>
-            </div>
+            </Reveal>
           </div>
 
           {/* Full-width stat strip: the hero's closing beat, a horizontal
@@ -326,24 +376,76 @@ export default function LandingPage() {
         </section>
 
         {/* ============================================================
-            SCENE 03, UNDERSTAND. Left intro, right connected path,
-            asymmetric rather than a centered heading over a centered
-            list. */}
-        <SectionDivider label="Understand" className="pt-4" />
-        <section id="how-it-works" className="py-14">
-          <div className="container-page grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
-            <div>
-              <SectionHeading eyebrow="How it works" title="From confused to job-ready, one clear step at a time" align="left" />
-              <p className="mt-5 max-w-sm text-sm leading-relaxed text-ink-500">
-                Four stages, each building on the last. No stage is optional and none of them are
-                busywork, the roadmap and projects only exist because the assessment pointed you at
-                a specific path.
+            SCENE 03, DISCOVER. A major product showcase: the real
+            onboarding assessment, shown large in a phone frame with actual
+            gentle tilt, beside a poster-scale headline. Typography-
+            dominant on the left, product-imagery-dominant on the right,
+            the first deliberate shift in visual rhythm after the hero. */}
+        <SectionDivider label="Discover" className="pt-4" />
+        <section id="how-it-works" className="overflow-hidden py-16 sm:py-20">
+          <div className="container-page grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
+            <Reveal>
+              <p className="eyebrow gap-2 text-ink-400">
+                <Sparkles className="h-3.5 w-3.5" /> How it works
               </p>
-              <Link href="/how-it-works" className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline">
+              <h2 className="mt-4 max-w-lg font-display text-hero font-semibold tracking-tight text-ink-100">
+                Find the path that fits you.
+              </h2>
+              <p className="mt-5 max-w-md text-sm leading-relaxed text-ink-500">
+                Ten honest questions about your time, budget, interests, and goals, not a random
+                guess. Every answer feeds a Best Match, a Strong Alternative, and a Wild Card, each
+                with a reason attached. Then a personalized roadmap, real projects, and a portfolio
+                follow from whichever one you choose.
+              </p>
+              <Link href="/how-it-works" className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline">
                 Read the full walkthrough <ArrowRight className="h-3.5 w-3.5" />
               </Link>
-            </div>
-            <JourneySteps steps={steps} className="mx-0 max-w-none" />
+            </Reveal>
+
+            <Reveal delayMs={120} className="perspective-scene relative flex justify-center py-6 lg:justify-end lg:py-10">
+              <div className="absolute -right-4 top-8 hidden w-44 -rotate-3 rounded-xl border border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] p-4 shadow-card sm:block lg:-right-8">
+                <p className="font-mono text-[10px] uppercase tracking-wide text-ink-500">Best Match</p>
+                <p className="mt-1.5 font-display text-lg font-semibold text-ink-100">Cybersecurity</p>
+                <p className="mt-1 text-xs leading-snug text-ink-500">Based on your problem-solving and systems answers.</p>
+              </div>
+              <div className="rotate-3">
+                <PhoneFrame label="Assessment">
+                  <div className="flex h-full flex-col justify-between p-5">
+                    <div>
+                      <div className="mb-4 flex items-center justify-between">
+                        <span className="font-mono text-[10px] uppercase tracking-wide text-ink-500">03 / 10</span>
+                        <span className="flex gap-1" aria-hidden="true">
+                          {Array.from({ length: 10 }).map((_, i) => (
+                            <span
+                              key={i}
+                              className={cn("h-1 w-3 rounded-full", i < 3 ? "bg-accent-light" : "bg-[rgb(var(--fg-tint)/0.1)]")}
+                            />
+                          ))}
+                        </span>
+                      </div>
+                      <p className="text-base font-semibold leading-snug text-ink-100">{ASSESSMENT_QUESTION}</p>
+                    </div>
+                    <div className="space-y-2">
+                      {ASSESSMENT_OPTIONS.map((o, i) => (
+                        <div
+                          key={o.label}
+                          className={cn(
+                            "flex items-center gap-2.5 rounded-xl border px-3.5 py-3 text-sm font-medium transition-colors",
+                            i === 0
+                              ? "border-accent bg-accent/15 text-accent-light shadow-xs"
+                              : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] text-ink-300"
+                          )}
+                        >
+                          <o.icon className="h-4 w-4 flex-shrink-0" />
+                          {o.label}
+                          {i === 0 && <Check className="ml-auto h-3.5 w-3.5" />}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </PhoneFrame>
+              </div>
+            </Reveal>
           </div>
         </section>
 
@@ -420,10 +522,18 @@ export default function LandingPage() {
                 <Link
                   key={c.slug}
                   href={`/careers/${c.slug}`}
-                  className="focus-ring group grid grid-cols-[3rem_1fr] gap-x-4 border-b border-[rgb(var(--fg-tint)/0.08)] py-7 sm:grid-cols-[4rem_1fr_auto] sm:items-center sm:gap-x-8"
+                  className="focus-ring group relative grid grid-cols-[3rem_1fr] gap-x-4 overflow-hidden border-b border-[rgb(var(--fg-tint)/0.08)] py-7 transition-colors duration-200 hover:bg-accent/[0.03] sm:grid-cols-[4rem_1fr_auto] sm:items-center sm:gap-x-8"
                 >
+                  {/* Desktop hover preview: the path's own icon swells in as
+                      a soft watermark and its entry role/tools surface, so
+                      hovering reveals a real (if subtle) product detail
+                      instead of just a color change. */}
+                  <c.icon
+                    aria-hidden="true"
+                    className="pointer-events-none absolute -right-4 top-1/2 hidden h-32 w-32 -translate-y-1/2 rotate-6 text-accent-light opacity-0 transition-all duration-300 ease-smooth group-hover:opacity-[0.07] group-hover:rotate-0 lg:block"
+                  />
                   <span className="font-display text-2xl text-ink-500 sm:text-3xl">{String(i + 1).padStart(2, "0")}</span>
-                  <div className="min-w-0">
+                  <div className="relative min-w-0">
                     <div className="flex items-center gap-2.5">
                       <c.icon className="h-4 w-4 flex-shrink-0 text-accent-light" />
                       <h3 className="font-display text-lg font-semibold tracking-tight text-ink-100 group-hover:text-accent-light sm:text-xl">
@@ -434,8 +544,13 @@ export default function LandingPage() {
                     <span className="mt-3 flex items-center gap-2 font-mono text-[10px] uppercase tracking-wide text-ink-500">
                       <DifficultyMeter level={c.difficulty} /> {c.difficulty}/5 difficulty
                     </span>
+                    <div className="hidden max-h-0 overflow-hidden opacity-0 transition-all duration-300 ease-smooth group-hover:mt-3 group-hover:max-h-10 group-hover:opacity-100 lg:block">
+                      <p className="text-xs text-ink-500">
+                        Entry role: <span className="text-ink-300">{c.entryRole}</span> &middot; {c.tools[0]}
+                      </p>
+                    </div>
                   </div>
-                  <span className="col-span-2 mt-4 flex items-center gap-1.5 text-sm font-medium text-accent-light sm:col-span-1 sm:mt-0">
+                  <span className="relative col-span-2 mt-4 flex items-center gap-1.5 text-sm font-medium text-accent-light sm:col-span-1 sm:mt-0">
                     Explore <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
                   </span>
                 </Link>
@@ -504,36 +619,46 @@ export default function LandingPage() {
                 })}
               </ol>
 
-              <div>
-                <InterfaceFrame label="Cybersecurity roadmap, live excerpt" tone="ink">
-                  <div className="divide-y divide-white/10">
-                    {samplePhases.map((phase) => (
-                      <div key={phase.title} className="flex items-center gap-3 px-5 py-4">
-                        {phase.state === "done" && <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-[#8fd18a]" />}
-                        {phase.state === "active" && <span className="h-4 w-4 flex-shrink-0 rounded-full border-2 border-[#c3d19a]" />}
-                        {phase.state === "upcoming" && <Lock className="h-3.5 w-3.5 flex-shrink-0 text-white/40" />}
-                        <span
-                          className={cn(
-                            "text-sm",
-                            phase.state === "active" ? "font-medium text-[#f4f5f0]" : phase.state === "done" ? "text-white/70" : "text-white/40"
-                          )}
-                        >
-                          {phase.title}
-                        </span>
-                        {phase.state === "active" && (
-                          <span className="ml-auto rounded-[0.25rem] border border-[#c3d19a]/40 bg-[#c3d19a]/15 px-2 py-0.5 text-xs font-medium text-[#c3d19a]">
-                            In progress
+              <Reveal className="perspective-scene relative pb-10 pr-6 sm:pb-14 sm:pr-10">
+                {/* A second screen peeks out from behind, tilted the other
+                    way: the project this phase's "Portfolio" milestone
+                    actually produces, so the roadmap reads as one product
+                    with projects attached rather than a standalone list. */}
+                <div className="absolute -bottom-3 -right-3 hidden w-48 rotate-6 rounded-xl border border-white/10 bg-white/[0.03] p-4 shadow-raised sm:block">
+                  <p className="font-mono text-[9px] uppercase tracking-wide text-white/40">Phase 10 project</p>
+                  <p className="surface-ink-muted mt-1.5 text-xs font-medium text-[#f4f5f0]">{FEATURED_PROJECT.title}</p>
+                </div>
+                <div className="relative -rotate-2">
+                  <InterfaceFrame label="Cybersecurity roadmap, live excerpt" tone="ink">
+                    <div className="divide-y divide-white/10">
+                      {samplePhases.map((phase) => (
+                        <div key={phase.title} className="flex items-center gap-3 px-5 py-4">
+                          {phase.state === "done" && <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-[#8fd18a]" />}
+                          {phase.state === "active" && <span className="h-4 w-4 flex-shrink-0 rounded-full border-2 border-[#c3d19a]" />}
+                          {phase.state === "upcoming" && <Lock className="h-3.5 w-3.5 flex-shrink-0 text-white/40" />}
+                          <span
+                            className={cn(
+                              "text-sm",
+                              phase.state === "active" ? "font-medium text-[#f4f5f0]" : phase.state === "done" ? "text-white/70" : "text-white/40"
+                            )}
+                          >
+                            {phase.title}
                           </span>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </InterfaceFrame>
-                <p className="surface-ink-muted mt-4 text-xs leading-relaxed">
+                          {phase.state === "active" && (
+                            <span className="ml-auto rounded-[0.25rem] border border-[#c3d19a]/40 bg-[#c3d19a]/15 px-2 py-0.5 text-xs font-medium text-[#c3d19a]">
+                              In progress
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </InterfaceFrame>
+                </div>
+                <p className="surface-ink-muted relative mt-4 text-xs leading-relaxed">
                   Every path has its own full set of phases like these, each with lessons, exercises, and projects. This
                   is a real excerpt, not a mockup.
                 </p>
-              </div>
+              </Reveal>
             </div>
           </div>
         </section>
@@ -542,7 +667,7 @@ export default function LandingPage() {
             a real interface excerpt (its own steps list, live-rendered),
             and gets a full-width band to itself before the two smaller,
             supporting builds sit beneath in a tighter row. */}
-        <section className="py-20">
+        <section className="overflow-hidden py-20">
           <div className="container-page">
             <SectionHeading eyebrow="Projects" title="Don't just learn it. Build it." align="left" />
 
@@ -561,21 +686,49 @@ export default function LandingPage() {
                 </Link>
               </div>
 
-              <InterfaceFrame label={FEATURED_PROJECT.title}>
-                <ol className="space-y-4 p-6">
-                  {FEATURED_PROJECT.steps.map((s, i) => (
-                    <li key={s} className="flex gap-4">
-                      <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-[0.35rem] bg-accent/12 font-mono text-xs text-accent-light">
-                        {i + 1}
-                      </span>
-                      <span className="text-sm leading-relaxed text-ink-300">{s}</span>
-                    </li>
-                  ))}
-                </ol>
-              </InterfaceFrame>
+              <Reveal className="perspective-scene relative pb-8 pr-10 sm:pb-12">
+                {/* A phone showing the two supporting projects as a real
+                    list peeks out behind the featured project's browser
+                    frame, so the "case-study gallery" reads as layered
+                    product screens rather than a browser frame plus a
+                    separate text row underneath. */}
+                <div className="absolute -bottom-6 -right-6 hidden rotate-6 sm:block">
+                  <PhoneFrame label="Projects" className="w-[180px]">
+                    <div className="divide-y divide-[rgb(var(--fg-tint)/0.08)] px-1">
+                      {SUPPORTING_PROJECTS.map((p) => (
+                        <div key={p.title} className="px-2.5 py-3">
+                          <p className="font-mono text-[8px] uppercase tracking-wide text-ink-500">{p.path}</p>
+                          <p className="mt-1 text-[11px] font-medium leading-snug text-ink-100">{p.title}</p>
+                          <span className="mt-1.5 flex items-center gap-1.5">
+                            <DifficultyMeter level={p.difficulty} /> <span className="text-[9px] text-ink-500">{p.difficultyLabel}</span>
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </PhoneFrame>
+                </div>
+                <div className="relative -rotate-1">
+                  <InterfaceFrame label={FEATURED_PROJECT.title}>
+                    <ol className="space-y-4 p-6">
+                      {FEATURED_PROJECT.steps.map((s, i) => (
+                        <li key={s} className="flex gap-4">
+                          <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-[0.35rem] bg-accent/12 font-mono text-xs text-accent-light">
+                            {i + 1}
+                          </span>
+                          <span className="text-sm leading-relaxed text-ink-300">{s}</span>
+                        </li>
+                      ))}
+                    </ol>
+                  </InterfaceFrame>
+                </div>
+              </Reveal>
             </div>
 
-            <div className="mt-14 grid gap-6 border-t border-[rgb(var(--fg-tint)/0.1)] pt-10 sm:grid-cols-2">
+            {/* On mobile (where the layered phone peek is hidden), the two
+                supporting projects still get a real, if plainer, row - see
+                the hidden sm:block phone frame above for the desktop
+                treatment of this same data. */}
+            <div className="mt-14 grid gap-6 border-t border-[rgb(var(--fg-tint)/0.1)] pt-10 sm:hidden">
               {SUPPORTING_PROJECTS.map((p) => (
                 <div key={p.title}>
                   <p className="font-mono text-[10px] uppercase tracking-wide text-ink-500">{p.path}</p>
@@ -596,7 +749,7 @@ export default function LandingPage() {
             title-wrapped, statused shape /portfolio renders), not a row of
             icon chips standing in for a description. */}
         <SectionDivider label="Show your work" />
-        <section className="bg-paper py-20">
+        <section className="overflow-hidden bg-paper py-20">
           <div className="container-page grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-16">
             <div>
               <SectionHeading eyebrow="Portfolio" title="Turn learning into proof" align="left" />
@@ -626,25 +779,35 @@ export default function LandingPage() {
               </Link>
             </div>
 
-            <InterfaceFrame label="Your Portfolio">
-              <div className="divide-y divide-[rgb(var(--fg-tint)/0.08)]">
-                {PORTFOLIO_ENTRIES.map((entry) => (
-                  <div key={entry.title} className="flex items-center gap-4 p-5">
-                    <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-accent/10">
-                      <FolderGit2 className="h-5 w-5 text-accent-light" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium text-ink-100">{entry.title}</p>
-                      <p className="mt-0.5 font-mono text-[10px] uppercase tracking-wide text-ink-500">{entry.path}</p>
-                    </div>
-                    <span className="flex flex-shrink-0 items-center gap-1.5 text-xs text-ink-400">
-                      <entry.icon className={cn("h-3.5 w-3.5", entry.status === "Published" ? "text-success" : "text-ink-500")} />
-                      {entry.status}
-                    </span>
-                  </div>
-                ))}
+            <Reveal className="perspective-scene relative pb-10 pl-6 sm:pb-14 sm:pl-10">
+              <div className="absolute -bottom-2 -left-2 hidden -rotate-3 rounded-xl border border-[rgb(var(--fg-tint)/0.12)] bg-accent/10 p-4 shadow-raised sm:block">
+                <p className="font-display text-2xl font-semibold text-ink-100">
+                  {PORTFOLIO_ENTRIES.filter((e) => e.status === "Published").length}/{PORTFOLIO_ENTRIES.length}
+                </p>
+                <p className="mt-0.5 max-w-[9rem] text-xs leading-snug text-ink-500">projects published and ready to share</p>
               </div>
-            </InterfaceFrame>
+              <div className="relative rotate-1">
+                <InterfaceFrame label="Your Portfolio">
+                  <div className="divide-y divide-[rgb(var(--fg-tint)/0.08)]">
+                    {PORTFOLIO_ENTRIES.map((entry) => (
+                      <div key={entry.title} className="flex items-center gap-4 p-5">
+                        <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-accent/10">
+                          <FolderGit2 className="h-5 w-5 text-accent-light" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-medium text-ink-100">{entry.title}</p>
+                          <p className="mt-0.5 font-mono text-[10px] uppercase tracking-wide text-ink-500">{entry.path}</p>
+                        </div>
+                        <span className="flex flex-shrink-0 items-center gap-1.5 text-xs text-ink-400">
+                          <entry.icon className={cn("h-3.5 w-3.5", entry.status === "Published" ? "text-success" : "text-ink-500")} />
+                          {entry.status}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </InterfaceFrame>
+              </div>
+            </Reveal>
           </div>
         </section>
 
@@ -663,14 +826,17 @@ export default function LandingPage() {
               align="left"
             />
 
-            <div className="mt-12 grid gap-10 lg:grid-cols-2">
-              {/* Toriola: founder mentorship, real photo, real pricing. */}
+            <div className="mt-12 grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
+              {/* Toriola: founder mentorship, real photo, real pricing.
+                  Slightly wider column and a taller crop than the second
+                  card, an asymmetric pairing rather than two identical
+                  boxes, since she's the founder's own offering. */}
               <div className="overflow-hidden rounded-3xl border border-warm/25 bg-warm/[0.04]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/mentors/toriola.jpg"
                   alt="Toriola Opeyemi, CareerFound founder and mentor"
-                  className="h-64 w-full object-cover object-top sm:h-72"
+                  className="h-80 w-full object-cover object-top sm:h-[26rem]"
                 />
                 <div className="p-7">
                   <p className="font-display text-xl font-semibold text-ink-100">Toriola Opeyemi</p>
@@ -694,7 +860,7 @@ export default function LandingPage() {
                   <div className="mt-5 flex flex-col items-start gap-3 border-t border-warm/20 pt-4 sm:flex-row sm:items-baseline sm:justify-between">
                     <span>
                       <span className="text-2xl font-semibold text-ink-100">$200</span>
-                      <span className="ml-1.5 text-xs text-ink-500">or &#8358;250,000, 2 months</span>
+                      <span className="mt-0.5 block text-xs text-ink-500">or &#8358;250,000, 2 months</span>
                     </span>
                     <Link href="/mentorship" className="flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline">
                       Request mentorship <ArrowRight className="h-3.5 w-3.5" />
@@ -715,12 +881,12 @@ export default function LandingPage() {
                   instead of both collapsing onto the generic /mentors
                   marketplace list the way "View profile" incorrectly did
                   before. */}
-              <div className="overflow-hidden rounded-3xl border border-warm/25 bg-warm/[0.04]">
+              <div className="overflow-hidden rounded-3xl border border-warm/25 bg-warm/[0.04] lg:mt-10">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/mentors/mobile-engineering-mentor.jpg"
                   alt="David Oladotun Egundey, a real CareerFound mobile engineering mentor"
-                  className="h-64 w-full object-cover object-top sm:h-72"
+                  className="h-72 w-full object-cover object-top sm:h-80"
                 />
                 <div className="p-7">
                   <p className="eyebrow">Mobile Engineering Mentor</p>
@@ -738,7 +904,7 @@ export default function LandingPage() {
                   <div className="mt-5 flex flex-col items-start gap-3 border-t border-warm/20 pt-4 sm:flex-row sm:items-baseline sm:justify-between">
                     <span>
                       <span className="text-2xl font-semibold text-ink-100">$200</span>
-                      <span className="ml-1.5 text-xs text-ink-500">or &#8358;250,000, 2 months</span>
+                      <span className="mt-0.5 block text-xs text-ink-500">or &#8358;250,000, 2 months</span>
                     </span>
                     <span className="flex flex-wrap items-center gap-x-4 gap-y-2">
                       <Link href="/mentors/mobile-engineering-mentor" className="text-sm font-medium text-ink-400 hover:underline">
@@ -774,7 +940,7 @@ export default function LandingPage() {
             through the product interface rather than described in prose,
             so it reads as one feature among several, not the identity of
             the page. */}
-        <section className="py-16">
+        <section className="overflow-hidden py-16">
           <div className="container-page grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
             <div>
               <p className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-ink-500">
@@ -787,42 +953,65 @@ export default function LandingPage() {
               </p>
               <Badge className="mt-4">Included free</Badge>
             </div>
-            <InterfaceFrame label="AI Mentor">
-              <div className="space-y-3 p-6">
-                <div className="max-w-[80%] rounded-lg border-l-2 border-accent/40 bg-accent/[0.06] px-4 py-2.5 text-sm text-ink-200">
-                  My detection script flags everything as high severity. What am I missing?
-                </div>
-                <div className="ml-auto max-w-[80%] rounded-lg bg-[rgb(var(--fg-tint)/0.04)] px-4 py-2.5 text-sm leading-relaxed text-ink-300">
-                  Check your severity thresholds first, not the notification code. What counts as
-                  &ldquo;high&rdquo; in your log analyzer right now?
-                </div>
+            <Reveal className="perspective-scene flex justify-center py-4 lg:justify-end">
+              <div className="-rotate-2">
+                <PhoneFrame label="AI Mentor">
+                  <div className="flex h-full flex-col p-4">
+                    {/* Career/roadmap context stays visible above the chat,
+                        so the AI reads as grounded in this mentee's actual
+                        path and phase, not a floating chatbot. */}
+                    <div className="mb-3 flex items-center gap-2 rounded-lg border border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] px-3 py-2">
+                      <Shield className="h-3.5 w-3.5 flex-shrink-0 text-accent-light" />
+                      <p className="min-w-0 truncate text-[11px] text-ink-400">
+                        Cybersecurity &middot; Phase 10, Portfolio
+                      </p>
+                    </div>
+                    <div className="space-y-2.5">
+                      <div className="max-w-[85%] rounded-lg border-l-2 border-accent/40 bg-accent/[0.06] px-3 py-2 text-xs leading-relaxed text-ink-200">
+                        My detection script flags everything as high severity. What am I missing?
+                      </div>
+                      <div className="ml-auto max-w-[85%] rounded-lg bg-[rgb(var(--fg-tint)/0.04)] px-3 py-2 text-xs leading-relaxed text-ink-300">
+                        Check your severity thresholds first, not the notification code. What counts as
+                        &ldquo;high&rdquo; in your log analyzer right now?
+                      </div>
+                    </div>
+                  </div>
+                </PhoneFrame>
               </div>
-            </InterfaceFrame>
+            </Reveal>
           </div>
         </section>
 
         {/* ============================================================
-            JOB READY, Outcomes, pricing, FAQ, final CTA. */}
+            JOB READY: a typographic transition, not five outcome cards.
+            Learn -> Build -> Prove -> Apply -> Get hired, each word its
+            own real destination, connected by an arrow (a chevron on
+            mobile) rather than boxed and bulleted. Pricing, FAQ, and the
+            final CTA follow. */}
         <SectionDivider label="Job ready" />
-        <section className="bg-paper py-20">
-          <div className="container-page grid gap-10 lg:grid-cols-[0.7fr_1.3fr] lg:gap-16">
-            <SectionHeading
-              eyebrow="What CareerFound is built for"
-              title="What we're designed to help you achieve"
-              description="These are the outcomes we design toward, not a guarantee or a claim about any specific user."
-              align="left"
-            />
-            <div className="divide-y divide-[rgb(var(--fg-tint)/0.08)] border-y border-[rgb(var(--fg-tint)/0.08)]">
-              {OUTCOMES.map((o) => (
-                <div key={o.title} className="flex gap-4 py-5 first:pt-0 last:pb-0">
-                  <o.icon className="mt-0.5 h-4 w-4 flex-shrink-0 text-accent-light" />
-                  <div>
-                    <h3 className="text-h3 font-display font-semibold text-ink-100">{o.title}</h3>
-                    <p className="mt-1.5 text-sm leading-relaxed text-ink-500">{o.body}</p>
+        <section className="bg-paper py-20 sm:py-28">
+          <div className="container-page">
+            <p className="eyebrow justify-center">What CareerFound is built for</p>
+            <Reveal>
+              <div className="mt-12 flex flex-col sm:flex-row sm:items-center">
+                {READINESS_STAGES.map((s, i) => (
+                  <div key={s.label} className="flex flex-1 flex-col items-center sm:flex-row">
+                    <Link href={s.href} className="group block w-full py-6 text-center sm:py-2">
+                      <p className="font-display text-3xl font-semibold tracking-tight text-ink-100 transition-colors duration-200 group-hover:text-accent-light sm:text-2xl lg:text-3xl">
+                        {s.label}
+                      </p>
+                      <p className="mx-auto mt-2 max-w-[9rem] text-xs leading-snug text-ink-500 sm:max-w-[7rem]">{s.body}</p>
+                    </Link>
+                    {i < READINESS_STAGES.length - 1 && (
+                      <>
+                        <ArrowRight className="hidden h-4 w-4 flex-shrink-0 text-ink-300 sm:block" aria-hidden="true" />
+                        <ChevronDown className="h-4 w-4 flex-shrink-0 text-ink-300 sm:hidden" aria-hidden="true" />
+                      </>
+                    )}
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            </Reveal>
           </div>
         </section>
 
