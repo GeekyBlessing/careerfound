@@ -239,6 +239,15 @@ async def seed_mentors(db: AsyncSession) -> None:
         if existing_founder.availability_note == old_default:
             existing_founder.availability_note = "Availability coming soon: check back or ask a question."
             changed = True
+        # One-time positioning update: Toriola's headline/tags were narrowed
+        # to cybersecurity/cloud security only. Only touch a row that still
+        # holds that exact original headline, so a real dashboard edit is
+        # never overwritten.
+        old_headline = "Cybersecurity & Cloud Security Engineer | Cybersecurity Mentor"
+        if existing_founder.headline == old_headline:
+            existing_founder.headline = FOUNDING_MENTOR["headline"]
+            existing_founder.paths = FOUNDING_MENTOR["paths"]
+            changed = True
         if changed:
             await db.commit()
 

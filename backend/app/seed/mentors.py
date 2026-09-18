@@ -195,17 +195,23 @@ FOUNDING_MENTOR_EMAIL = "opeyemitoriola41@gmail.com"
 
 FOUNDING_MENTOR = dict(
     display_name="Toriola Opeyemi",
-    headline="Cybersecurity & Cloud Security Engineer | Cybersecurity Mentor",
+    headline="Software Engineer | Cybersecurity Expert",
     bio=(
         "I mentor people who are figuring out how to break into tech, especially complete "
-        "beginners with little or no technical background. My focus is cybersecurity, cloud "
-        "security, and security engineering: what to learn first, how to structure your learning "
+        "beginners with little or no technical background. My focus is software engineering, "
+        "cybersecurity, and cloud security: what to learn first, how to structure your learning "
         "path, and how to avoid the mistakes that slow beginners down most. If you're stuck on "
         "'where do I even start,' that's exactly what I help with."
     ),
     avatar_seed="toriola",
     avatar_url="/mentors/toriola.jpg",
-    paths=["cybersecurity", "cloud-security"],
+    # Tags shown on the marketplace card/profile. Only "software-engineering",
+    # "cybersecurity" and "cloud-security" are real CareerPath slugs today;
+    # "devsecops" and "security-automation" aren't in the 21-path catalog yet
+    # so they won't drive path-filtered matching, but they're real areas
+    # Toriola mentors in and render fine as plain tags (see mobile-engineering
+    # mentor below for the same pattern).
+    paths=["software-engineering", "cybersecurity", "cloud-security", "devsecops", "cloud-engineering", "security-automation"],
     years_experience=None,
     hourly_rate_cents=0,
     currency="USD",
