@@ -38,7 +38,7 @@ from app.models.progress import (
 from app.models.roadmap import Exercise, Lesson, Project, Quiz, Roadmap, RoadmapPhase, RoadmapStatus, SkillEdge, SkillNode
 from app.models.user import Plan, Role, User
 from app.seed.career_paths import CAREER_PATHS
-from app.seed.mentors import FOUNDING_MENTOR, MENTORS
+from app.seed.mentors import FOUNDING_MENTOR, MENTORS, MOBILE_ENGINEERING_MENTOR
 from app.seed.roadmap_content import CYBERSECURITY, SOFTWARE_ENGINEERING
 from app.seed.roadmap_content_extra import PATH_PROJECTS
 from app.seed.simulations import SIMULATIONS
@@ -241,6 +241,24 @@ async def seed_mentors(db: AsyncSession) -> None:
             changed = True
         if changed:
             await db.commit()
+
+    # A second real, non-demo mentor (mobile engineering). Keyed on
+    # display_name rather than contact_email for idempotency, since no
+    # verified email exists yet for this profile.
+    existing_mobile_mentor = (
+        await db.execute(select(Mentor).where(Mentor.display_name == MOBILE_ENGINEERING_MENTOR["display_name"]))
+    ).scalars().first()
+    if not existing_mobile_mentor:
+        db.add(
+            Mentor(
+                **MOBILE_ENGINEERING_MENTOR,
+                is_verified=False,
+                is_active=True,
+                is_demo=False,
+                is_founding_mentor=True,
+            )
+        )
+        await db.commit()
 
 
 async def seed_communities(db: AsyncSession, paths: dict[str, CareerPath], demo_user: User) -> None:

@@ -227,3 +227,49 @@ FOUNDING_MENTOR = dict(
     consultation_duration_label="30 minutes",
     consultation_price_label="₦10,000 ($7)",
 )
+
+
+# --- Second real mentor: mobile engineering --------------------------------
+#
+# A real, non-demo profile, following the exact same "only what was actually
+# provided" rule as FOUNDING_MENTOR above. No name has been supplied yet, so
+# display_name is a clear temporary label rather than an invented name, and
+# nothing here claims years_experience, an employer, certifications,
+# testimonials, or ratings, since none of those were provided either.
+# contact_email stays unset (no verified email yet) - the row can be linked
+# to a real account later via the mentor dashboard once one exists.
+#
+# Pricing is a fixed 2-month program only (no hourly/short-session rate):
+# consultation_* is deliberately left blank so mentor_price_label() and the
+# marketplace/profile UI never fall back to an hourly-rate display for this
+# mentor - see lib/utils.ts::mentorPriceLabel.
+MOBILE_ENGINEERING_MENTOR = dict(
+    display_name="Mobile Engineering Mentor",
+    headline="Mobile Engineer",
+    bio=(
+        "Get practical guidance on mobile development, building real applications, structuring "
+        "projects, debugging, and preparing for a career in mobile engineering."
+    ),
+    avatar_seed="mobile-engineering-mentor",
+    avatar_url="/mentors/mobile-engineering-mentor.jpg",
+    paths=["mobile-engineering", "mobile-development", "app-development"],
+    years_experience=None,
+    hourly_rate_cents=0,
+    currency="USD",
+    rating_avg=0.0,
+    rating_count=0,
+    languages=["English"],
+    mentorship_formats=["video_call"],
+    session_durations_minutes=[30, 60],
+    value_proposition=(
+        "Structured guidance for anyone building toward a mobile engineering career: what to learn "
+        "first, how to build real projects, and how to get job-ready."
+    ),
+    focus_beginner_friendly=True,
+    contact_email=None,
+    mentee_count=0,
+    mentorship_duration_label="2 months",
+    mentorship_price_label="₦250,000 ($200)",
+    consultation_duration_label="",
+    consultation_price_label="",
+)

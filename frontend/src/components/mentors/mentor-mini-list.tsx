@@ -5,8 +5,9 @@ import Link from "next/link";
 import { Star, ArrowRight, Users } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { MentorAvatar } from "@/components/mentors/mentor-avatar";
 import { api, ApiError } from "@/lib/api";
-import { initials, mentorPriceLabel } from "@/lib/utils";
+import { mentorPriceLabel } from "@/lib/utils";
 import type { Mentor } from "@/types";
 
 /**
@@ -71,9 +72,7 @@ export function MentorMiniList({ pathSlug, pathName, limit = 3 }: { pathSlug: st
               className="block rounded-xl border border-[rgb(var(--fg-tint)/0.1)] bg-base-950/40 p-4 transition hover:border-accent/30"
             >
               <div className="flex items-center gap-2.5">
-                <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-accent/15 text-xs font-semibold text-accent-light">
-                  {initials(mentor.display_name)}
-                </div>
+                <MentorAvatar displayName={mentor.display_name} avatarUrl={mentor.avatar_url} size="sm" />
                 <div className="min-w-0">
                   <p className="truncate text-xs font-semibold text-ink-100">{mentor.display_name}</p>
                   <div className="flex items-center gap-1 text-[11px] text-ink-500">

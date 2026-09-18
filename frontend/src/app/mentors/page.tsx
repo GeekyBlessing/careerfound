@@ -89,7 +89,7 @@ function MentorsPageInner() {
         </Alert>
       )}
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {mentors.map((mentor) => (
           <Link
             key={mentor.id}
@@ -97,27 +97,30 @@ function MentorsPageInner() {
             className="focus-ring block rounded-2xl"
             aria-label={`View profile: ${mentor.display_name}`}
           >
-            <Card interactive className="h-full">
-              <CardContent className="flex h-full flex-col p-6">
-                <div className="flex items-center gap-3">
-                  <MentorAvatar displayName={mentor.display_name} avatarUrl={mentor.avatar_url} />
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold text-ink-100">{mentor.display_name}</p>
-                    <div className="flex items-center gap-1 text-xs text-ink-500">
-                      {mentor.is_demo ? (
-                        "Demo profile, not a real rating"
-                      ) : (
-                        <>
-                          <Star className="h-3 w-3 fill-warning text-warning" />
-                          {mentor.rating_count > 0 ? `${mentor.rating_avg.toFixed(1)} (${mentor.rating_count})` : "No ratings yet"}
-                        </>
-                      )}
-                    </div>
+            {/* overflow-hidden clips the photo panel to the card's own corners, so
+                a real mentor photo reads as one continuous professional profile
+                card rather than an image floating inside a separate box. */}
+            <Card interactive className="flex h-full flex-col overflow-hidden p-0">
+              <MentorAvatar size="panel" displayName={mentor.display_name} avatarUrl={mentor.avatar_url} />
+              <CardContent className="flex flex-1 flex-col p-5">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold leading-snug text-ink-100">{mentor.display_name}</p>
+                    <p className="mt-0.5 truncate text-xs text-ink-500">{mentor.headline}</p>
                   </div>
-                  <MentorBadge mentor={mentor} />
+                  <MentorBadge mentor={mentor} className="flex-shrink-0" />
                 </div>
-                <p className="mt-3 text-sm text-ink-300">{mentor.headline}</p>
-                <p className="mt-2 line-clamp-3 text-xs leading-relaxed text-ink-500">{mentor.bio}</p>
+                <div className="mt-2 flex items-center gap-1 text-xs text-ink-500">
+                  {mentor.is_demo ? (
+                    "Demo profile, not a real rating"
+                  ) : (
+                    <>
+                      <Star className="h-3 w-3 fill-warning text-warning" />
+                      {mentor.rating_count > 0 ? `${mentor.rating_avg.toFixed(1)} (${mentor.rating_count})` : "No ratings yet"}
+                    </>
+                  )}
+                </div>
+                <p className="mt-3 line-clamp-3 text-xs leading-relaxed text-ink-500">{mentor.bio}</p>
                 <div className="mt-3 flex flex-wrap gap-1.5">
                   {mentor.paths.map((p) => (
                     <Badge key={p}>{p.replace(/-/g, " ")}</Badge>

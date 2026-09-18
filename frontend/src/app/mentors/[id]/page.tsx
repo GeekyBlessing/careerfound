@@ -158,36 +158,44 @@ export default function MentorProfilePage() {
                 {mentor.mentorship_price_label && (
                   <Card className="border-accent/30 bg-gradient-to-br from-accent/10 to-transparent p-5">
                     <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-accent-light">
-                      <Sparkles className="h-3.5 w-3.5" /> {mentor.display_name.split(" ")[0]}&apos;s 1:1 mentorship
+                      <Sparkles className="h-3.5 w-3.5" /> 1:1 mentorship with {mentor.display_name}
                     </div>
                     <p className="mt-2 text-xl font-semibold text-ink-100">{mentor.mentorship_price_label}</p>
                     <p className="text-xs text-ink-500">{mentor.mentorship_duration_label}, long-term mentorship</p>
                     <p className="mt-3 text-xs leading-relaxed text-ink-400">
-                      A premium, structured mentorship program: consistent guidance over {mentor.mentorship_duration_label.toLowerCase()} to help you go from confused beginner to job-ready with a clear plan. This is {mentor.display_name.split(" ")[0]}&apos;s personal offering, the same one on the Mentorship page.
+                      A premium, structured mentorship program: consistent guidance over {mentor.mentorship_duration_label.toLowerCase()} to help you go from confused beginner to job-ready with a clear plan.{" "}
+                      {mentor.is_founding_mentor && mentor.display_name === "Toriola Opeyemi"
+                        ? "This is Toriola's personal offering, the same one on the Mentorship page."
+                        : "This is this mentor's own mentorship offering, booked directly through this profile."}
                     </p>
-                    <Link href="/mentorship" className="mt-4 block">
-                      <Button className="w-full gap-1.5">
-                        <Calendar className="h-3.5 w-3.5" /> View mentorship details
-                      </Button>
-                    </Link>
+                    {mentor.display_name === "Toriola Opeyemi" && (
+                      <Link href="/mentorship" className="mt-4 block">
+                        <Button className="w-full gap-1.5">
+                          <Calendar className="h-3.5 w-3.5" /> View mentorship details
+                        </Button>
+                      </Link>
+                    )}
                   </Card>
                 )}
 
                 {mentor.consultation_price_label && (
                   <Card className="p-5">
                     <div className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-ink-500">
-                      <Compass className="h-3.5 w-3.5" /> {mentor.display_name.split(" ")[0]}&apos;s career consultation
+                      <Compass className="h-3.5 w-3.5" /> Career consultation with {mentor.display_name}
                     </div>
                     <p className="mt-2 text-lg font-semibold text-ink-100">{mentor.consultation_price_label}</p>
                     <p className="text-xs text-ink-500">{mentor.consultation_duration_label}, one-time consultation</p>
                     <p className="mt-3 text-xs leading-relaxed text-ink-400">
-                      A focused, one-on-one consultation with {mentor.display_name.split(" ")[0]} to get personal career advice, no long-term commitment required. Same offering as the Consultation page.
+                      A focused, one-on-one consultation with {mentor.display_name} to get personal career advice, no long-term commitment required.
+                      {mentor.display_name === "Toriola Opeyemi" ? " Same offering as the Consultation page." : ""}
                     </p>
-                    <Link href="/consultation" className="mt-4 block">
-                      <Button variant="secondary" className="w-full gap-1.5">
-                        <Calendar className="h-3.5 w-3.5" /> View consultation details
-                      </Button>
-                    </Link>
+                    {mentor.display_name === "Toriola Opeyemi" && (
+                      <Link href="/consultation" className="mt-4 block">
+                        <Button variant="secondary" className="w-full gap-1.5">
+                          <Calendar className="h-3.5 w-3.5" /> View consultation details
+                        </Button>
+                      </Link>
+                    )}
                   </Card>
                 )}
 
