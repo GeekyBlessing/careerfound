@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { Star, Briefcase, Globe, Video, Clock, Users, MessageCircle, Calendar, Sparkles, Compass } from "lucide-react";
 import { PublicShell } from "@/components/layout/public-shell";
 import { Card, CardContent } from "@/components/ui/card";
@@ -26,8 +26,25 @@ interface ReviewOut {
 }
 
 export default function MentorProfilePage() {
+  return (
+    <Suspense fallback={null}>
+      <MentorProfilePageInner />
+    </Suspense>
+  );
+}
+
+function MentorProfilePageInner() {
   const params = useParams<{ id: string }>();
   const mentorId = params.id;
+  // The dynamic segment ({id}) accepts either a mentor's real UUID or their
+  // public slug (e.g. "mobile-engineering-mentor") - see
+  // marketplace_service.get_mentor on the backend. ?action=request lets a
+  // link (the homepage's "Request mentorship" CTA) land on this exact same
+  // profile URL but open the request flow immediately, instead of needing a
+  // second, separate route for what is - in this app's actual architecture -
+  // a state on this page rather than a distinct page of its own.
+  const searchParams = useSearchParams();
+  const requestedAction = searchParams.get("action");
 
   const [mentor, setMentor] = useState<Mentor | null>(null);
   const [reviews, setReviews] = useState<ReviewOut[]>([]);
@@ -35,6 +52,7 @@ export default function MentorProfilePage() {
   const [mode, setMode] = useState<"session" | "question" | null>(null);
   const [confirmedSession, setConfirmedSession] = useState<MentorSession | null>(null);
   const [bookingContext, setBookingContext] = useState<{ message: string; durationMinutes?: number } | null>(null);
+  const autoOpenedRequest = useRef(false);
 
   function openSessionBooking(context?: { message: string; durationMinutes?: number }) {
     setBookingContext(context ?? null);
@@ -52,6 +70,13 @@ export default function MentorProfilePage() {
       })
       .catch((err) => setError(err instanceof ApiError ? err.message : "Couldn't load this mentor's profile."));
   }, [mentorId]);
+
+  useEffect(() => {
+    if (mentor && requestedAction === "request" && !autoOpenedRequest.current) {
+      autoOpenedRequest.current = true;
+      openSessionBooking();
+    }
+  }, [mentor, requestedAction]);
 
   return (
     <PublicShell>
@@ -168,12 +193,16 @@ export default function MentorProfilePage() {
                         ? "This is Toriola's personal offering, the same one on the Mentorship page."
                         : "This is this mentor's own mentorship offering, booked directly through this profile."}
                     </p>
-                    {mentor.display_name === "Toriola Opeyemi" && (
+                    {mentor.display_name === "Toriola Opeyemi" ? (
                       <Link href="/mentorship" className="mt-4 block">
                         <Button className="w-full gap-1.5">
                           <Calendar className="h-3.5 w-3.5" /> View mentorship details
                         </Button>
                       </Link>
+                    ) : (
+                      <Button className="mt-4 w-full gap-1.5" onClick={() => openSessionBooking()}>
+                        <Calendar className="h-3.5 w-3.5" /> Request mentorship
+                      </Button>
                     )}
                   </Card>
                 )}

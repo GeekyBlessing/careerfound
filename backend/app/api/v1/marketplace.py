@@ -86,7 +86,13 @@ async def apply_to_be_a_mentor(
 
 
 @router.get("/mentors/{mentor_id}", response_model=MentorOut)
-async def get_mentor(mentor_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
+async def get_mentor(mentor_id: str, db: AsyncSession = Depends(get_db)):
+    # mentor_id is a str, not uuid.UUID, here specifically so this route
+    # accepts either a mentor's real UUID or their public slug (e.g.
+    # "mobile-engineering-mentor") — marketplace_service.get_mentor resolves
+    # whichever form was given. This is the one dynamic mentor-profile route
+    # in the app; a slug is a value for its existing {mentor_id} segment,
+    # not a second, conflicting route.
     mentor = await marketplace_service.get_mentor(db, mentor_id)
     if mentor is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Mentor not found")
@@ -94,8 +100,13 @@ async def get_mentor(mentor_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
 
 
 @router.get("/mentors/{mentor_id}/reviews", response_model=list[MentorReviewOut])
-async def list_mentor_reviews(mentor_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
-    return await marketplace_service.list_reviews(db, mentor_id)
+async def list_mentor_reviews(mentor_id: str, db: AsyncSession = Depends(get_db)):
+    # Resolve slug-or-uuid to the mentor's real id first, since
+    # MentorReview rows are always keyed on the real UUID.
+    mentor = await marketplace_service.get_mentor(db, mentor_id)
+    if mentor is None:
+        return []
+    return await marketplace_service.list_reviews(db, mentor.id)
 
 
 @router.post("/mentors/{mentor_id}/sessions", response_model=MentorSessionOut, status_code=status.HTTP_201_CREATED)

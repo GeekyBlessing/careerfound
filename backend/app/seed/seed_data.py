@@ -255,10 +255,13 @@ async def seed_mentors(db: AsyncSession) -> None:
             await db.commit()
 
     # A second real, non-demo mentor (mobile engineering). Keyed on
-    # display_name rather than contact_email for idempotency, since no
-    # verified email exists yet for this profile.
+    # avatar_seed rather than contact_email or display_name for idempotency,
+    # since no verified email exists yet for this profile and display_name
+    # itself changed (a temporary role label -> the mentor's real name) once
+    # that was supplied — avatar_seed has stayed "mobile-engineering-mentor"
+    # since this mentor's row was first created, so it's the stable key.
     existing_mobile_mentor = (
-        await db.execute(select(Mentor).where(Mentor.display_name == MOBILE_ENGINEERING_MENTOR["display_name"]))
+        await db.execute(select(Mentor).where(Mentor.avatar_seed == MOBILE_ENGINEERING_MENTOR["avatar_seed"]))
     ).scalars().first()
     if not existing_mobile_mentor:
         db.add(
@@ -271,6 +274,24 @@ async def seed_mentors(db: AsyncSession) -> None:
             )
         )
         await db.commit()
+    else:
+        # Backfill fields added after this row may have already been
+        # seeded: slug (needed for the /mentors/{slug} profile URL) and the
+        # real name/experience once they were supplied. Each is guarded so
+        # a real mentor-dashboard edit is never overwritten by a redeploy
+        # re-running this seed script.
+        changed = False
+        if not existing_mobile_mentor.slug:
+            existing_mobile_mentor.slug = MOBILE_ENGINEERING_MENTOR["slug"]
+            changed = True
+        if existing_mobile_mentor.display_name == "Mobile Engineering Mentor":
+            existing_mobile_mentor.display_name = MOBILE_ENGINEERING_MENTOR["display_name"]
+            changed = True
+        if existing_mobile_mentor.years_experience is None:
+            existing_mobile_mentor.years_experience = MOBILE_ENGINEERING_MENTOR["years_experience"]
+            changed = True
+        if changed:
+            await db.commit()
 
 
 async def seed_communities(db: AsyncSession, paths: dict[str, CareerPath], demo_user: User) -> None:

@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 
 class MentorOut(BaseModel):
     id: uuid.UUID
+    slug: str | None = None
     display_name: str
     headline: str
     bio: str

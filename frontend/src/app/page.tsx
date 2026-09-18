@@ -703,18 +703,29 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Mobile Engineering Mentor: real photo, real pricing, no
-                  invented name/experience/employer. */}
+              {/* Mobile Engineering Mentor: real photo, real pricing, real
+                  name/experience now that they've been supplied - no
+                  invented employer/ratings/testimonials/certifications.
+                  "View profile" and "Request mentorship" are two distinct
+                  actions (per the routing fix below): the first is a plain
+                  link to this mentor's own profile at
+                  /mentors/mobile-engineering-mentor, the second links to
+                  the same profile with ?action=request, which that page
+                  reads to open the mentorship request flow directly,
+                  instead of both collapsing onto the generic /mentors
+                  marketplace list the way "View profile" incorrectly did
+                  before. */}
               <div className="overflow-hidden rounded-3xl border border-warm/25 bg-warm/[0.04]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/mentors/mobile-engineering-mentor.jpg"
-                  alt="Mobile Engineering Mentor, a real CareerFound mentor"
+                  alt="David Oladotun Egundey, a real CareerFound mobile engineering mentor"
                   className="h-64 w-full object-cover object-top sm:h-72"
                 />
                 <div className="p-7">
-                  <p className="font-display text-xl font-semibold text-ink-100">Mobile Engineering Mentor</p>
-                  <p className="mt-0.5 text-sm text-ink-400">Mobile Engineer</p>
+                  <p className="eyebrow">Mobile Engineering Mentor</p>
+                  <p className="mt-1.5 font-display text-xl font-semibold text-ink-100">David Oladotun Egundey</p>
+                  <p className="mt-0.5 text-sm text-ink-400">Mobile Engineer &middot; 4 years of experience</p>
                   <div className="mt-3 flex flex-wrap gap-1.5">
                     {["Mobile Engineering", "Mobile Development", "App Development"].map((t) => (
                       <Badge key={t} tone="warm">{t}</Badge>
@@ -729,9 +740,17 @@ export default function LandingPage() {
                       <span className="text-2xl font-semibold text-ink-100">$200</span>
                       <span className="ml-1.5 text-xs text-ink-500">or &#8358;250,000, 2 months</span>
                     </span>
-                    <Link href="/mentors" className="flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline">
-                      View profile <ArrowRight className="h-3.5 w-3.5" />
-                    </Link>
+                    <span className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                      <Link href="/mentors/mobile-engineering-mentor" className="text-sm font-medium text-ink-400 hover:underline">
+                        View profile
+                      </Link>
+                      <Link
+                        href="/mentors/mobile-engineering-mentor?action=request"
+                        className="flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline"
+                      >
+                        Request mentorship <ArrowRight className="h-3.5 w-3.5" />
+                      </Link>
+                    </span>
                   </div>
                 </div>
               </div>

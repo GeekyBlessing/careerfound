@@ -238,10 +238,13 @@ FOUNDING_MENTOR = dict(
 # --- Second real mentor: mobile engineering --------------------------------
 #
 # A real, non-demo profile, following the exact same "only what was actually
-# provided" rule as FOUNDING_MENTOR above. No name has been supplied yet, so
-# display_name is a clear temporary label rather than an invented name, and
-# nothing here claims years_experience, an employer, certifications,
-# testimonials, or ratings, since none of those were provided either.
+# provided" rule as FOUNDING_MENTOR above. display_name and years_experience
+# below are real, user-supplied values (added once verified); nothing here
+# still claims an employer, certifications, testimonials, or ratings, since
+# none of those were provided. slug is this mentor's stable public
+# identifier for /mentors/{slug} (see Mentor.slug and
+# marketplace_service.get_mentor) - kept separate from display_name so the
+# URL never breaks if the display name is edited later.
 # contact_email stays unset (no verified email yet) - the row can be linked
 # to a real account later via the mentor dashboard once one exists.
 #
@@ -250,7 +253,8 @@ FOUNDING_MENTOR = dict(
 # marketplace/profile UI never fall back to an hourly-rate display for this
 # mentor - see lib/utils.ts::mentorPriceLabel.
 MOBILE_ENGINEERING_MENTOR = dict(
-    display_name="Mobile Engineering Mentor",
+    slug="mobile-engineering-mentor",
+    display_name="David Oladotun Egundey",
     headline="Mobile Engineer",
     bio=(
         "Get practical guidance on mobile development, building real applications, structuring "
@@ -259,7 +263,7 @@ MOBILE_ENGINEERING_MENTOR = dict(
     avatar_seed="mobile-engineering-mentor",
     avatar_url="/mentors/mobile-engineering-mentor.jpg",
     paths=["mobile-engineering", "mobile-development", "app-development"],
-    years_experience=None,
+    years_experience=4,
     hourly_rate_cents=0,
     currency="USD",
     rating_avg=0.0,

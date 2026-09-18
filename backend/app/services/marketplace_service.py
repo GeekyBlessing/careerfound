@@ -67,8 +67,27 @@ async def list_mentors(db: AsyncSession, path_slug: str | None, min_rating: floa
     return mentors
 
 
-async def get_mentor(db: AsyncSession, mentor_id: uuid.UUID) -> Mentor | None:
-    result = await db.execute(select(Mentor).where(Mentor.id == mentor_id))
+async def get_mentor(db: AsyncSession, mentor_id: uuid.UUID | str) -> Mentor | None:
+    """Looks a mentor up by their real UUID (always accepted, and the only
+    form used by internal/server-side callers that already hold a UUID
+    object) or, when given a string that isn't a valid UUID, by their public
+    slug (e.g. "mobile-engineering-mentor") — so GET /mentors/{mentor_id}
+    can serve either /mentors/{uuid} or /mentors/{slug} without a second,
+    conflicting route.
+    """
+    if isinstance(mentor_id, uuid.UUID):
+        result = await db.execute(select(Mentor).where(Mentor.id == mentor_id))
+        return result.scalar_one_or_none()
+
+    try:
+        parsed = uuid.UUID(mentor_id)
+    except ValueError:
+        parsed = None
+
+    if parsed is not None:
+        result = await db.execute(select(Mentor).where(Mentor.id == parsed))
+    else:
+        result = await db.execute(select(Mentor).where(Mentor.slug == mentor_id))
     return result.scalar_one_or_none()
 
 

@@ -25,6 +25,12 @@ class Mentor(Base, UUIDMixin, TimestampMixin):
     __tablename__ = "mentors"
 
     user_id: Mapped[uuid.UUID | None] = mapped_column(GUID(), ForeignKey("users.id"), nullable=True)
+    # A stable, human-readable public identifier (e.g. "mobile-engineering-mentor")
+    # so a mentor's profile URL (/mentors/{slug}) doesn't depend on exposing or
+    # guessing their database UUID. Nullable/unique: most seeded demo mentors
+    # don't have one and are still looked up by UUID at GET /mentors/{mentor_id}
+    # (see marketplace_service.get_mentor, which accepts either form).
+    slug: Mapped[str | None] = mapped_column(String(160), unique=True, nullable=True, index=True)
     display_name: Mapped[str] = mapped_column(String(160))
     headline: Mapped[str] = mapped_column(String(240))
     bio: Mapped[str] = mapped_column(Text, default="")
