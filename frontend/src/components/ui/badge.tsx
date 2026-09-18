@@ -21,7 +21,11 @@ export function Badge({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium",
+        // A small rectangular tag, not a pill: the "rounded chip" language
+        // reads as generic SaaS UI, whereas a near-square label with a
+        // slight corner and mono-adjacent letter-spacing reads closer to a
+        // category tag on an editorial/institutional page.
+        "inline-flex items-center rounded-[0.25rem] border px-2 py-0.5 text-xs font-medium tracking-tight",
         toneClasses[tone],
         className
       )}

@@ -10,6 +10,12 @@ export interface PathWaypoint {
    * counts as done for their context (assessment step index, roadmap phase
    * completion, etc). */
   state?: "done" | "active" | "upcoming";
+  /** Optional one-line supporting copy, rendered under the label in
+   * vertical orientation only (horizontal usages stay compact - the
+   * onboarding stepper and hero teaser have no room for a second line).
+   * Lets the same primitive double as a real "product interface" panel
+   * (see the homepage hero) instead of a bare labeled stepper. */
+  caption?: string;
 }
 
 /**
@@ -57,9 +63,10 @@ export function PathTrack({
               </div>
               {i < waypoints.length - 1 && <div className={segmentToneClass(waypoints[i + 1]?.state)} />}
             </div>
-            <p className={cn("pb-8 pt-1.5 text-sm font-medium", wp.state === "active" ? "text-ink-100" : "text-ink-400")}>
-              {wp.label}
-            </p>
+            <div className={cn("pb-8 pt-1.5", wp.state === "active" ? "text-ink-100" : "text-ink-400")}>
+              <p className="text-sm font-medium">{wp.label}</p>
+              {wp.caption && <p className="mt-0.5 max-w-[220px] text-xs leading-snug text-ink-500">{wp.caption}</p>}
+            </div>
           </li>
         ))}
       </ol>

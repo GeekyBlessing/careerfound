@@ -65,6 +65,15 @@
      page, so the exact opacity value in each usage (e.g. /[0.06]) keeps
      working unchanged in both themes. */
   --fg-tint: 15 23 42;
+
+  /* "Paper": a warm off-white surface, distinct from --color-base-950's
+     cooler neutral gray. Used to give alternating sections real visual
+     rhythm (cool app surface, warm editorial surface) instead of every
+     section sitting on the identical background, the way an institutional
+     site alternates white and cream/parchment sections rather than tinting
+     everything the same shade. Kept subtle: a near-white ivory, not a
+     saturated cream. */
+  --color-paper: 250 248 242;
 }
 
 :root[data-theme="dark"],
@@ -88,6 +97,12 @@
   --color-accent-mist: 22 28 18;
 
   --fg-tint: 255 255 255;
+
+  /* Dark-mode "paper": a warm, slightly-lifted near-black (not the cooler
+     base-900), so the same alternating-surface rhythm survives in dark
+     mode instead of paper silently becoming identical to the app
+     background the moment the theme switches. */
+  --color-paper: 16 14 10;
 }
 
 html {

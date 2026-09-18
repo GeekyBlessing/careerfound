@@ -52,6 +52,10 @@ const config: Config = {
         // button dropped on top - the hero rail, the best-match reveal
         // frame, a highlighted stat tile.
         mist: "rgb(var(--color-accent-mist) / <alpha-value>)",
+        // A warm off-white (light) / warm near-black (dark) surface used to
+        // alternate section rhythm against the cooler base background - see
+        // the note on --color-paper in globals.css.
+        paper: "rgb(var(--color-paper) / <alpha-value>)",
       },
       fontFamily: {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
@@ -59,21 +63,35 @@ const config: Config = {
         mono: ["var(--font-mono)", "ui-monospace", "monospace"],
       },
       // A named type scale so "which size is this" is a deliberate choice
-      // tied to a role (display/h1/h2/h3/label) instead of every heading
-      // reaching for whichever text-2xl/3xl felt right in the moment. Sizes
-      // are additive - existing text-sm/text-xs usage across the app is
-      // untouched, this scale is for headings and metadata going forward.
+      // tied to a role (hero/display/h1/h2/h3/label) instead of every
+      // heading reaching for whichever text-2xl/3xl felt right in the
+      // moment. Sizes are additive - existing text-sm/text-xs usage across
+      // the app is untouched, this scale is for headings and metadata.
+      //
+      // Widened for the editorial redesign: "hero" is new (the one true
+      // homepage-scale headline), and every other step got more room
+      // between it and its neighbor so hierarchy reads at a glance instead
+      // of every heading landing in the same narrow 1rem-1.4rem band. Sizes
+      // use clamp() so the top of the range only shows up on wide viewports
+      // rather than forcing a huge headline into a 375px phone.
       fontSize: {
-        display: ["3rem", { lineHeight: "1.05", letterSpacing: "-0.02em" }],
-        h1: ["2rem", { lineHeight: "1.15", letterSpacing: "-0.015em" }],
-        h2: ["1.375rem", { lineHeight: "1.25", letterSpacing: "-0.01em" }],
-        h3: ["1.0625rem", { lineHeight: "1.35" }],
+        hero: ["clamp(2.75rem, 2rem + 3vw, 4.5rem)", { lineHeight: "1.04", letterSpacing: "-0.025em" }],
+        display: ["clamp(2rem, 1.5rem + 2vw, 2.875rem)", { lineHeight: "1.1", letterSpacing: "-0.02em" }],
+        h1: ["2.125rem", { lineHeight: "1.15", letterSpacing: "-0.018em" }],
+        h2: ["1.5rem", { lineHeight: "1.28", letterSpacing: "-0.01em" }],
+        h3: ["1.125rem", { lineHeight: "1.4" }],
         label: ["0.6875rem", { lineHeight: "1.4", letterSpacing: "0.09em" }],
       },
+      // A tighter, more restrained radius scale than the pill-happy default
+      // (was 0.875/1.25/1.5rem). An institutional interface reads through
+      // borders, spacing and type, not through how rounded every corner is,
+      // so cards and panels get a modest radius rather than a soft "app"
+      // curve, and pill shapes (Badge, previously) are reworked separately
+      // to not lean on rounded-full at all.
       borderRadius: {
-        xl: "0.875rem",
-        "2xl": "1.25rem",
-        "3xl": "1.5rem",
+        xl: "0.625rem",
+        "2xl": "0.75rem",
+        "3xl": "1rem",
       },
       boxShadow: {
         // A small elevation scale, used consistently instead of one-off

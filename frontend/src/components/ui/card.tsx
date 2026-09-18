@@ -9,7 +9,13 @@ export function Card({ className, interactive, ...props }: CardProps) {
   return (
     <div
       className={cn(
-        "rounded-2xl border border-[rgb(var(--fg-tint)/0.08)] bg-[rgb(var(--fg-tint)/0.03)] shadow-card",
+        // Flat and bordered by default: an institutional surface reads
+        // through its border, spacing and content, not a floating drop
+        // shadow. Elevation (shadow-card/shadow-raised) is opt-in per call
+        // site for the handful of moments that should feel lifted (a modal,
+        // the onboarding card over a contour background, a "best match"
+        // reveal) rather than the resting state of every card in the app.
+        "rounded-2xl border border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.025)]",
         interactive && "card-interactive cursor-pointer",
         className
       )}
