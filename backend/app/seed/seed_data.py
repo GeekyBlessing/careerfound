@@ -235,7 +235,10 @@ async def seed_mentors(db: AsyncSession) -> None:
         # One-time text fix: an earlier column default used an em dash. Only
         # touch rows that still hold that exact original default, so a
         # mentor-dashboard edit to this field is never overwritten.
-        old_default = "Availability coming soon — check back or ask a question."
+        # Built from an escape rather than a literal character so this
+        # source file itself contains zero em dashes, while still matching
+        # byte-for-byte against any legacy row that has the old value.
+        old_default = "Availability coming soon" + chr(0x2014) + " check back or ask a question."
         if existing_founder.availability_note == old_default:
             existing_founder.availability_note = "Availability coming soon: check back or ask a question."
             changed = True

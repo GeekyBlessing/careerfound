@@ -7,6 +7,12 @@ on:
     branches: [main]
 
 jobs:
+  dashes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/check_dashes.py
+
   backend:
     runs-on: ubuntu-latest
     defaults:

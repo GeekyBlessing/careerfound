@@ -215,7 +215,7 @@ async def upsert_session_note(
     mentor: Mentor = Depends(require_mentor),
     db: AsyncSession = Depends(get_db),
 ):
-    """Private — never exposed on any mentee-facing route."""
+    """Private: never exposed on any mentee-facing route."""
     session = await marketplace_service.get_session(db, session_id)
     if session is None or session.mentor_id != mentor.id:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Session not found")
