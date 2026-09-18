@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import {
   ArrowRight,
+  ArrowUpRight,
   Shield,
   Code2,
   BarChart3,
@@ -23,6 +24,7 @@ import {
   Lock,
   FileText,
   Award,
+  GitCommit,
 } from "lucide-react";
 import { MarketingNav } from "@/components/layout/marketing-nav";
 import { Footer } from "@/components/layout/footer";
@@ -30,11 +32,11 @@ import { SectionHeading } from "@/components/marketing/section-heading";
 import { SectionDivider } from "@/components/marketing/section-divider";
 import { JourneySteps } from "@/components/marketing/journey-steps";
 import { CareerExplorerSearch } from "@/components/marketing/career-explorer-search";
+import { InterfaceFrame } from "@/components/marketing/interface-frame";
 import { PathTrack, type PathWaypoint } from "@/components/marketing/path-track";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { IconTile } from "@/components/ui/icon-tile";
 import { DifficultyMeter } from "@/components/ui/difficulty-meter";
 import { cn } from "@/lib/utils";
 import { steps, pricingTiers, faqs } from "@/lib/marketing-content";
@@ -60,16 +62,19 @@ const heroWaypoints: PathWaypoint[] = [
   { icon: Briefcase, label: "Portfolio", state: "upcoming", caption: "Finished work written up as proof you can show." },
 ];
 
-// Six real paths, verbatim from backend/app/seed/career_paths.py, presented
-// as a curated catalogue index rather than another row of icon cards. The
-// full 21 are still listed below by category for anyone who wants the
-// complete directory.
+// Six real paths, with real entry_roles/tools/skills_required copied
+// verbatim from backend/app/seed/career_paths.py (the same fields the
+// career-detail page itself reads), not written for this page. The full 21
+// are still listed below by category for anyone who wants the complete
+// directory.
 const CATALOGUE: {
   slug: string;
   name: string;
   icon: typeof Code2;
   summary: string;
   difficulty: number;
+  entryRole: string;
+  tools: string[];
 }[] = [
   {
     slug: "software-engineering",
@@ -77,6 +82,8 @@ const CATALOGUE: {
     icon: Code2,
     summary: "Design, build, and maintain the applications and systems that power products people use every day.",
     difficulty: 3,
+    entryRole: "Junior Software Engineer",
+    tools: ["Python or JavaScript", "Git/GitHub", "SQL", "REST APIs"],
   },
   {
     slug: "cybersecurity",
@@ -84,6 +91,8 @@ const CATALOGUE: {
     icon: Shield,
     summary: "Protect organizations from attackers by finding, fixing, and defending against security weaknesses.",
     difficulty: 3,
+    entryRole: "SOC Analyst (Tier 1)",
+    tools: ["Wireshark", "Linux", "Python", "Nmap"],
   },
   {
     slug: "cloud-engineering",
@@ -91,6 +100,8 @@ const CATALOGUE: {
     icon: Cloud,
     summary: "Set up and run computer systems that live on the internet instead of one physical machine.",
     difficulty: 3,
+    entryRole: "Junior Cloud Engineer",
+    tools: ["AWS/Azure/GCP basics", "Linux", "Terraform", "Docker"],
   },
   {
     slug: "devops",
@@ -98,6 +109,8 @@ const CATALOGUE: {
     icon: Workflow,
     summary: "Make sure software gets built, tested, and delivered smoothly and reliably.",
     difficulty: 3,
+    entryRole: "Junior DevOps Engineer",
+    tools: ["Docker", "CI/CD (GitHub Actions)", "Linux", "Cloud basics"],
   },
   {
     slug: "product-design",
@@ -105,6 +118,8 @@ const CATALOGUE: {
     icon: PenTool,
     summary: "Shape how a product looks, feels, and solves a user's problem.",
     difficulty: 2,
+    entryRole: "Junior Product Designer",
+    tools: ["Figma", "User research basics", "Prototyping"],
   },
   {
     slug: "data-analysis",
@@ -112,8 +127,15 @@ const CATALOGUE: {
     icon: BarChart3,
     summary: "Turn raw numbers into insights that help people make decisions.",
     difficulty: 2,
+    entryRole: "Junior Data Analyst",
+    tools: ["SQL", "Excel/Sheets", "Python (pandas)"],
   },
 ];
+
+// Non-null: CATALOGUE is a fixed, non-empty literal defined immediately
+// above, so the first entry is always present.
+const FEATURED_CAREER = CATALOGUE[0]!;
+const SECONDARY_CAREERS = CATALOGUE.slice(1, 4);
 
 // The homepage's "Build" stage: the same six-stage shape the roadmap page
 // itself uses (discover, then a staged phase progression to job-ready),
@@ -170,6 +192,16 @@ const SUPPORTING_PROJECTS = [
   },
 ];
 
+// A realistic (not fabricated-content) excerpt of what the Portfolio
+// Builder actually produces: a real project (see FEATURED_PROJECT/
+// SUPPORTING_PROJECTS above) written up with a status, not invented case
+// studies. Mirrors the fields /portfolio itself shows.
+const PORTFOLIO_ENTRIES = [
+  { title: "Build an automated security alert system", path: "Cybersecurity", status: "Published", icon: CheckCircle2 },
+  { title: "Create a mini SOC dashboard", path: "Cybersecurity", status: "Published", icon: CheckCircle2 },
+  { title: "Build a weather lookup app using a public API", path: "Software Engineering", status: "Draft", icon: GitCommit },
+];
+
 const OUTCOMES = [
   { title: "Clarity on a path", body: "Stop guessing which tech career fits you and start with one that matches how you actually think and work.", icon: Target },
   { title: "A roadmap you can follow", body: "A staged plan for your chosen path, beginner through advanced, so you always know what to focus on next.", icon: Map },
@@ -185,27 +217,38 @@ export default function LandingPage() {
       <MarketingNav />
       <main>
         {/* ============================================================
-            DISCOVER — Hero. An editorial split, not a centered SaaS hero:
-            copy on the left, a layered product composition on the right
-            (the real 5-stage journey panel, plus a smaller offset stat
-            card behind it for depth), instead of a single flat box. */}
-        <section className="relative overflow-hidden border-b border-[rgb(var(--fg-tint)/0.08)] py-16 sm:py-24">
-          <div className="bg-contour pointer-events-none absolute inset-x-0 top-0 -z-10 h-[560px]" />
-          <div className="container-page grid gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-12">
+            SCENE 01, DISCOVER. An editorial masthead, not a centered SaaS
+            hero: a poster-scale headline claims the left ~60% of the row,
+            a real product panel (the five-stage journey) sits layered on
+            the right, and a sourced-numbers stat strip runs the full width
+            underneath, so the first screen reads as a designed spread
+            rather than a text block over a box. */}
+        <section className="relative overflow-hidden border-b border-[rgb(var(--fg-tint)/0.08)] pb-0 pt-16 sm:pt-20">
+          <div className="bg-contour pointer-events-none absolute inset-x-0 top-0 -z-10 h-[620px]" />
+          <span
+            aria-hidden="true"
+            className="scene-figure pointer-events-none absolute -right-6 -top-4 hidden text-[13rem] text-ink-100 lg:block"
+          >
+            01
+          </span>
+
+          <div className="container-page grid gap-14 lg:grid-cols-[1.15fr_0.85fr] lg:items-start lg:gap-10">
             <div>
               <p className="eyebrow gap-2 text-ink-400">
                 <span className="h-1.5 w-1.5 rounded-full bg-accent-light" aria-hidden="true" />
                 Career discovery, for people breaking into tech
               </p>
-              <h1 className="mt-5 max-w-xl font-display text-hero font-semibold tracking-tight text-ink-100">
-                Find your tech career. Build the proof you did the work.
+              <h1 className="mt-6 max-w-2xl font-display text-poster font-semibold tracking-tight text-ink-100">
+                Find your tech career.
+                <br />
+                <span className="text-accent-light">Build the proof</span> you did the work.
               </h1>
-              <p className="mt-6 max-w-lg text-base leading-relaxed text-ink-300">
+              <p className="mt-7 max-w-lg text-deck leading-relaxed text-ink-300">
                 Find the tech career that actually fits you, follow a roadmap built for it, and build
                 real projects that prove you can do the work. When you want a second opinion, get
                 guidance from an AI mentor or from Toriola directly.
               </p>
-              <div className="mt-8 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+              <div className="mt-9 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
                 <Link href="/onboarding">
                   <Button size="lg" className="gap-2">
                     Find My Tech Path <ArrowRight className="h-4 w-4" />
@@ -226,33 +269,67 @@ export default function LandingPage() {
                 flat bordered box. Both pieces show real, sourced numbers,
                 not decorative filler. */}
             <div className="relative pb-10 pr-6 sm:pb-14 sm:pr-10">
-              <div className="relative rounded-2xl border border-[rgb(var(--fg-tint)/0.12)] bg-[rgb(var(--fg-tint)/0.025)]">
-                <div className="flex items-center justify-between border-b border-[rgb(var(--fg-tint)/0.1)] px-5 py-3">
-                  <span className="font-mono text-[10px] uppercase tracking-wide text-ink-500">Your Career Path</span>
-                  <Badge tone="accent">Discover</Badge>
-                </div>
+              <InterfaceFrame label="Your Career Path">
                 <div className="p-6">
                   <PathTrack waypoints={heroWaypoints} orientation="vertical" size="sm" />
                 </div>
-              </div>
+              </InterfaceFrame>
 
-              {/* The offset stat chip: bottom-right, outside the panel's own
-                  box (the wrapper's pb/pr padding reserves the room), so it
-                  reads as a second layered piece instead of colliding with
-                  the "Discover" badge in the panel header. */}
-              <div className="absolute -bottom-2 -right-2 hidden w-40 rotate-2 rounded-xl border border-[rgb(var(--fg-tint)/0.12)] bg-base-950 p-4 shadow-raised sm:block">
+              <div className="absolute -bottom-2 -right-2 hidden w-40 -rotate-2 rounded-xl border border-[rgb(var(--fg-tint)/0.12)] bg-warm/12 p-4 shadow-raised sm:block">
                 <p className="font-display text-2xl font-semibold text-ink-100">{CAREER_PATH_COUNT}</p>
                 <p className="mt-0.5 text-xs leading-snug text-ink-500">real tech career paths, each with its own roadmap</p>
               </div>
             </div>
           </div>
+
+          {/* Full-width stat strip: the hero's closing beat, a horizontal
+              row of sourced numbers rather than trailing off with nothing
+              after the CTA. */}
+          <div className="container-page mt-14 grid grid-cols-2 gap-6 border-t border-[rgb(var(--fg-tint)/0.08)] py-8 sm:grid-cols-4">
+            {[
+              { value: String(CAREER_PATH_COUNT), label: "real career paths, not one generic track" },
+              { value: "5", label: "categories, from security to design" },
+              { value: "$0", label: "to assess, plan, and start building" },
+              { value: "2", label: "real, named mentors to talk to" },
+            ].map((s) => (
+              <div key={s.label}>
+                <p className="font-display text-3xl font-semibold text-ink-100">{s.value}</p>
+                <p className="mt-1 max-w-[14rem] text-xs leading-snug text-ink-500">{s.label}</p>
+              </div>
+            ))}
+          </div>
         </section>
 
         {/* ============================================================
-            UNDERSTAND — How it works. Left intro, right connected path,
+            SCENE 02, a full-bleed search moment on its own warm surface,
+            deliberately plain and huge rather than a small input tucked
+            into a card, so it reads as a distinct beat rather than a
+            continuation of the hero. */}
+        <section className="bg-paper py-20">
+          <div className="container-page">
+            <p className="eyebrow justify-start">Search</p>
+            <h2 className="mt-3 max-w-xl font-display text-hero font-semibold tracking-tight text-ink-100">
+              Find where you belong in tech.
+            </h2>
+            <div className="mt-10 max-w-2xl">
+              <CareerExplorerSearch />
+            </div>
+            <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-ink-500">
+              <span className="font-mono uppercase tracking-wide">Browse by category</span>
+              {CAREER_CATEGORIES.map((cat) => (
+                <Link key={cat.name} href="/careers" className="focus-ring text-ink-400 transition-colors hover:text-accent-light">
+                  {cat.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ============================================================
+            SCENE 03, UNDERSTAND. Left intro, right connected path,
             asymmetric rather than a centered heading over a centered
             list. */}
-        <SectionDivider label="Understand" className="pt-16" />
+        <SectionDivider label="Understand" className="pt-4" />
         <section id="how-it-works" className="py-14">
           <div className="container-page grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
             <div>
@@ -271,24 +348,73 @@ export default function LandingPage() {
         </section>
 
         {/* ============================================================
-            CHOOSE — Career Explorer. A real search box (filters the live
-            catalog as you type) plus a curated, numbered index, in place
-            of a spotlight-card grid. The full 21 are still listed below,
-            grouped by discipline, as plain typography, not cards. */}
+            SCENE 04, CHOOSE. An art-directed grid: one large featured
+            career (real tools/entry role, not a generic card) alongside
+            three smaller ones stacked beside it, instead of six identical
+            tiles. Each block uses its own color relationship (accent for
+            the featured block, neutral for the rest) so the featured path
+            reads as a deliberate spotlight, not just "the first item". */}
         <SectionDivider label="Choose" />
         <section id="careers" className="py-14">
           <div className="container-page">
             <SectionHeading
               eyebrow="Career paths"
-              title="Where could your career take you?"
+              title="There's more than one way into tech."
               description="We don't just ask what you want to learn, we help you discover what actually fits how you think and what you enjoy."
               align="left"
             />
 
-            <div className="mt-10 max-w-2xl">
-              <CareerExplorerSearch />
+            <div className="mt-12 grid gap-6 lg:grid-cols-[1.2fr_1fr]">
+              <Link
+                href={`/careers/${FEATURED_CAREER.slug}`}
+                className="card-interactive group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-accent/25 bg-accent/10 p-8 sm:p-10"
+              >
+                <span aria-hidden="true" className="scene-figure pointer-events-none absolute -bottom-6 -right-2 text-[9rem] text-accent-light">
+                  01
+                </span>
+                <div className="relative">
+                  <FEATURED_CAREER.icon className="h-9 w-9 text-accent-light" />
+                  <h3 className="mt-6 font-display text-hero font-semibold tracking-tight text-ink-100">
+                    {FEATURED_CAREER.name}
+                  </h3>
+                  <p className="mt-4 max-w-md text-sm leading-relaxed text-ink-300">{FEATURED_CAREER.summary}</p>
+                </div>
+                <div className="relative mt-8">
+                  <div className="flex flex-wrap gap-1.5">
+                    {FEATURED_CAREER.tools.map((t) => (
+                      <Badge key={t} tone="accent">{t}</Badge>
+                    ))}
+                  </div>
+                  <div className="mt-5 flex items-center justify-between border-t border-accent/20 pt-4">
+                    <span className="text-xs text-ink-400">Entry role: {FEATURED_CAREER.entryRole}</span>
+                    <span className="flex items-center gap-1.5 text-sm font-medium text-accent-light">
+                      Explore <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    </span>
+                  </div>
+                </div>
+              </Link>
+
+              <div className="flex flex-col gap-4">
+                {SECONDARY_CAREERS.map((c) => (
+                  <Link
+                    key={c.slug}
+                    href={`/careers/${c.slug}`}
+                    className="card-interactive group flex flex-1 items-center gap-4 rounded-2xl border border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.02)] p-5"
+                  >
+                    <c.icon className="h-6 w-6 flex-shrink-0 text-accent-light" />
+                    <div className="min-w-0 flex-1">
+                      <h4 className="font-display text-base font-semibold text-ink-100 group-hover:text-accent-light">{c.name}</h4>
+                      <p className="mt-1 line-clamp-1 text-xs text-ink-500">{c.summary}</p>
+                    </div>
+                    <ArrowRight className="h-4 w-4 flex-shrink-0 text-ink-500 transition-transform group-hover:translate-x-0.5" />
+                  </Link>
+                ))}
+              </div>
             </div>
 
+            {/* The immersive numbered directory: large typography rows and
+                separators, the way an institution's catalogue reads,
+                rather than a second row of cards. */}
             <div className="mt-16 border-t border-[rgb(var(--fg-tint)/0.08)]">
               {CATALOGUE.map((c, i) => (
                 <Link
@@ -340,42 +466,70 @@ export default function LandingPage() {
         </section>
 
         {/* ============================================================
-            BUILD — Roadmap. CareerFound's signature progression visual,
-            given its own full-width band on the green "mist" surface so it
-            reads as a distinct moment, not another section on the default
-            background. Real phase titles (from the Cybersecurity roadmap)
-            stand in for what a phase list actually looks like once you're
-            on a path: done, active, and locked/upcoming states. */}
+            SCENE 05, BUILD: Roadmap. A deliberately fixed dark surface
+            (surface-ink, independent of the light/dark toggle) so this
+            becomes the page's one "step into a dark room" moment, the way
+            an institutional site drops in a fixed dark features band. */}
         <SectionDivider label="Build" />
-        <section className="bg-mist py-16">
-          <div className="container-page">
-            <SectionHeading eyebrow="Roadmap" title="Know what to learn next" description="Not a generic timeline: a staged plan for your specific path, with real phases you unlock in order." align="left" />
-            <div className="mt-12 grid gap-14 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
-              <JourneySteps
-                steps={roadmapStory.map((s) => ({ title: s.title, body: s.body, icon: s.icon }))}
-                className="mx-0 max-w-none"
-              />
+        <section className="surface-ink relative overflow-hidden py-20">
+          <span aria-hidden="true" className="scene-figure pointer-events-none absolute -right-4 -top-10 hidden text-[13rem] lg:block">
+            05
+          </span>
+          <div className="container-page relative">
+            <p className="eyebrow justify-start text-[#c3d19a]">Roadmap</p>
+            <h2 className="mt-3 max-w-xl font-display text-hero font-semibold tracking-tight">Know what to learn next.</h2>
+            <p className="surface-ink-muted mt-4 max-w-lg text-sm leading-relaxed">
+              Not a generic timeline: a staged plan for your specific path, with real phases you unlock in order.
+            </p>
+
+            <div className="mt-14 grid gap-14 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
+              <ol className="space-y-0">
+                {roadmapStory.map((s, i) => {
+                  const isLast = i === roadmapStory.length - 1;
+                  return (
+                    <li key={s.title} className="flex gap-6">
+                      <div className="flex flex-col items-center">
+                        <span className="font-display text-2xl font-semibold text-[#c3d19a]">{String(i + 1).padStart(2, "0")}</span>
+                        {!isLast && <div className="my-1 w-px flex-1 bg-white/12" />}
+                      </div>
+                      <div className={cn("min-w-0", !isLast && "pb-9")}>
+                        <div className="flex items-center gap-2 pt-1">
+                          <s.icon className="h-4 w-4 text-[#c3d19a]" aria-hidden="true" />
+                          <h3 className="font-display text-base font-semibold tracking-tight">{s.title}</h3>
+                        </div>
+                        <p className="surface-ink-muted mt-1.5 text-sm leading-relaxed">{s.body}</p>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ol>
+
               <div>
-                <p className="font-mono text-[11px] uppercase tracking-wide text-ink-500">Example, inside the Cybersecurity roadmap</p>
-                <div className="mt-4 divide-y divide-[rgb(var(--fg-tint)/0.1)] rounded-2xl border border-[rgb(var(--fg-tint)/0.1)] bg-base-950">
-                  {samplePhases.map((phase) => (
-                    <div key={phase.title} className="flex items-center gap-3 px-5 py-4">
-                      {phase.state === "done" && <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-success" />}
-                      {phase.state === "active" && <span className="h-4 w-4 flex-shrink-0 rounded-full border-2 border-accent-light" />}
-                      {phase.state === "upcoming" && <Lock className="h-3.5 w-3.5 flex-shrink-0 text-ink-500" />}
-                      <span
-                        className={cn(
-                          "text-sm",
-                          phase.state === "active" ? "font-medium text-ink-100" : phase.state === "done" ? "text-ink-300" : "text-ink-500"
+                <InterfaceFrame label="Cybersecurity roadmap, live excerpt" tone="ink">
+                  <div className="divide-y divide-white/10">
+                    {samplePhases.map((phase) => (
+                      <div key={phase.title} className="flex items-center gap-3 px-5 py-4">
+                        {phase.state === "done" && <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-[#8fd18a]" />}
+                        {phase.state === "active" && <span className="h-4 w-4 flex-shrink-0 rounded-full border-2 border-[#c3d19a]" />}
+                        {phase.state === "upcoming" && <Lock className="h-3.5 w-3.5 flex-shrink-0 text-white/40" />}
+                        <span
+                          className={cn(
+                            "text-sm",
+                            phase.state === "active" ? "font-medium text-[#f4f5f0]" : phase.state === "done" ? "text-white/70" : "text-white/40"
+                          )}
+                        >
+                          {phase.title}
+                        </span>
+                        {phase.state === "active" && (
+                          <span className="ml-auto rounded-[0.25rem] border border-[#c3d19a]/40 bg-[#c3d19a]/15 px-2 py-0.5 text-xs font-medium text-[#c3d19a]">
+                            In progress
+                          </span>
                         )}
-                      >
-                        {phase.title}
-                      </span>
-                      {phase.state === "active" && <Badge tone="accent" className="ml-auto">In progress</Badge>}
-                    </div>
-                  ))}
-                </div>
-                <p className="mt-4 text-xs leading-relaxed text-ink-500">
+                      </div>
+                    ))}
+                  </div>
+                </InterfaceFrame>
+                <p className="surface-ink-muted mt-4 text-xs leading-relaxed">
                   Every path has its own full set of phases like these, each with lessons, exercises, and projects. This
                   is a real excerpt, not a mockup.
                 </p>
@@ -384,55 +538,65 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Projects: an editorial portfolio composition (one large featured
-            build, two smaller supporting ones) instead of a 3-card feature
-            grid. Content is copied verbatim from the real project catalog,
-            not written for this page. */}
-        <section className="py-16">
+        {/* Projects: a case-study gallery. The featured build is framed as
+            a real interface excerpt (its own steps list, live-rendered),
+            and gets a full-width band to itself before the two smaller,
+            supporting builds sit beneath in a tighter row. */}
+        <section className="py-20">
           <div className="container-page">
-            <SectionHeading eyebrow="Projects" title="We don't just tell you what to learn. We help you build proof." align="left" />
-            <div className="mt-12 grid gap-12 lg:grid-cols-[1.3fr_1fr]">
-              <div className="border-t-2 border-ink-100 pt-6">
-                <p className="font-mono text-[11px] uppercase tracking-wide text-ink-500">{FEATURED_PROJECT.path} · {FEATURED_PROJECT.phase}</p>
-                <h3 className="mt-2 font-display text-2xl font-semibold tracking-tight text-ink-100 sm:text-3xl">{FEATURED_PROJECT.title}</h3>
-                <p className="mt-4 max-w-lg text-sm leading-relaxed text-ink-400">{FEATURED_PROJECT.teaches}</p>
-                <ol className="mt-6 space-y-2.5 text-sm text-ink-300">
-                  {FEATURED_PROJECT.steps.map((s, i) => (
-                    <li key={s} className="flex gap-3">
-                      <span className="font-mono text-xs text-ink-500">{i + 1}</span>
-                      {s}
-                    </li>
-                  ))}
-                </ol>
-                <span className="mt-6 flex items-center gap-2 font-mono text-[10px] uppercase tracking-wide text-ink-500">
+            <SectionHeading eyebrow="Projects" title="Don't just learn it. Build it." align="left" />
+
+            <div className="mt-12 grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
+              <div>
+                <p className="font-mono text-[11px] uppercase tracking-wide text-ink-500">
+                  {FEATURED_PROJECT.path} &middot; {FEATURED_PROJECT.phase}
+                </p>
+                <h3 className="mt-3 font-display text-display font-semibold tracking-tight text-ink-100">{FEATURED_PROJECT.title}</h3>
+                <p className="mt-4 max-w-md text-sm leading-relaxed text-ink-400">{FEATURED_PROJECT.teaches}</p>
+                <span className="mt-5 flex items-center gap-2 font-mono text-[10px] uppercase tracking-wide text-ink-500">
                   <DifficultyMeter level={FEATURED_PROJECT.difficulty} /> {FEATURED_PROJECT.difficultyLabel}
                 </span>
-              </div>
-
-              <div className="space-y-10">
-                {SUPPORTING_PROJECTS.map((p) => (
-                  <div key={p.title} className="border-t border-[rgb(var(--fg-tint)/0.1)] pt-5">
-                    <p className="font-mono text-[10px] uppercase tracking-wide text-ink-500">{p.path}</p>
-                    <h4 className="mt-1.5 font-display text-base font-semibold text-ink-100">{p.title}</h4>
-                    <p className="mt-2 text-sm leading-relaxed text-ink-500">{p.teaches}</p>
-                    <span className="mt-3 flex items-center gap-2 font-mono text-[10px] uppercase tracking-wide text-ink-500">
-                      <DifficultyMeter level={p.difficulty} /> {p.difficultyLabel}
-                    </span>
-                  </div>
-                ))}
-                <Link href="/projects" className="inline-flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline">
+                <Link href="/projects" className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline">
                   Browse every project <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               </div>
+
+              <InterfaceFrame label={FEATURED_PROJECT.title}>
+                <ol className="space-y-4 p-6">
+                  {FEATURED_PROJECT.steps.map((s, i) => (
+                    <li key={s} className="flex gap-4">
+                      <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-[0.35rem] bg-accent/12 font-mono text-xs text-accent-light">
+                        {i + 1}
+                      </span>
+                      <span className="text-sm leading-relaxed text-ink-300">{s}</span>
+                    </li>
+                  ))}
+                </ol>
+              </InterfaceFrame>
+            </div>
+
+            <div className="mt-14 grid gap-6 border-t border-[rgb(var(--fg-tint)/0.1)] pt-10 sm:grid-cols-2">
+              {SUPPORTING_PROJECTS.map((p) => (
+                <div key={p.title}>
+                  <p className="font-mono text-[10px] uppercase tracking-wide text-ink-500">{p.path}</p>
+                  <h4 className="mt-1.5 font-display text-base font-semibold text-ink-100">{p.title}</h4>
+                  <p className="mt-2 text-sm leading-relaxed text-ink-500">{p.teaches}</p>
+                  <span className="mt-3 flex items-center gap-2 font-mono text-[10px] uppercase tracking-wide text-ink-500">
+                    <DifficultyMeter level={p.difficulty} /> {p.difficultyLabel}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
         </section>
 
         {/* ============================================================
-            SHOW YOUR WORK — Portfolio. The flow from learning to proof,
-            shown as a connected sequence rather than restated in prose. */}
+            SHOW YOUR WORK, Portfolio. The product itself, shown as a real
+            interface excerpt (three actual project entries, in the exact
+            title-wrapped, statused shape /portfolio renders), not a row of
+            icon chips standing in for a description. */}
         <SectionDivider label="Show your work" />
-        <section className="bg-paper py-16">
+        <section className="bg-paper py-20">
           <div className="container-page grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-16">
             <div>
               <SectionHeading eyebrow="Portfolio" title="Turn learning into proof" align="left" />
@@ -441,110 +605,135 @@ export default function LandingPage() {
                 LinkedIn blurb, drafted from what you actually built and then yours to personalize
                 before you publish or apply.
               </p>
-              <Link href="/portfolio" className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline">
+              <div className="mt-6 flex flex-wrap items-center gap-2 text-sm">
+                {[
+                  { label: "Learning", icon: Compass },
+                  { label: "Projects", icon: FolderGit2 },
+                  { label: "Portfolio", icon: FileText },
+                  { label: "Job applications", icon: Briefcase },
+                ].map((step, i, arr) => (
+                  <span key={step.label} className="flex items-center gap-2">
+                    <span className="flex items-center gap-1.5 text-ink-400">
+                      <step.icon className="h-3.5 w-3.5 text-accent-light" />
+                      {step.label}
+                    </span>
+                    {i < arr.length - 1 && <ArrowRight className="h-3 w-3 text-ink-500" />}
+                  </span>
+                ))}
+              </div>
+              <Link href="/portfolio" className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline">
                 See the Portfolio Builder <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </div>
 
-            <div className="flex flex-wrap items-center gap-3 text-sm">
-              {[
-                { label: "Learning", icon: Compass },
-                { label: "Projects", icon: FolderGit2 },
-                { label: "Portfolio", icon: FileText },
-                { label: "Job applications", icon: Briefcase },
-              ].map((step, i, arr) => (
-                <div key={step.label} className="flex items-center gap-3">
-                  <div className="flex items-center gap-2 rounded-xl border border-[rgb(var(--fg-tint)/0.12)] bg-base-950 px-4 py-3">
-                    <step.icon className="h-4 w-4 text-accent-light" />
-                    <span className="font-medium text-ink-100">{step.label}</span>
+            <InterfaceFrame label="Your Portfolio">
+              <div className="divide-y divide-[rgb(var(--fg-tint)/0.08)]">
+                {PORTFOLIO_ENTRIES.map((entry) => (
+                  <div key={entry.title} className="flex items-center gap-4 p-5">
+                    <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-accent/10">
+                      <FolderGit2 className="h-5 w-5 text-accent-light" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium text-ink-100">{entry.title}</p>
+                      <p className="mt-0.5 font-mono text-[10px] uppercase tracking-wide text-ink-500">{entry.path}</p>
+                    </div>
+                    <span className="flex flex-shrink-0 items-center gap-1.5 text-xs text-ink-400">
+                      <entry.icon className={cn("h-3.5 w-3.5", entry.status === "Published" ? "text-success" : "text-ink-500")} />
+                      {entry.status}
+                    </span>
                   </div>
-                  {i < arr.length - 1 && <ArrowRight className="h-3.5 w-3.5 flex-shrink-0 text-ink-500" />}
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            </InterfaceFrame>
           </div>
         </section>
 
         {/* ============================================================
-            GET GUIDANCE — Mentorship first (the premium, human, photo-led
-            moment), AI Mentor second and visually subordinate: one section
-            among several, not the dominant idea on the page. */}
+            GET GUIDANCE, Mentorship. Large portrait crops of the two real
+            mentors, full-width above the AI Mentor's own smaller, clearly
+            subordinate section further down (AI as one feature, not the
+            identity of the page). */}
         <SectionDivider label="Get guidance" />
-        <section className="py-16">
+        <section className="py-20">
           <div className="container-page">
-            <SectionHeading eyebrow="Human mentorship" title="Sometimes you need a human" description="Get practical guidance from people who have done the work. Separate from the AI Mentor below: real professionals, paid, by design." align="left" />
+            <SectionHeading
+              eyebrow="Human mentorship"
+              title="Sometimes you need a human."
+              description="Get practical guidance from people who have done the work. Separate from the AI Mentor below: real professionals, paid, by design."
+              align="left"
+            />
 
-            <div className="mt-12 grid gap-8 lg:grid-cols-2">
+            <div className="mt-12 grid gap-10 lg:grid-cols-2">
               {/* Toriola: founder mentorship, real photo, real pricing. */}
-              <div className="border-t-2 border-warm pt-6">
-                <div className="flex gap-5">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src="/mentors/toriola.jpg"
-                    alt="Toriola Opeyemi, CareerFound founder and mentor"
-                    className="h-32 w-28 flex-shrink-0 rounded-xl object-cover object-top sm:h-40 sm:w-32"
-                  />
-                  <div className="min-w-0">
-                    <p className="font-display text-lg font-semibold text-ink-100">Toriola Opeyemi</p>
-                    <p className="mt-0.5 text-sm text-ink-400">Software Engineer | Cybersecurity Expert</p>
-                    <div className="mt-2.5 flex flex-wrap gap-1.5">
-                      {[
-                        "Software Engineering",
-                        "Cybersecurity",
-                        "Cloud Security",
-                        "DevSecOps",
-                        "Cloud Engineering",
-                        "Security Automation",
-                      ].map((t) => (
-                        <Badge key={t} tone="warm">{t}</Badge>
-                      ))}
-                    </div>
+              <div className="overflow-hidden rounded-3xl border border-warm/25 bg-warm/[0.04]">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/mentors/toriola.jpg"
+                  alt="Toriola Opeyemi, CareerFound founder and mentor"
+                  className="h-64 w-full object-cover object-top sm:h-72"
+                />
+                <div className="p-7">
+                  <p className="font-display text-xl font-semibold text-ink-100">Toriola Opeyemi</p>
+                  <p className="mt-0.5 text-sm text-ink-400">Software Engineer | Cybersecurity Expert</p>
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    {[
+                      "Software Engineering",
+                      "Cybersecurity",
+                      "Cloud Security",
+                      "DevSecOps",
+                      "Cloud Engineering",
+                      "Security Automation",
+                    ].map((t) => (
+                      <Badge key={t} tone="warm">{t}</Badge>
+                    ))}
+                  </div>
+                  <p className="mt-4 text-sm leading-relaxed text-ink-500">
+                    Direct, one-on-one mentorship: roadmap, project guidance, portfolio review, and interview
+                    preparation, from CareerFound&apos;s founder.
+                  </p>
+                  <div className="mt-5 flex flex-col items-start gap-3 border-t border-warm/20 pt-4 sm:flex-row sm:items-baseline sm:justify-between">
+                    <span>
+                      <span className="text-2xl font-semibold text-ink-100">$200</span>
+                      <span className="ml-1.5 text-xs text-ink-500">or &#8358;250,000, 2 months</span>
+                    </span>
+                    <Link href="/mentorship" className="flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline">
+                      Request mentorship <ArrowRight className="h-3.5 w-3.5" />
+                    </Link>
                   </div>
                 </div>
-                <p className="mt-4 max-w-md text-sm leading-relaxed text-ink-500">
-                  Direct, one-on-one mentorship: roadmap, project guidance, portfolio review, and interview
-                  preparation, from CareerFound&apos;s founder.
-                </p>
-                <div className="mt-4 flex items-baseline gap-2">
-                  <span className="text-2xl font-semibold text-ink-100">$200</span>
-                  <span className="text-xs text-ink-500">or ₦250,000, 2 months</span>
-                </div>
-                <Link href="/mentorship" className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline">
-                  Request mentorship <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
               </div>
 
               {/* Mobile Engineering Mentor: real photo, real pricing, no
                   invented name/experience/employer. */}
-              <div className="border-t-2 border-warm pt-6">
-                <div className="flex gap-5">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src="/mentors/mobile-engineering-mentor.jpg"
-                    alt="Mobile Engineering Mentor, a real CareerFound mentor"
-                    className="h-32 w-28 flex-shrink-0 rounded-xl object-cover object-top sm:h-40 sm:w-32"
-                  />
-                  <div className="min-w-0">
-                    <p className="font-display text-lg font-semibold text-ink-100">Mobile Engineering Mentor</p>
-                    <p className="mt-0.5 text-sm text-ink-400">Mobile Engineer</p>
-                    <div className="mt-2.5 flex flex-wrap gap-1.5">
-                      {["Mobile Engineering", "Mobile Development", "App Development"].map((t) => (
-                        <Badge key={t} tone="warm">{t}</Badge>
-                      ))}
-                    </div>
+              <div className="overflow-hidden rounded-3xl border border-warm/25 bg-warm/[0.04]">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/mentors/mobile-engineering-mentor.jpg"
+                  alt="Mobile Engineering Mentor, a real CareerFound mentor"
+                  className="h-64 w-full object-cover object-top sm:h-72"
+                />
+                <div className="p-7">
+                  <p className="font-display text-xl font-semibold text-ink-100">Mobile Engineering Mentor</p>
+                  <p className="mt-0.5 text-sm text-ink-400">Mobile Engineer</p>
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    {["Mobile Engineering", "Mobile Development", "App Development"].map((t) => (
+                      <Badge key={t} tone="warm">{t}</Badge>
+                    ))}
+                  </div>
+                  <p className="mt-4 text-sm leading-relaxed text-ink-500">
+                    Practical guidance on mobile development: building real applications, structuring projects,
+                    debugging, and preparing for a career in mobile engineering.
+                  </p>
+                  <div className="mt-5 flex flex-col items-start gap-3 border-t border-warm/20 pt-4 sm:flex-row sm:items-baseline sm:justify-between">
+                    <span>
+                      <span className="text-2xl font-semibold text-ink-100">$200</span>
+                      <span className="ml-1.5 text-xs text-ink-500">or &#8358;250,000, 2 months</span>
+                    </span>
+                    <Link href="/mentors" className="flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline">
+                      View profile <ArrowRight className="h-3.5 w-3.5" />
+                    </Link>
                   </div>
                 </div>
-                <p className="mt-4 max-w-md text-sm leading-relaxed text-ink-500">
-                  Practical guidance on mobile development: building real applications, structuring projects,
-                  debugging, and preparing for a career in mobile engineering.
-                </p>
-                <div className="mt-4 flex items-baseline gap-2">
-                  <span className="text-2xl font-semibold text-ink-100">$200</span>
-                  <span className="text-xs text-ink-500">or ₦250,000, 2 months</span>
-                </div>
-                <Link href="/mentors" className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline">
-                  View profile <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
               </div>
             </div>
 
@@ -558,28 +747,45 @@ export default function LandingPage() {
                 Browse mentors
               </Link>
             </div>
+          </div>
+        </section>
 
-            {/* AI Mentor: deliberately smaller and plain (no glow, no
-                "AI-powered everything" framing) so it reads as one part of
-                the guidance story, not the headline act. */}
-            <div className="mt-10 flex flex-col gap-4 rounded-2xl border border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.02)] p-6 sm:flex-row sm:items-center">
-              <Bot className="h-5 w-5 flex-shrink-0 text-ink-400" />
-              <div className="flex-1">
-                <p className="text-sm font-semibold text-ink-100">AI Mentor, on call whenever you&apos;re stuck</p>
-                <p className="mt-1 text-sm leading-relaxed text-ink-500">
-                  Software, not a person: it gives hints before answers, reviews your code, and adjusts your
-                  roadmap when it notices you&apos;re struggling. One part of CareerFound, not the whole product.
-                </p>
-              </div>
-              <Badge className="flex-shrink-0">Included free</Badge>
+        {/* AI Mentor: its own small, sophisticated section, deliberately
+            plain (no glow, no "AI-powered everything" framing), and shown
+            through the product interface rather than described in prose,
+            so it reads as one feature among several, not the identity of
+            the page. */}
+        <section className="py-16">
+          <div className="container-page grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+            <div>
+              <p className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-ink-500">
+                <Bot className="h-4 w-4" /> AI Mentor
+              </p>
+              <h3 className="mt-3 font-display text-h1 font-semibold tracking-tight text-ink-100">On call whenever you&apos;re stuck</h3>
+              <p className="mt-3 max-w-md text-sm leading-relaxed text-ink-500">
+                Software, not a person: it gives hints before answers, reviews your code, and adjusts your
+                roadmap when it notices you&apos;re struggling. One part of CareerFound, not the whole product.
+              </p>
+              <Badge className="mt-4">Included free</Badge>
             </div>
+            <InterfaceFrame label="AI Mentor">
+              <div className="space-y-3 p-6">
+                <div className="max-w-[80%] rounded-lg border-l-2 border-accent/40 bg-accent/[0.06] px-4 py-2.5 text-sm text-ink-200">
+                  My detection script flags everything as high severity. What am I missing?
+                </div>
+                <div className="ml-auto max-w-[80%] rounded-lg bg-[rgb(var(--fg-tint)/0.04)] px-4 py-2.5 text-sm leading-relaxed text-ink-300">
+                  Check your severity thresholds first, not the notification code. What counts as
+                  &ldquo;high&rdquo; in your log analyzer right now?
+                </div>
+              </div>
+            </InterfaceFrame>
           </div>
         </section>
 
         {/* ============================================================
-            JOB READY — Outcomes, pricing, FAQ, final CTA. */}
+            JOB READY, Outcomes, pricing, FAQ, final CTA. */}
         <SectionDivider label="Job ready" />
-        <section className="bg-paper py-16">
+        <section className="bg-paper py-20">
           <div className="container-page grid gap-10 lg:grid-cols-[0.7fr_1.3fr] lg:gap-16">
             <SectionHeading
               eyebrow="What CareerFound is built for"
@@ -660,12 +866,16 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Final CTA */}
-        <section className="relative overflow-hidden border-t border-[rgb(var(--fg-tint)/0.08)] py-20">
-          <div className="bg-contour pointer-events-none absolute inset-x-0 top-0 -z-10 h-full opacity-70" />
-          <div className="container-page flex flex-col items-center gap-6 text-center">
-            <p className="eyebrow justify-center">Ready when you are</p>
-            <h2 className="max-w-lg font-display text-display font-semibold tracking-tight text-ink-100">
+        {/* Closing statement: the poster headline's bookend, on the same
+            fixed dark surface as the roadmap scene so the page opens and
+            closes on its two strongest typographic moments. */}
+        <section className="surface-ink relative overflow-hidden py-24">
+          <span aria-hidden="true" className="scene-figure pointer-events-none absolute -bottom-10 -left-6 hidden text-[13rem] lg:block">
+            06
+          </span>
+          <div className="container-page relative flex flex-col items-center gap-7 text-center">
+            <p className="eyebrow justify-center text-[#c3d19a]">Ready when you are</p>
+            <h2 className="max-w-2xl font-display text-poster font-semibold tracking-tight">
               Your next step is one honest assessment away.
             </h2>
             <Link href="/onboarding">

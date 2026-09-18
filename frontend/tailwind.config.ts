@@ -75,11 +75,21 @@ const config: Config = {
       // use clamp() so the top of the range only shows up on wide viewports
       // rather than forcing a huge headline into a 375px phone.
       fontSize: {
+        // "poster" is the one true above-the-fold moment: a headline meant
+        // to occupy a real fraction of the screen, the way a magazine cover
+        // or an institutional homepage's masthead line does, not a "big
+        // heading" in the SaaS sense. Reserved for the hero and the closing
+        // statement; everything else uses hero/display and below.
+        poster: ["clamp(3.25rem, 2.1rem + 6vw, 7.5rem)", { lineHeight: "0.98", letterSpacing: "-0.03em" }],
         hero: ["clamp(2.75rem, 2rem + 3vw, 4.5rem)", { lineHeight: "1.04", letterSpacing: "-0.025em" }],
         display: ["clamp(2rem, 1.5rem + 2vw, 2.875rem)", { lineHeight: "1.1", letterSpacing: "-0.02em" }],
         h1: ["2.125rem", { lineHeight: "1.15", letterSpacing: "-0.018em" }],
         h2: ["1.5rem", { lineHeight: "1.28", letterSpacing: "-0.01em" }],
         h3: ["1.125rem", { lineHeight: "1.4" }],
+        // "deck" is an editorial lede: the one supporting line under a
+        // poster/hero headline that needs to read as intentionally larger
+        // than body copy, not just another paragraph.
+        deck: ["clamp(1.125rem, 1rem + 0.4vw, 1.375rem)", { lineHeight: "1.45" }],
         label: ["0.6875rem", { lineHeight: "1.4", letterSpacing: "0.09em" }],
       },
       // A tighter, more restrained radius scale than the pill-happy default

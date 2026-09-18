@@ -191,6 +191,44 @@ body {
   @apply inline-flex items-center gap-1.5 font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-accent-light;
 }
 
+/* A deliberately fixed dark surface, independent of the light/dark theme
+   toggle: used for exactly one homepage scene (the roadmap/interface
+   moment) so the page has one genuine "step into a dark room" beat, the
+   way an institutional site drops in a fixed dark features band, rather
+   than just inverting whatever the current theme already is. Text tokens
+   inside it are hardcoded to match (not the theme-aware --ink-* variables)
+   since this surface never flips with the toggle. */
+.surface-ink {
+  background-color: #0b0d0a;
+  color: #f4f5f0;
+}
+.surface-ink .surface-ink-muted {
+  color: #a7ac9e;
+}
+.surface-ink .surface-ink-line {
+  border-color: rgba(244, 245, 240, 0.12);
+}
+
+/* A large outlined numeral used as a quiet background watermark behind a
+   scene heading (hero, roadmap, closing statement), the way an editorial
+   spread uses an oversized folio number as a graphic element rather than
+   pure navigation. Kept as text (not an SVG/image) so it stays sharp at
+   any size and costs nothing to load. */
+.scene-figure {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1;
+  /* The stroke reads `currentColor`, so `color` (set by whatever text-*
+     utility is passed alongside this class, e.g. text-ink-100) stays the
+     visible outline color; only the fill is knocked out, via the
+     -webkit-text-fill-color property rather than `color: transparent`
+     (which would also blank out currentColor and make the stroke itself
+     invisible). */
+  -webkit-text-stroke: 1px currentColor;
+  -webkit-text-fill-color: transparent;
+  opacity: 0.5;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
