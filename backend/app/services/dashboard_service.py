@@ -5,10 +5,25 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.career import CareerPath
-from app.models.progress import DailyMission, ProgressStatus
+from app.models.progress import DailyMission, ProgressStatus, XPEvent
 from app.models.roadmap import Exercise, Lesson, Project, Quiz, Roadmap, RoadmapPhase, RoadmapStatus
 from app.services import readiness_service, roadmap_service
 from app.services.streak_service import get_streak
+
+
+async def _get_recent_activity(db: AsyncSession, user_id: uuid.UUID, limit: int = 5) -> list[dict]:
+    """The dashboard's "Recent activity" feed: the user's own last few
+    XP-earning events (lesson/project/quiz/exercise completions), newest
+    first. Reuses the reason text already written at the point each event
+    was recorded (see roadmap_service._award_xp) rather than inventing new
+    copy here, and never fabricates an entry — an empty ledger just returns
+    an empty list.
+    """
+    result = await db.execute(
+        select(XPEvent).where(XPEvent.user_id == user_id).order_by(XPEvent.created_at.desc()).limit(limit)
+    )
+    events = result.scalars().all()
+    return [{"label": e.reason, "created_at": e.created_at} for e in events]
 
 
 async def _next_incomplete_items(db: AsyncSession, path_id: uuid.UUID, user_id: uuid.UUID, limit: int = 4) -> list[dict]:
@@ -96,6 +111,7 @@ async def build_dashboard(db: AsyncSession, user) -> dict:
 
     streak = await get_streak(db, user.id)
     streak_days = streak.current_streak_days if streak else 0
+    recent_activity = await _get_recent_activity(db, user.id)
 
     if roadmap is None:
         return {
@@ -109,6 +125,7 @@ async def build_dashboard(db: AsyncSession, user) -> dict:
             "current_project_title": None,
             "upcoming_milestone": None,
             "recommended_next_action": "Take the 'Find Your Tech Path' assessment to get your personalized roadmap.",
+            "recent_activity": recent_activity,
         }
 
     path = (await db.execute(select(CareerPath).where(CareerPath.id == roadmap.path_id))).scalar_one()
@@ -181,4 +198,5 @@ async def build_dashboard(db: AsyncSession, user) -> dict:
         "current_project_title": current_project,
         "upcoming_milestone": next_phase,
         "recommended_next_action": next_task["title"] if next_task else "You're all caught up for today.",
+        "recent_activity": recent_activity,
     }

@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Sparkles, Star } from "lucide-react";
+import { ArrowRight, Sparkles, Star, Users } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { MentorAvatar } from "@/components/mentors/mentor-avatar";
 import { MentorBadge } from "@/components/mentors/mentor-badge";
 import { api, ApiError } from "@/lib/api";
@@ -26,7 +27,20 @@ const LEVEL_TONE: Record<string, "success" | "accent" | "warning" | "neutral"> =
  * roadmap page, and a career's detail page. Replaces the plain directory
  * teaser (MentorMiniList) everywhere it appeared.
  */
-export function SmartMentorRecommendation({ pathSlug, pathName }: { pathSlug: string; pathName: string }) {
+export function SmartMentorRecommendation({
+  pathSlug,
+  pathName,
+  variant = "compact",
+}: {
+  pathSlug: string;
+  pathName: string;
+  /** "compact" (default) is the original list-teaser used on the roadmap
+   * page — unchanged. "featured" is the dashboard's "Your Mentor Match"
+   * treatment: a large photo, rating and a real reason presented as the
+   * section's whole purpose rather than a secondary panel. Both read from
+   * the same GET /mentors/recommended call; only the presentation differs. */
+  variant?: "compact" | "featured";
+}) {
   const [data, setData] = useState<MentorRecommendationRequest | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -46,6 +60,10 @@ export function SmartMentorRecommendation({ pathSlug, pathName }: { pathSlug: st
       cancelled = true;
     };
   }, [pathSlug]);
+
+  if (variant === "featured") {
+    return <FeaturedMentorMatch data={data} error={error} pathSlug={pathSlug} />;
+  }
 
   if (error) return null; // secondary section — fail quietly
   if (data && data.matches.length === 0) return null;
@@ -114,5 +132,93 @@ export function SmartMentorRecommendation({ pathSlug, pathName }: { pathSlug: st
         </div>
       )}
     </Card>
+  );
+}
+
+/**
+ * The dashboard's "Your Mentor Match": a real photo at real size, a real
+ * reason grounded in the same skill-gap snapshot as the compact variant,
+ * and a "View profile" action that goes straight to /mentors/{id} — never
+ * to /mentors/apply, which is a completely different, unrelated route (see
+ * MentorBadge's own note on never conflating real and demo mentors).
+ * Designs its own empty state (no silent null-render) for the case where
+ * this path genuinely has no mentor coverage yet.
+ */
+function FeaturedMentorMatch({
+  data,
+  error,
+  pathSlug,
+}: {
+  data: MentorRecommendationRequest | null;
+  error: string | null;
+  pathSlug: string;
+}) {
+  return (
+    <div>
+      <p className="eyebrow">Your mentor match</p>
+
+      {!data && !error && (
+        <div className="mt-4 space-y-3">
+          <div className="flex items-center gap-3">
+            <Skeleton className="h-16 w-16 rounded-lg" />
+            <div className="flex-1 space-y-2">
+              <Skeleton className="h-4 w-2/3" />
+              <Skeleton className="h-3 w-1/2" />
+            </div>
+          </div>
+          <Skeleton className="h-12 w-full rounded-lg" />
+        </div>
+      )}
+
+      {(error || (data && data.matches.length === 0)) && (
+        <div className="mt-4 flex flex-col items-center gap-3 rounded-xl border border-dashed border-[rgb(var(--fg-tint)/0.12)] px-5 py-8 text-center">
+          <Users className="h-5 w-5 text-ink-500" />
+          <p className="text-sm font-medium text-ink-100">No mentor match yet</p>
+          <p className="max-w-[220px] text-xs leading-relaxed text-ink-500">
+            We don&apos;t have a strong mentor match for this path yet. Browse the full marketplace instead.
+          </p>
+          <Link href={`/mentors?path=${encodeURIComponent(pathSlug)}`}>
+            <Button variant="secondary" size="sm">
+              Browse mentors
+            </Button>
+          </Link>
+        </div>
+      )}
+
+      {data && data.matches.length > 0 && (() => {
+        const top = data.matches[0];
+        if (!top) return null;
+        return (
+          <div className="mt-4">
+            <div className="flex items-start gap-4">
+              <MentorAvatar displayName={top.mentor.display_name} avatarUrl={top.mentor.avatar_url} size="md" />
+              <div className="min-w-0 flex-1 pt-0.5">
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="font-display text-lg font-semibold leading-tight text-ink-100">{top.mentor.display_name}</p>
+                  <MentorBadge mentor={top.mentor} />
+                </div>
+                <p className="mt-0.5 text-xs text-ink-500">{top.mentor.headline}</p>
+                <div className="mt-1.5 flex items-center gap-1.5 text-xs text-ink-400">
+                  <Star className="h-3 w-3 fill-warning text-warning" />
+                  {top.mentor.rating_count > 0 ? top.mentor.rating_avg.toFixed(1) : "No ratings yet"}
+                  <span className="text-ink-700">·</span>
+                  {mentorPriceLabel(top.mentor)}
+                </div>
+              </div>
+            </div>
+
+            <p className="mt-4 border-l-2 border-accent/40 pl-3 text-sm italic leading-relaxed text-ink-300">
+              &ldquo;{top.reason}&rdquo;
+            </p>
+
+            <Link href={`/mentors/${top.mentor.id}`} className="mt-5 block">
+              <Button variant="secondary" size="sm" className="w-full gap-1.5">
+                View profile <ArrowRight className="h-3.5 w-3.5" />
+              </Button>
+            </Link>
+          </div>
+        );
+      })()}
+    </div>
   );
 }

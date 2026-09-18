@@ -1,3 +1,4 @@
+import datetime
 import uuid
 
 from pydantic import BaseModel
@@ -46,6 +47,18 @@ class ReadinessScoreOut(BaseModel):
     next_actions: list[str]
 
 
+class ActivityItemOut(BaseModel):
+    """One real, already-recorded event from the user's own XP ledger
+    (see XPEvent / _award_xp) — never a synthesized or placeholder entry.
+    `label` reuses that event's own `reason` text verbatim, since it was
+    already written to read as a activity line (e.g. "Completed lesson:
+    Intro to Networking"), not a raw enum value.
+    """
+
+    label: str
+    created_at: datetime.datetime
+
+
 class DashboardOut(BaseModel):
     greeting: str
     has_active_roadmap: bool
@@ -57,3 +70,4 @@ class DashboardOut(BaseModel):
     current_project_title: str | None = None
     upcoming_milestone: str | None = None
     recommended_next_action: str
+    recent_activity: list[ActivityItemOut] = []

@@ -12,6 +12,29 @@ export function formatMinutes(minutes: number): string {
   return rest ? `${hours}h ${rest}m` : `${hours}h`;
 }
 
+/**
+ * Short, human relative time ("2 hours ago", "Yesterday", "3 days ago")
+ * for real timestamps (XP events, activity feed) — never a guess, always
+ * derived from an actual ISO timestamp the backend recorded.
+ */
+export function formatRelativeTime(isoDate: string): string {
+  const then = new Date(isoDate).getTime();
+  if (Number.isNaN(then)) return "";
+  const diffMs = Date.now() - then;
+  const minutes = Math.round(diffMs / 60000);
+  if (minutes < 1) return "Just now";
+  if (minutes < 60) return `${minutes} minute${minutes === 1 ? "" : "s"} ago`;
+  const hours = Math.round(minutes / 60);
+  if (hours < 24) return `${hours} hour${hours === 1 ? "" : "s"} ago`;
+  const days = Math.round(hours / 24);
+  if (days === 1) return "Yesterday";
+  if (days < 7) return `${days} days ago`;
+  const weeks = Math.round(days / 7);
+  if (weeks < 5) return `${weeks} week${weeks === 1 ? "" : "s"} ago`;
+  const months = Math.round(days / 30);
+  return `${months} month${months === 1 ? "" : "s"} ago`;
+}
+
 export function initials(name: string): string {
   return name
     .split(" ")

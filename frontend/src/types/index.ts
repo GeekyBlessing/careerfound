@@ -182,6 +182,11 @@ export interface ReadinessScore {
   next_actions: string[];
 }
 
+export interface ActivityItem {
+  label: string;
+  created_at: string;
+}
+
 export interface Dashboard {
   greeting: string;
   has_active_roadmap: boolean;
@@ -193,6 +198,7 @@ export interface Dashboard {
   current_project_title: string | null;
   upcoming_milestone: string | null;
   recommended_next_action: string;
+  recent_activity: ActivityItem[];
 }
 
 export interface SkillGraphNode {
