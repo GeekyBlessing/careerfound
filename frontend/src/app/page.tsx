@@ -488,7 +488,14 @@ export default function LandingPage() {
                     <p className="font-display text-lg font-semibold text-ink-100">Toriola Opeyemi</p>
                     <p className="mt-0.5 text-sm text-ink-400">Software Engineer | Cybersecurity Expert</p>
                     <div className="mt-2.5 flex flex-wrap gap-1.5">
-                      {["Software Engineering", "Cybersecurity", "Cloud Security", "DevSecOps"].map((t) => (
+                      {[
+                        "Software Engineering",
+                        "Cybersecurity",
+                        "Cloud Security",
+                        "DevSecOps",
+                        "Cloud Engineering",
+                        "Security Automation",
+                      ].map((t) => (
                         <Badge key={t} tone="warm">{t}</Badge>
                       ))}
                     </div>
