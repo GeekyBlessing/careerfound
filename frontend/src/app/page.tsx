@@ -68,8 +68,8 @@ const heroWaypoints: PathWaypoint[] = [
 
 // Six real paths, with real entry_roles/tools/skills_required copied
 // verbatim from backend/app/seed/career_paths.py (the same fields the
-// career-detail page itself reads), not written for this page. The full 21
-// are still listed below by category for anyone who wants the complete
+// career-detail page itself reads), not written for this page. The full
+// catalogue is still listed below by category for anyone who wants the complete
 // directory.
 const CATALOGUE: {
   slug: string;
@@ -84,46 +84,46 @@ const CATALOGUE: {
     slug: "software-engineering",
     name: "Software Engineering",
     icon: Code2,
-    summary: "Design, build, and maintain the applications and systems that power products people use every day.",
+    summary: "The broad craft of designing, building, testing and maintaining software, before you choose to specialise in frontend, backend, full-stack or mobile.",
     difficulty: 3,
     entryRole: "Junior Software Engineer",
-    tools: ["Python or JavaScript", "Git/GitHub", "SQL", "REST APIs"],
+    tools: ["Python", "JavaScript", "Git/GitHub", "SQL"],
   },
   {
     slug: "cybersecurity",
     name: "Cybersecurity",
     icon: Shield,
-    summary: "Protect organizations from attackers by finding, fixing, and defending against security weaknesses.",
+    summary: "The broad foundation of security: how attacks work, how defences are built, and which specialisation fits you best.",
     difficulty: 3,
-    entryRole: "SOC Analyst (Tier 1)",
+    entryRole: "Junior Security Analyst",
     tools: ["Wireshark", "Linux", "Python", "Nmap"],
   },
   {
     slug: "cloud-engineering",
     name: "Cloud Engineering",
     icon: Cloud,
-    summary: "Set up and run computer systems that live on the internet instead of one physical machine.",
+    summary: "Build and run the cloud foundations software depends on: compute, storage, networking, access control and automation as code.",
     difficulty: 3,
     entryRole: "Junior Cloud Engineer",
-    tools: ["AWS/Azure/GCP basics", "Linux", "Terraform", "Docker"],
+    tools: ["AWS", "Azure", "Terraform", "Linux"],
   },
   {
-    slug: "devops",
-    name: "DevOps",
+    slug: "devops-engineering",
+    name: "DevOps Engineering",
     icon: Workflow,
-    summary: "Make sure software gets built, tested, and delivered smoothly and reliably.",
+    summary: "Automate how software is built, tested, deployed and observed, so teams can ship often without breaking things.",
     difficulty: 3,
     entryRole: "Junior DevOps Engineer",
-    tools: ["Docker", "CI/CD (GitHub Actions)", "Linux", "Cloud basics"],
+    tools: ["Docker", "GitHub Actions", "Kubernetes", "Terraform"],
   },
   {
     slug: "product-design",
     name: "Product Design",
     icon: PenTool,
-    summary: "Shape how a product looks, feels, and solves a user's problem.",
+    summary: "Own the whole product experience: frame the problem, design the flows, build the design system and ship alongside engineers.",
     difficulty: 2,
     entryRole: "Junior Product Designer",
-    tools: ["Figma", "User research basics", "Prototyping"],
+    tools: ["Figma", "Design systems", "Prototyping"],
   },
   {
     slug: "data-analysis",
@@ -338,7 +338,7 @@ export default function LandingPage() {
           <div className="container-page mt-14 grid grid-cols-2 gap-6 border-t border-[rgb(var(--fg-tint)/0.08)] py-8 sm:grid-cols-4">
             {[
               { value: String(CAREER_PATH_COUNT), label: "real career paths, not one generic track" },
-              { value: "5", label: "categories, from security to design" },
+              { value: String(CAREER_CATEGORIES.length), label: "categories to filter by, from security to design" },
               { value: "$0", label: "to assess, plan, and start building" },
               { value: "2", label: "real, named mentors to talk to" },
             ].map((s) => (
@@ -367,7 +367,11 @@ export default function LandingPage() {
             <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-ink-500">
               <span className="font-mono uppercase tracking-wide">Browse by category</span>
               {CAREER_CATEGORIES.map((cat) => (
-                <Link key={cat.name} href="/careers" className="focus-ring text-ink-400 transition-colors hover:text-accent-light">
+                <Link
+                  key={cat.slug}
+                  href={`/careers?category=${cat.slug}`}
+                  className="focus-ring text-ink-400 transition-colors hover:text-accent-light"
+                >
                   {cat.name}
                 </Link>
               ))}
@@ -557,9 +561,9 @@ export default function LandingPage() {
               ))}
             </div>
 
-            <div className="mt-14 grid grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-3 lg:grid-cols-5">
+            <div className="mt-14 grid grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-3 lg:grid-cols-6">
               {CAREER_CATEGORIES.map((cat) => (
-                <div key={cat.name}>
+                <div key={cat.slug}>
                   <p className="font-mono text-[10px] uppercase tracking-wide text-ink-500">{cat.name}</p>
                   <ul className="mt-3 space-y-1.5">
                     {cat.paths.map((p) => (

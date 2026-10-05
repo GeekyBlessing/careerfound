@@ -76,12 +76,15 @@ _BEGINNER_EXPLAINERS = {
     "cloud-engineering": "setting up and running computer systems that live on the internet ('the cloud') instead of one physical machine",
     "cloud-security": "protecting those internet-based systems from attackers",
     "cybersecurity": "protecting computers, networks, and data from people trying to break in",
-    "soc-analysis": "watching over a company's systems in real time and catching attacks as they happen",
+    "security-operations": "watching over a company's systems in real time and catching attacks as they happen",
     "penetration-testing": "legally breaking into systems on purpose to find weaknesses before criminals do",
-    "devops": "making sure software gets built, tested, and delivered smoothly and reliably",
+    "devops-engineering": "making sure software gets built, tested, and delivered smoothly and reliably",
     "data-analysis": "turning raw numbers into insights that help people make decisions",
     "data-engineering": "building the pipelines that move and organize data so others can use it",
-    "ai-ml-engineering": "building systems that learn patterns from data to make predictions",
+    "ai-engineering": "building AI-powered products, from machine learning models to applications built on large language models",
+    "data-science": "using statistics and experiments to answer open questions and guide decisions with evidence",
+    "graphic-design": "communicating ideas visually through branding, typography and layout",
+    "mobile-development": "building the apps people carry in their pocket for iOS and Android",
     "product-design": "shaping how a product looks, feels, and solves a user's problem",
     "ui-ux-design": "designing interfaces that are easy and pleasant for people to use",
     "product-management": "deciding what a product should do next and why",
@@ -98,7 +101,7 @@ class MockLLMProvider(LLMClient):
         self, profile: dict[str, Any], career_catalog: list[dict[str, Any]]
     ) -> AssessmentResult:
         scored = _score_paths(profile, career_catalog)
-        top3 = scored[:3]
+        top3 = _pick_top_three(scored)
         tiers = ["best_match", "strong_alternative", "wild_card"]
 
         recommendations: list[CareerRecommendation] = []
@@ -329,26 +332,29 @@ def _score_paths(profile: dict[str, Any], career_catalog: list[dict[str, Any]]) 
     """
     weights = {
         "cybersecurity": {"enjoys_problem_solving": 3, "prefers_systems": 3, "enjoys_math": 1},
-        "soc-analysis": {"enjoys_problem_solving": 2, "prefers_systems": 2, "enjoys_people": 1},
+        "security-operations": {"enjoys_problem_solving": 2, "prefers_systems": 2, "enjoys_people": 1},
         "penetration-testing": {"enjoys_problem_solving": 3, "prefers_systems": 2, "risk_tolerant": 2},
         "cloud-security": {"prefers_systems": 3, "enjoys_problem_solving": 2},
         "software-engineering": {"enjoys_problem_solving": 3, "enjoys_math": 2, "prefers_systems": 2},
         "backend-engineering": {"enjoys_problem_solving": 3, "prefers_systems": 3},
         "frontend-development": {"enjoys_creativity": 3, "enjoys_problem_solving": 2},
         "full-stack-development": {"enjoys_problem_solving": 2, "enjoys_creativity": 2, "prefers_systems": 2},
-        "devops": {"prefers_systems": 3, "enjoys_problem_solving": 2},
+        "devops-engineering": {"prefers_systems": 3, "enjoys_problem_solving": 2},
         "cloud-engineering": {"prefers_systems": 3, "enjoys_math": 1},
         "data-analysis": {"enjoys_math": 3, "enjoys_problem_solving": 2},
         "data-engineering": {"enjoys_math": 2, "prefers_systems": 3},
-        "ai-ml-engineering": {"enjoys_math": 3, "enjoys_problem_solving": 3},
-        "product-design": {"enjoys_creativity": 3, "enjoys_people": 2},
+        "ai-engineering": {"enjoys_math": 3, "enjoys_problem_solving": 3},
+        "data-science": {"enjoys_math": 3, "enjoys_problem_solving": 2, "enjoys_creativity": 1},
+        "mobile-development": {"enjoys_creativity": 2, "enjoys_problem_solving": 2, "enjoys_people": 1},
+        "graphic-design": {"enjoys_creativity": 3, "enjoys_people": 1},
+        "product-design": {"enjoys_creativity": 2, "enjoys_people": 2, "enjoys_problem_solving": 2},
         "ui-ux-design": {"enjoys_creativity": 3, "enjoys_people": 2},
         "product-management": {"enjoys_people": 3, "enjoys_problem_solving": 1},
         "technical-writing": {"enjoys_people": 2, "enjoys_creativity": 1},
         "qa-engineering": {"enjoys_problem_solving": 2, "prefers_systems": 1},
         "no-code-automation": {"enjoys_problem_solving": 1, "enjoys_creativity": 1},
         "it-support": {"enjoys_people": 3, "prefers_systems": 1},
-        "solutions-architecture": {"prefers_systems": 3, "enjoys_problem_solving": 2},
+        "solutions-architecture": {"prefers_systems": 3, "enjoys_people": 2, "enjoys_problem_solving": 1},
     }
 
     scored = []
@@ -365,6 +371,22 @@ def _score_paths(profile: dict[str, Any], career_catalog: list[dict[str, Any]]) 
 
     scored.sort(key=lambda t: t[1], reverse=True)
     return scored
+
+
+def _pick_top_three(scored: list[tuple[dict, int]]) -> list[tuple[dict, int]]:
+    """Best match and strong alternative are simply the two highest scores.
+    The wild card is the highest remaining score from a category neither of
+    the first two belongs to, so the three results never read as one career
+    and two of its specialisations. With no category data (or nothing left
+    outside those categories) it falls back to the next highest score.
+    """
+    picks = scored[:2]
+    chosen_categories = {path.get("category") for path, _score in picks if path.get("category")}
+    for candidate in scored[2:]:
+        category = candidate[0].get("category")
+        if not category or category not in chosen_categories:
+            return picks + [candidate]
+    return scored[:3]
 
 
 def _build_recommendation(path: dict, score: int, tier: str, profile: dict) -> CareerRecommendation:

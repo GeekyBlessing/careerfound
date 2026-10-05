@@ -13,6 +13,7 @@ import { SkeletonCard } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
 import { CareerDnaRadar } from "@/components/charts/career-dna-radar";
 import { api, ApiError } from "@/lib/api";
+import { careerBySlug } from "@/lib/career-categories";
 import type { AssessmentResult, CareerRecommendation } from "@/types";
 
 const TIER_META = {
@@ -126,7 +127,7 @@ function RecommendationCard({
         <Badge tone={meta.tone} className="w-fit gap-1">
           <Icon className="h-3 w-3" /> {meta.label}
         </Badge>
-        <h2 className="mt-3 text-lg font-semibold capitalize tracking-tight text-ink-100">{rec.path_slug.replace(/-/g, " ")}</h2>
+        <h2 className="mt-3 text-lg font-semibold tracking-tight text-ink-100">{careerBySlug(rec.path_slug)?.name ?? rec.path_slug.replace(/-/g, " ")}</h2>
         <div className="mt-1 flex items-center gap-2 text-xs text-ink-500">
           <span>Fit score</span>
           <span className="font-semibold text-ink-300">{rec.fit_score}/100</span>
@@ -210,8 +211,8 @@ function BestMatchReveal({
           <Badge tone="warm" className="w-fit gap-1.5">
             <Award className="h-3 w-3" /> Best Match
           </Badge>
-          <h2 className="mt-4 font-display text-3xl font-semibold capitalize tracking-tight text-ink-100 sm:text-4xl">
-            {rec.path_slug.replace(/-/g, " ")}
+          <h2 className="mt-4 font-display text-3xl font-semibold tracking-tight text-ink-100 sm:text-4xl">
+            {careerBySlug(rec.path_slug)?.name ?? rec.path_slug.replace(/-/g, " ")}
           </h2>
           <p className="mt-4 max-w-xl text-sm leading-relaxed text-ink-300">{rec.why_it_fits}</p>
 

@@ -19,6 +19,7 @@ from app.models.career import CareerPath
 from app.models.marketplace import Mentor
 from app.models.user import User
 from app.services import marketplace_service, skill_gap_service
+from app.services.career_taxonomy import canonical_slug
 
 
 def _first_name(display_name: str) -> str:
@@ -71,7 +72,7 @@ def build_reason(mentor: Mentor, path_name: str, level: str, gap_labels: list[st
 async def recommend_mentors_for_user(
     db: AsyncSession, user: User, path_slug: str, limit: int = 3
 ) -> dict:
-    path = (await db.execute(select(CareerPath).where(CareerPath.slug == path_slug))).scalar_one_or_none()
+    path = (await db.execute(select(CareerPath).where(CareerPath.slug == canonical_slug(path_slug)))).scalar_one_or_none()
     path_name = path.name if path else path_slug.replace("-", " ").title()
 
     snapshot = await skill_gap_service.get_skill_snapshot(db, user, path_slug)

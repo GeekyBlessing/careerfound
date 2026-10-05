@@ -23,6 +23,7 @@ async def submit_assessment(db: AsyncSession, user_id: uuid.UUID, payload: Asses
             "tools": p.tools,
             "remote_potential": p.remote_potential,
             "earning_notes": p.earning_notes,
+            "category": p.category,
         }
         for p in paths
     ]

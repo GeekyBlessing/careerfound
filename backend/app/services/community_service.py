@@ -6,10 +6,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.career import CareerPath
 from app.models.community import Community, CommunityPost
 from app.models.user import User
+from app.services.career_taxonomy import canonical_slug
 
 
 async def get_community_by_path(db: AsyncSession, path_slug: str) -> Community | None:
-    path = (await db.execute(select(CareerPath).where(CareerPath.slug == path_slug))).scalar_one_or_none()
+    path = (await db.execute(select(CareerPath).where(CareerPath.slug == canonical_slug(path_slug)))).scalar_one_or_none()
     if path is None:
         return None
     result = await db.execute(select(Community).where(Community.path_id == path.id))

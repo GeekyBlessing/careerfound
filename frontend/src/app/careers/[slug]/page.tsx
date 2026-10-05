@@ -24,6 +24,7 @@ import { Alert } from "@/components/ui/alert";
 import { SkeletonCard } from "@/components/ui/skeleton";
 import { SmartMentorRecommendation } from "@/components/mentors/smart-mentor-recommendation";
 import { api, ApiError } from "@/lib/api";
+import { careerBySlug } from "@/lib/career-categories";
 import type { CareerPath, CareerProjectItem, RoadmapOutline } from "@/types";
 
 const TIER_ORDER: CareerProjectItem["difficulty_label"][] = ["Beginner", "Intermediate", "Expert"];
@@ -56,11 +57,15 @@ export default function CareerDetailPage() {
     setError(null);
     Promise.all([api.get<CareerPath>(`/careers/${slug}`), api.get<CareerProjectItem[]>(`/careers/${slug}/projects`)])
       .then(([p, proj]) => {
+        // An old URL for a renamed career (devops, soc-analysis,
+        // ai-ml-engineering) resolves server-side; move the address bar to
+        // the career's current URL so links and bookmarks self-correct.
+        if (p.slug !== slug) router.replace(`/careers/${p.slug}`);
         setPath(p);
         setProjects(proj);
       })
       .catch((err) => setError(err instanceof ApiError ? err.message : "Couldn't load this career path."));
-  }, [slug]);
+  }, [slug, router]);
 
   async function startRoadmap() {
     if (!path) return;
@@ -88,10 +93,26 @@ export default function CareerDetailPage() {
       {path && (
         <div className="space-y-8">
           <div>
-            <p className="eyebrow">Career path</p>
+            <p className="eyebrow">
+              Career path
+              {path.category_label && (
+                <>
+                  <span aria-hidden="true">/</span>
+                  <Link href={`/careers?category=${path.category}`} className="focus-ring rounded hover:underline">
+                    {path.category_label}
+                  </Link>
+                </>
+              )}
+            </p>
             <h1 className="mt-1 font-display text-2xl font-semibold tracking-tight text-ink-100 sm:text-3xl">{path.name}</h1>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-400">{path.summary}</p>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-500">{path.beginner_summary}</p>
+            {path.who_its_for && (
+              <p className="mt-4 max-w-2xl text-sm leading-relaxed text-ink-400">
+                <span className="font-medium text-ink-200">Who it&apos;s for: </span>
+                {path.who_its_for}
+              </p>
+            )}
 
             <div className="mt-5 flex flex-wrap gap-2">
               {path.entry_roles.map((role) => (
@@ -253,6 +274,41 @@ export default function CareerDetailPage() {
             )}
           </div>
 
+          {(path.portfolio_expectations.length > 0 || path.career_progression.length > 0) && (
+            <div className="grid gap-4 lg:grid-cols-2">
+              {path.portfolio_expectations.length > 0 && (
+                <Card className="p-5">
+                  <h2 className="text-lg font-semibold tracking-tight text-ink-100">What your portfolio should show</h2>
+                  <p className="mt-1 text-sm text-ink-500">What hiring managers for this career expect to see.</p>
+                  <ul className="mt-4 space-y-2.5">
+                    {path.portfolio_expectations.map((item) => (
+                      <li key={item} className="flex gap-2 text-sm leading-relaxed text-ink-400">
+                        <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-accent" aria-hidden="true" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </Card>
+              )}
+              {path.career_progression.length > 0 && (
+                <Card className="p-5">
+                  <h2 className="text-lg font-semibold tracking-tight text-ink-100">Where this career leads</h2>
+                  <p className="mt-1 text-sm text-ink-500">A typical progression, from first role onward.</p>
+                  <ol className="mt-4 space-y-3">
+                    {path.career_progression.map((step, i) => (
+                      <li key={step} className="flex items-start gap-3 text-sm leading-relaxed text-ink-300">
+                        <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-accent/12 font-mono text-[10px] text-accent-light">
+                          {i + 1}
+                        </span>
+                        {step}
+                      </li>
+                    ))}
+                  </ol>
+                </Card>
+              )}
+            </div>
+          )}
+
           {(path.certifications.length > 0 || path.interview_prep.length > 0 || path.learning_resources.length > 0) && (
             <div>
               <h2 className="mb-1 text-lg font-semibold tracking-tight text-ink-100">Getting job ready</h2>
@@ -311,6 +367,30 @@ export default function CareerDetailPage() {
                     </ul>
                   </details>
                 )}
+              </div>
+            </div>
+          )}
+
+          {path.related_slugs.length > 0 && (
+            <div>
+              <h2 className="mb-1 text-lg font-semibold tracking-tight text-ink-100">Related careers</h2>
+              <p className="mb-5 text-sm text-ink-500">
+                Specialisations and neighbouring paths. Many people move between these as their interests settle.
+              </p>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {path.related_slugs.map((related) => {
+                  const entry = careerBySlug(related);
+                  if (!entry) return null;
+                  return (
+                    <Link key={related} href={`/careers/${related}`} className="focus-ring block rounded-2xl">
+                      <Card interactive className="flex items-center gap-3 p-4">
+                        <entry.icon className="h-5 w-5 flex-shrink-0 text-accent-light" />
+                        <span className="min-w-0 flex-1 text-sm font-medium text-ink-100">{entry.name}</span>
+                        <ArrowRight className="h-3.5 w-3.5 flex-shrink-0 text-ink-500" />
+                      </Card>
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           )}

@@ -19,6 +19,7 @@ from app.models.roadmap import (
     SkillNode,
 )
 from app.services.streak_service import touch_streak
+from app.services.career_taxonomy import canonical_slug
 
 
 class RoadmapError(Exception):
@@ -26,7 +27,7 @@ class RoadmapError(Exception):
 
 
 async def generate_roadmap(db: AsyncSession, user_id: uuid.UUID, path_slug: str) -> Roadmap:
-    result = await db.execute(select(CareerPath).where(CareerPath.slug == path_slug))
+    result = await db.execute(select(CareerPath).where(CareerPath.slug == canonical_slug(path_slug)))
     path = result.scalar_one_or_none()
     if path is None:
         raise RoadmapError(f"Unknown career path '{path_slug}'.")

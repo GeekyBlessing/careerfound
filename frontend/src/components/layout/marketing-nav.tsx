@@ -155,7 +155,7 @@ export function MarketingNav() {
     </header>
 
       {/* Mobile: a full-screen takeover rather than a dropdown sheet, so
-          long menus (21 careers grouped into 5 categories) have room to
+          long menus (every career grouped into its category) have room to
           breathe instead of scrolling inside a small floating panel.
           Deliberately rendered OUTSIDE <header>: that element has
           backdrop-blur (a CSS filter), and a filter on an ancestor creates
@@ -186,7 +186,7 @@ export function MarketingNav() {
             >
               <div className="space-y-5">
                 {CAREER_CATEGORIES.map((cat) => (
-                  <div key={cat.name}>
+                  <div key={cat.slug}>
                     <p className="font-mono text-[10px] uppercase tracking-wide text-ink-500">{cat.name}</p>
                     <ul className="mt-2 space-y-1">
                       {cat.paths.map((p) => (
@@ -274,10 +274,15 @@ function NavMenuButton({ label, active, onClick }: { label: string; active: bool
 function ExploreMenu() {
   return (
     <div>
-      <div className="grid grid-cols-2 gap-x-8 gap-y-6 lg:grid-cols-5">
+      <div className="grid grid-cols-2 gap-x-6 gap-y-6 lg:grid-cols-6">
         {CAREER_CATEGORIES.map((cat) => (
-          <div key={cat.name}>
-            <p className="font-mono text-[10px] uppercase tracking-wide text-ink-500">{cat.name}</p>
+          <div key={cat.slug}>
+            <Link
+              href={`/careers?category=${cat.slug}`}
+              className="focus-ring font-mono text-[10px] uppercase tracking-wide text-ink-500 transition-colors hover:text-accent-light"
+            >
+              {cat.name}
+            </Link>
             <ul className="mt-3 space-y-2">
               {cat.paths.map((p) => (
                 <li key={p.slug}>
@@ -295,7 +300,7 @@ function ExploreMenu() {
         ))}
       </div>
       <div className="mt-6 flex items-center justify-between border-t border-[rgb(var(--fg-tint)/0.08)] pt-5">
-        <p className="text-xs text-ink-500">{CAREER_PATH_COUNT} tech careers, grouped by discipline.</p>
+        <p className="text-xs text-ink-500">{CAREER_PATH_COUNT} careers in {CAREER_CATEGORIES.length} categories. Categories are for browsing; each career is its own path.</p>
         <Link href="/careers" className="inline-flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline">
           View the full directory <ArrowRight className="h-3.5 w-3.5" />
         </Link>

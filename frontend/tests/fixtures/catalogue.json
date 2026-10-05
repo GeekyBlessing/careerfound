@@ -1,0 +1,1036 @@
+[
+  {
+    "slug": "cybersecurity",
+    "name": "Cybersecurity",
+    "category": "security",
+    "summary": "The broad foundation of security: how attacks work, how defences are built, and which specialisation (security operations, cloud security or penetration testing) fits you best.",
+    "keywords": [
+      "cyber security",
+      "infosec",
+      "information security",
+      "security analyst",
+      "network security",
+      "threat",
+      "blue team",
+      "security+"
+    ],
+    "entry_roles": [
+      "Junior Security Analyst",
+      "IT Security Support",
+      "Security Associate"
+    ],
+    "tools": [
+      "Wireshark",
+      "Linux",
+      "Python",
+      "Nmap",
+      "Splunk"
+    ],
+    "skills_required": [
+      "Networking fundamentals (TCP/IP, DNS, HTTP)",
+      "Linux command line",
+      "Recognizing common attack patterns",
+      "Log analysis and pattern recognition",
+      "Basic scripting for automation"
+    ],
+    "related_slugs": [
+      "security-operations",
+      "penetration-testing",
+      "cloud-security",
+      "it-support"
+    ],
+    "category_label": "Security"
+  },
+  {
+    "slug": "security-operations",
+    "name": "Security Operations (SOC)",
+    "category": "security",
+    "summary": "Monitor an organisation's systems in real time, triage alerts, investigate incidents and escalate real attacks.",
+    "keywords": [
+      "soc",
+      "soc analyst",
+      "blue team",
+      "siem",
+      "incident response",
+      "threat detection",
+      "alert triage",
+      "monitoring",
+      "security operations center"
+    ],
+    "entry_roles": [
+      "SOC Analyst (Tier 1)",
+      "Security Monitoring Analyst"
+    ],
+    "tools": [
+      "Splunk",
+      "Wireshark",
+      "Windows Event Logs",
+      "MITRE ATT&CK",
+      "Ticketing systems"
+    ],
+    "skills_required": [
+      "Reading and triaging SIEM alerts",
+      "Networking fundamentals",
+      "Recognizing common attack signatures",
+      "Clear incident documentation and communication",
+      "Staying calm and methodical under time pressure"
+    ],
+    "related_slugs": [
+      "cybersecurity",
+      "cloud-security",
+      "penetration-testing"
+    ],
+    "category_label": "Security"
+  },
+  {
+    "slug": "penetration-testing",
+    "name": "Penetration Testing",
+    "category": "security",
+    "summary": "Legally break into systems on purpose to find weaknesses before criminals do.",
+    "keywords": [
+      "pentest",
+      "pen testing",
+      "ethical hacking",
+      "red team",
+      "offensive security",
+      "vulnerability assessment",
+      "bug bounty",
+      "hacker",
+      "burp suite"
+    ],
+    "entry_roles": [
+      "Junior Penetration Tester",
+      "Security Consultant (junior)",
+      "Application Security Analyst"
+    ],
+    "tools": [
+      "Kali Linux",
+      "Burp Suite",
+      "Python",
+      "Metasploit"
+    ],
+    "skills_required": [
+      "Networking and web application fundamentals",
+      "Common vulnerability classes (OWASP Top 10)",
+      "Scripting for exploit development and automation",
+      "Methodical, ethical testing process",
+      "Clear vulnerability reporting and communication"
+    ],
+    "related_slugs": [
+      "cybersecurity",
+      "security-operations"
+    ],
+    "category_label": "Security"
+  },
+  {
+    "slug": "cloud-security",
+    "name": "Cloud Security",
+    "category": "security",
+    "summary": "Protect internet-based (cloud) systems from misconfigurations and attackers.",
+    "keywords": [
+      "cloud security engineer",
+      "iam",
+      "aws security",
+      "azure security",
+      "devsecops",
+      "cspm",
+      "misconfiguration",
+      "guardduty",
+      "zero trust"
+    ],
+    "entry_roles": [
+      "Junior Cloud Security Analyst",
+      "Cloud Security Associate"
+    ],
+    "tools": [
+      "AWS",
+      "Azure",
+      "IAM",
+      "GuardDuty",
+      "Python"
+    ],
+    "skills_required": [
+      "Cloud fundamentals across at least one major provider",
+      "Identity and access management (IAM)",
+      "Common cloud misconfiguration patterns",
+      "Security monitoring and alerting",
+      "Networking and firewall fundamentals"
+    ],
+    "related_slugs": [
+      "cybersecurity",
+      "security-operations",
+      "cloud-engineering"
+    ],
+    "category_label": "Security"
+  },
+  {
+    "slug": "software-engineering",
+    "name": "Software Engineering",
+    "category": "engineering",
+    "summary": "The broad craft of designing, building, testing and maintaining software, before you choose to specialise in frontend, backend, full-stack or mobile.",
+    "keywords": [
+      "software developer",
+      "programmer",
+      "coding",
+      "programming",
+      "computer science",
+      "swe",
+      "algorithms",
+      "data structures",
+      "git"
+    ],
+    "entry_roles": [
+      "Junior Software Engineer",
+      "Associate Developer",
+      "Software Engineer I"
+    ],
+    "tools": [
+      "Python",
+      "JavaScript",
+      "Git/GitHub",
+      "SQL",
+      "REST APIs",
+      "VS Code"
+    ],
+    "skills_required": [
+      "Programming fundamentals (variables, loops, functions)",
+      "Data structures and algorithms basics",
+      "Version control with Git",
+      "Reading and debugging error messages",
+      "Working with APIs and databases"
+    ],
+    "related_slugs": [
+      "frontend-development",
+      "backend-engineering",
+      "full-stack-development",
+      "mobile-development",
+      "qa-engineering",
+      "technical-writing"
+    ],
+    "category_label": "Engineering"
+  },
+  {
+    "slug": "frontend-development",
+    "name": "Frontend Development",
+    "category": "engineering",
+    "summary": "Build the visual, interactive part of websites and apps that users see and click on.",
+    "keywords": [
+      "front end",
+      "front-end",
+      "web developer",
+      "ui developer",
+      "javascript",
+      "react",
+      "css",
+      "html",
+      "typescript",
+      "web design implementation"
+    ],
+    "entry_roles": [
+      "Junior Frontend Developer",
+      "UI Developer"
+    ],
+    "tools": [
+      "HTML/CSS",
+      "JavaScript",
+      "React",
+      "Git"
+    ],
+    "skills_required": [
+      "Semantic HTML and accessible markup",
+      "CSS layout (Flexbox, Grid, responsive design)",
+      "JavaScript fundamentals and the DOM",
+      "Component-based UI thinking (React)",
+      "Reading a design file (Figma) and building it accurately"
+    ],
+    "related_slugs": [
+      "software-engineering",
+      "full-stack-development",
+      "mobile-development",
+      "ui-ux-design"
+    ],
+    "category_label": "Engineering"
+  },
+  {
+    "slug": "backend-engineering",
+    "name": "Backend Engineering",
+    "category": "engineering",
+    "summary": "Build the servers, databases, and APIs that power an app behind the scenes.",
+    "keywords": [
+      "back end",
+      "back-end",
+      "api developer",
+      "server side",
+      "databases",
+      "python",
+      "node",
+      "sql",
+      "microservices",
+      "rest api"
+    ],
+    "entry_roles": [
+      "Junior Backend Developer",
+      "API Developer"
+    ],
+    "tools": [
+      "Python",
+      "Node.js",
+      "SQL",
+      "REST",
+      "GraphQL",
+      "Docker"
+    ],
+    "skills_required": [
+      "Server-side programming (Python or Node.js)",
+      "Relational database design and SQL",
+      "API design (REST)",
+      "Authentication and authorization basics",
+      "Reading logs and debugging server errors"
+    ],
+    "related_slugs": [
+      "software-engineering",
+      "full-stack-development",
+      "cloud-engineering",
+      "data-engineering",
+      "solutions-architecture",
+      "technical-writing",
+      "ai-engineering"
+    ],
+    "category_label": "Engineering"
+  },
+  {
+    "slug": "full-stack-development",
+    "name": "Full-Stack Development",
+    "category": "engineering",
+    "summary": "Build both the visible part of an app and the systems that power it behind the scenes.",
+    "keywords": [
+      "full stack",
+      "fullstack",
+      "web developer",
+      "mern",
+      "next.js",
+      "javascript",
+      "typescript",
+      "end to end",
+      "startup developer"
+    ],
+    "entry_roles": [
+      "Junior Full-Stack Developer",
+      "Web Developer"
+    ],
+    "tools": [
+      "JavaScript/TypeScript",
+      "React",
+      "Node.js",
+      "SQL"
+    ],
+    "skills_required": [
+      "Frontend fundamentals (HTML, CSS, JavaScript, React)",
+      "Backend fundamentals (APIs, databases)",
+      "Connecting a frontend to a real backend end to end",
+      "Basic deployment and hosting",
+      "Debugging across the whole stack, not just one layer"
+    ],
+    "related_slugs": [
+      "software-engineering",
+      "frontend-development",
+      "backend-engineering"
+    ],
+    "category_label": "Engineering"
+  },
+  {
+    "slug": "mobile-development",
+    "name": "Mobile Development",
+    "category": "engineering",
+    "summary": "Build the apps people carry in their pocket for iOS and Android, from first screen to app store release.",
+    "keywords": [
+      "mobile engineer",
+      "mobile app developer",
+      "ios",
+      "android",
+      "swift",
+      "kotlin",
+      "react native",
+      "flutter",
+      "app development",
+      "app store",
+      "mobile engineering"
+    ],
+    "entry_roles": [
+      "Junior Mobile Developer",
+      "Junior iOS Developer",
+      "Junior Android Developer"
+    ],
+    "tools": [
+      "React Native",
+      "Flutter",
+      "Swift",
+      "Kotlin",
+      "Git/GitHub",
+      "Xcode",
+      "Android Studio"
+    ],
+    "skills_required": [
+      "A mobile language and framework (Swift, Kotlin, React Native or Flutter)",
+      "Screen navigation and state management",
+      "Working with REST APIs and local storage",
+      "Handling permissions, notifications and offline behaviour",
+      "App store builds, signing and release"
+    ],
+    "related_slugs": [
+      "software-engineering",
+      "frontend-development"
+    ],
+    "category_label": "Engineering"
+  },
+  {
+    "slug": "qa-engineering",
+    "name": "QA Engineering",
+    "category": "engineering",
+    "summary": "Test software methodically to catch bugs before users do.",
+    "keywords": [
+      "quality assurance",
+      "software tester",
+      "test automation",
+      "sdet",
+      "playwright",
+      "selenium",
+      "manual testing",
+      "bug hunting",
+      "testing"
+    ],
+    "entry_roles": [
+      "Junior QA Engineer",
+      "QA Tester"
+    ],
+    "tools": [
+      "Test case design",
+      "Selenium/Playwright basics",
+      "Bug tracking tools"
+    ],
+    "skills_required": [
+      "Test case design and edge-case thinking",
+      "Manual testing methodology",
+      "Basic test automation (Selenium or Playwright)",
+      "Clear, reproducible bug reporting",
+      "Reading requirements and spotting ambiguity"
+    ],
+    "related_slugs": [
+      "software-engineering",
+      "devops-engineering"
+    ],
+    "category_label": "Engineering"
+  },
+  {
+    "slug": "cloud-engineering",
+    "name": "Cloud Engineering",
+    "category": "cloud-infrastructure",
+    "summary": "Build and run the cloud foundations software depends on: compute, storage, networking, access control and automation as code.",
+    "keywords": [
+      "cloud engineer",
+      "aws",
+      "azure",
+      "gcp",
+      "google cloud",
+      "terraform",
+      "infrastructure",
+      "networking",
+      "vpc",
+      "iac",
+      "sysadmin"
+    ],
+    "entry_roles": [
+      "Junior Cloud Engineer",
+      "Cloud Support Associate"
+    ],
+    "tools": [
+      "AWS",
+      "Azure",
+      "Terraform",
+      "Linux",
+      "Docker"
+    ],
+    "skills_required": [
+      "Cloud fundamentals (compute, storage, networking)",
+      "Linux administration basics",
+      "Infrastructure as code (Terraform)",
+      "Understanding cost and scaling tradeoffs",
+      "Basic scripting for automation"
+    ],
+    "related_slugs": [
+      "backend-engineering",
+      "devops-engineering",
+      "solutions-architecture",
+      "cloud-security",
+      "it-support"
+    ],
+    "category_label": "Cloud & Infrastructure"
+  },
+  {
+    "slug": "devops-engineering",
+    "name": "DevOps Engineering",
+    "category": "cloud-infrastructure",
+    "summary": "Automate how software is built, tested, deployed and observed, so teams can ship often without breaking things.",
+    "keywords": [
+      "devops",
+      "ci/cd",
+      "pipelines",
+      "kubernetes",
+      "docker",
+      "github actions",
+      "automation",
+      "observability",
+      "platform engineering",
+      "sre",
+      "site reliability"
+    ],
+    "entry_roles": [
+      "Junior DevOps Engineer",
+      "Release Engineer",
+      "Platform Support Engineer"
+    ],
+    "tools": [
+      "Docker",
+      "GitHub Actions",
+      "Kubernetes",
+      "Terraform",
+      "AWS",
+      "Linux"
+    ],
+    "skills_required": [
+      "Linux administration",
+      "CI/CD pipeline design",
+      "Containerization (Docker)",
+      "Infrastructure as code basics",
+      "Monitoring and incident response fundamentals"
+    ],
+    "related_slugs": [
+      "qa-engineering",
+      "cloud-engineering",
+      "solutions-architecture"
+    ],
+    "category_label": "Cloud & Infrastructure"
+  },
+  {
+    "slug": "solutions-architecture",
+    "name": "Solutions Architecture",
+    "category": "cloud-infrastructure",
+    "summary": "Design the overall blueprint for how a company's systems fit together.",
+    "keywords": [
+      "solutions architect",
+      "system design",
+      "architecture",
+      "aws",
+      "azure",
+      "gcp",
+      "scalability",
+      "integration",
+      "technical design",
+      "pre-sales"
+    ],
+    "entry_roles": [
+      "Associate Solutions Architect (typically after 2+ years elsewhere)",
+      "Technical Pre-Sales Engineer"
+    ],
+    "tools": [
+      "AWS",
+      "Azure",
+      "GCP",
+      "Architecture diagrams",
+      "System design"
+    ],
+    "skills_required": [
+      "System design and architecture tradeoffs",
+      "Cross-domain fluency (backend, cloud, networking, security)",
+      "Cost and scaling analysis",
+      "Stakeholder communication and technical documentation",
+      "Evaluating build-versus-buy decisions"
+    ],
+    "related_slugs": [
+      "backend-engineering",
+      "cloud-engineering",
+      "devops-engineering"
+    ],
+    "category_label": "Cloud & Infrastructure"
+  },
+  {
+    "slug": "data-analysis",
+    "name": "Data Analysis",
+    "category": "data-ai",
+    "summary": "Turn raw numbers into insights that help people make decisions.",
+    "keywords": [
+      "data analyst",
+      "analytics",
+      "sql",
+      "excel",
+      "dashboards",
+      "tableau",
+      "power bi",
+      "looker",
+      "business intelligence",
+      "bi",
+      "reporting",
+      "python",
+      "pandas"
+    ],
+    "entry_roles": [
+      "Junior Data Analyst",
+      "Business Intelligence Analyst",
+      "Reporting Analyst"
+    ],
+    "tools": [
+      "SQL",
+      "Excel/Sheets",
+      "Python (pandas)",
+      "Tableau/Looker"
+    ],
+    "skills_required": [
+      "SQL querying and joins",
+      "Spreadsheet analysis",
+      "Data cleaning and validation",
+      "Basic statistics",
+      "Turning findings into a clear narrative for non-technical people"
+    ],
+    "related_slugs": [
+      "data-science",
+      "data-engineering",
+      "product-management",
+      "no-code-automation"
+    ],
+    "category_label": "Data & AI"
+  },
+  {
+    "slug": "data-science",
+    "name": "Data Science",
+    "category": "data-ai",
+    "summary": "Use statistics, experiments and predictive models to answer open-ended questions and guide decisions with evidence.",
+    "keywords": [
+      "data scientist",
+      "statistics",
+      "a/b testing",
+      "experimentation",
+      "forecasting",
+      "predictive modelling",
+      "machine learning",
+      "python",
+      "pandas",
+      "jupyter",
+      "hypothesis testing"
+    ],
+    "entry_roles": [
+      "Junior Data Scientist",
+      "Associate Data Scientist",
+      "Analytics Scientist"
+    ],
+    "tools": [
+      "Python",
+      "pandas",
+      "SQL",
+      "Jupyter",
+      "scikit-learn",
+      "Statistics"
+    ],
+    "skills_required": [
+      "Statistics and probability (distributions, hypothesis testing)",
+      "Experiment design and A/B testing",
+      "Exploratory analysis and feature building in Python",
+      "Predictive modelling and honest evaluation",
+      "Communicating uncertainty and recommendations to decision makers"
+    ],
+    "related_slugs": [
+      "data-analysis",
+      "data-engineering",
+      "ai-engineering"
+    ],
+    "category_label": "Data & AI"
+  },
+  {
+    "slug": "data-engineering",
+    "name": "Data Engineering",
+    "category": "data-ai",
+    "summary": "Build the pipelines that move and organize data so others can use it.",
+    "keywords": [
+      "data engineer",
+      "etl",
+      "elt",
+      "pipelines",
+      "airflow",
+      "warehouse",
+      "spark",
+      "dbt",
+      "bigquery",
+      "snowflake",
+      "python",
+      "sql",
+      "data modelling"
+    ],
+    "entry_roles": [
+      "Junior Data Engineer",
+      "Analytics Engineer (junior)",
+      "ETL Developer"
+    ],
+    "tools": [
+      "SQL",
+      "Python",
+      "Airflow",
+      "Cloud data warehouses"
+    ],
+    "skills_required": [
+      "Advanced SQL and database design",
+      "Python for data pipelines",
+      "ETL/ELT pipeline design",
+      "Cloud data warehouse fundamentals",
+      "Data quality and validation practices"
+    ],
+    "related_slugs": [
+      "backend-engineering",
+      "data-analysis",
+      "data-science",
+      "ai-engineering"
+    ],
+    "category_label": "Data & AI"
+  },
+  {
+    "slug": "ai-engineering",
+    "name": "AI Engineering",
+    "category": "data-ai",
+    "summary": "Build and ship AI-powered products: train and evaluate machine learning models, and build applications on top of large language models.",
+    "keywords": [
+      "ai engineer",
+      "machine learning engineer",
+      "ml engineer",
+      "ml",
+      "mlops",
+      "deep learning",
+      "pytorch",
+      "llm",
+      "rag",
+      "generative ai",
+      "genai",
+      "nlp",
+      "python",
+      "ai/ml",
+      "neural networks"
+    ],
+    "entry_roles": [
+      "Junior AI Engineer",
+      "Junior ML Engineer",
+      "AI Application Developer"
+    ],
+    "tools": [
+      "Python",
+      "NumPy/pandas",
+      "scikit-learn",
+      "PyTorch",
+      "LLM APIs",
+      "Vector databases"
+    ],
+    "skills_required": [
+      "Python for data science",
+      "Linear algebra and statistics fundamentals",
+      "Classical machine learning (regression, classification)",
+      "Model evaluation and avoiding overfitting",
+      "Basic neural networks and deep learning concepts",
+      "Building applications on LLM APIs, including retrieval and evaluation"
+    ],
+    "related_slugs": [
+      "data-science",
+      "data-engineering",
+      "backend-engineering"
+    ],
+    "category_label": "Data & AI"
+  },
+  {
+    "slug": "ui-ux-design",
+    "name": "UI/UX Design",
+    "category": "design-product",
+    "summary": "Research how people use interfaces, then design the screens, interactions and flows that make a product easy and pleasant to use.",
+    "keywords": [
+      "ui designer",
+      "ux designer",
+      "user experience",
+      "user interface",
+      "interaction design",
+      "wireframes",
+      "prototyping",
+      "usability testing",
+      "accessibility",
+      "figma",
+      "user research"
+    ],
+    "entry_roles": [
+      "Junior UX Designer",
+      "UI Designer"
+    ],
+    "tools": [
+      "Figma",
+      "Usability testing",
+      "Wireframing",
+      "Accessibility checklists"
+    ],
+    "skills_required": [
+      "Visual design fundamentals (typography, color, spacing)",
+      "Interaction design and usability principles",
+      "Wireframing and high-fidelity prototyping",
+      "Basic usability testing",
+      "Accessibility fundamentals"
+    ],
+    "related_slugs": [
+      "frontend-development",
+      "product-design",
+      "graphic-design"
+    ],
+    "category_label": "Design & Product"
+  },
+  {
+    "slug": "product-design",
+    "name": "Product Design",
+    "category": "design-product",
+    "summary": "Own the whole product experience: frame the problem, design the end-to-end flows, build the design system and ship alongside engineers and product managers.",
+    "keywords": [
+      "product designer",
+      "design systems",
+      "end to end design",
+      "figma",
+      "product thinking",
+      "design handoff",
+      "case study",
+      "design ops",
+      "ux"
+    ],
+    "entry_roles": [
+      "Junior Product Designer",
+      "Associate Product Designer"
+    ],
+    "tools": [
+      "Figma",
+      "Design systems",
+      "Prototyping",
+      "Product metrics",
+      "User research"
+    ],
+    "skills_required": [
+      "Problem framing and product thinking",
+      "End-to-end flow design tied to product metrics",
+      "User research fundamentals",
+      "Design systems thinking",
+      "Collaborating with engineers and product managers on handoff"
+    ],
+    "related_slugs": [
+      "ui-ux-design",
+      "product-management",
+      "graphic-design"
+    ],
+    "category_label": "Design & Product"
+  },
+  {
+    "slug": "product-management",
+    "name": "Product Management",
+    "category": "design-product",
+    "summary": "Decide what a product should do next and why.",
+    "keywords": [
+      "product manager",
+      "pm",
+      "apm",
+      "roadmap",
+      "prioritization",
+      "product strategy",
+      "metrics",
+      "discovery",
+      "prd",
+      "user stories",
+      "agile"
+    ],
+    "entry_roles": [
+      "Associate Product Manager",
+      "Product Analyst",
+      "Technical Product Owner"
+    ],
+    "tools": [
+      "Roadmapping tools",
+      "Analytics basics",
+      "User research"
+    ],
+    "skills_required": [
+      "Prioritization frameworks",
+      "Writing clear product requirements",
+      "Basic data analysis and metrics literacy",
+      "Stakeholder communication",
+      "User research fundamentals"
+    ],
+    "related_slugs": [
+      "data-analysis",
+      "product-design",
+      "no-code-automation",
+      "technical-writing"
+    ],
+    "category_label": "Design & Product"
+  },
+  {
+    "slug": "graphic-design",
+    "name": "Graphic Design",
+    "category": "design-product",
+    "summary": "Communicate ideas visually through branding, typography, layout and visual systems for print and digital use.",
+    "keywords": [
+      "graphic designer",
+      "visual design",
+      "branding",
+      "logo design",
+      "typography",
+      "layout",
+      "illustration",
+      "figma",
+      "illustrator",
+      "photoshop",
+      "canva",
+      "brand identity"
+    ],
+    "entry_roles": [
+      "Junior Graphic Designer",
+      "Brand Designer (junior)",
+      "Visual Designer"
+    ],
+    "tools": [
+      "Figma",
+      "Adobe Illustrator",
+      "Adobe Photoshop",
+      "Adobe InDesign",
+      "Canva"
+    ],
+    "skills_required": [
+      "Typography and type pairing",
+      "Colour theory and palettes",
+      "Layout, grids and visual hierarchy",
+      "Brand identity and visual systems",
+      "Preparing files for print and digital delivery"
+    ],
+    "related_slugs": [
+      "ui-ux-design",
+      "product-design"
+    ],
+    "category_label": "Design & Product"
+  },
+  {
+    "slug": "it-support",
+    "name": "IT Support",
+    "category": "operations-digital",
+    "summary": "Help people solve everyday computer and technology problems.",
+    "keywords": [
+      "help desk",
+      "service desk",
+      "desktop support",
+      "technical support",
+      "it technician",
+      "comptia a+",
+      "troubleshooting",
+      "windows",
+      "active directory",
+      "ticketing"
+    ],
+    "entry_roles": [
+      "IT Support Technician",
+      "Help Desk Analyst"
+    ],
+    "tools": [
+      "Windows/Mac fundamentals",
+      "Networking basics",
+      "Ticketing systems"
+    ],
+    "skills_required": [
+      "Operating system troubleshooting (Windows and Mac)",
+      "Basic networking (Wi-Fi, printers, connectivity issues)",
+      "Clear, patient communication with non-technical users",
+      "Ticketing and documentation habits",
+      "Systematic problem-solving under time pressure"
+    ],
+    "related_slugs": [
+      "cybersecurity",
+      "cloud-engineering",
+      "no-code-automation"
+    ],
+    "category_label": "Operations & Digital"
+  },
+  {
+    "slug": "no-code-automation",
+    "name": "No-Code / Automation",
+    "category": "operations-digital",
+    "summary": "Build working software tools without writing much or any code.",
+    "keywords": [
+      "no code",
+      "nocode",
+      "low code",
+      "automation",
+      "zapier",
+      "make",
+      "airtable",
+      "bubble",
+      "webflow",
+      "workflow",
+      "internal tools",
+      "citizen developer"
+    ],
+    "entry_roles": [
+      "Automation Specialist",
+      "No-Code Developer"
+    ],
+    "tools": [
+      "Zapier/Make",
+      "Airtable",
+      "Webflow/Bubble"
+    ],
+    "skills_required": [
+      "Workflow and process thinking",
+      "Connecting apps via APIs without writing code",
+      "Database/spreadsheet structuring (Airtable)",
+      "Basic logic (conditionals, triggers)",
+      "Client or stakeholder communication for freelance work"
+    ],
+    "related_slugs": [
+      "data-analysis",
+      "it-support",
+      "product-management"
+    ],
+    "category_label": "Operations & Digital"
+  },
+  {
+    "slug": "technical-writing",
+    "name": "Technical Writing",
+    "category": "operations-digital",
+    "summary": "Explain complex technical things in a way anyone can understand.",
+    "keywords": [
+      "technical writer",
+      "documentation",
+      "docs",
+      "api documentation",
+      "docs as code",
+      "markdown",
+      "content design",
+      "developer documentation",
+      "knowledge base",
+      "communication"
+    ],
+    "entry_roles": [
+      "Junior Technical Writer",
+      "Documentation Specialist",
+      "Content Designer"
+    ],
+    "tools": [
+      "Markdown",
+      "Docs-as-code tools",
+      "API documentation"
+    ],
+    "skills_required": [
+      "Clear, concise technical writing",
+      "Understanding of the product/API you're documenting",
+      "Information structuring and navigation design",
+      "Basic Markdown and docs-as-code workflows",
+      "Working with subject-matter experts to extract accurate information"
+    ],
+    "related_slugs": [
+      "software-engineering",
+      "backend-engineering",
+      "product-management"
+    ],
+    "category_label": "Operations & Digital"
+  }
+]

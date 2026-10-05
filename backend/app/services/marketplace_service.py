@@ -27,6 +27,7 @@ from app.models.marketplace import (
 from app.models.roadmap import Roadmap, RoadmapStatus
 from app.models.user import Role, User
 from app.services import skill_gap_service
+from app.services.career_taxonomy import slug_matches
 
 _HELP_TOPIC_LABELS = {
     "choose_career": "figuring out which tech career to choose",
@@ -61,7 +62,7 @@ async def list_mentors(db: AsyncSession, path_slug: str | None, min_rating: floa
     result = await db.execute(query)
     mentors = list(result.scalars().all())
     if path_slug:
-        mentors = [m for m in mentors if path_slug in (m.paths or [])]
+        mentors = [m for m in mentors if any(slug_matches(tag, path_slug) for tag in (m.paths or []))]
     if min_rating:
         mentors = [m for m in mentors if m.rating_avg >= min_rating]
     return mentors

@@ -19,6 +19,7 @@ from app.models.career import CareerPath
 from app.models.progress import UserSkillProgress
 from app.models.roadmap import SkillNode
 from app.models.user import User
+from app.services.career_taxonomy import canonical_slug
 
 # Skill categories in the rough order a learner encounters them. "career"
 # (portfolio/job-prep skills) is deliberately last — those aren't "gaps" for
@@ -31,7 +32,7 @@ class UnknownPathError(ValueError):
 
 
 async def get_skill_snapshot(db: AsyncSession, user: User, path_slug: str, max_gaps: int = 3) -> dict:
-    path = (await db.execute(select(CareerPath).where(CareerPath.slug == path_slug))).scalar_one_or_none()
+    path = (await db.execute(select(CareerPath).where(CareerPath.slug == canonical_slug(path_slug)))).scalar_one_or_none()
     if path is None:
         raise UnknownPathError(f"Unknown career path: {path_slug}")
 

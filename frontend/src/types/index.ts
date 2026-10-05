@@ -44,6 +44,14 @@ export interface CareerPath {
   interview_prep: string[];
   learning_resources: LearningResource[];
   roadmap_outline: RoadmapOutline;
+  /** Catalogue category slug (a filter and grouping label, never a career). */
+  category: string;
+  category_label: string;
+  related_slugs: string[];
+  keywords: string[];
+  who_its_for: string;
+  portfolio_expectations: string[];
+  career_progression: string[];
 }
 
 export interface SkillTransfer {

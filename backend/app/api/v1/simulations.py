@@ -10,6 +10,7 @@ from app.models.career import CareerPath
 from app.models.progress import Simulation, UserSimulationAttempt
 from app.models.user import User
 from app.services.streak_service import touch_streak
+from app.services.career_taxonomy import canonical_slug
 
 router = APIRouter(prefix="/simulations", tags=["simulations"])
 
@@ -18,7 +19,7 @@ router = APIRouter(prefix="/simulations", tags=["simulations"])
 async def list_simulations(path: str | None = None, db: AsyncSession = Depends(get_db)):
     query = select(Simulation)
     if path:
-        career = (await db.execute(select(CareerPath).where(CareerPath.slug == path))).scalar_one_or_none()
+        career = (await db.execute(select(CareerPath).where(CareerPath.slug == canonical_slug(path)))).scalar_one_or_none()
         if career is None:
             return []
         query = query.where(Simulation.path_id == career.id)

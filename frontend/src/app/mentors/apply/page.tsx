@@ -9,30 +9,10 @@ import { Alert } from "@/components/ui/alert";
 import { Input, Textarea } from "@/components/ui/input";
 import { api, ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
+import { CAREER_ORDER, careerBySlug } from "@/lib/career-categories";
 
-const PATH_OPTIONS = [
-  "cybersecurity",
-  "software-engineering",
-  "frontend-development",
-  "backend-engineering",
-  "full-stack-development",
-  "cloud-engineering",
-  "cloud-security",
-  "soc-analysis",
-  "penetration-testing",
-  "devops",
-  "data-analysis",
-  "data-engineering",
-  "ai-ml-engineering",
-  "product-design",
-  "ui-ux-design",
-  "product-management",
-  "technical-writing",
-  "qa-engineering",
-  "no-code-automation",
-  "it-support",
-  "solutions-architecture",
-];
+// Every career in the catalogue, in catalogue order (single source of truth).
+const PATH_OPTIONS = CAREER_ORDER;
 
 export default function ApplyToMentorPage() {
   const { user } = useAuth();
@@ -136,7 +116,7 @@ export default function ApplyToMentorPage() {
                         : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] text-ink-400 hover:bg-[rgb(var(--fg-tint)/0.06)]"
                     }`}
                   >
-                    {slug.replace(/-/g, " ")}
+                    {careerBySlug(slug)?.name ?? slug.replace(/-/g, " ")}
                   </button>
                 ))}
               </div>

@@ -38,6 +38,12 @@ from app.models.progress import (
 from app.models.roadmap import Exercise, Lesson, Project, Quiz, Roadmap, RoadmapPhase, RoadmapStatus, SkillEdge, SkillNode
 from app.models.user import Plan, Role, User
 from app.seed.career_paths import CAREER_PATHS
+from app.seed.catalogue_sync import (
+    normalize_mentor_tags,
+    rename_legacy_paths,
+    sync_career_fields,
+    sync_light_roadmap_content,
+)
 from app.seed.mentors import FOUNDING_MENTOR, MENTORS, MOBILE_ENGINEERING_MENTOR
 from app.seed.roadmap_content import CYBERSECURITY, SOFTWARE_ENGINEERING
 from app.seed.roadmap_content_extra import PATH_PROJECTS
@@ -46,7 +52,7 @@ from app.seed.simulations import SIMULATIONS
 ROADMAP_CONTENT = {
     "cybersecurity": CYBERSECURITY,
     "software-engineering": SOFTWARE_ENGINEERING,
-    # The remaining 19 paths get a lighter but fully real "project catalog"
+    # The remaining paths get a lighter but fully real "project catalog"
     # (Beginner / Intermediate / Expert projects) rather than a full
     # lesson/quiz curriculum — see roadmap_content_extra.py and
     # docs/PHASE_2.md item #5 for the plan to expand these to full roadmaps.
@@ -54,35 +60,25 @@ ROADMAP_CONTENT = {
 }
 
 
-# Directory-depth fields added to CareerPath after the 21 paths were
-# already seeded in production (see f3a7c1d92e40_add_career_directory_depth_fields).
-# Rows created before that migration exist in `existing` below and get
-# skipped entirely by the "already seeded" check, so without this list
-# they'd keep their empty defaults forever. Backfilled from CAREER_PATHS
-# only when still empty, so a real admin edit is never overwritten.
-CAREER_PATH_DEPTH_FIELDS = [
-    "skills_required",
-    "certifications",
-    "interview_prep",
-    "learning_resources",
-    "roadmap_outline",
-]
-
-
 async def seed_career_paths(db: AsyncSession) -> dict[str, CareerPath]:
+    # Rows stored under a legacy slug (ai-ml-engineering, soc-analysis, devops)
+    # are renamed in place first so their ids, roadmaps and progress survive.
+    await rename_legacy_paths(db, CAREER_PATHS)
+
     result = await db.execute(select(CareerPath))
     existing = {p.slug: p for p in result.scalars().all()}
     for data in CAREER_PATHS:
         if data["slug"] in existing:
-            path = existing[data["slug"]]
-            for field in CAREER_PATH_DEPTH_FIELDS:
-                if not getattr(path, field) and data.get(field):
-                    setattr(path, field, data[field])
             continue
         path = CareerPath(**data)
         db.add(path)
         existing[data["slug"]] = path
     await db.commit()
+
+    # The catalogue in app/seed is authoritative (nothing edits CareerPath
+    # rows at runtime), so existing rows are brought in line with it.
+    await sync_career_fields(db, CAREER_PATHS)
+
     # refresh ids
     result = await db.execute(select(CareerPath))
     return {p.slug: p for p in result.scalars().all()}
@@ -93,7 +89,12 @@ async def seed_roadmap_content(db: AsyncSession, paths: dict[str, CareerPath]) -
         path = paths[slug]
         existing_nodes = (await db.execute(select(SkillNode).where(SkillNode.path_id == path.id))).scalars().all()
         if existing_nodes:
-            continue  # already seeded
+            # Already seeded: full curricula (cybersecurity, software
+            # engineering) are left alone; lighter project catalogues are
+            # synced in place so catalogue edits reach existing databases.
+            if slug in PATH_PROJECTS:
+                await sync_light_roadmap_content(db, path, content)
+            continue
 
         skill_key_to_id: dict[str, uuid.UUID] = {}
         for skill in content["skills"]:
@@ -407,6 +408,7 @@ async def main() -> None:
         await seed_roadmap_content(db, paths)
         await seed_simulations(db, paths)
         await seed_mentors(db)
+        await normalize_mentor_tags(db)
         users = await seed_users(db)
         await seed_communities(db, paths, users["demo@careerfound.dev"])
         await seed_demo_progress(db, users, paths)

@@ -4,7 +4,7 @@ MENTORS = [
         headline="Senior SOC Manager, ex-Tier 1 analyst, now hires and trains junior analysts",
         bio="8 years in security operations across fintech and telecom. I love helping career switchers get their first SOC role, since I was one myself.",
         avatar_seed="chidinma",
-        paths=["cybersecurity", "soc-analysis"],
+        paths=["cybersecurity", "security-operations"],
         years_experience=8,
         hourly_rate_cents=4500,
         currency="USD",
@@ -88,7 +88,7 @@ MENTORS = [
         headline="DevOps Lead, Kubernetes and CI/CD at scale",
         bio="I've built deployment pipelines for teams of 5 and teams of 200. I like working with people transitioning from sysadmin or backend roles into DevOps specifically.",
         avatar_seed="elena",
-        paths=["devops"],
+        paths=["devops-engineering"],
         years_experience=9,
         hourly_rate_cents=5500,
         currency="USD",
@@ -100,7 +100,7 @@ MENTORS = [
         headline="ML Engineer, ex-research, now shipping models in production",
         bio="I spent 3 years in academic ML before moving to industry, so I know exactly which parts of a CS/ML degree matter for a job and which don't. I focus on making your projects portfolio-ready, not just technically correct.",
         avatar_seed="wei",
-        paths=["ai-ml-engineering"],
+        paths=["ai-engineering"],
         years_experience=6,
         hourly_rate_cents=7000,
         currency="USD",
@@ -207,7 +207,7 @@ FOUNDING_MENTOR = dict(
     avatar_url="/mentors/toriola.jpg",
     # Tags shown on the marketplace card/profile. Only "software-engineering",
     # "cybersecurity" and "cloud-security" are real CareerPath slugs today;
-    # "devsecops" and "security-automation" aren't in the 21-path catalog yet
+    # "devsecops" and "security-automation" aren't CareerPath slugs yet
     # so they won't drive path-filtered matching, but they're real areas
     # Toriola mentors in and render fine as plain tags (see mobile-engineering
     # mentor below for the same pattern).

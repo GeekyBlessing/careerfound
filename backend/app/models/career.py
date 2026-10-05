@@ -38,6 +38,18 @@ class CareerPath(Base, UUIDMixin, TimestampMixin):
     # {"beginner": list[str], "intermediate": list[str], "advanced": list[str]}
     roadmap_outline: Mapped[dict] = mapped_column(JSON, default=dict)
 
+    # Catalogue taxonomy. `category` is one of app.services.career_taxonomy.
+    # CATEGORY_SLUGS: a grouping/filtering label, never a career itself.
+    # `related_slugs` links neighbouring careers (specialisations and
+    # adjacent paths), `keywords` feeds search beyond the name, and the
+    # three trailing fields complete the career page.
+    category: Mapped[str] = mapped_column(String(40), default="", index=True)
+    related_slugs: Mapped[list] = mapped_column(JSON, default=list)
+    keywords: Mapped[list] = mapped_column(JSON, default=list)
+    who_its_for: Mapped[str] = mapped_column(Text, default="")
+    portfolio_expectations: Mapped[list] = mapped_column(JSON, default=list)
+    career_progression: Mapped[list] = mapped_column(JSON, default=list)
+
 
 class PathFitRule(Base, UUIDMixin, TimestampMixin):
     """Declarative scoring rule: how much a given profile trait/answer should

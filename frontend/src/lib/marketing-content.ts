@@ -1,3 +1,5 @@
+import { CAREER_CATEGORIES, CAREER_PATH_COUNT } from "@/lib/career-categories";
+
 import { Compass, Map, FolderGit2, MessageCircle } from "lucide-react";
 
 /**
@@ -103,7 +105,7 @@ export const faqs = [
   },
   {
     q: "What career paths are available?",
-    a: "21 tech career paths today, spanning software engineering, cybersecurity, cloud engineering, cloud security, DevOps, data analysis, data engineering, AI/ML engineering, frontend, backend, full-stack development, UI/UX and product design, product management, technical writing, QA engineering, no-code and automation, IT support, and solutions architecture. Browse the full directory on the Career Paths page.",
+    a: `${CAREER_PATH_COUNT} tech career paths today, grouped into ${CAREER_CATEGORIES.length} categories for browsing. Security: cybersecurity, security operations, penetration testing and cloud security. Engineering: software engineering, frontend, backend, full-stack, mobile and QA. Cloud and infrastructure: cloud engineering, DevOps and solutions architecture. Data and AI: data analysis, data science, data engineering and AI engineering. Design and product: UI/UX design, product design, product management and graphic design. Operations and digital: IT support, no-code and automation, and technical writing. Browse the full directory on the Career Paths page.`,
   },
   {
     q: "How do the projects work?",

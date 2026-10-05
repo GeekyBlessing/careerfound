@@ -7,6 +7,7 @@ from app.models.career import CareerPath
 from app.models.roadmap import Project, RoadmapPhase
 from app.schemas.career import CareerPathOut
 from app.schemas.roadmap import CareerProjectOut, RoleProjectCatalogEntry
+from app.services.career_taxonomy import canonical_slug
 
 router = APIRouter(prefix="/careers", tags=["careers"])
 
@@ -64,7 +65,7 @@ async def list_project_catalog(db: AsyncSession = Depends(get_db)):
 
 @router.get("/{slug}", response_model=CareerPathOut)
 async def get_career(slug: str, db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(CareerPath).where(CareerPath.slug == slug))
+    result = await db.execute(select(CareerPath).where(CareerPath.slug == canonical_slug(slug)))
     path = result.scalar_one_or_none()
     if path is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Career path not found")
@@ -78,7 +79,7 @@ async def list_career_projects(slug: str, db: AsyncSession = Depends(get_db)):
     powers the public project catalog on a career's detail page: no active
     roadmap or login required to explore what you'd actually build.
     """
-    path = (await db.execute(select(CareerPath).where(CareerPath.slug == slug))).scalar_one_or_none()
+    path = (await db.execute(select(CareerPath).where(CareerPath.slug == canonical_slug(slug)))).scalar_one_or_none()
     if path is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Career path not found")
     return await _projects_for_path(db, path)
