@@ -1,13 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { Alert } from "@/components/ui/alert";
-import { BrandTile } from "@/components/brand/logo";
+import { GlobalNav } from "@/components/layout/global-nav";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
 import { api, ApiError } from "@/lib/api";
@@ -363,18 +362,15 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen lg:grid lg:grid-cols-[minmax(0,26rem)_1fr]">
+    <>
+    <GlobalNav />
+    <div className="lg:grid lg:min-h-[calc(100vh-4rem)] lg:grid-cols-[minmax(0,26rem)_1fr]">
       {/* The journey so far: a fixed dark panel on desktop, a slim header
           on mobile. It shows where you are in the chapters and, as you
           answer, what we have heard from you, so the next screen reads as
           a conversation rather than a form. */}
-      <aside className="surface-ink relative flex flex-col overflow-hidden px-6 py-6 lg:sticky lg:top-0 lg:h-screen lg:px-10 lg:py-10">
-        <Link href="/" className="focus-ring flex w-fit items-center gap-2 rounded-lg font-display font-semibold">
-          <BrandTile className="h-7 w-7" />
-          CareerFound
-        </Link>
-
-        <div className="mt-6 lg:hidden">
+      <aside className="surface-ink relative flex flex-col overflow-hidden px-6 py-5 lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] lg:px-10 lg:py-10">
+        <div className="lg:hidden">
           <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[#9fd6a8]">
             {chapter ? `Chapter ${String(step).padStart(2, "0")} of 07 · ${chapter.name}` : "Discover your direction"}
           </p>
@@ -385,7 +381,7 @@ export default function OnboardingPage() {
           </div>
         </div>
 
-        <div className="mt-12 hidden flex-1 flex-col lg:flex">
+        <div className="hidden flex-1 flex-col lg:flex">
           <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[#9fd6a8]">Discover your direction</p>
           <ol className="mt-6 space-y-1">
             {CHAPTERS.map((c, i) => {
@@ -427,7 +423,7 @@ export default function OnboardingPage() {
         </div>
       </aside>
 
-      <main className="relative flex min-h-[calc(100vh-9rem)] flex-col justify-center px-6 py-10 sm:px-12 lg:min-h-screen lg:px-20">
+      <main className="relative flex flex-col justify-center px-6 py-10 sm:px-12 lg:min-h-[calc(100vh-4rem)] lg:px-20">
         <div className="bg-contour pointer-events-none absolute inset-x-0 top-0 -z-10 h-[420px]" />
         <div className="mx-auto w-full max-w-2xl">
           <div key={step} className="animate-fade-in-up">
@@ -522,5 +518,6 @@ export default function OnboardingPage() {
         </div>
       </main>
     </div>
+    </>
   );
 }

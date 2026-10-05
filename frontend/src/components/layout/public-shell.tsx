@@ -1,4 +1,4 @@
-import { MarketingNav } from "@/components/layout/marketing-nav";
+import { GlobalNav } from "@/components/layout/global-nav";
 import { Footer } from "@/components/layout/footer";
 
 /**
@@ -11,7 +11,7 @@ import { Footer } from "@/components/layout/footer";
 export function PublicShell({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <MarketingNav />
+      <GlobalNav />
       <main className="container-page py-8">{children}</main>
       <Footer />
     </>

@@ -50,7 +50,7 @@ export default function SettingsPage() {
           <p className="mt-1 text-sm text-ink-500">Manage your profile and how CareerFound looks for you.</p>
         </div>
 
-        <Card>
+        <Card id="profile" className="scroll-mt-24">
           <CardHeader className="flex flex-row items-center gap-2">
             <IconTile icon={UserIcon} size="sm" />
             <CardTitle>Profile</CardTitle>
@@ -69,7 +69,7 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card id="settings" className="scroll-mt-24">
           <CardHeader className="flex flex-row items-center gap-2">
             <IconTile icon={Mail} size="sm" />
             <CardTitle>Email</CardTitle>

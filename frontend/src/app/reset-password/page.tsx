@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { Alert } from "@/components/ui/alert";
 import { Card } from "@/components/ui/card";
-import { BrandTile } from "@/components/brand/logo";
+import { GlobalNav } from "@/components/layout/global-nav";
 import { api, ApiError } from "@/lib/api";
 
 export default function ResetPasswordPage() {
@@ -58,13 +58,11 @@ function ResetPasswordInner() {
   }
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4">
+    <>
+      <GlobalNav />
+    <div className="relative flex min-h-[calc(100vh-4rem)] items-center justify-center overflow-hidden px-4 py-10">
       <div className="bg-contour pointer-events-none absolute inset-x-0 top-0 -z-10 h-[420px]" />
       <div className="w-full max-w-sm">
-        <Link href="/" className="focus-ring mb-8 flex items-center justify-center gap-2 rounded-lg font-display font-semibold text-ink-100">
-          <BrandTile className="h-7 w-7" />
-          CareerFound
-        </Link>
         <Card className="animate-fade-in-up p-8 shadow-raised">
           {done ? (
             <div className="text-center" role="status" aria-live="polite">
@@ -113,5 +111,6 @@ function ResetPasswordInner() {
         </Card>
       </div>
     </div>
+    </>
   );
 }

@@ -31,7 +31,7 @@ import {
   Trophy,
   MessageSquare,
 } from "lucide-react";
-import { MarketingNav } from "@/components/layout/marketing-nav";
+import { GlobalNav } from "@/components/layout/global-nav";
 import { Footer } from "@/components/layout/footer";
 import { SectionHeading } from "@/components/marketing/section-heading";
 import { SectionDivider } from "@/components/marketing/section-divider";
@@ -279,7 +279,7 @@ const READINESS_STAGES: { label: string; body: string; href: string }[] = [
 export default function LandingPage() {
   return (
     <>
-      <MarketingNav />
+      <GlobalNav />
       <main>
         {/* ============================================================
             SCENE 01, DISCOVER. An editorial masthead, not a centered SaaS
