@@ -1,0 +1,372 @@
+{
+  "career": {
+    "slug": "cybersecurity",
+    "name": "Cybersecurity"
+  },
+  "levels": [
+    {
+      "level": "beginner",
+      "label": "Beginner",
+      "blurb": "Small, finished tools that each teach one core skill. You build something that runs, and you learn to publish it properly.",
+      "projects": [
+        {
+          "slug": "network-recon-tool",
+          "title": "Network Reconnaissance Tool",
+          "est_hours": 8,
+          "difficulty": 2,
+          "summary": "A Python command line scanner that finds open TCP ports on a host you own and reports what is listening.",
+          "skills": [
+            "TCP and ports",
+            "Python sockets",
+            "Command line interfaces",
+            "Threading basics"
+          ],
+          "tools": [
+            "Python 3",
+            "socket module",
+            "argparse",
+            "concurrent.futures",
+            "Nmap"
+          ],
+          "deliverable": "A GitHub repository containing the scanner, a sample JSON report from a scan of your own machine, tests, and a README that explains the tool and the legal limits of scanning."
+        },
+        {
+          "slug": "password-security-analyzer",
+          "title": "Password Security Analyzer",
+          "est_hours": 6,
+          "difficulty": 2,
+          "summary": "A tool that scores password strength with real rules, checks a local wordlist, and never stores or transmits the passwords it sees.",
+          "skills": [
+            "Python functions and modules",
+            "Regular expressions",
+            "Entropy and password strength",
+            "Hashing"
+          ],
+          "tools": [
+            "Python 3",
+            "re module",
+            "hashlib",
+            "pytest",
+            "A public common password list"
+          ],
+          "deliverable": "A GitHub repository with the analyzer, a command line interface, a test suite, and a README that explains how the score is calculated and why passwords are never stored."
+        },
+        {
+          "slug": "network-traffic-investigation",
+          "title": "Network Traffic Investigation",
+          "est_hours": 8,
+          "difficulty": 2,
+          "summary": "Investigate a packet capture of a suspicious incident, write the timeline and findings, and automate the first pass with a Python script.",
+          "skills": [
+            "Packet analysis",
+            "Reading protocols such as DNS, HTTP and TCP",
+            "Indicators of compromise",
+            "Timeline building"
+          ],
+          "tools": [
+            "Wireshark",
+            "tshark",
+            "Python 3",
+            "A public sample capture"
+          ],
+          "deliverable": "A GitHub repository with an investigation report in Markdown, the extraction script, the extracted data, and screenshots, all without the raw capture if its licence does not allow redistribution."
+        },
+        {
+          "slug": "security-log-analyzer",
+          "title": "Security Log Analyzer",
+          "est_hours": 9,
+          "difficulty": 2,
+          "summary": "A Python tool that parses authentication and web server logs, finds suspicious patterns such as brute force attempts, and produces a report.",
+          "skills": [
+            "Log parsing",
+            "Regular expressions",
+            "Detection rules and thresholds",
+            "Time windows"
+          ],
+          "tools": [
+            "Python 3",
+            "re module",
+            "collections and datetime",
+            "Sample log files",
+            "pytest"
+          ],
+          "deliverable": "A GitHub repository with the parser, the detection rules, sample logs, a generated report, tests and a README explaining each rule and its false positive risks."
+        }
+      ]
+    },
+    {
+      "level": "intermediate",
+      "label": "Intermediate",
+      "blurb": "Projects that combine several skills on realistic data and ask you to make design decisions of your own.",
+      "projects": [
+        {
+          "slug": "web-application-security-assessment",
+          "title": "Web Application Security Assessment",
+          "est_hours": 14,
+          "difficulty": 3,
+          "summary": "Assess a deliberately vulnerable web application you run yourself, document each finding with evidence and write remediation advice.",
+          "skills": [
+            "OWASP Top 10",
+            "HTTP and web requests",
+            "Intercepting proxies",
+            "Risk rating"
+          ],
+          "tools": [
+            "OWASP Juice Shop",
+            "Docker",
+            "Burp Suite Community or OWASP ZAP",
+            "Browser developer tools",
+            "A report template"
+          ],
+          "deliverable": "A GitHub repository with an assessment report, evidence screenshots, a finding register and a short remediation plan, without any exploit that works against real systems."
+        },
+        {
+          "slug": "siem-detection-lab",
+          "title": "SIEM Detection Lab",
+          "est_hours": 16,
+          "difficulty": 3,
+          "summary": "Build a small SIEM, ingest logs from real sources, write detection rules, and prove they fire by running safe attack simulations.",
+          "skills": [
+            "Log ingestion",
+            "SIEM searching",
+            "Detection logic",
+            "MITRE ATT&CK mapping"
+          ],
+          "tools": [
+            "Elastic Stack or Wazuh",
+            "Docker or a virtual machine",
+            "Sysmon or auditd",
+            "Atomic Red Team",
+            "MITRE ATT&CK"
+          ],
+          "deliverable": "A GitHub repository with the lab setup instructions, the detection rules as code, a detection catalogue mapped to ATT&CK, test evidence for each rule, dashboard exports and a README."
+        },
+        {
+          "slug": "cloud-security-posture-checker",
+          "title": "Cloud Security Posture Checker",
+          "est_hours": 14,
+          "difficulty": 3,
+          "summary": "A Python tool that scans a cloud account for risky configuration such as public storage and over broad permissions, and reports findings with fixes.",
+          "skills": [
+            "AWS identity and access management",
+            "Cloud networking",
+            "Storage security",
+            "Boto3 and cloud APIs"
+          ],
+          "tools": [
+            "AWS free tier account",
+            "Python 3 and boto3",
+            "Terraform",
+            "moto or localstack",
+            "AWS CLI"
+          ],
+          "deliverable": "A GitHub repository with the checker, Terraform for the intentionally misconfigured test resources, sample findings output, tests and a README with the least privilege policy the tool needs."
+        },
+        {
+          "slug": "soc-alert-dashboard",
+          "title": "SOC Alert Dashboard",
+          "est_hours": 14,
+          "difficulty": 3,
+          "summary": "A web dashboard where analysts see alerts, triage them with context, and record decisions, backed by a small API and database.",
+          "skills": [
+            "Python web APIs",
+            "SQL databases",
+            "Alert triage workflow",
+            "Data enrichment"
+          ],
+          "tools": [
+            "FastAPI",
+            "SQLite",
+            "SQLAlchemy",
+            "A simple frontend",
+            "pytest"
+          ],
+          "deliverable": "A GitHub repository with the API, the database model, the dashboard, sample alerts, tests, screenshots and a README that explains the triage workflow."
+        }
+      ]
+    },
+    {
+      "level": "advanced",
+      "label": "Advanced",
+      "blurb": "Engineering projects that integrate earlier work, include automated testing and ask you to defend your choices.",
+      "projects": [
+        {
+          "slug": "detection-engineering-pipeline",
+          "title": "Detection Engineering Pipeline",
+          "est_hours": 20,
+          "difficulty": 4,
+          "summary": "Treat detections as software: write Sigma rules, test them against labelled data in continuous integration, and measure their quality.",
+          "skills": [
+            "Sigma rule writing",
+            "Detection as code",
+            "Continuous integration",
+            "Test data design"
+          ],
+          "tools": [
+            "Sigma and pySigma",
+            "Python 3 and pytest",
+            "GitHub Actions",
+            "A labelled event dataset",
+            "MITRE ATT&CK data"
+          ],
+          "deliverable": "A GitHub repository with at least ten Sigma rules, labelled test data, a test harness, a CI workflow that passes, a generated coverage report and documentation of the contribution process."
+        },
+        {
+          "slug": "cloud-attack-path-analyzer",
+          "title": "Cloud Attack Path Analyzer",
+          "est_hours": 22,
+          "difficulty": 4,
+          "summary": "Model cloud identities and resources as a graph and find the chains of permissions an attacker could use to reach sensitive data.",
+          "skills": [
+            "Advanced IAM",
+            "Graph modelling",
+            "Privilege escalation techniques",
+            "Python data structures"
+          ],
+          "tools": [
+            "Python 3",
+            "networkx",
+            "boto3 or exported IAM data",
+            "Terraform",
+            "Graphviz or a similar tool"
+          ],
+          "deliverable": "A GitHub repository with the analyzer, a sample environment export, Terraform for a sandbox with planted paths, ranked findings, diagrams of the paths, tests and a README."
+        },
+        {
+          "slug": "automated-incident-response-pipeline",
+          "title": "Automated Incident Response Pipeline",
+          "est_hours": 22,
+          "difficulty": 4,
+          "summary": "Receive an alert, enrich it, decide on a response, and act with human approval and a full audit trail, in a safe sandbox.",
+          "skills": [
+            "Webhook and API design",
+            "Playbook design",
+            "Enrichment",
+            "Human in the loop controls"
+          ],
+          "tools": [
+            "Python and FastAPI",
+            "A job queue or background tasks",
+            "SQLite or PostgreSQL",
+            "A chat webhook or email in a test workspace",
+            "AWS sandbox or a local mock"
+          ],
+          "deliverable": "A GitHub repository with the pipeline, playbooks as code, a sandbox target, an audit log sample, tests including failure cases, an architecture diagram and a README with a safety design section."
+        }
+      ]
+    },
+    {
+      "level": "job_ready",
+      "label": "Job Ready",
+      "blurb": "A flagship project you can talk about for most of an interview, built and documented like real work.",
+      "projects": [
+        {
+          "slug": "cloud-security-operations-platform",
+          "title": "End to End Cloud Security Operations Platform",
+          "est_hours": 40,
+          "difficulty": 5,
+          "summary": "Your flagship project: a small security operations platform that detects, investigates and responds across a cloud environment, documented like a real engineering project.",
+          "skills": [
+            "Security architecture",
+            "Infrastructure as code",
+            "Cloud logging",
+            "Detection and response integration"
+          ],
+          "tools": [
+            "Terraform",
+            "AWS sandbox account",
+            "CloudTrail and VPC flow logs",
+            "Your earlier projects",
+            "GitHub Actions",
+            "Draw.io or a similar diagram tool"
+          ],
+          "deliverable": "A public repository with infrastructure as code, integrated components, a threat model, an architecture diagram, a runbook, a cost estimate, test evidence, a recorded incident walkthrough and a README written for a hiring manager."
+        }
+      ]
+    }
+  ],
+  "featured": {
+    "slug": "network-recon-tool",
+    "title": "Network Reconnaissance Tool",
+    "level": "beginner",
+    "summary": "A Python command line scanner that finds open TCP ports on a host you own and reports what is listening.",
+    "skills": [
+      "TCP and ports",
+      "Python sockets",
+      "Command line interfaces",
+      "Threading basics",
+      "Reading and writing JSON",
+      "Responsible scanning"
+    ],
+    "tools": [
+      "Python 3",
+      "socket module",
+      "argparse",
+      "concurrent.futures",
+      "Nmap"
+    ],
+    "deliverable": "A GitHub repository containing the scanner, a sample JSON report from a scan of your own machine, tests, and a README that explains the tool and the legal limits of scanning.",
+    "milestones": [
+      {
+        "stage": "build",
+        "title": "Set up the project"
+      },
+      {
+        "stage": "build",
+        "title": "Check a single port"
+      },
+      {
+        "stage": "build",
+        "title": "Scan a range"
+      },
+      {
+        "stage": "build",
+        "title": "Add concurrency"
+      },
+      {
+        "stage": "build",
+        "title": "Grab banners"
+      },
+      {
+        "stage": "build",
+        "title": "Add the safety guard"
+      },
+      {
+        "stage": "build",
+        "title": "Handle errors"
+      },
+      {
+        "stage": "test",
+        "title": "Write automated tests"
+      },
+      {
+        "stage": "test",
+        "title": "Compare with Nmap"
+      },
+      {
+        "stage": "document",
+        "title": "Write the README"
+      },
+      {
+        "stage": "document",
+        "title": "Capture evidence"
+      }
+    ],
+    "criteria": [
+      "I ran the scanner against a machine I own and saved the output.",
+      "My results match Nmap for the same port range, or I can explain every difference.",
+      "The tool refuses to scan an address I did not confirm.",
+      "Automated tests run and pass on a clean checkout.",
+      "The README explains how to run it and states the legal limits of scanning."
+    ],
+    "interview": [
+      "Explain what happens at the network level when your scanner checks a port that is open, closed and filtered.",
+      "Why does a full connect scan get noticed more easily than a SYN scan, and why did you choose a connect scan?",
+      "How did you decide the number of worker threads and the timeout?",
+      "A scan reports port 8080 filtered but the service is running. What could explain it?",
+      "How would a defender detect your scanner, and what would they see in their logs?",
+      "What legal and ethical rules did you build into the tool, and why?"
+    ],
+    "cv_bullet": "Built a concurrent Python TCP port scanner with banner grabbing and JSON reporting, validated against Nmap results and tested with automated unit tests."
+  }
+}

@@ -387,3 +387,13 @@ async def test_available_careers_lists_only_careers_with_a_curriculum(seeded):
     async with AsyncSessionLocal() as db:
         careers = await lab_service.available_careers(db)
     assert [c["slug"] for c in careers] == ["cybersecurity"] and careers[0]["projects"] == 12
+
+
+def test_homepage_lab_snapshot_is_not_stale():
+    from app.seed import export_lab_showcase
+
+    assert export_lab_showcase.SNAPSHOT_PATH.read_text(encoding="utf-8") == export_lab_showcase.render(), (
+        "Run `python -m app.seed.export_lab_showcase` to refresh frontend/src/data/lab-cybersecurity.json"
+    )
+    for text in _walk(export_lab_showcase.build_snapshot()):
+        assert not any(d in text for d in LONG_DASHES)

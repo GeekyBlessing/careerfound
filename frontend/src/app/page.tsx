@@ -11,43 +11,55 @@ import {
   PenTool,
   Check,
   ChevronDown,
-  Compass,
-  Target,
-  FolderGit2,
-  Users,
-  Map,
-  Briefcase,
-  Gauge,
   Bot,
-  CheckCircle2,
-  Lock,
-  FileText,
-  Award,
-  GitCommit,
-  Sparkles,
-  Laptop,
-  Rocket,
-  Globe,
-  Trophy,
-  MessageSquare,
+  Users,
 } from "lucide-react";
 import { GlobalNav } from "@/components/layout/global-nav";
 import { Footer } from "@/components/layout/footer";
 import { SectionHeading } from "@/components/marketing/section-heading";
 import { SectionDivider } from "@/components/marketing/section-divider";
 import { CareerExplorerSearch } from "@/components/marketing/career-explorer-search";
-import { InterfaceFrame } from "@/components/marketing/interface-frame";
-import { PhoneFrame } from "@/components/marketing/phone-frame";
 import { Reveal } from "@/components/marketing/reveal";
-import { PathTrack, type PathWaypoint } from "@/components/marketing/path-track";
+import { Parallax } from "@/components/marketing/parallax";
+import { StageLine } from "@/components/marketing/stage-line";
+import { Laptop, Monitor, Phone, Tablet } from "@/components/devices/devices";
+import { PhotoBackdrop } from "@/components/devices/photo-backdrop";
+import {
+  AssessmentScreen,
+  DashboardScreen,
+  InterviewScreen,
+  LabCurriculumScreen,
+  MatchesScreen,
+  MentorChatScreen,
+  MentorshipScreen,
+  PhoneAssessmentScreen,
+  PhoneLabScreen,
+  PhonePortfolioScreen,
+  PhoneRoadmapScreen,
+  PortfolioScreen,
+  PublishScreen,
+  ReadinessScreen,
+  RoadmapScreen,
+  WorkspaceScreen,
+} from "@/components/screens/screens";
+import { JOURNEY } from "@/components/screens/example";
+import {
+  MatchFragment,
+  PortfolioFragment,
+  ProjectFragment,
+  RoadmapFragment,
+  SkillsFragment,
+  StageFragment,
+} from "@/components/home/fragments";
+import { LabProgress } from "@/components/home/lab-progress";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DifficultyMeter } from "@/components/ui/difficulty-meter";
-import { ReadinessDial } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { pricingTiers, faqs } from "@/lib/marketing-content";
 import { CAREER_CATEGORIES, CAREER_PATH_COUNT, CAREER_ORDER } from "@/lib/career-categories";
+import lab from "@/data/lab-cybersecurity.json";
 
 export const metadata: Metadata = {
   title: "CareerFound: Find your tech career, step by step",
@@ -56,18 +68,12 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-// The hero's product panel: the whole CareerFound experience as five real
-// stages, each with the one line that describes what actually happens
-// there. Same <PathTrack> primitive the onboarding stepper and roadmap
-// phase tracker reuse, so this reads as a real product surface rather than
-// a one-off illustration.
-const heroWaypoints: PathWaypoint[] = [
-  { icon: Compass, label: "Discover", state: "active", caption: "Answer honest questions about how you think and work." },
-  { icon: Target, label: "Career Match", state: "upcoming", caption: "A Best Match, a Strong Alternative, and a Wild Card." },
-  { icon: Map, label: "Roadmap", state: "upcoming", caption: "A staged plan, beginner through advanced, for your path." },
-  { icon: FolderGit2, label: "Projects", state: "upcoming", caption: "Real builds, with feedback on every submission." },
-  { icon: Briefcase, label: "Portfolio", state: "upcoming", caption: "Finished work written up as proof you can show." },
-];
+// Staged entrance for the hero's pieces: plain CSS (no client JS), each piece
+// arriving a beat after the last so the composition assembles rather than
+// appearing all at once. Reduced motion collapses the duration globally.
+const enter = "animate-fade-in-up [animation-fill-mode:both]";
+
+const LAB_PROJECT_COUNT = lab.levels.reduce((n, l) => n + l.projects.length, 0);
 
 // Six real paths, with real entry_roles/tools/skills_required copied
 // verbatim from backend/app/seed/career_paths.py (the same fields the
@@ -141,140 +147,11 @@ const CATALOGUE: {
 
 // Non-null: CATALOGUE is a fixed, non-empty literal defined immediately
 // above, so the first entry is always present.
+// Listed in the catalogue's own order, so the numbered rows read 01, 02, 03
+// and the spotlight is the career the Project Lab is built around.
+CATALOGUE.sort((a, b) => CAREER_ORDER.indexOf(a.slug) - CAREER_ORDER.indexOf(b.slug));
 const FEATURED_CAREER = CATALOGUE[0]!;
 const SECONDARY_CAREERS = CATALOGUE.slice(1, 4);
-
-// The Discover scene's product excerpt: the real first chapter of the
-// onboarding journey (frontend/src/lib/discovery.ts), same question, same
-// options, same chapter names, not written for this page. `short` is the
-// compact label the small phone frame uses.
-const JOURNEY_CHAPTERS = ["Interests", "Strengths", "Working style", "Goals", "Technology", "Direction", "Starting point"];
-const ASSESSMENT_QUESTION = "What could you lose a whole afternoon to?";
-const ASSESSMENT_OPTIONS: { label: string; short: string; hint: string; icon: typeof Briefcase }[] = [
-  { label: "Designing how things look and feel", short: "Designing interfaces", hint: "Layouts, type, interactions", icon: PenTool },
-  { label: "Building things people use", short: "Building products", hint: "Apps, tools, products", icon: Code2 },
-  { label: "Protecting systems, or testing how they break", short: "Protecting systems", hint: "Defence and attack", icon: Shield },
-  { label: "Finding patterns in numbers", short: "Finding patterns", hint: "Charts, spreadsheets, trends", icon: BarChart3 },
-  { label: "Automating repetitive work", short: "Automating work", hint: "Make the boring part run itself", icon: Workflow },
-];
-
-// An example result, shaped exactly like the real /assessment/results page
-// (Career DNA, Best Match with a fit score, Strong Alternative, Wild Card).
-// It is labelled as an example in the interface; the values are illustrative.
-const RESULT_DNA = [
-  { label: "Creativity", value: 78 },
-  { label: "Communication", value: 74 },
-  { label: "People", value: 66 },
-  { label: "Problem solving", value: 52 },
-  { label: "Systems", value: 44 },
-  { label: "Mathematics", value: 40 },
-];
-
-// The homepage's "Build" stage: the same six-stage shape the roadmap page
-// itself uses (discover, then a staged phase progression to job-ready),
-// with real phase titles from the Cybersecurity roadmap
-// (backend/app/seed/roadmap_content.py) standing in as a concrete example
-// of what a phase list actually looks like once you're inside a path.
-const roadmapStory = [
-  { title: "Discover", body: "The assessment points you at one specific path, not a menu.", icon: Compass },
-  { title: "Foundations", body: "Computer fundamentals, networking, the command line: the base every phase after this assumes.", icon: Map },
-  { title: "Skills", body: "Path-specific skills, taught in order, each unlocked by the last.", icon: Gauge },
-  { title: "Projects", body: "Real builds at each phase, with AI feedback on every submission.", icon: FolderGit2 },
-  { title: "Portfolio", body: "Finished projects written up as proof, not just checked off a list.", icon: Briefcase },
-  { title: "Job ready", body: "A Tech Readiness Score and interview practice built around your target role.", icon: Award },
-];
-
-// The full Cybersecurity roadmap, phase titles verbatim from
-// backend/app/seed/roadmap_content.py (the "Phase N, " prefix is dropped
-// because the interface numbers them itself). Nine complete and Phase 10
-// active is the example state the roadmap scene shows.
-const ROADMAP_PHASES = [
-  "Computer Fundamentals",
-  "Networking",
-  "Linux",
-  "Python",
-  "Security Fundamentals",
-  "SOC Fundamentals",
-  "SIEM",
-  "Cloud Security",
-  "Detection Engineering",
-  "Portfolio",
-  "Job Preparation",
-];
-const ROADMAP_ACTIVE = 9; // zero-based index of "Portfolio"
-
-// Three real projects, verbatim from backend/app/seed/roadmap_content.py
-// (title, teaches, and difficulty copied exactly). difficulty follows the
-// same <=2 Beginner / 3 Intermediate / >3 Expert mapping used elsewhere in
-// the backend (see app/schemas/roadmap.py::difficulty_label).
-const FEATURED_PROJECT = {
-  title: "Build an automated security alert system",
-  path: "Cybersecurity",
-  phase: "Phase 10, Portfolio",
-  teaches: "Tying detection logic to real notifications, the last mile that makes a detection system actually useful.",
-  steps: [
-    "Define what counts as 'high severity' based on your log analyzer's logic.",
-    "Add a notification step: console/log first, then optionally email or a webhook.",
-    "Add basic rate limiting so one burst of events doesn't spam 50 notifications.",
-  ],
-  difficultyLabel: "Intermediate",
-  difficulty: 3,
-};
-
-const SUPPORTING_PROJECTS = [
-  {
-    title: "Create a mini SOC dashboard",
-    path: "Cybersecurity",
-    teaches: "Pulling logs, alerts, and summary metrics into one view, the core idea behind SOC tooling.",
-    difficultyLabel: "Intermediate",
-    difficulty: 3,
-  },
-  {
-    title: "Build a weather lookup app using a public API",
-    path: "Software Engineering",
-    teaches: "Calling a real external API, handling responses, and displaying results to a user.",
-    difficultyLabel: "Beginner",
-    difficulty: 2,
-  },
-];
-
-// A realistic (not fabricated-content) excerpt of what the Portfolio
-// Builder actually produces: a real project (see FEATURED_PROJECT/
-// SUPPORTING_PROJECTS above) written up with a status, not invented case
-// studies. Mirrors the fields /portfolio itself shows.
-const PORTFOLIO_ENTRIES = [
-  { title: "Build an automated security alert system", path: "Cybersecurity", status: "Published", icon: CheckCircle2 },
-  { title: "Create a mini SOC dashboard", path: "Cybersecurity", status: "Published", icon: CheckCircle2 },
-  { title: "Build a weather lookup app using a public API", path: "Software Engineering", status: "Draft", icon: GitCommit },
-];
-
-// Career readiness. The five signals and their weights are the real ones
-// (backend/app/services/readiness_service.py: knowledge 25%, projects 30%,
-// portfolio 15%, interview 15%, practical 15%); the values are an example
-// learner part-way through a path. Overall is the weighted sum, rounded.
-const READINESS_SIGNALS = [
-  { key: "knowledge_pct", label: "Knowledge", weight: 25, value: 72 },
-  { key: "projects_pct", label: "Projects", weight: 30, value: 58 },
-  { key: "portfolio_pct", label: "Portfolio", weight: 15, value: 40 },
-  { key: "interview_pct", label: "Interview readiness", weight: 15, value: 35 },
-  { key: "practical_pct", label: "Practical skills", weight: 15, value: 66 },
-];
-const READINESS_OVERALL = Math.round(READINESS_SIGNALS.reduce((n, r) => n + (r.value * r.weight) / 100, 0));
-// The two lowest signals, with the app's own "what would move your score" lines.
-const READINESS_NEXT = [
-  "Try a real-world simulation scenario to build interview readiness.",
-  "Generate a portfolio write-up for a completed project, it's a quick, high-leverage win.",
-];
-
-// The five-stage shape of the whole journey, in its plainest typographic
-// form (Learn, Build, Prove, Apply, Get hired), each tied to a real page.
-const READINESS_STAGES: { label: string; body: string; href: string }[] = [
-  { label: "Learn", body: "A staged roadmap for your path", href: "/roadmap" },
-  { label: "Build", body: "Real projects, not just lessons", href: "/projects" },
-  { label: "Prove", body: "A portfolio of finished work", href: "/portfolio" },
-  { label: "Apply", body: "Interview prep and AI feedback", href: "/mentor" },
-  { label: "Get hired", body: "A Tech Readiness Score you can track", href: "/assessment/results" },
-];
 
 export default function LandingPage() {
   return (
@@ -282,36 +159,29 @@ export default function LandingPage() {
       <GlobalNav />
       <main>
         {/* ============================================================
-            SCENE 01, DISCOVER. An editorial masthead, not a centered SaaS
-            hero: a poster-scale headline claims the left ~60% of the row,
-            a real product panel (the five-stage journey) sits layered on
-            the right, and a sourced-numbers stat strip runs the full width
-            underneath, so the first screen reads as a designed spread
-            rather than a text block over a box. */}
-        <section className="relative overflow-hidden border-b border-[rgb(var(--fg-tint)/0.08)] pb-0 pt-16 sm:pt-20">
-          <div className="bg-contour pointer-events-none absolute inset-x-0 top-0 -z-10 h-[620px]" />
-          <span
-            aria-hidden="true"
-            className="scene-figure pointer-events-none absolute -right-6 -top-4 hidden text-[13rem] text-ink-100 lg:block"
-          >
-            01
-          </span>
-
-          <div className="container-page grid gap-14 lg:grid-cols-[1.15fr_0.85fr] lg:items-start lg:gap-10">
-            <div>
+            HERO. Poster headline on the left; on the right a large laptop
+            running the real dashboard, a phone behind it, and three
+            fragments of the interface lifted out at full size and anchored
+            to the laptop's edges. The person photograph (supplied by the
+            team, see lib/photos.ts) sits behind the devices when present;
+            until then the composition is device-led. */}
+        <section className="relative overflow-hidden border-b border-[rgb(var(--fg-tint)/0.08)] pb-0 pt-14 sm:pt-20">
+          <div className="bg-contour pointer-events-none absolute inset-x-0 top-0 -z-10 h-[640px]" />
+          <div className="container-page grid gap-12 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-center lg:gap-4">
+            <div className="relative z-20 lg:pb-10">
               <p className="eyebrow gap-2 text-ink-400">
                 <span className="h-1.5 w-1.5 rounded-full bg-accent-light" aria-hidden="true" />
                 Career discovery, for people breaking into tech
               </p>
-              <h1 className="mt-6 max-w-2xl font-display text-poster font-semibold tracking-tight text-ink-100">
+              <h1 className="mt-6 max-w-[27rem] font-display text-[clamp(2.9rem,1.7rem+3.4vw,4.4rem)] font-semibold leading-[1.0] tracking-[-0.03em] text-ink-100">
                 Find your tech career.
                 <br />
                 <span className="text-accent-light">Build the proof</span> you did the work.
               </h1>
-              <p className="mt-7 max-w-lg text-deck leading-relaxed text-ink-300">
+              <p className="mt-7 max-w-sm text-deck leading-relaxed text-ink-300">
                 Find the tech career that actually fits you, follow a roadmap built for it, and build
                 real projects that prove you can do the work. When you want a second opinion, get
-                guidance from an AI mentor or from Toriola directly.
+                guidance from an AI mentor or from a real mentor.
               </p>
               <div className="mt-9 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
                 <Link href="/onboarding">
@@ -328,58 +198,64 @@ export default function LandingPage() {
               <p className="mt-5 text-xs text-ink-500">No credit card required, takes about 5 minutes</p>
             </div>
 
-            {/* Layered device composition, not a single flat card: a real
-                assessment screen sits tilted behind, the journey panel
-                sits in front and slightly counter-rotated, and a small
-                offset stat chip anchors the bottom corner. perspective-scene
-                gives the tilt real depth instead of a flat CSS rotation. */}
-            <Reveal className="perspective-scene relative pb-14 pl-8 pr-6 pt-4 sm:pb-20 sm:pl-16 sm:pr-10">
-              <div className="absolute -left-2 top-6 hidden -rotate-6 sm:block lg:-left-6">
-                <PhoneFrame label="Discover your direction, 01 / 07">
-                  <div className="flex h-full flex-col justify-between p-4">
-                    <div>
-                      <p className="font-mono text-[9px] uppercase tracking-wide text-ink-500">01 / 07 · Interests</p>
-                      <p className="mt-2 text-sm font-semibold leading-snug text-ink-100">{ASSESSMENT_QUESTION}</p>
-                    </div>
-                    <div className="space-y-1.5">
-                      {ASSESSMENT_OPTIONS.slice(0, 3).map((o, i) => (
-                        <div
-                          key={o.label}
-                          className={cn(
-                            "flex items-center gap-2 rounded-lg border px-2.5 py-2 text-[11px] font-medium",
-                            i === 0
-                              ? "border-accent bg-accent/15 text-accent-light"
-                              : "border-[rgb(var(--fg-tint)/0.1)] text-ink-400"
-                          )}
-                        >
-                          <o.icon className="h-3 w-3 flex-shrink-0" />
-                          {o.short}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </PhoneFrame>
+            {/* Wide screens: laptop foreground, the AI Mentor on a phone
+                behind and above it, three fragments anchored to the
+                laptop's edges (skills above-left, portfolio below-left,
+                a career match lower right). Nothing here repeats what the
+                laptop screen already shows. */}
+            <div className="relative hidden sm:block lg:ml-4 lg:-mr-[max(2rem,calc((100vw-72rem)/2+2rem))]">
+              <Parallax range={16} className="pointer-events-none absolute -right-6 -top-10 bottom-10 left-[22%]">
+                <PhotoBackdrop slot="hero" bare fade="left" className="h-full w-full" />
+              </Parallax>
+              <div className={cn(enter, "absolute right-[3%] top-[-12%] z-0 w-[20%] rotate-[5deg]")} style={{ animationDelay: "380ms" }}>
+                <Phone label="CareerFound on a phone: the AI Mentor helping break down an AWS security project. Example conversation.">
+                  <MentorChatScreen />
+                </Phone>
               </div>
+              <div className={cn(enter, "relative z-10 mt-[10%] w-[90%] transition-transform duration-500 ease-smooth hover:-translate-y-1")} style={{ animationDelay: "120ms" }}>
+                <Laptop label="CareerFound on a laptop: a Cybersecurity roadmap at 68 percent complete and a Project Lab project in progress. Example data.">
+                  <DashboardScreen />
+                </Laptop>
+              </div>
+              <Parallax range={10} className="absolute left-[3%] top-[0%] z-20 hidden w-[15.5rem] lg:block">
+                <div className={enter} style={{ animationDelay: "620ms" }}>
+                  <SkillsFragment />
+                </div>
+              </Parallax>
+              <Parallax range={-12} className="absolute -bottom-12 left-[9%] z-20 hidden w-[17rem] lg:block">
+                <div className={enter} style={{ animationDelay: "760ms" }}>
+                  <PortfolioFragment />
+                </div>
+              </Parallax>
+              <Parallax range={-14} className="absolute bottom-[-6%] right-[6%] z-20 w-[16rem]">
+                <div className={enter} style={{ animationDelay: "880ms" }}>
+                  <MatchFragment />
+                </div>
+              </Parallax>
+            </div>
 
-              <div className="relative translate-x-2 rotate-2 sm:translate-x-6">
-                <InterfaceFrame label="Your Career Path">
-                  <div className="p-6">
-                    <PathTrack waypoints={heroWaypoints} orientation="vertical" size="sm" />
-                  </div>
-                </InterfaceFrame>
+            {/* Phones: a recomposition, not a shrunken laptop. One phone big
+                enough to read, with two fragments overlapping it at full size. */}
+            <div className="relative mx-auto w-full max-w-[21rem] pb-24 pt-14 sm:hidden">
+              <div className={cn(enter, "ml-[2%] w-[66%]")} style={{ animationDelay: "100ms" }}>
+                <Phone label="CareerFound on a phone: your career matches, with Cloud Security at 92 percent">
+                  <MatchesScreen />
+                </Phone>
               </div>
-
-              <div className="absolute -bottom-4 right-0 hidden w-40 -rotate-2 rounded-xl border border-[rgb(var(--fg-tint)/0.12)] bg-warm/12 p-4 shadow-raised sm:block">
-                <p className="font-display text-2xl font-semibold text-ink-100">{CAREER_PATH_COUNT}</p>
-                <p className="mt-0.5 text-xs leading-snug text-ink-500">real tech career paths, each with its own roadmap</p>
+              <div className={cn(enter, "absolute right-0 top-0 w-[60%]")} style={{ animationDelay: "420ms" }}>
+                <RoadmapFragment />
               </div>
-            </Reveal>
+              <div className={cn(enter, "absolute bottom-0 left-0 w-[90%]")} style={{ animationDelay: "640ms" }}>
+                <ProjectFragment />
+              </div>
+            </div>
           </div>
 
-          {/* Full-width stat strip: the hero's closing beat, a horizontal
-              row of sourced numbers rather than trailing off with nothing
-              after the CTA. */}
-          <div className="container-page mt-14 grid grid-cols-2 gap-6 border-t border-[rgb(var(--fg-tint)/0.08)] py-8 sm:grid-cols-4">
+          <p className="container-page mt-10 text-[11px] text-ink-500 sm:mt-6">
+            Screens are the real CareerFound interface with an example learner. Progress and scores shown are examples.
+          </p>
+
+          <div className="container-page mt-8 grid grid-cols-2 gap-6 border-t border-[rgb(var(--fg-tint)/0.08)] py-8 sm:grid-cols-4">
             {[
               { value: String(CAREER_PATH_COUNT), label: "real career paths, not one generic track" },
               { value: String(CAREER_CATEGORIES.length), label: "categories to filter by, from security to design" },
@@ -424,172 +300,57 @@ export default function LandingPage() {
         </section>
 
         {/* ============================================================
-            SCENE 03, DISCOVER. The real first chapter of onboarding, shown
-            as a large product interface: the seven chapters down the left,
-            the Interests question with real options on the right, and a
-            running record of what you have told us. Typography on the left,
-            product on the right: the first shift in rhythm after the hero. */}
+            DISCOVER. A person answering the assessment on a tablet, the
+            real first chapter of onboarding on its screen, and the result
+            (a phone) overlapping it. On phones it recomposes to one phone
+            and one fragment. */}
         <SectionDivider label="Discover" className="pt-4" />
         <section id="how-it-works" className="overflow-hidden py-16 sm:py-24">
-          <div className="container-page grid items-center gap-14 lg:grid-cols-[0.8fr_1.2fr] lg:gap-14">
-            <Reveal>
-              <p className="eyebrow gap-2 text-ink-400">
-                <Sparkles className="h-3.5 w-3.5" /> Discover your direction
-              </p>
-              <h2 className="mt-4 max-w-lg font-display text-display font-semibold tracking-tight text-ink-100">
-                It starts with you, not a menu of jobs.
+          <div className="container-page grid items-center gap-14 lg:grid-cols-[0.72fr_1.28fr] lg:gap-10">
+            <Reveal className="relative z-10">
+              <p className="eyebrow gap-2 text-ink-400">01 · Discover</p>
+              <h2 className="mt-4 max-w-md font-display text-display font-semibold tracking-tight text-ink-100">
+                Start with what fits you, not a list of jobs.
               </h2>
               <p className="mt-5 max-w-md text-sm leading-relaxed text-ink-500">
-                Seven short chapters: what you could lose an afternoon to, what you are already good at,
-                how you like to work, what you want from tech, which technology pulls you in, how clear your
-                direction is and where you are starting from. Nothing is a trick question.
+                Seven short chapters on how you think, what you enjoy and where you are starting from. The
+                result is a ranked set of careers with a fit score for each, not a menu to browse and guess at.
               </p>
-              <Link href="/how-it-works" className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline">
-                Read the full walkthrough <ArrowRight className="h-3.5 w-3.5" />
+              <ul className="mt-6 max-w-md space-y-2 text-sm text-ink-300">
+                {["Interests, strengths and working style", "Goals, technology and starting point", "A Best Match, a Strong Alternative and a Wild Card"].map((t) => (
+                  <li key={t} className="flex items-start gap-2.5"><Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-accent-light" />{t}</li>
+                ))}
+              </ul>
+              <Link href="/onboarding" className="mt-7 inline-flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline">
+                Take the assessment <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </Reveal>
 
-            <Reveal delayMs={120} className="perspective-scene relative pb-6 sm:pb-10">
-              <div className="relative sm:-rotate-1">
-                <InterfaceFrame label="Discover your direction, chapter 1 of 7">
-                  <div className="grid sm:grid-cols-[11rem_1fr]">
-                    <ol className="hidden border-r border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.025)] p-5 sm:block">
-                      {JOURNEY_CHAPTERS.map((c, i) => (
-                        <li key={c} className="flex items-baseline gap-3 py-1.5">
-                          <span className={cn("w-5 font-mono text-[10px]", i === 0 ? "text-accent-light" : "text-ink-500")}>
-                            {String(i + 1).padStart(2, "0")}
-                          </span>
-                          <span className={cn("font-display text-sm", i === 0 ? "font-semibold text-ink-100" : "text-ink-500")}>{c}</span>
-                        </li>
-                      ))}
-                    </ol>
-                    <div className="p-5 sm:p-7">
-                      <p className="font-mono text-[10px] uppercase tracking-wide text-accent-light">01 / 07 · Interests</p>
-                      <p className="mt-2 font-display text-xl font-semibold leading-snug tracking-tight text-ink-100 sm:text-2xl">
-                        {ASSESSMENT_QUESTION}
-                      </p>
-                      <div className="mt-5">
-                        {ASSESSMENT_OPTIONS.map((o, i) => {
-                          const on = i === 0 || i === 1;
-                          return (
-                            <div
-                              key={o.label}
-                              className={cn(
-                                "flex items-center gap-3 border-b py-2.5",
-                                on ? "border-accent-light" : "border-[rgb(var(--fg-tint)/0.1)]"
-                              )}
-                            >
-                              <span
-                                className={cn(
-                                  "flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-[3px] border",
-                                  on ? "border-accent-light bg-accent-light text-[#0b0d0a]" : "border-[rgb(var(--fg-tint)/0.3)] text-transparent"
-                                )}
-                              >
-                                <Check className="h-2.5 w-2.5" />
-                              </span>
-                              <span className="min-w-0">
-                                <span className={cn("block text-sm font-medium leading-snug", on ? "text-ink-100" : "text-ink-300")}>{o.label}</span>
-                                <span className="block text-[11px] text-ink-500">{o.hint}</span>
-                              </span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                      <p className="mt-3 font-mono text-[10px] uppercase tracking-wide text-ink-500">2 of 5 chosen</p>
-                    </div>
-                  </div>
-                </InterfaceFrame>
-              </div>
-              <div className="absolute -bottom-2 right-2 hidden w-52 rotate-2 rounded-xl border border-[rgb(var(--fg-tint)/0.12)] bg-paper p-4 shadow-raised sm:block lg:-right-4">
-                <p className="font-mono text-[9px] uppercase tracking-wide text-ink-500">What we have heard so far</p>
-                <ul className="mt-2 space-y-1 text-xs text-ink-300">
-                  <li>Designing how things look and feel</li>
-                  <li>Building things people use</li>
-                </ul>
-              </div>
-            </Reveal>
-          </div>
-        </section>
-
-        {/* ============================================================
-            SCENE 03b, THE RESULT. What the journey produces, shown as the
-            real results interface (Career DNA, Best Match with a fit score
-            and the reason in the person's own words, Strong Alternative,
-            Wild Card) so "a match you can read" is demonstrated, not said.
-            Labelled as an example. */}
-        <SectionDivider label="Your match" />
-        <section className="bg-paper py-16 sm:py-24">
-          <div className="container-page grid items-start gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-14">
-            <Reveal>
-              <p className="eyebrow gap-2 text-ink-400">
-                <Target className="h-3.5 w-3.5" /> Your result
-              </p>
-              <h2 className="mt-4 max-w-md font-display text-display font-semibold tracking-tight text-ink-100">
-                A match you can read, not a quiz score.
-              </h2>
-              <p className="mt-5 max-w-md text-sm leading-relaxed text-ink-500">
-                You get a Best Match, a Strong Alternative and a Wild Card from a different field, each with a
-                fit score and the reason in your own words. Your Career DNA shows the shape of how you work, so
-                you can see why, and disagree with it if you want to.
-              </p>
-              <p className="mt-6 text-xs leading-relaxed text-ink-500">
-                Shown: an example result for someone who picked design and building in chapter one.
-              </p>
-            </Reveal>
-
-            <Reveal delayMs={120}>
-              <InterfaceFrame label="Your results, example">
-                <div className="grid gap-0 sm:grid-cols-[1fr_15rem]">
-                  <div className="p-6 sm:p-8">
-                    <span className="inline-flex items-center gap-1.5 rounded-[0.25rem] bg-warm/15 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wide text-warm">
-                      <Trophy className="h-3 w-3" /> Best Match
-                    </span>
-                    <div className="mt-4 flex items-end justify-between gap-4">
-                      <h3 className="font-display text-display font-semibold tracking-tight text-ink-100">UI/UX Design</h3>
-                      <p className="flex-shrink-0 text-right">
-                        <span className="font-display text-4xl font-semibold text-warm">87</span>
-                        <span className="block font-mono text-[10px] uppercase tracking-wide text-ink-500">/ 100 fit</span>
-                      </p>
-                    </div>
-                    <p className="mt-4 max-w-md text-sm leading-relaxed text-ink-400">
-                      This is your strongest match: designing interfaces that are easy and pleasant for people to
-                      use. You told us you are drawn to designing how things look and feel and building things people use.
-                    </p>
-                    <p className="mt-4 font-mono text-[10px] uppercase tracking-wide text-ink-500">Entry roles</p>
-                    <p className="mt-1 text-sm text-ink-300">Junior UX Designer, UI Designer</p>
-                    <div className="mt-6 grid gap-px overflow-hidden rounded-lg border border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.1)] sm:grid-cols-2">
-                      {[
-                        { tier: "Strong Alternative", name: "Product Design", score: 85 },
-                        { tier: "Wild Card", name: "Technical Writing", score: 77 },
-                      ].map((r) => (
-                        <div key={r.tier} className="bg-paper px-4 py-3">
-                          <p className="font-mono text-[9px] uppercase tracking-wide text-ink-500">{r.tier}</p>
-                          <p className="mt-1 flex items-baseline justify-between gap-2">
-                            <span className="font-display text-base font-semibold text-ink-100">{r.name}</span>
-                            <span className="font-mono text-xs text-ink-400">{r.score}</span>
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="border-t border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.025)] p-6 sm:border-l sm:border-t-0">
-                    <p className="font-mono text-[10px] uppercase tracking-wide text-accent-light">Your Career DNA</p>
-                    <ul className="mt-4 space-y-3.5">
-                      {RESULT_DNA.map((d) => (
-                        <li key={d.label}>
-                          <div className="flex items-baseline justify-between text-xs">
-                            <span className="text-ink-300">{d.label}</span>
-                            <span className="font-mono text-ink-500">{d.value}</span>
-                          </div>
-                          <div className="mt-1.5 h-1 rounded-full bg-[rgb(var(--fg-tint)/0.1)]">
-                            <div className="h-1 rounded-full bg-accent-light" style={{ width: `${d.value}%` }} />
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+            <Reveal delayMs={120} className="relative">
+              <div className="relative hidden pb-12 sm:block">
+                <Parallax range={14}>
+                  <PhotoBackdrop slot="discover" bare className="absolute inset-x-0 top-0 h-[88%]" fade="bottom" />
+                </Parallax>
+                <div className="relative w-[84%]">
+                  <Tablet label="CareerFound on a tablet: the career assessment asking what you could lose a whole afternoon to. Example data.">
+                    <AssessmentScreen />
+                  </Tablet>
                 </div>
-              </InterfaceFrame>
+                <div className="absolute -bottom-2 right-0 z-10 w-[27%] rotate-[4deg]">
+                  <Phone label="CareerFound on a phone: your strongest matches, Cloud Security 92 percent, Cloud Engineering 87 percent, Cybersecurity 82 percent. Example data.">
+                    <MatchesScreen />
+                  </Phone>
+                </div>
+              </div>
+
+              <div className="relative mx-auto w-full max-w-[21rem] pb-20 sm:hidden">
+                <div className="w-[68%]">
+                  <Phone label="CareerFound on a phone: the career assessment. Example data.">
+                    <PhoneAssessmentScreen />
+                  </Phone>
+                </div>
+                <MatchFragment className="absolute bottom-0 right-0 w-[78%]" />
+              </div>
             </Reveal>
           </div>
         </section>
@@ -752,392 +513,325 @@ export default function LandingPage() {
         </section>
 
         {/* ============================================================
-            SCENE 05, BUILD: Roadmap. A deliberately fixed dark surface
-            (surface-ink, independent of the light/dark toggle) so this
-            becomes the page's one "step into a dark room" moment, the way
-            an institutional site drops in a fixed dark features band. */}
-        <SectionDivider label="Build" />
-        <section className="surface-ink relative overflow-hidden py-20">
-          <span aria-hidden="true" className="scene-figure pointer-events-none absolute -right-4 -top-10 hidden text-[13rem] lg:block">
-            05
-          </span>
-          <div className="container-page relative">
-            <p className="eyebrow justify-start text-[#c3d19a]">Roadmap</p>
-            <h2 className="mt-3 max-w-xl font-display text-hero font-semibold tracking-tight">Know what to learn next.</h2>
-            <p className="surface-ink-muted mt-4 max-w-lg text-sm leading-relaxed">
-              Not a generic timeline: a staged plan for your specific path, with real phases you unlock in order.
-            </p>
-
-            <div className="mt-14 grid gap-14 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
-              <ol className="space-y-0">
-                {roadmapStory.map((s, i) => {
-                  const isLast = i === roadmapStory.length - 1;
-                  return (
-                    <li key={s.title} className="flex gap-6">
-                      <div className="flex flex-col items-center">
-                        <span className="font-display text-2xl font-semibold text-[#c3d19a]">{String(i + 1).padStart(2, "0")}</span>
-                        {!isLast && <div className="my-1 w-px flex-1 bg-white/12" />}
-                      </div>
-                      <div className={cn("min-w-0", !isLast && "pb-9")}>
-                        <div className="flex items-center gap-2 pt-1">
-                          <s.icon className="h-4 w-4 text-[#c3d19a]" aria-hidden="true" />
-                          <h3 className="font-display text-base font-semibold tracking-tight">{s.title}</h3>
-                        </div>
-                        <p className="surface-ink-muted mt-1.5 text-sm leading-relaxed">{s.body}</p>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ol>
-
-              <Reveal className="relative">
-                <InterfaceFrame label="Cybersecurity roadmap" tone="ink">
-                  <div className="border-b border-white/10 px-5 py-4 sm:px-6">
-                    <div className="flex items-baseline justify-between gap-4">
-                      <p className="font-display text-lg font-semibold tracking-tight text-[#f4f5f0]">Cybersecurity</p>
-                      <p className="font-mono text-[10px] uppercase tracking-wide text-white/50">
-                        {ROADMAP_ACTIVE} of {ROADMAP_PHASES.length} phases complete
-                      </p>
-                    </div>
-                    <div className="mt-3 flex gap-1" aria-hidden="true">
-                      {ROADMAP_PHASES.map((t, i) => (
-                        <span
-                          key={t}
-                          className={cn(
-                            "h-1 flex-1 rounded-full",
-                            i < ROADMAP_ACTIVE ? "bg-[#8fd18a]" : i === ROADMAP_ACTIVE ? "bg-[#c3d19a]" : "bg-white/12"
-                          )}
-                        />
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="grid sm:grid-cols-[1fr_1fr]">
-                    <ol className="divide-y divide-white/[0.07] border-white/10 sm:border-r">
-                      {ROADMAP_PHASES.map((title, i) => {
-                        const state = i < ROADMAP_ACTIVE ? "done" : i === ROADMAP_ACTIVE ? "active" : "upcoming";
-                        return (
-                          <li key={title} className="flex items-center gap-3 px-5 py-2.5 sm:px-6">
-                            <span className="w-5 font-mono text-[10px] text-white/35">{String(i + 1).padStart(2, "0")}</span>
-                            <span
-                              className={cn(
-                                "min-w-0 flex-1 truncate text-sm",
-                                state === "active" ? "font-medium text-[#f4f5f0]" : state === "done" ? "text-white/65" : "text-white/35"
-                              )}
-                            >
-                              {title}
-                            </span>
-                            {state === "done" && <CheckCircle2 className="h-3.5 w-3.5 flex-shrink-0 text-[#8fd18a]" aria-label="Complete" />}
-                            {state === "active" && <span className="h-3.5 w-3.5 flex-shrink-0 rounded-full border-2 border-[#c3d19a]" aria-label="In progress" />}
-                            {state === "upcoming" && <Lock className="h-3 w-3 flex-shrink-0 text-white/30" aria-label="Locked" />}
-                          </li>
-                        );
-                      })}
-                    </ol>
-
-                    <div className="border-t border-white/10 p-5 sm:border-t-0 sm:p-6">
-                      <p className="font-mono text-[10px] uppercase tracking-wide text-[#c3d19a]">Now: Phase 10, Portfolio</p>
-                      <p className="mt-2 text-xs leading-relaxed text-white/55">
-                        Turn your completed projects into a portfolio that gets you interviews.
-                      </p>
-                      <ul className="mt-5 space-y-4">
-                        <li className="flex gap-3">
-                          <FileText className="mt-0.5 h-4 w-4 flex-shrink-0 text-white/45" aria-hidden="true" />
-                          <span>
-                            <span className="block text-sm text-[#f4f5f0]">What makes a security portfolio stand out</span>
-                            <span className="block font-mono text-[10px] uppercase tracking-wide text-white/40">Lesson · 15 min</span>
-                          </span>
-                        </li>
-                        <li className="flex gap-3">
-                          <FolderGit2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#c3d19a]" aria-hidden="true" />
-                          <span>
-                            <span className="block text-sm text-[#f4f5f0]">{FEATURED_PROJECT.title}</span>
-                            <span className="block font-mono text-[10px] uppercase tracking-wide text-white/40">Project · {FEATURED_PROJECT.difficultyLabel}</span>
-                          </span>
-                        </li>
-                        <li className="flex gap-3">
-                          <Award className="mt-0.5 h-4 w-4 flex-shrink-0 text-white/45" aria-hidden="true" />
-                          <span>
-                            <span className="block text-sm text-[#f4f5f0]">Checkpoint: Portfolio</span>
-                            <span className="block font-mono text-[10px] uppercase tracking-wide text-white/40">Quiz · pass at 70%</span>
-                          </span>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </InterfaceFrame>
-                <p className="surface-ink-muted relative mt-4 text-xs leading-relaxed">
-                  Every path has its own full set of phases like these, each with lessons, exercises, projects and a
-                  checkpoint. These are the real phases of the Cybersecurity roadmap.
-                </p>
-              </Reveal>
-            </div>
-          </div>
-        </section>
-
-        {/* Projects: a case-study gallery. The featured build is framed as
-            a real interface excerpt (its own steps list, live-rendered),
-            and gets a full-width band to itself before the two smaller,
-            supporting builds sit beneath in a tighter row. */}
-        <section className="overflow-hidden py-20">
-          <div className="container-page">
-            <SectionHeading eyebrow="Projects" title="Don't just learn it. Build it." align="left" />
-
-            <div className="mt-12 grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
-              <div>
-                <p className="font-mono text-[11px] uppercase tracking-wide text-ink-500">
-                  {FEATURED_PROJECT.path} &middot; {FEATURED_PROJECT.phase}
-                </p>
-                <h3 className="mt-3 font-display text-display font-semibold tracking-tight text-ink-100">{FEATURED_PROJECT.title}</h3>
-                <p className="mt-4 max-w-md text-sm leading-relaxed text-ink-400">{FEATURED_PROJECT.teaches}</p>
-                <span className="mt-5 flex items-center gap-2 font-mono text-[10px] uppercase tracking-wide text-ink-500">
-                  <DifficultyMeter level={FEATURED_PROJECT.difficulty} /> {FEATURED_PROJECT.difficultyLabel}
-                </span>
-                <Link href="/projects" className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline">
-                  Browse every project <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
-              </div>
-
-              <Reveal className="perspective-scene relative pb-8 pr-10 sm:pb-12">
-                {/* A phone showing the two supporting projects as a real
-                    list peeks out behind the featured project's browser
-                    frame, so the "case-study gallery" reads as layered
-                    product screens rather than a browser frame plus a
-                    separate text row underneath. */}
-                <div className="absolute -bottom-6 -right-6 hidden rotate-6 sm:block">
-                  <PhoneFrame label="Projects" className="w-[180px]">
-                    <div className="divide-y divide-[rgb(var(--fg-tint)/0.08)] px-1">
-                      {SUPPORTING_PROJECTS.map((p) => (
-                        <div key={p.title} className="px-2.5 py-3">
-                          <p className="font-mono text-[8px] uppercase tracking-wide text-ink-500">{p.path}</p>
-                          <p className="mt-1 text-[11px] font-medium leading-snug text-ink-100">{p.title}</p>
-                          <span className="mt-1.5 flex items-center gap-1.5">
-                            <DifficultyMeter level={p.difficulty} /> <span className="text-[9px] text-ink-500">{p.difficultyLabel}</span>
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </PhoneFrame>
-                </div>
-                <div className="relative -rotate-1">
-                  <InterfaceFrame label={FEATURED_PROJECT.title}>
-                    <ol className="space-y-4 p-6">
-                      {FEATURED_PROJECT.steps.map((s, i) => (
-                        <li key={s} className="flex gap-4">
-                          <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-[0.35rem] bg-accent/12 font-mono text-xs text-accent-light">
-                            {i + 1}
-                          </span>
-                          <span className="text-sm leading-relaxed text-ink-300">{s}</span>
-                        </li>
-                      ))}
-                    </ol>
-                  </InterfaceFrame>
-                </div>
-              </Reveal>
-            </div>
-
-            {/* On mobile (where the layered phone peek is hidden), the two
-                supporting projects still get a real, if plainer, row - see
-                the hidden sm:block phone frame above for the desktop
-                treatment of this same data. */}
-            <div className="mt-14 grid gap-6 border-t border-[rgb(var(--fg-tint)/0.1)] pt-10 sm:hidden">
-              {SUPPORTING_PROJECTS.map((p) => (
-                <div key={p.title}>
-                  <p className="font-mono text-[10px] uppercase tracking-wide text-ink-500">{p.path}</p>
-                  <h4 className="mt-1.5 font-display text-base font-semibold text-ink-100">{p.title}</h4>
-                  <p className="mt-2 text-sm leading-relaxed text-ink-500">{p.teaches}</p>
-                  <span className="mt-3 flex items-center gap-2 font-mono text-[10px] uppercase tracking-wide text-ink-500">
-                    <DifficultyMeter level={p.difficulty} /> {p.difficultyLabel}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ============================================================
-            SHOW YOUR WORK, Portfolio. The product itself, shown as a real
-            interface excerpt (three actual project entries, in the exact
-            title-wrapped, statused shape /portfolio renders), not a row of
-            icon chips standing in for a description. */}
-        <SectionDivider label="Show your work" />
-        <section className="overflow-hidden bg-paper py-20">
-          <div className="container-page grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-16">
+            LEARN. The one fixed-dark band on the page. The whole journey
+            as large editorial type whose stages light up in turn, beside
+            the real roadmap running on a laptop. */}
+        <SectionDivider label="Learn" />
+        <section className="surface-ink relative overflow-hidden py-20 sm:py-28">
+          <div className="container-page relative grid items-start gap-14 lg:grid-cols-[0.8fr_1.2fr] lg:gap-8">
             <div>
-              <SectionHeading eyebrow="Portfolio" title="Turn learning into proof" align="left" />
-              <p className="mt-5 max-w-md text-sm leading-relaxed text-ink-500">
-                Every completed project can become a portfolio piece: a README, a CV bullet, and a
-                LinkedIn blurb, drafted from what you actually built and then yours to personalize
-                before you publish or apply.
+              <p className="eyebrow justify-start text-[#c3d19a]">02 · The path</p>
+              <h2 className="mt-3 max-w-md font-display text-display font-semibold tracking-tight">Know what to learn next.</h2>
+              <p className="surface-ink-muted mt-4 max-w-md text-sm leading-relaxed">
+                One connected line from the first question to a job-ready portfolio. Every stage is a real part of
+                CareerFound, and each one starts where the last one left off.
               </p>
-              <div className="mt-6 flex flex-wrap items-center gap-2 text-sm">
-                {[
-                  { label: "Learning", icon: Compass },
-                  { label: "Projects", icon: FolderGit2 },
-                  { label: "Portfolio", icon: FileText },
-                  { label: "Job applications", icon: Briefcase },
-                ].map((step, i, arr) => (
-                  <span key={step.label} className="flex items-center gap-2">
-                    <span className="flex items-center gap-1.5 text-ink-400">
-                      <step.icon className="h-3.5 w-3.5 text-accent-light" />
-                      {step.label}
-                    </span>
-                    {i < arr.length - 1 && <ArrowRight className="h-3 w-3 text-ink-500" />}
-                  </span>
-                ))}
+              <div className="mt-10">
+                <StageLine stages={JOURNEY} tone="ink" />
               </div>
-              <Link href="/portfolio" className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline">
-                See the Portfolio Builder <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
             </div>
 
-            <Reveal className="perspective-scene relative pb-10 pl-6 sm:pb-14 sm:pl-10">
-              <div className="absolute -bottom-2 -left-2 hidden -rotate-3 rounded-xl border border-[rgb(var(--fg-tint)/0.12)] bg-accent/10 p-4 shadow-raised sm:block">
-                <p className="font-display text-2xl font-semibold text-ink-100">
-                  {PORTFOLIO_ENTRIES.filter((e) => e.status === "Published").length}/{PORTFOLIO_ENTRIES.length}
-                </p>
-                <p className="mt-0.5 max-w-[9rem] text-xs leading-snug text-ink-500">projects published and ready to share</p>
+            <Reveal className="relative lg:sticky lg:top-28">
+              <div className="hidden pb-8 sm:block lg:-mr-24 lg:mt-24">
+                <div className="w-[96%] transition-transform duration-500 ease-smooth hover:-translate-y-1">
+                  <Laptop label="CareerFound on a laptop: the Cybersecurity roadmap, seven phases complete and Cloud Security in progress. Example data.">
+                    <RoadmapScreen />
+                  </Laptop>
+                </div>
               </div>
-              <div className="relative rotate-1">
-                <InterfaceFrame label="Your Portfolio">
-                  <div className="divide-y divide-[rgb(var(--fg-tint)/0.08)]">
-                    {PORTFOLIO_ENTRIES.map((entry) => (
-                      <div key={entry.title} className="flex items-center gap-4 p-5">
-                        <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-accent/10">
-                          <FolderGit2 className="h-5 w-5 text-accent-light" />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-medium text-ink-100">{entry.title}</p>
-                          <p className="mt-0.5 font-mono text-[10px] uppercase tracking-wide text-ink-500">{entry.path}</p>
-                        </div>
-                        <span className="flex flex-shrink-0 items-center gap-1.5 text-xs text-ink-400">
-                          <entry.icon className={cn("h-3.5 w-3.5", entry.status === "Published" ? "text-success" : "text-ink-500")} />
-                          {entry.status}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </InterfaceFrame>
+              <div className="mx-auto w-full max-w-[19rem] sm:hidden">
+                <Phone label="CareerFound on a phone: the Cybersecurity roadmap, seven phases complete and Cloud Security in progress. Example data.">
+                  <PhoneRoadmapScreen />
+                </Phone>
               </div>
             </Reveal>
           </div>
         </section>
 
         {/* ============================================================
-            GET GUIDANCE, Mentorship. Large portrait crops of the two real
-            mentors, full-width above the AI Mentor's own smaller, clearly
-            subordinate section further down (AI as one feature, not the
-            identity of the page). */}
-        <SectionDivider label="Get guidance" />
-        <section className="py-20">
+            BUILD. The strongest section. The Project Lab is the proof
+            engine, so it gets the widest composition on the page: a person
+            at a laptop (photo, once supplied) with the real curriculum on a
+            monitor and the real project workspace on a laptop in front. */}
+        <SectionDivider label="Build" />
+        <section className="overflow-hidden bg-paper py-20 sm:py-28">
           <div className="container-page">
-            <SectionHeading
-              eyebrow="Human mentorship"
-              title="Sometimes you need a human."
-              description="Get practical guidance from people who have done the work. Separate from the AI Mentor below: real professionals, paid, by design."
-              align="left"
-            />
+            <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:gap-16">
+              <Reveal>
+                <p className="eyebrow gap-2 text-ink-400">03 · Project Lab</p>
+                <h2 className="mt-4 max-w-xl font-display text-hero font-semibold tracking-tight text-ink-100">
+                  Build the proof, not just the lessons.
+                </h2>
+                <p className="mt-6 max-w-lg text-deck leading-relaxed text-ink-300">
+                  {LAB_PROJECT_COUNT} Cybersecurity projects across four levels, from a port scanner you write in an
+                  afternoon to a cloud security operations platform. Each one ends in the same place: a public
+                  repository, a README, a portfolio entry and your own interview answers.
+                </p>
+                <p className="mt-4 max-w-lg text-sm leading-relaxed text-ink-500">
+                  CareerFound checks that your evidence exists. It does not run or grade your code, and it says so.
+                </p>
+                <Link href="/projects" className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline">
+                  See the Project Lab <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </Reveal>
+              <Reveal delayMs={140}>
+                <LabProgress />
+              </Reveal>
+            </div>
 
-            <div className="mt-12 grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
-              {/* Toriola: founder mentorship, real photo, real pricing.
-                  Slightly wider column and a taller crop than the second
-                  card, an asymmetric pairing rather than two identical
-                  boxes, since she's the founder's own offering. */}
-              <div className="overflow-hidden rounded-3xl border border-warm/25 bg-warm/[0.04]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/mentors/toriola.jpg"
-                  alt="Toriola Opeyemi, CareerFound founder and mentor"
-                  className="h-80 w-full object-cover object-top sm:h-[26rem]"
-                />
-                <div className="p-7">
-                  <p className="font-display text-xl font-semibold text-ink-100">Toriola Opeyemi</p>
-                  <p className="mt-0.5 text-sm text-ink-400">Cloud Security Mentor | Cloud Engineer</p>
-                  <div className="mt-3 flex flex-wrap gap-1.5">
-                    {[
-                      "Cloud Security",
-                      "Cloud Engineering",
-                      "AWS Security",
-                      "Security Automation",
-                      "DevSecOps",
-                    ].map((t) => (
-                      <Badge key={t} tone="warm">{t}</Badge>
-                    ))}
+            <Reveal className="relative mt-16 lg:-mx-14">
+              <div className="relative hidden sm:block">
+                <Parallax range={18}>
+                  <PhotoBackdrop slot="projectLab" bare fade="bottom" className="absolute inset-x-0 top-0 h-[80%]" />
+                </Parallax>
+                <div className="relative grid grid-cols-12 items-end pb-[6%]">
+                  <div className="col-span-8 col-start-1 row-start-1 transition-transform duration-500 ease-smooth hover:-translate-y-1">
+                    <Monitor label="CareerFound on a monitor: the Project Lab curriculum, twelve Cybersecurity projects in four levels. Example data.">
+                      <LabCurriculumScreen />
+                    </Monitor>
                   </div>
-                  <p className="mt-4 text-sm leading-relaxed text-ink-500">
-                    One-on-one mentorship for cloud and security careers: your roadmap, hands-on cloud security
-                    projects, portfolio review and interview preparation, from CareerFound&apos;s founder.
-                  </p>
-                  <div className="mt-5 flex flex-col items-start gap-3 border-t border-warm/20 pt-4 sm:flex-row sm:items-baseline sm:justify-between">
-                    <span>
-                      <span className="text-2xl font-semibold text-ink-100">$200</span>
-                      <span className="mt-0.5 block text-xs text-ink-500">or &#8358;250,000, 2 months</span>
-                    </span>
-                    <Link href="/mentorship" className="flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline">
-                      Request mentorship <ArrowRight className="h-3.5 w-3.5" />
-                    </Link>
+                  <div className="relative z-10 col-span-6 col-start-7 row-start-1 translate-y-[10%] self-end transition-transform duration-500 ease-smooth hover:-translate-y-0">
+                    <Laptop label="CareerFound on a laptop: the Network Reconnaissance Tool project, build and test done, document, GitHub, portfolio and interview still ahead. Example data.">
+                      <WorkspaceScreen />
+                    </Laptop>
                   </div>
                 </div>
+                <SkillsFragment className="absolute -top-8 left-[44%] z-20 hidden w-[16rem] lg:block" />
               </div>
 
-              {/* Mobile Engineering Mentor: real photo, real pricing, real
-                  name/experience now that they've been supplied - no
-                  invented employer/ratings/testimonials/certifications.
-                  "View profile" and "Request mentorship" are two distinct
-                  actions (per the routing fix below): the first is a plain
-                  link to this mentor's own profile at
-                  /mentors/mobile-engineering-mentor, the second links to
-                  the same profile with ?action=request, which that page
-                  reads to open the mentorship request flow directly,
-                  instead of both collapsing onto the generic /mentors
-                  marketplace list the way "View profile" incorrectly did
-                  before. */}
-              <div className="overflow-hidden rounded-3xl border border-warm/25 bg-warm/[0.04] lg:mt-10">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/mentors/mobile-engineering-mentor.jpg"
-                  alt="David Oladotun Egundey, a real CareerFound mobile engineering mentor"
-                  className="h-72 w-full object-cover object-top sm:h-80"
-                />
-                <div className="p-7">
-                  <p className="eyebrow">Mobile Engineering Mentor</p>
-                  <p className="mt-1.5 font-display text-xl font-semibold text-ink-100">David Oladotun Egundey</p>
-                  <p className="mt-0.5 text-sm text-ink-400">Mobile Engineer &middot; 4 years of experience</p>
+              <div className="relative mx-auto w-full max-w-[21rem] pb-16 sm:hidden">
+                <div className="w-[70%]">
+                  <Phone label="CareerFound on a phone: the Network Reconnaissance Tool project, build and test done. Example data.">
+                    <PhoneLabScreen />
+                  </Phone>
+                </div>
+                <SkillsFragment className="absolute right-0 top-10 w-[62%]" />
+                <ProjectFragment className="absolute bottom-0 left-0 w-[90%]" />
+              </div>
+            </Reveal>
+
+            <dl className="mt-14 grid grid-cols-2 gap-x-6 gap-y-8 border-t border-[rgb(var(--fg-tint)/0.14)] pt-8 sm:mt-28 sm:grid-cols-4">
+              {[
+                { k: String(LAB_PROJECT_COUNT), v: "projects in the Cybersecurity track" },
+                { k: "4", v: "levels: Beginner, Intermediate, Advanced, Job Ready" },
+                { k: "6", v: "evidence stages from Started to Interview ready" },
+                { k: "1", v: "career built end to end first, before any other" },
+              ].map((s) => (
+                <div key={s.v}>
+                  <dt className="font-display text-4xl font-semibold tracking-tight text-ink-100">{s.k}</dt>
+                  <dd className="mt-1 max-w-[14rem] text-xs leading-snug text-ink-500">{s.v}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </section>
+
+        {/* ============================================================
+            DOCUMENT AND PUBLISH. The README Builder and the GitHub
+            evidence checks, on a tablet, with the three real checks lifted
+            out beside it. */}
+        <SectionDivider label="Document and publish" />
+        <section className="overflow-hidden py-20 sm:py-28">
+          <div className="container-page grid items-center gap-14 lg:grid-cols-[1.2fr_0.8fr] lg:gap-12">
+            <Reveal className="relative order-2 lg:order-1">
+              <div className="relative hidden pb-10 sm:block">
+                <div className="w-[92%] transition-transform duration-500 ease-smooth hover:-translate-y-1">
+                  <Tablet label="CareerFound on a tablet: publishing a project, with a public GitHub repository, a README and three commits checked. Example data.">
+                    <PublishScreen />
+                  </Tablet>
+                </div>
+                <StageFragment className="absolute -bottom-2 right-0 z-10 w-[15rem]" />
+              </div>
+              <div className="relative mx-auto w-full max-w-[21rem] pb-4 sm:hidden">
+                <StageFragment />
+              </div>
+            </Reveal>
+
+            <Reveal delayMs={100} className="order-1 lg:order-2">
+              <p className="eyebrow gap-2 text-ink-400">04 · Document, publish</p>
+              <h2 className="mt-4 max-w-md font-display text-display font-semibold tracking-tight text-ink-100">
+                Finished work no one can see is not proof.
+              </h2>
+              <p className="mt-5 max-w-md text-sm leading-relaxed text-ink-500">
+                The README Builder turns your own answers into a README you can edit. Then the project goes on a
+                public GitHub repository, and CareerFound checks the three things a reviewer looks for first.
+              </p>
+              <ol className="mt-7 max-w-md divide-y divide-[rgb(var(--fg-tint)/0.1)] border-y border-[rgb(var(--fg-tint)/0.1)]">
+                {[
+                  ["Document", "A README that explains the tool and its limits, written from what you actually built."],
+                  ["Publish", "A public repository with a README and at least three commits, so the history is real."],
+                  ["Honest by design", "We check that this evidence exists. We do not run or grade your code."],
+                ].map(([t, b]) => (
+                  <li key={t} className="py-3.5">
+                    <p className="font-display text-lg font-semibold tracking-tight text-ink-100">{t}</p>
+                    <p className="mt-1 text-sm leading-snug text-ink-500">{b}</p>
+                  </li>
+                ))}
+              </ol>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* ============================================================
+            SHOWCASE. The portfolio as a person would show it. */}
+        <SectionDivider label="Showcase" />
+        <section className="overflow-hidden bg-paper py-20 sm:py-28">
+          <div className="container-page grid items-center gap-14 lg:grid-cols-[0.75fr_1.25fr] lg:gap-10">
+            <Reveal>
+              <p className="eyebrow gap-2 text-ink-400">05 · Showcase</p>
+              <h2 className="mt-4 max-w-md font-display text-display font-semibold tracking-tight text-ink-100">
+                A portfolio that is the work itself.
+              </h2>
+              <p className="mt-5 max-w-md text-sm leading-relaxed text-ink-500">
+                Every published project becomes an entry: what you built, the skills it used, and links to the
+                repository, the README and the case study. Nothing is padded, because every entry traces back to
+                evidence you produced.
+              </p>
+              <Link href="/portfolio" className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline">
+                Build your portfolio <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </Reveal>
+            <Reveal delayMs={120} className="relative">
+              <div className="relative hidden pb-8 sm:block lg:-mr-16">
+                <Parallax range={14}>
+                  <PhotoBackdrop slot="portfolio" bare fade="left" className="absolute inset-y-0 right-0 w-[60%]" />
+                </Parallax>
+                <div className="relative w-[94%] transition-transform duration-500 ease-smooth hover:-translate-y-1">
+                  <Laptop label="CareerFound on a laptop: a published portfolio for a Cybersecurity Engineer with three projects. Example data.">
+                    <PortfolioScreen />
+                  </Laptop>
+                </div>
+                <div className="absolute -bottom-6 right-[1%] z-10 hidden w-[17%] rotate-[4deg] lg:block">
+                  <Phone label="CareerFound on a phone: the same published portfolio. Example data.">
+                    <PhonePortfolioScreen />
+                  </Phone>
+                </div>
+              </div>
+              <div className="relative mx-auto w-full max-w-[21rem] pb-16 sm:hidden">
+                <div className="w-[70%]">
+                  <Phone label="CareerFound on a phone: a published portfolio with three projects. Example data.">
+                    <PhonePortfolioScreen />
+                  </Phone>
+                </div>
+                <PortfolioFragment className="absolute bottom-0 right-0 w-[78%]" />
+              </div>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* ============================================================
+            GUIDANCE. Humans first and large: real portraits, real names,
+            real prices. The AI Mentor follows as one part of the product,
+            smaller and plainly labelled as software. */}
+        <SectionDivider label="Guidance" />
+        <section className="overflow-hidden py-20 sm:py-28">
+          <div className="container-page">
+            <Reveal>
+              <p className="eyebrow gap-2 text-ink-400">
+                <Users className="h-3.5 w-3.5" /> 06 · Human mentorship
+              </p>
+              <h2 className="mt-4 max-w-3xl font-display text-hero font-semibold tracking-tight text-ink-100">
+                Real people.
+                <br />
+                Real guidance.
+              </h2>
+              <p className="mt-6 max-w-lg text-deck leading-relaxed text-ink-300">
+                Some questions need someone who has done the job. Every mentor here is a real, named professional
+                with a profile you can read before you ask for a session.
+              </p>
+            </Reveal>
+
+            <div className="mt-14 grid gap-12 lg:grid-cols-12 lg:items-end lg:gap-10">
+              <Reveal className="lg:col-span-7">
+                <article>
+                  <div className="relative">
+                    <div className="relative overflow-hidden rounded-3xl bg-[rgb(var(--color-accent-mist))]">
+                      <Parallax range={-12}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src="/mentors/toriola.jpg"
+                          alt="Toriola Opeyemi, CareerFound founder and mentor"
+                          className="aspect-[4/5] w-full scale-[1.06] object-cover object-[50%_18%] sm:aspect-[4/4.2]"
+                        />
+                      </Parallax>
+                      <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/45 to-transparent" />
+                      <div className="absolute bottom-5 left-5 right-5 text-white">
+                        <p className="font-mono text-[11px] uppercase tracking-wide text-white/75">Founder and mentor</p>
+                        <p className="mt-1 font-display text-3xl font-semibold tracking-tight sm:text-4xl">Toriola Opeyemi</p>
+                      </div>
+                    </div>
+                    <div className="absolute -bottom-14 right-5 hidden w-[24%] rotate-[3deg] md:block">
+                      <Phone label="CareerFound on a phone: requesting mentorship from Toriola Opeyemi, Cloud Security Mentor and Cloud Engineer.">
+                        <MentorshipScreen />
+                      </Phone>
+                    </div>
+                  </div>
+                  <div className="mt-6 grid gap-5 sm:grid-cols-[1fr_auto] sm:items-end md:pr-[28%]">
+                    <div>
+                      <p className="text-sm font-medium text-ink-200">Cloud Security Mentor | Cloud Engineer</p>
+                      <div className="mt-3 flex flex-wrap gap-1.5">
+                        {["Cloud Security", "Cloud Engineering", "AWS Security", "DevSecOps"].map((t) => (
+                          <Badge key={t} tone="warm">{t}</Badge>
+                        ))}
+                      </div>
+                      <p className="mt-4 max-w-md text-sm leading-relaxed text-ink-500">
+                        One-on-one mentorship for cloud and security careers: your roadmap, hands-on cloud security
+                        projects, portfolio review and interview preparation.
+                      </p>
+                    </div>
+                    <div className="sm:text-right">
+                      <p className="text-2xl font-semibold text-ink-100">$200</p>
+                      <p className="text-xs text-ink-500">or &#8358;250,000, 2 months</p>
+                      <Link href="/mentorship" className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline">
+                        Request mentorship <ArrowRight className="h-3.5 w-3.5" />
+                      </Link>
+                    </div>
+                  </div>
+                </article>
+              </Reveal>
+
+              <Reveal delayMs={140} className="lg:col-span-5 lg:mb-24">
+                <article>
+                  <div className="relative overflow-hidden rounded-3xl bg-[rgb(var(--color-accent-mist))]">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="/mentors/mobile-engineering-mentor.jpg"
+                      alt="David Oladotun Egundey, a real CareerFound mobile engineering mentor"
+                      className="aspect-[4/5] w-full object-cover object-[50%_20%]"
+                    />
+                    <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/45 to-transparent" />
+                    <div className="absolute bottom-5 left-5 right-5 text-white">
+                      <p className="font-mono text-[11px] uppercase tracking-wide text-white/75">Mobile Engineering Mentor</p>
+                      <p className="mt-1 font-display text-2xl font-semibold tracking-tight sm:text-3xl">David Oladotun Egundey</p>
+                    </div>
+                  </div>
+                  <p className="mt-5 text-sm font-medium text-ink-200">Mobile Engineer &middot; 4 years of experience</p>
                   <div className="mt-3 flex flex-wrap gap-1.5">
-                    {["Mobile Engineering", "Mobile Development", "App Development"].map((t) => (
+                    {["Mobile Engineering", "App Development"].map((t) => (
                       <Badge key={t} tone="warm">{t}</Badge>
                     ))}
                   </div>
                   <p className="mt-4 text-sm leading-relaxed text-ink-500">
-                    Practical guidance on mobile development: building real applications, structuring projects,
-                    debugging, and preparing for a career in mobile engineering.
+                    Practical guidance on building real applications, structuring projects, debugging, and
+                    preparing for a career in mobile engineering.
                   </p>
-                  <div className="mt-5 flex flex-col items-start gap-3 border-t border-warm/20 pt-4 sm:flex-row sm:items-baseline sm:justify-between">
-                    <span>
-                      <span className="text-2xl font-semibold text-ink-100">$200</span>
-                      <span className="mt-0.5 block text-xs text-ink-500">or &#8358;250,000, 2 months</span>
-                    </span>
-                    <span className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                      <Link href="/mentors/mobile-engineering-mentor" className="text-sm font-medium text-ink-400 hover:underline">
-                        View profile
-                      </Link>
-                      <Link
-                        href="/mentors/mobile-engineering-mentor?action=request"
-                        className="flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline"
-                      >
+                  <div className="mt-4 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
+                    <span><span className="text-2xl font-semibold text-ink-100">$200</span> <span className="text-xs text-ink-500">or &#8358;250,000, 2 months</span></span>
+                    <span className="flex items-center gap-4">
+                      <Link href="/mentors/mobile-engineering-mentor" className="text-sm font-medium text-ink-400 hover:underline">View profile</Link>
+                      <Link href="/mentors/mobile-engineering-mentor?action=request" className="inline-flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline">
                         Request mentorship <ArrowRight className="h-3.5 w-3.5" />
                       </Link>
                     </span>
                   </div>
-                </div>
-              </div>
+                </article>
+              </Reveal>
             </div>
 
-            <div className="mt-8 flex flex-wrap items-center gap-4 border-t border-[rgb(var(--fg-tint)/0.08)] pt-6">
+            <div className="mt-14 flex flex-wrap items-center gap-4 border-t border-[rgb(var(--fg-tint)/0.08)] pt-6">
               <p className="flex items-center gap-2 text-sm text-ink-500">
                 <Users className="h-4 w-4 text-ink-400" />
-                Every mentor is a real person with a real profile. Filter by career path, read how they
-                work, and request a session when one fits.
+                More mentors join as they are reviewed and verified. Filter by career path and read how each one works.
               </p>
               <Link href="/mentors" className="ml-auto flex-shrink-0 text-sm font-medium text-accent-light hover:underline">
                 Browse mentors
@@ -1146,167 +840,63 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* AI Mentor: its own small, sophisticated section, deliberately
-            plain (no glow, no "AI-powered everything" framing), and shown
-            through the product interface rather than described in prose,
-            so it reads as one feature among several, not the identity of
-            the page. */}
-        <section className="overflow-hidden py-16">
-          <div className="container-page grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-            <div>
+        {/* AI Mentor: one part of the product, shown as the real chat. */}
+        <section className="overflow-hidden bg-paper py-16 sm:py-20">
+          <div className="container-page grid items-center gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+            <Reveal className="relative flex justify-center">
+              <div className="w-[16rem] -rotate-2 sm:w-[17rem]">
+                <Phone label="CareerFound on a phone: the AI Mentor asking what you are working on and helping break down an AWS security project. Example conversation.">
+                  <MentorChatScreen />
+                </Phone>
+              </div>
+            </Reveal>
+            <Reveal delayMs={100}>
               <p className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-ink-500">
                 <Bot className="h-4 w-4" /> AI Mentor
               </p>
-              <h3 className="mt-3 font-display text-h1 font-semibold tracking-tight text-ink-100">On call whenever you&apos;re stuck</h3>
+              <h3 className="mt-3 max-w-md font-display text-h1 font-semibold tracking-tight text-ink-100">
+                And on call at 11pm, when you are stuck.
+              </h3>
               <p className="mt-3 max-w-md text-sm leading-relaxed text-ink-500">
-                Software, not a person: it gives hints before answers, reviews your code, and adjusts your
-                roadmap when it notices you&apos;re struggling. One part of CareerFound, not the whole product.
+                Software, not a person: it gives hints before answers, knows which phase and project you are on,
+                and adjusts your roadmap when it notices you struggling. One part of CareerFound, not the whole product.
               </p>
               <Badge className="mt-4">Included free</Badge>
-            </div>
-            <Reveal className="perspective-scene flex justify-center py-4 lg:justify-end">
-              <div className="-rotate-2">
-                <PhoneFrame label="AI Mentor">
-                  <div className="flex h-full flex-col p-4">
-                    {/* Career/roadmap context stays visible above the chat,
-                        so the AI reads as grounded in this mentee's actual
-                        path and phase, not a floating chatbot. */}
-                    <div className="mb-3 flex items-center gap-2 rounded-lg border border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] px-3 py-2">
-                      <Shield className="h-3.5 w-3.5 flex-shrink-0 text-accent-light" />
-                      <p className="min-w-0 truncate text-[11px] text-ink-400">
-                        Cybersecurity &middot; Phase 10, Portfolio
-                      </p>
-                    </div>
-                    <div className="space-y-2.5">
-                      <div className="max-w-[85%] rounded-lg border-l-2 border-accent/40 bg-accent/[0.06] px-3 py-2 text-xs leading-relaxed text-ink-200">
-                        My detection script flags everything as high severity. What am I missing?
-                      </div>
-                      <div className="ml-auto max-w-[85%] rounded-lg bg-[rgb(var(--fg-tint)/0.04)] px-3 py-2 text-xs leading-relaxed text-ink-300">
-                        Check your severity thresholds first, not the notification code. What counts as
-                        &ldquo;high&rdquo; in your log analyzer right now?
-                      </div>
-                    </div>
-                  </div>
-                </PhoneFrame>
-              </div>
             </Reveal>
           </div>
         </section>
 
         {/* ============================================================
-            JOB READY. The last layer of the product, shown as the real
-            Tech Readiness Score (five weighted signals, what would move
-            it up) next to a real interview simulation, so "job ready" is
-            something you can measure and rehearse, not a closing slogan.
-            The Learn / Build / Prove / Apply / Get hired line closes it. */}
-        <SectionDivider label="Job ready" />
-        <section className="bg-paper py-20 sm:py-28">
-          <div className="container-page">
-            <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-14">
-              <Reveal>
-                <p className="eyebrow gap-2 text-ink-400">
-                  <Gauge className="h-3.5 w-3.5" /> Career readiness
-                </p>
-                <h2 className="mt-4 max-w-md font-display text-display font-semibold tracking-tight text-ink-100">
-                  Know when you are ready, not just when you have finished.
-                </h2>
-                <p className="mt-5 max-w-md text-sm leading-relaxed text-ink-500">
-                  Your Tech Readiness Score is built from five signals of your own activity: what you have learned,
-                  built, published, rehearsed and proven. It tells you what would move it up next, and the
-                  simulations are where you practise the part that is hardest to fake: thinking out loud under pressure.
-                </p>
-                <Link href="/pricing" className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline">
-                  Start free <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
-              </Reveal>
-
-              <Reveal delayMs={120} className="grid gap-6 sm:grid-cols-[1.15fr_1fr]">
-                <InterfaceFrame label="Tech Readiness Score, example">
-                  <div className="p-6">
-                    <div className="flex items-center justify-center">
-                      <ReadinessDial
-                        size={168}
-                        overall={READINESS_OVERALL}
-                        segments={READINESS_SIGNALS.map((r) => ({ key: r.key, label: r.label, value: r.value }))}
-                      />
-                    </div>
-                    <ul className="mt-6 space-y-3">
-                      {READINESS_SIGNALS.map((r) => (
-                        <li key={r.key}>
-                          <div className="flex items-baseline justify-between text-xs">
-                            <span className="text-ink-300">
-                              {r.label} <span className="font-mono text-[10px] text-ink-500">{r.weight}% of score</span>
-                            </span>
-                            <span className="font-mono text-ink-400">{r.value}%</span>
-                          </div>
-                          <div className="mt-1.5 h-1 rounded-full bg-[rgb(var(--fg-tint)/0.1)]">
-                            <div className="h-1 rounded-full bg-accent-light" style={{ width: `${r.value}%` }} />
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                    <div className="mt-6 border-t border-[rgb(var(--fg-tint)/0.1)] pt-4">
-                      <p className="text-xs font-medium text-ink-300">What would move your score up</p>
-                      <ul className="mt-2 space-y-2 text-xs leading-relaxed text-ink-500">
-                        {READINESS_NEXT.map((a) => (
-                          <li key={a} className="flex gap-2">
-                            <span className="mt-1.5 h-1 w-1 flex-shrink-0 rounded-full bg-accent" aria-hidden="true" />
-                            {a}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </InterfaceFrame>
-
-                <InterfaceFrame label="Simulation, SOC triage" className="sm:mt-12">
-                  <div className="p-6">
-                    <p className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-wide text-accent-light">
-                      <MessageSquare className="h-3 w-3" /> Real-world simulation
-                    </p>
-                    <p className="mt-3 font-display text-lg font-semibold leading-snug tracking-tight text-ink-100">
-                      SOC Triage: Which alert do you investigate first?
-                    </p>
-                    <p className="mt-3 text-xs leading-relaxed text-ink-500">
-                      You are a Tier 1 SOC analyst. Your SIEM has raised three alerts in the last 10 minutes.
-                    </p>
-                    <ul className="mt-4 space-y-2 text-xs leading-relaxed text-ink-300">
-                      <li className="rounded-md border border-[rgb(var(--fg-tint)/0.1)] px-3 py-2">
-                        <span className="font-mono text-ink-500">A</span> One failed admin login, from the usual office IP.
-                      </li>
-                      <li className="rounded-md border border-accent bg-accent/10 px-3 py-2 text-ink-100">
-                        <span className="font-mono text-accent-light">B</span> 400 failed logins on one account in 2 minutes, from a country with no employees.
-                      </li>
-                      <li className="rounded-md border border-[rgb(var(--fg-tint)/0.1)] px-3 py-2">
-                        <span className="font-mono text-ink-500">C</span> A file renamed on a marketing laptop at 2:15pm.
-                      </li>
-                    </ul>
-                    <p className="mt-4 text-xs leading-relaxed text-ink-500">
-                      Prioritising by volume, anomaly and business impact is the core triage skill.
-                    </p>
-                  </div>
-                </InterfaceFrame>
-              </Reveal>
-            </div>
-
+            INTERVIEW AND JOB READY. */}
+        <SectionDivider label="Interview and job ready" />
+        <section className="overflow-hidden py-20 sm:py-28">
+          <div className="container-page grid items-center gap-14 lg:grid-cols-[0.85fr_1.15fr] lg:gap-10">
             <Reveal>
-              <div className="mt-20 flex flex-col border-t border-[rgb(var(--fg-tint)/0.1)] pt-10 sm:flex-row sm:items-center">
-                {READINESS_STAGES.map((s, i) => (
-                  <div key={s.label} className="flex flex-1 flex-col items-center sm:flex-row">
-                    <Link href={s.href} className="group block w-full py-5 text-center sm:py-2">
-                      <p className="font-display text-3xl font-semibold tracking-tight text-ink-100 transition-colors duration-200 group-hover:text-accent-light sm:text-2xl lg:text-3xl">
-                        {s.label}
-                      </p>
-                      <p className="mx-auto mt-2 max-w-[9rem] text-xs leading-snug text-ink-500 sm:max-w-[7rem]">{s.body}</p>
-                    </Link>
-                    {i < READINESS_STAGES.length - 1 && (
-                      <>
-                        <ArrowRight className="hidden h-4 w-4 flex-shrink-0 text-ink-300 sm:block" aria-hidden="true" />
-                        <ChevronDown className="h-4 w-4 flex-shrink-0 text-ink-300 sm:hidden" aria-hidden="true" />
-                      </>
-                    )}
-                  </div>
-                ))}
+              <p className="eyebrow gap-2 text-ink-400">07 · Interview, job ready</p>
+              <h2 className="mt-4 max-w-md font-display text-display font-semibold tracking-tight text-ink-100">
+                Know when you are ready, not just when you have finished.
+              </h2>
+              <p className="mt-5 max-w-md text-sm leading-relaxed text-ink-500">
+                Each project comes with the questions an interviewer will ask about it, and you write the answers
+                in your own words. Your Tech Readiness Score is built from five signals of your own activity:
+                what you have learned, built, published, rehearsed and proven. It tells you what would move it up next.
+              </p>
+              <Link href="/pricing" className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline">
+                Start free <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </Reveal>
+            <Reveal delayMs={120} className="relative">
+              <div className="mx-auto flex max-w-[34rem] items-start justify-center gap-5 sm:gap-8 lg:max-w-none lg:justify-end">
+                <div className="w-[46%] sm:mt-14 sm:w-[40%] lg:w-[40%]">
+                  <Phone label="CareerFound on a phone: interview preparation, written answers to questions about the Network Reconnaissance Tool. Example data.">
+                    <InterviewScreen />
+                  </Phone>
+                </div>
+                <div className="w-[46%] -rotate-1 sm:w-[40%] lg:w-[40%]">
+                  <Phone label="CareerFound on a phone: a Tech Readiness Score of 57 built from five signals. Example data.">
+                    <ReadinessScreen />
+                  </Phone>
+                </div>
               </div>
             </Reveal>
           </div>
@@ -1376,7 +966,7 @@ export default function LandingPage() {
             closes on its two strongest typographic moments. */}
         <section className="surface-ink relative overflow-hidden py-24">
           <span aria-hidden="true" className="scene-figure pointer-events-none absolute -bottom-10 -left-6 hidden text-[13rem] lg:block">
-            06
+            08
           </span>
           <div className="container-page relative flex flex-col items-center gap-7 text-center">
             <p className="eyebrow justify-center text-[#c3d19a]">Ready when you are</p>
