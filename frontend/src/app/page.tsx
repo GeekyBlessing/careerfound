@@ -28,6 +28,8 @@ import {
   Laptop,
   Rocket,
   Globe,
+  Trophy,
+  MessageSquare,
 } from "lucide-react";
 import { MarketingNav } from "@/components/layout/marketing-nav";
 import { Footer } from "@/components/layout/footer";
@@ -42,9 +44,10 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DifficultyMeter } from "@/components/ui/difficulty-meter";
+import { ReadinessDial } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { pricingTiers, faqs } from "@/lib/marketing-content";
-import { CAREER_CATEGORIES, CAREER_PATH_COUNT } from "@/lib/career-categories";
+import { CAREER_CATEGORIES, CAREER_PATH_COUNT, CAREER_ORDER } from "@/lib/career-categories";
 
 export const metadata: Metadata = {
   title: "CareerFound: Find your tech career, step by step",
@@ -141,18 +144,30 @@ const CATALOGUE: {
 const FEATURED_CAREER = CATALOGUE[0]!;
 const SECONDARY_CAREERS = CATALOGUE.slice(1, 4);
 
-// The Discover scene's device-frame excerpt: the real third onboarding
-// question and its real options, copied verbatim from
-// frontend/src/app/onboarding/page.tsx's GOAL_OPTIONS/steps array, not
-// written for this page. Presented as "03 / 10" to match the real step
-// count onboarding actually walks a new user through.
-const ASSESSMENT_QUESTION = "What are you hoping to achieve?";
-const ASSESSMENT_OPTIONS: { label: string; icon: typeof Briefcase }[] = [
-  { label: "Get a job", icon: Briefcase },
-  { label: "Freelance", icon: Laptop },
-  { label: "Build a startup", icon: Rocket },
-  { label: "Remote career", icon: Globe },
-  { label: "Explore tech", icon: Compass },
+// The Discover scene's product excerpt: the real first chapter of the
+// onboarding journey (frontend/src/lib/discovery.ts), same question, same
+// options, same chapter names, not written for this page. `short` is the
+// compact label the small phone frame uses.
+const JOURNEY_CHAPTERS = ["Interests", "Strengths", "Working style", "Goals", "Technology", "Direction", "Starting point"];
+const ASSESSMENT_QUESTION = "What could you lose a whole afternoon to?";
+const ASSESSMENT_OPTIONS: { label: string; short: string; hint: string; icon: typeof Briefcase }[] = [
+  { label: "Designing how things look and feel", short: "Designing interfaces", hint: "Layouts, type, interactions", icon: PenTool },
+  { label: "Building things people use", short: "Building products", hint: "Apps, tools, products", icon: Code2 },
+  { label: "Protecting systems, or testing how they break", short: "Protecting systems", hint: "Defence and attack", icon: Shield },
+  { label: "Finding patterns in numbers", short: "Finding patterns", hint: "Charts, spreadsheets, trends", icon: BarChart3 },
+  { label: "Automating repetitive work", short: "Automating work", hint: "Make the boring part run itself", icon: Workflow },
+];
+
+// An example result, shaped exactly like the real /assessment/results page
+// (Career DNA, Best Match with a fit score, Strong Alternative, Wild Card).
+// It is labelled as an example in the interface; the values are illustrative.
+const RESULT_DNA = [
+  { label: "Creativity", value: 78 },
+  { label: "Communication", value: 74 },
+  { label: "People", value: 66 },
+  { label: "Problem solving", value: 52 },
+  { label: "Systems", value: 44 },
+  { label: "Mathematics", value: 40 },
 ];
 
 // The homepage's "Build" stage: the same six-stage shape the roadmap page
@@ -169,11 +184,24 @@ const roadmapStory = [
   { title: "Job ready", body: "A Tech Readiness Score and interview practice built around your target role.", icon: Award },
 ];
 
-const samplePhases = [
-  { title: "Phase 9, Detection Engineering", state: "done" as const },
-  { title: "Phase 10, Portfolio", state: "active" as const },
-  { title: "Phase 11, Job Preparation", state: "upcoming" as const },
+// The full Cybersecurity roadmap, phase titles verbatim from
+// backend/app/seed/roadmap_content.py (the "Phase N, " prefix is dropped
+// because the interface numbers them itself). Nine complete and Phase 10
+// active is the example state the roadmap scene shows.
+const ROADMAP_PHASES = [
+  "Computer Fundamentals",
+  "Networking",
+  "Linux",
+  "Python",
+  "Security Fundamentals",
+  "SOC Fundamentals",
+  "SIEM",
+  "Cloud Security",
+  "Detection Engineering",
+  "Portfolio",
+  "Job Preparation",
 ];
+const ROADMAP_ACTIVE = 9; // zero-based index of "Portfolio"
 
 // Three real projects, verbatim from backend/app/seed/roadmap_content.py
 // (title, teaches, and difficulty copied exactly). difficulty follows the
@@ -220,10 +248,26 @@ const PORTFOLIO_ENTRIES = [
   { title: "Build a weather lookup app using a public API", path: "Software Engineering", status: "Draft", icon: GitCommit },
 ];
 
-// Career readiness: the same five-stage shape as the hero/roadmap journey,
-// reduced to its plainest typographic form for the closing transition
-// (Learn -> Build -> Prove -> Apply -> Get hired), each stage tied to a
-// real page rather than a decorative label.
+// Career readiness. The five signals and their weights are the real ones
+// (backend/app/services/readiness_service.py: knowledge 25%, projects 30%,
+// portfolio 15%, interview 15%, practical 15%); the values are an example
+// learner part-way through a path. Overall is the weighted sum, rounded.
+const READINESS_SIGNALS = [
+  { key: "knowledge_pct", label: "Knowledge", weight: 25, value: 72 },
+  { key: "projects_pct", label: "Projects", weight: 30, value: 58 },
+  { key: "portfolio_pct", label: "Portfolio", weight: 15, value: 40 },
+  { key: "interview_pct", label: "Interview readiness", weight: 15, value: 35 },
+  { key: "practical_pct", label: "Practical skills", weight: 15, value: 66 },
+];
+const READINESS_OVERALL = Math.round(READINESS_SIGNALS.reduce((n, r) => n + (r.value * r.weight) / 100, 0));
+// The two lowest signals, with the app's own "what would move your score" lines.
+const READINESS_NEXT = [
+  "Try a real-world simulation scenario to build interview readiness.",
+  "Generate a portfolio write-up for a completed project, it's a quick, high-leverage win.",
+];
+
+// The five-stage shape of the whole journey, in its plainest typographic
+// form (Learn, Build, Prove, Apply, Get hired), each tied to a real page.
 const READINESS_STAGES: { label: string; body: string; href: string }[] = [
   { label: "Learn", body: "A staged roadmap for your path", href: "/roadmap" },
   { label: "Build", body: "Real projects, not just lessons", href: "/projects" },
@@ -291,10 +335,10 @@ export default function LandingPage() {
                 gives the tilt real depth instead of a flat CSS rotation. */}
             <Reveal className="perspective-scene relative pb-14 pl-8 pr-6 pt-4 sm:pb-20 sm:pl-16 sm:pr-10">
               <div className="absolute -left-2 top-6 hidden -rotate-6 sm:block lg:-left-6">
-                <PhoneFrame label="Assessment, 03 / 10">
+                <PhoneFrame label="Discover your direction, 01 / 07">
                   <div className="flex h-full flex-col justify-between p-4">
                     <div>
-                      <p className="font-mono text-[9px] uppercase tracking-wide text-ink-500">03 / 10</p>
+                      <p className="font-mono text-[9px] uppercase tracking-wide text-ink-500">01 / 07 · Interests</p>
                       <p className="mt-2 text-sm font-semibold leading-snug text-ink-100">{ASSESSMENT_QUESTION}</p>
                     </div>
                     <div className="space-y-1.5">
@@ -309,7 +353,7 @@ export default function LandingPage() {
                           )}
                         >
                           <o.icon className="h-3 w-3 flex-shrink-0" />
-                          {o.label}
+                          {o.short}
                         </div>
                       ))}
                     </div>
@@ -380,75 +424,172 @@ export default function LandingPage() {
         </section>
 
         {/* ============================================================
-            SCENE 03, DISCOVER. A major product showcase: the real
-            onboarding assessment, shown large in a phone frame with actual
-            gentle tilt, beside a poster-scale headline. Typography-
-            dominant on the left, product-imagery-dominant on the right,
-            the first deliberate shift in visual rhythm after the hero. */}
+            SCENE 03, DISCOVER. The real first chapter of onboarding, shown
+            as a large product interface: the seven chapters down the left,
+            the Interests question with real options on the right, and a
+            running record of what you have told us. Typography on the left,
+            product on the right: the first shift in rhythm after the hero. */}
         <SectionDivider label="Discover" className="pt-4" />
-        <section id="how-it-works" className="overflow-hidden py-16 sm:py-20">
-          <div className="container-page grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
+        <section id="how-it-works" className="overflow-hidden py-16 sm:py-24">
+          <div className="container-page grid items-center gap-14 lg:grid-cols-[0.8fr_1.2fr] lg:gap-14">
             <Reveal>
               <p className="eyebrow gap-2 text-ink-400">
-                <Sparkles className="h-3.5 w-3.5" /> How it works
+                <Sparkles className="h-3.5 w-3.5" /> Discover your direction
               </p>
-              <h2 className="mt-4 max-w-lg font-display text-hero font-semibold tracking-tight text-ink-100">
-                Find the path that fits you.
+              <h2 className="mt-4 max-w-lg font-display text-display font-semibold tracking-tight text-ink-100">
+                It starts with you, not a menu of jobs.
               </h2>
               <p className="mt-5 max-w-md text-sm leading-relaxed text-ink-500">
-                Ten honest questions about your time, budget, interests, and goals, not a random
-                guess. Every answer feeds a Best Match, a Strong Alternative, and a Wild Card, each
-                with a reason attached. Then a personalized roadmap, real projects, and a portfolio
-                follow from whichever one you choose.
+                Seven short chapters: what you could lose an afternoon to, what you are already good at,
+                how you like to work, what you want from tech, which technology pulls you in, how clear your
+                direction is and where you are starting from. Nothing is a trick question.
               </p>
               <Link href="/how-it-works" className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline">
                 Read the full walkthrough <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </Reveal>
 
-            <Reveal delayMs={120} className="perspective-scene relative flex justify-center py-6 lg:justify-end lg:py-10">
-              <div className="absolute -right-4 top-8 hidden w-44 -rotate-3 rounded-xl border border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] p-4 shadow-card sm:block lg:-right-8">
-                <p className="font-mono text-[10px] uppercase tracking-wide text-ink-500">Best Match</p>
-                <p className="mt-1.5 font-display text-lg font-semibold text-ink-100">Cybersecurity</p>
-                <p className="mt-1 text-xs leading-snug text-ink-500">Based on your problem-solving and systems answers.</p>
-              </div>
-              <div className="rotate-3">
-                <PhoneFrame label="Assessment">
-                  <div className="flex h-full flex-col justify-between p-5">
-                    <div>
-                      <div className="mb-4 flex items-center justify-between">
-                        <span className="font-mono text-[10px] uppercase tracking-wide text-ink-500">03 / 10</span>
-                        <span className="flex gap-1" aria-hidden="true">
-                          {Array.from({ length: 10 }).map((_, i) => (
-                            <span
-                              key={i}
-                              className={cn("h-1 w-3 rounded-full", i < 3 ? "bg-accent-light" : "bg-[rgb(var(--fg-tint)/0.1)]")}
-                            />
-                          ))}
-                        </span>
+            <Reveal delayMs={120} className="perspective-scene relative pb-6 sm:pb-10">
+              <div className="relative sm:-rotate-1">
+                <InterfaceFrame label="Discover your direction, chapter 1 of 7">
+                  <div className="grid sm:grid-cols-[11rem_1fr]">
+                    <ol className="hidden border-r border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.025)] p-5 sm:block">
+                      {JOURNEY_CHAPTERS.map((c, i) => (
+                        <li key={c} className="flex items-baseline gap-3 py-1.5">
+                          <span className={cn("w-5 font-mono text-[10px]", i === 0 ? "text-accent-light" : "text-ink-500")}>
+                            {String(i + 1).padStart(2, "0")}
+                          </span>
+                          <span className={cn("font-display text-sm", i === 0 ? "font-semibold text-ink-100" : "text-ink-500")}>{c}</span>
+                        </li>
+                      ))}
+                    </ol>
+                    <div className="p-5 sm:p-7">
+                      <p className="font-mono text-[10px] uppercase tracking-wide text-accent-light">01 / 07 · Interests</p>
+                      <p className="mt-2 font-display text-xl font-semibold leading-snug tracking-tight text-ink-100 sm:text-2xl">
+                        {ASSESSMENT_QUESTION}
+                      </p>
+                      <div className="mt-5">
+                        {ASSESSMENT_OPTIONS.map((o, i) => {
+                          const on = i === 0 || i === 1;
+                          return (
+                            <div
+                              key={o.label}
+                              className={cn(
+                                "flex items-center gap-3 border-b py-2.5",
+                                on ? "border-accent-light" : "border-[rgb(var(--fg-tint)/0.1)]"
+                              )}
+                            >
+                              <span
+                                className={cn(
+                                  "flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-[3px] border",
+                                  on ? "border-accent-light bg-accent-light text-[#0b0d0a]" : "border-[rgb(var(--fg-tint)/0.3)] text-transparent"
+                                )}
+                              >
+                                <Check className="h-2.5 w-2.5" />
+                              </span>
+                              <span className="min-w-0">
+                                <span className={cn("block text-sm font-medium leading-snug", on ? "text-ink-100" : "text-ink-300")}>{o.label}</span>
+                                <span className="block text-[11px] text-ink-500">{o.hint}</span>
+                              </span>
+                            </div>
+                          );
+                        })}
                       </div>
-                      <p className="text-base font-semibold leading-snug text-ink-100">{ASSESSMENT_QUESTION}</p>
+                      <p className="mt-3 font-mono text-[10px] uppercase tracking-wide text-ink-500">2 of 5 chosen</p>
                     </div>
-                    <div className="space-y-2">
-                      {ASSESSMENT_OPTIONS.map((o, i) => (
-                        <div
-                          key={o.label}
-                          className={cn(
-                            "flex items-center gap-2.5 rounded-xl border px-3.5 py-3 text-sm font-medium transition-colors",
-                            i === 0
-                              ? "border-accent bg-accent/15 text-accent-light shadow-xs"
-                              : "border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.03)] text-ink-300"
-                          )}
-                        >
-                          <o.icon className="h-4 w-4 flex-shrink-0" />
-                          {o.label}
-                          {i === 0 && <Check className="ml-auto h-3.5 w-3.5" />}
+                  </div>
+                </InterfaceFrame>
+              </div>
+              <div className="absolute -bottom-2 right-2 hidden w-52 rotate-2 rounded-xl border border-[rgb(var(--fg-tint)/0.12)] bg-paper p-4 shadow-raised sm:block lg:-right-4">
+                <p className="font-mono text-[9px] uppercase tracking-wide text-ink-500">What we have heard so far</p>
+                <ul className="mt-2 space-y-1 text-xs text-ink-300">
+                  <li>Designing how things look and feel</li>
+                  <li>Building things people use</li>
+                </ul>
+              </div>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* ============================================================
+            SCENE 03b, THE RESULT. What the journey produces, shown as the
+            real results interface (Career DNA, Best Match with a fit score
+            and the reason in the person's own words, Strong Alternative,
+            Wild Card) so "a match you can read" is demonstrated, not said.
+            Labelled as an example. */}
+        <SectionDivider label="Your match" />
+        <section className="bg-paper py-16 sm:py-24">
+          <div className="container-page grid items-start gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-14">
+            <Reveal>
+              <p className="eyebrow gap-2 text-ink-400">
+                <Target className="h-3.5 w-3.5" /> Your result
+              </p>
+              <h2 className="mt-4 max-w-md font-display text-display font-semibold tracking-tight text-ink-100">
+                A match you can read, not a quiz score.
+              </h2>
+              <p className="mt-5 max-w-md text-sm leading-relaxed text-ink-500">
+                You get a Best Match, a Strong Alternative and a Wild Card from a different field, each with a
+                fit score and the reason in your own words. Your Career DNA shows the shape of how you work, so
+                you can see why, and disagree with it if you want to.
+              </p>
+              <p className="mt-6 text-xs leading-relaxed text-ink-500">
+                Shown: an example result for someone who picked design and building in chapter one.
+              </p>
+            </Reveal>
+
+            <Reveal delayMs={120}>
+              <InterfaceFrame label="Your results, example">
+                <div className="grid gap-0 sm:grid-cols-[1fr_15rem]">
+                  <div className="p-6 sm:p-8">
+                    <span className="inline-flex items-center gap-1.5 rounded-[0.25rem] bg-warm/15 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wide text-warm">
+                      <Trophy className="h-3 w-3" /> Best Match
+                    </span>
+                    <div className="mt-4 flex items-end justify-between gap-4">
+                      <h3 className="font-display text-display font-semibold tracking-tight text-ink-100">UI/UX Design</h3>
+                      <p className="flex-shrink-0 text-right">
+                        <span className="font-display text-4xl font-semibold text-warm">87</span>
+                        <span className="block font-mono text-[10px] uppercase tracking-wide text-ink-500">/ 100 fit</span>
+                      </p>
+                    </div>
+                    <p className="mt-4 max-w-md text-sm leading-relaxed text-ink-400">
+                      This is your strongest match: designing interfaces that are easy and pleasant for people to
+                      use. You told us you are drawn to designing how things look and feel and building things people use.
+                    </p>
+                    <p className="mt-4 font-mono text-[10px] uppercase tracking-wide text-ink-500">Entry roles</p>
+                    <p className="mt-1 text-sm text-ink-300">Junior UX Designer, UI Designer</p>
+                    <div className="mt-6 grid gap-px overflow-hidden rounded-lg border border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.1)] sm:grid-cols-2">
+                      {[
+                        { tier: "Strong Alternative", name: "Product Design", score: 85 },
+                        { tier: "Wild Card", name: "Technical Writing", score: 77 },
+                      ].map((r) => (
+                        <div key={r.tier} className="bg-paper px-4 py-3">
+                          <p className="font-mono text-[9px] uppercase tracking-wide text-ink-500">{r.tier}</p>
+                          <p className="mt-1 flex items-baseline justify-between gap-2">
+                            <span className="font-display text-base font-semibold text-ink-100">{r.name}</span>
+                            <span className="font-mono text-xs text-ink-400">{r.score}</span>
+                          </p>
                         </div>
                       ))}
                     </div>
                   </div>
-                </PhoneFrame>
-              </div>
+                  <div className="border-t border-[rgb(var(--fg-tint)/0.1)] bg-[rgb(var(--fg-tint)/0.025)] p-6 sm:border-l sm:border-t-0">
+                    <p className="font-mono text-[10px] uppercase tracking-wide text-accent-light">Your Career DNA</p>
+                    <ul className="mt-4 space-y-3.5">
+                      {RESULT_DNA.map((d) => (
+                        <li key={d.label}>
+                          <div className="flex items-baseline justify-between text-xs">
+                            <span className="text-ink-300">{d.label}</span>
+                            <span className="font-mono text-ink-500">{d.value}</span>
+                          </div>
+                          <div className="mt-1.5 h-1 rounded-full bg-[rgb(var(--fg-tint)/0.1)]">
+                            <div className="h-1 rounded-full bg-accent-light" style={{ width: `${d.value}%` }} />
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </InterfaceFrame>
             </Reveal>
           </div>
         </section>
@@ -476,7 +617,7 @@ export default function LandingPage() {
                 className="card-interactive group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-accent/25 bg-accent/10 p-8 sm:p-10"
               >
                 <span aria-hidden="true" className="scene-figure pointer-events-none absolute -bottom-6 -right-2 text-[9rem] text-accent-light">
-                  01
+                  {String(CAREER_ORDER.indexOf(FEATURED_CAREER.slug) + 1).padStart(2, "0")}
                 </span>
                 <div className="relative">
                   <FEATURED_CAREER.icon className="h-9 w-9 text-accent-light" />
@@ -522,7 +663,7 @@ export default function LandingPage() {
                 separators, the way an institution's catalogue reads,
                 rather than a second row of cards. */}
             <div className="mt-16 border-t border-[rgb(var(--fg-tint)/0.08)]">
-              {CATALOGUE.map((c, i) => (
+              {CATALOGUE.map((c) => (
                 <Link
                   key={c.slug}
                   href={`/careers/${c.slug}`}
@@ -536,7 +677,7 @@ export default function LandingPage() {
                     aria-hidden="true"
                     className="pointer-events-none absolute -right-4 top-1/2 hidden h-32 w-32 -translate-y-1/2 rotate-6 text-accent-light opacity-0 transition-all duration-300 ease-smooth group-hover:opacity-[0.07] group-hover:rotate-0 lg:block"
                   />
-                  <span className="font-display text-2xl text-ink-500 sm:text-3xl">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="font-display text-2xl text-ink-500 sm:text-3xl">{String(CAREER_ORDER.indexOf(c.slug) + 1).padStart(2, "0")}</span>
                   <div className="relative min-w-0">
                     <div className="flex items-center gap-2.5">
                       <c.icon className="h-4 w-4 flex-shrink-0 text-accent-light" />
@@ -561,21 +702,47 @@ export default function LandingPage() {
               ))}
             </div>
 
-            <div className="mt-14 grid grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-3 lg:grid-cols-6">
-              {CAREER_CATEGORIES.map((cat) => (
-                <div key={cat.slug}>
-                  <p className="font-mono text-[10px] uppercase tracking-wide text-ink-500">{cat.name}</p>
-                  <ul className="mt-3 space-y-1.5">
-                    {cat.paths.map((p) => (
-                      <li key={p.slug}>
-                        <Link href={`/careers/${p.slug}`} className="focus-ring text-sm text-ink-300 transition-colors hover:text-accent-light">
-                          {p.name}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
+            {/* The rest of the library: all six fields with every career in
+                them, so six featured rows read as a sample of a much larger
+                catalogue rather than the whole of it. */}
+            <div className="mt-20">
+              <div className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2 border-b border-[rgb(var(--fg-tint)/0.14)] pb-5">
+                <h3 className="font-display text-display font-semibold tracking-tight text-ink-100">
+                  The full library: {CAREER_PATH_COUNT} careers.
+                </h3>
+                <p className="max-w-sm text-sm text-ink-500">
+                  Every one has its own roadmap, projects, tools and entry roles. None repeats another.
+                </p>
+              </div>
+              <div className="mt-8 grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+                {CAREER_CATEGORIES.map((cat) => (
+                  <div key={cat.slug}>
+                    <div className="flex items-baseline justify-between gap-3">
+                      <Link
+                        href={`/careers?category=${cat.slug}`}
+                        className="focus-ring font-display text-xl font-semibold tracking-tight text-ink-100 hover:text-accent-light"
+                      >
+                        {cat.name}
+                      </Link>
+                      <span className="font-mono text-[10px] uppercase tracking-wide text-ink-500">{cat.paths.length} careers</span>
+                    </div>
+                    <p className="mt-1 max-w-xs text-xs leading-relaxed text-ink-500">{cat.blurb}</p>
+                    <ul className="mt-4 border-t border-[rgb(var(--fg-tint)/0.1)]">
+                      {cat.paths.map((p) => (
+                        <li key={p.slug} className="border-b border-[rgb(var(--fg-tint)/0.06)]">
+                          <Link
+                            href={`/careers/${p.slug}`}
+                            className="focus-ring group flex items-center gap-3 py-2 text-sm text-ink-300 transition-colors hover:text-accent-light"
+                          >
+                            <p.icon className="h-3.5 w-3.5 flex-shrink-0 text-ink-500 group-hover:text-accent-light" aria-hidden="true" />
+                            {p.name}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
             </div>
 
             <Link href="/careers" className="mt-10 inline-flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline">
@@ -601,7 +768,7 @@ export default function LandingPage() {
               Not a generic timeline: a staged plan for your specific path, with real phases you unlock in order.
             </p>
 
-            <div className="mt-14 grid gap-14 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
+            <div className="mt-14 grid gap-14 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
               <ol className="space-y-0">
                 {roadmapStory.map((s, i) => {
                   const isLast = i === roadmapStory.length - 1;
@@ -623,44 +790,85 @@ export default function LandingPage() {
                 })}
               </ol>
 
-              <Reveal className="perspective-scene relative pb-10 pr-6 sm:pb-14 sm:pr-10">
-                {/* A second screen peeks out from behind, tilted the other
-                    way: the project this phase's "Portfolio" milestone
-                    actually produces, so the roadmap reads as one product
-                    with projects attached rather than a standalone list. */}
-                <div className="absolute -bottom-3 -right-3 hidden w-48 rotate-6 rounded-xl border border-white/10 bg-white/[0.03] p-4 shadow-raised sm:block">
-                  <p className="font-mono text-[9px] uppercase tracking-wide text-white/40">Phase 10 project</p>
-                  <p className="surface-ink-muted mt-1.5 text-xs font-medium text-[#f4f5f0]">{FEATURED_PROJECT.title}</p>
-                </div>
-                <div className="relative -rotate-2">
-                  <InterfaceFrame label="Cybersecurity roadmap, live excerpt" tone="ink">
-                    <div className="divide-y divide-white/10">
-                      {samplePhases.map((phase) => (
-                        <div key={phase.title} className="flex items-center gap-3 px-5 py-4">
-                          {phase.state === "done" && <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-[#8fd18a]" />}
-                          {phase.state === "active" && <span className="h-4 w-4 flex-shrink-0 rounded-full border-2 border-[#c3d19a]" />}
-                          {phase.state === "upcoming" && <Lock className="h-3.5 w-3.5 flex-shrink-0 text-white/40" />}
-                          <span
-                            className={cn(
-                              "text-sm",
-                              phase.state === "active" ? "font-medium text-[#f4f5f0]" : phase.state === "done" ? "text-white/70" : "text-white/40"
-                            )}
-                          >
-                            {phase.title}
-                          </span>
-                          {phase.state === "active" && (
-                            <span className="ml-auto rounded-[0.25rem] border border-[#c3d19a]/40 bg-[#c3d19a]/15 px-2 py-0.5 text-xs font-medium text-[#c3d19a]">
-                              In progress
-                            </span>
+              <Reveal className="relative">
+                <InterfaceFrame label="Cybersecurity roadmap" tone="ink">
+                  <div className="border-b border-white/10 px-5 py-4 sm:px-6">
+                    <div className="flex items-baseline justify-between gap-4">
+                      <p className="font-display text-lg font-semibold tracking-tight text-[#f4f5f0]">Cybersecurity</p>
+                      <p className="font-mono text-[10px] uppercase tracking-wide text-white/50">
+                        {ROADMAP_ACTIVE} of {ROADMAP_PHASES.length} phases complete
+                      </p>
+                    </div>
+                    <div className="mt-3 flex gap-1" aria-hidden="true">
+                      {ROADMAP_PHASES.map((t, i) => (
+                        <span
+                          key={t}
+                          className={cn(
+                            "h-1 flex-1 rounded-full",
+                            i < ROADMAP_ACTIVE ? "bg-[#8fd18a]" : i === ROADMAP_ACTIVE ? "bg-[#c3d19a]" : "bg-white/12"
                           )}
-                        </div>
+                        />
                       ))}
                     </div>
-                  </InterfaceFrame>
-                </div>
+                  </div>
+
+                  <div className="grid sm:grid-cols-[1fr_1fr]">
+                    <ol className="divide-y divide-white/[0.07] border-white/10 sm:border-r">
+                      {ROADMAP_PHASES.map((title, i) => {
+                        const state = i < ROADMAP_ACTIVE ? "done" : i === ROADMAP_ACTIVE ? "active" : "upcoming";
+                        return (
+                          <li key={title} className="flex items-center gap-3 px-5 py-2.5 sm:px-6">
+                            <span className="w-5 font-mono text-[10px] text-white/35">{String(i + 1).padStart(2, "0")}</span>
+                            <span
+                              className={cn(
+                                "min-w-0 flex-1 truncate text-sm",
+                                state === "active" ? "font-medium text-[#f4f5f0]" : state === "done" ? "text-white/65" : "text-white/35"
+                              )}
+                            >
+                              {title}
+                            </span>
+                            {state === "done" && <CheckCircle2 className="h-3.5 w-3.5 flex-shrink-0 text-[#8fd18a]" aria-label="Complete" />}
+                            {state === "active" && <span className="h-3.5 w-3.5 flex-shrink-0 rounded-full border-2 border-[#c3d19a]" aria-label="In progress" />}
+                            {state === "upcoming" && <Lock className="h-3 w-3 flex-shrink-0 text-white/30" aria-label="Locked" />}
+                          </li>
+                        );
+                      })}
+                    </ol>
+
+                    <div className="border-t border-white/10 p-5 sm:border-t-0 sm:p-6">
+                      <p className="font-mono text-[10px] uppercase tracking-wide text-[#c3d19a]">Now: Phase 10, Portfolio</p>
+                      <p className="mt-2 text-xs leading-relaxed text-white/55">
+                        Turn your completed projects into a portfolio that gets you interviews.
+                      </p>
+                      <ul className="mt-5 space-y-4">
+                        <li className="flex gap-3">
+                          <FileText className="mt-0.5 h-4 w-4 flex-shrink-0 text-white/45" aria-hidden="true" />
+                          <span>
+                            <span className="block text-sm text-[#f4f5f0]">What makes a security portfolio stand out</span>
+                            <span className="block font-mono text-[10px] uppercase tracking-wide text-white/40">Lesson · 15 min</span>
+                          </span>
+                        </li>
+                        <li className="flex gap-3">
+                          <FolderGit2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#c3d19a]" aria-hidden="true" />
+                          <span>
+                            <span className="block text-sm text-[#f4f5f0]">{FEATURED_PROJECT.title}</span>
+                            <span className="block font-mono text-[10px] uppercase tracking-wide text-white/40">Project · {FEATURED_PROJECT.difficultyLabel}</span>
+                          </span>
+                        </li>
+                        <li className="flex gap-3">
+                          <Award className="mt-0.5 h-4 w-4 flex-shrink-0 text-white/45" aria-hidden="true" />
+                          <span>
+                            <span className="block text-sm text-[#f4f5f0]">Checkpoint: Portfolio</span>
+                            <span className="block font-mono text-[10px] uppercase tracking-wide text-white/40">Quiz · pass at 70%</span>
+                          </span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </InterfaceFrame>
                 <p className="surface-ink-muted relative mt-4 text-xs leading-relaxed">
-                  Every path has its own full set of phases like these, each with lessons, exercises, and projects. This
-                  is a real excerpt, not a mockup.
+                  Every path has its own full set of phases like these, each with lessons, exercises, projects and a
+                  checkpoint. These are the real phases of the Cybersecurity roadmap.
                 </p>
               </Reveal>
             </div>
@@ -844,22 +1052,21 @@ export default function LandingPage() {
                 />
                 <div className="p-7">
                   <p className="font-display text-xl font-semibold text-ink-100">Toriola Opeyemi</p>
-                  <p className="mt-0.5 text-sm text-ink-400">Software Engineer | Cybersecurity Expert</p>
+                  <p className="mt-0.5 text-sm text-ink-400">Cloud Security Mentor | Cloud Engineer</p>
                   <div className="mt-3 flex flex-wrap gap-1.5">
                     {[
-                      "Software Engineering",
-                      "Cybersecurity",
                       "Cloud Security",
-                      "DevSecOps",
                       "Cloud Engineering",
+                      "AWS Security",
                       "Security Automation",
+                      "DevSecOps",
                     ].map((t) => (
                       <Badge key={t} tone="warm">{t}</Badge>
                     ))}
                   </div>
                   <p className="mt-4 text-sm leading-relaxed text-ink-500">
-                    Direct, one-on-one mentorship: roadmap, project guidance, portfolio review, and interview
-                    preparation, from CareerFound&apos;s founder.
+                    One-on-one mentorship for cloud and security careers: your roadmap, hands-on cloud security
+                    projects, portfolio review and interview preparation, from CareerFound&apos;s founder.
                   </p>
                   <div className="mt-5 flex flex-col items-start gap-3 border-t border-warm/20 pt-4 sm:flex-row sm:items-baseline sm:justify-between">
                     <span>
@@ -929,8 +1136,8 @@ export default function LandingPage() {
             <div className="mt-8 flex flex-wrap items-center gap-4 border-t border-[rgb(var(--fg-tint)/0.08)] pt-6">
               <p className="flex items-center gap-2 text-sm text-ink-500">
                 <Users className="h-4 w-4 text-ink-400" />
-                Prefer a shorter, cheaper session? The Mentor Marketplace has working professionals for
-                portfolio reviews and mock interviews, filtered by career path.
+                Every mentor is a real person with a real profile. Filter by career path, read how they
+                work, and request a session when one fits.
               </p>
               <Link href="/mentors" className="ml-auto flex-shrink-0 text-sm font-medium text-accent-light hover:underline">
                 Browse mentors
@@ -987,20 +1194,106 @@ export default function LandingPage() {
         </section>
 
         {/* ============================================================
-            JOB READY: a typographic transition, not five outcome cards.
-            Learn -> Build -> Prove -> Apply -> Get hired, each word its
-            own real destination, connected by an arrow (a chevron on
-            mobile) rather than boxed and bulleted. Pricing, FAQ, and the
-            final CTA follow. */}
+            JOB READY. The last layer of the product, shown as the real
+            Tech Readiness Score (five weighted signals, what would move
+            it up) next to a real interview simulation, so "job ready" is
+            something you can measure and rehearse, not a closing slogan.
+            The Learn / Build / Prove / Apply / Get hired line closes it. */}
         <SectionDivider label="Job ready" />
         <section className="bg-paper py-20 sm:py-28">
           <div className="container-page">
-            <p className="eyebrow justify-center">What CareerFound is built for</p>
+            <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-14">
+              <Reveal>
+                <p className="eyebrow gap-2 text-ink-400">
+                  <Gauge className="h-3.5 w-3.5" /> Career readiness
+                </p>
+                <h2 className="mt-4 max-w-md font-display text-display font-semibold tracking-tight text-ink-100">
+                  Know when you are ready, not just when you have finished.
+                </h2>
+                <p className="mt-5 max-w-md text-sm leading-relaxed text-ink-500">
+                  Your Tech Readiness Score is built from five signals of your own activity: what you have learned,
+                  built, published, rehearsed and proven. It tells you what would move it up next, and the
+                  simulations are where you practise the part that is hardest to fake: thinking out loud under pressure.
+                </p>
+                <Link href="/pricing" className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline">
+                  Start free <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </Reveal>
+
+              <Reveal delayMs={120} className="grid gap-6 sm:grid-cols-[1.15fr_1fr]">
+                <InterfaceFrame label="Tech Readiness Score, example">
+                  <div className="p-6">
+                    <div className="flex items-center justify-center">
+                      <ReadinessDial
+                        size={168}
+                        overall={READINESS_OVERALL}
+                        segments={READINESS_SIGNALS.map((r) => ({ key: r.key, label: r.label, value: r.value }))}
+                      />
+                    </div>
+                    <ul className="mt-6 space-y-3">
+                      {READINESS_SIGNALS.map((r) => (
+                        <li key={r.key}>
+                          <div className="flex items-baseline justify-between text-xs">
+                            <span className="text-ink-300">
+                              {r.label} <span className="font-mono text-[10px] text-ink-500">{r.weight}% of score</span>
+                            </span>
+                            <span className="font-mono text-ink-400">{r.value}%</span>
+                          </div>
+                          <div className="mt-1.5 h-1 rounded-full bg-[rgb(var(--fg-tint)/0.1)]">
+                            <div className="h-1 rounded-full bg-accent-light" style={{ width: `${r.value}%` }} />
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="mt-6 border-t border-[rgb(var(--fg-tint)/0.1)] pt-4">
+                      <p className="text-xs font-medium text-ink-300">What would move your score up</p>
+                      <ul className="mt-2 space-y-2 text-xs leading-relaxed text-ink-500">
+                        {READINESS_NEXT.map((a) => (
+                          <li key={a} className="flex gap-2">
+                            <span className="mt-1.5 h-1 w-1 flex-shrink-0 rounded-full bg-accent" aria-hidden="true" />
+                            {a}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </InterfaceFrame>
+
+                <InterfaceFrame label="Simulation, SOC triage" className="sm:mt-12">
+                  <div className="p-6">
+                    <p className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-wide text-accent-light">
+                      <MessageSquare className="h-3 w-3" /> Real-world simulation
+                    </p>
+                    <p className="mt-3 font-display text-lg font-semibold leading-snug tracking-tight text-ink-100">
+                      SOC Triage: Which alert do you investigate first?
+                    </p>
+                    <p className="mt-3 text-xs leading-relaxed text-ink-500">
+                      You are a Tier 1 SOC analyst. Your SIEM has raised three alerts in the last 10 minutes.
+                    </p>
+                    <ul className="mt-4 space-y-2 text-xs leading-relaxed text-ink-300">
+                      <li className="rounded-md border border-[rgb(var(--fg-tint)/0.1)] px-3 py-2">
+                        <span className="font-mono text-ink-500">A</span> One failed admin login, from the usual office IP.
+                      </li>
+                      <li className="rounded-md border border-accent bg-accent/10 px-3 py-2 text-ink-100">
+                        <span className="font-mono text-accent-light">B</span> 400 failed logins on one account in 2 minutes, from a country with no employees.
+                      </li>
+                      <li className="rounded-md border border-[rgb(var(--fg-tint)/0.1)] px-3 py-2">
+                        <span className="font-mono text-ink-500">C</span> A file renamed on a marketing laptop at 2:15pm.
+                      </li>
+                    </ul>
+                    <p className="mt-4 text-xs leading-relaxed text-ink-500">
+                      Prioritising by volume, anomaly and business impact is the core triage skill.
+                    </p>
+                  </div>
+                </InterfaceFrame>
+              </Reveal>
+            </div>
+
             <Reveal>
-              <div className="mt-12 flex flex-col sm:flex-row sm:items-center">
+              <div className="mt-20 flex flex-col border-t border-[rgb(var(--fg-tint)/0.1)] pt-10 sm:flex-row sm:items-center">
                 {READINESS_STAGES.map((s, i) => (
                   <div key={s.label} className="flex flex-1 flex-col items-center sm:flex-row">
-                    <Link href={s.href} className="group block w-full py-6 text-center sm:py-2">
+                    <Link href={s.href} className="group block w-full py-5 text-center sm:py-2">
                       <p className="font-display text-3xl font-semibold tracking-tight text-ink-100 transition-colors duration-200 group-hover:text-accent-light sm:text-2xl lg:text-3xl">
                         {s.label}
                       </p>

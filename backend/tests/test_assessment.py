@@ -58,3 +58,52 @@ async def test_career_dna_axes_bounded(client):
     dna = resp.json()["career_dna"]
     for axis in ["problem_solving", "mathematics", "creativity", "people_orientation", "systems_thinking", "communication"]:
         assert 0 <= dna[axis] <= 100
+
+
+async def _top_slug(client, token, answers):
+    resp = await client.post(
+        "/api/v1/assessment", headers={"Authorization": f"Bearer {token}"}, json={"answers": answers}
+    )
+    assert resp.status_code == 201
+    recs = {r["tier"]: r for r in resp.json()["recommendations"]}
+    return recs
+
+
+async def test_journey_signals_steer_the_match_and_show_in_the_result(client):
+    await _seed_paths()
+    token = await _register(client, "journey@example.com")
+
+    design = await _top_slug(
+        client,
+        token,
+        {
+            "enjoys_creativity": True,
+            "things_enjoyed": ["interfaces"],
+            "existing_skills": ["creativity"],
+            "tech_interests": ["design"],
+            "preferred_category": "design-product",
+        },
+    )
+    assert design["best_match"]["path_slug"] in {"ui-ux-design", "product-design", "graphic-design"}
+    assert "drawn to" in design["best_match"]["why_it_fits"]
+
+    cloud = await _top_slug(
+        client,
+        token,
+        {
+            "prefers_systems": True,
+            "things_enjoyed": ["infrastructure"],
+            "tech_interests": ["cloud"],
+            "preferred_category": "cloud-infrastructure",
+        },
+    )
+    assert cloud["best_match"]["path_slug"] in {"cloud-engineering", "devops-engineering"}
+    # The wild card still comes from a different category than the top two.
+    assert cloud["wild_card"]["path_slug"] not in {"cloud-engineering", "devops-engineering", "solutions-architecture"}
+
+
+async def test_unknown_signal_ids_are_ignored(client):
+    await _seed_paths()
+    token = await _register(client, "junk@example.com")
+    recs = await _top_slug(client, token, {"things_enjoyed": ["not-a-real-tag"], "preferred_category": "nope"})
+    assert set(recs) == {"best_match", "strong_alternative", "wild_card"}

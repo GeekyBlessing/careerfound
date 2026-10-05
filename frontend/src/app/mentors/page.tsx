@@ -81,15 +81,31 @@ function MentorsPageInner() {
 
       {!loading && !error && mentors.length === 0 && (
         <Alert>
-          No mentors match &ldquo;{pathFilter?.replace(/-/g, " ")}&rdquo; yet.{" "}
-          <Link href="/mentors" className="underline">
-            Browse all mentors
-          </Link>{" "}
-          instead.
+          {pathFilter ? (
+            <>
+              No mentor covers &ldquo;{pathFilter.replace(/-/g, " ")}&rdquo; yet.{" "}
+              <Link href="/mentors" className="underline">
+                See every mentor
+              </Link>
+              , or{" "}
+              <Link href="/mentors/apply" className="underline">
+                apply to mentor this path
+              </Link>
+              .
+            </>
+          ) : (
+            <>
+              Mentors are being added as they are reviewed.{" "}
+              <Link href="/mentors/apply" className="underline">
+                Apply to become one
+              </Link>
+              .
+            </>
+          )}
         </Alert>
       )}
 
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className={`grid gap-5 sm:grid-cols-2 ${mentors.length > 2 ? "lg:grid-cols-3" : "lg:max-w-4xl"}`}>
         {mentors.map((mentor) => (
           <Link
             key={mentor.id}

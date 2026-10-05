@@ -362,7 +362,7 @@ async def test_mentor_tags_with_legacy_slugs_are_rewritten():
 @pytest.mark.asyncio
 async def test_mentor_filter_accepts_old_and_new_slugs(client):
     async with AsyncSessionLocal() as db:
-        db.add(Mentor(display_name="Pipeline Pro", headline="h", bio="b", avatar_seed="pp", paths=["devops-engineering"], hourly_rate_cents=0, is_active=True, is_verified=True))
+        db.add(Mentor(display_name="Pipeline Pro", headline="h", bio="b", avatar_seed="pp", paths=["devops-engineering"], hourly_rate_cents=0, is_active=True, is_verified=True, is_demo=False))
         await db.commit()
     for slug in ("devops-engineering", "devops"):
         listing = await client.get("/api/v1/mentors", params={"path": slug})

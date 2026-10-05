@@ -1,0 +1,78 @@
+"""Seeded demo personas are never public marketplace content; only the real,
+verified mentors are listed, viewable, matched and bookable."""
+
+import pytest
+from sqlalchemy import select
+
+from app.db.session import AsyncSessionLocal
+from app.models.marketplace import Mentor
+from app.seed.mentors import FOUNDING_MENTOR, MOBILE_ENGINEERING_MENTOR
+from app.seed.seed_data import seed_mentors
+
+pytestmark = pytest.mark.asyncio
+
+
+async def test_public_listing_contains_only_the_real_mentors(client):
+    async with AsyncSessionLocal() as db:
+        await seed_mentors(db)
+        demo_count = len((await db.execute(select(Mentor).where(Mentor.is_demo.is_(True)))).scalars().all())
+    assert demo_count > 0, "demo personas stay in the database, just hidden"
+
+    listing = (await client.get("/api/v1/mentors")).json()
+    assert {m["display_name"] for m in listing} == {"Toriola Opeyemi", "David Oladotun Egundey"}
+    assert all(m["is_demo"] is False for m in listing)
+
+    # Filtering by a career a demo persona used to cover returns no demo mentor.
+    assert (await client.get("/api/v1/mentors", params={"path": "devops-engineering"})).json() == []
+    cloud = (await client.get("/api/v1/mentors", params={"path": "cloud-security"})).json()
+    assert [m["display_name"] for m in cloud] == ["Toriola Opeyemi"]
+
+
+async def test_a_demo_mentor_is_a_404_by_id_and_cannot_be_booked(client):
+    async with AsyncSessionLocal() as db:
+        await seed_mentors(db)
+        demo = (await db.execute(select(Mentor).where(Mentor.is_demo.is_(True)))).scalars().first()
+        demo_id = str(demo.id)
+    assert (await client.get(f"/api/v1/mentors/{demo_id}")).status_code == 404
+    assert (await client.get(f"/api/v1/mentors/{demo_id}/reviews")).json() == []
+
+
+async def test_real_mentor_profiles_carry_the_verified_positioning(client):
+    async with AsyncSessionLocal() as db:
+        await seed_mentors(db)
+    toriola = next(m for m in (await client.get("/api/v1/mentors")).json() if m["display_name"] == "Toriola Opeyemi")
+    assert toriola["headline"] == "Cloud Security Mentor | Cloud Engineer"
+    assert toriola["paths"] == ["cloud-security", "cloud-engineering", "aws-security", "security-automation", "devsecops"]
+    assert toriola["mentorship_price_label"] == "₦250,000 ($200)"
+    assert toriola["mentorship_duration_label"] == "2 months"
+
+    dotun = (await client.get("/api/v1/mentors/mobile-engineering-mentor")).json()
+    assert dotun["headline"] == "Mobile Engineer"
+    assert dotun["mentorship_price_label"] == "₦250,000 ($200)"
+    assert dotun["mentorship_duration_label"] == "2 months"
+
+
+async def test_existing_founder_row_is_repositioned_once_and_edits_are_kept():
+    async with AsyncSessionLocal() as db:
+        await seed_mentors(db)
+        founder = (await db.execute(select(Mentor).where(Mentor.contact_email == FOUNDING_MENTOR["contact_email"]))).scalar_one()
+        # Simulate the previously deployed profile.
+        founder.headline = "Software Engineer | Cybersecurity Expert"
+        founder.bio = "I mentor people who are figuring out how to break into tech, older copy."
+        founder.paths = ["software-engineering", "cybersecurity"]
+        await db.commit()
+
+        await seed_mentors(db)
+        await db.refresh(founder)
+        assert founder.headline == FOUNDING_MENTOR["headline"]
+        assert founder.bio == FOUNDING_MENTOR["bio"]
+        assert founder.paths == FOUNDING_MENTOR["paths"]
+
+        # A later real edit from the mentor dashboard survives another seed run.
+        founder.headline = "My own headline"
+        await db.commit()
+        await seed_mentors(db)
+        await db.refresh(founder)
+        assert founder.headline == "My own headline"
+
+    assert MOBILE_ENGINEERING_MENTOR["paths"][0] == "mobile-engineering"

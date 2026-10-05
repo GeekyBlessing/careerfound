@@ -63,6 +63,7 @@ async def test_beginner_focused_mentor_outranks_generalist_for_a_beginner():
             paths=[path.slug],
             focus_beginner_friendly=True,
             is_founding_mentor=True,
+            is_demo=False,
             years_experience=None,
         )
         generalist_mentor = Mentor(
@@ -71,6 +72,7 @@ async def test_beginner_focused_mentor_outranks_generalist_for_a_beginner():
             paths=[path.slug],
             focus_beginner_friendly=False,
             years_experience=10,
+            is_demo=False,
         )
         db.add_all([beginner_mentor, generalist_mentor])
         await db.commit()

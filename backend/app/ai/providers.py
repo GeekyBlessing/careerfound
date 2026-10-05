@@ -36,6 +36,7 @@ from app.ai.schemas import (
     ProjectReviewFinding,
     SkillTransfer,
 )
+from app.ai.assessment_signals import matched_labels, signal_bonus
 from app.core.config import settings
 
 
@@ -366,6 +367,7 @@ def _score_paths(profile: dict[str, Any], career_catalog: list[dict[str, Any]]) 
             if profile.get(trait):
                 score += weight * 8
         # light variety so repeated identical answers don't always rank identically
+        score += signal_bonus(profile, slug, path.get("category"))
         score += random.Random(slug + json.dumps(profile, sort_keys=True, default=str)).randint(-3, 3)
         scored.append((path, max(0, min(100, score))))
 
@@ -400,6 +402,9 @@ def _build_recommendation(path: dict, score: int, tier: str, profile: dict) -> C
         transfers.append(SkillTransfer(skill="Comfort with logic/math", why_it_transfers="Helps with the structured, rule-based thinking this path uses daily."))
     if profile.get("enjoys_people"):
         transfers.append(SkillTransfer(skill="Communication", why_it_transfers="Useful for explaining findings and working cross-functionally."))
+    matched = matched_labels(profile, slug)
+    for label in matched["strengths"][:2]:
+        transfers.append(SkillTransfer(skill=label, why_it_transfers="You told us this is a strength, and this path leans on it."))
     if not transfers:
         transfers.append(SkillTransfer(skill="Curiosity", why_it_transfers="The single best predictor of success for a total beginner in this field."))
 
@@ -408,6 +413,13 @@ def _build_recommendation(path: dict, score: int, tier: str, profile: dict) -> C
         "strong_alternative": f"A strong runner-up: {beginner_desc}. If your priorities shift (budget, time, or interests), this is a great backup direction.",
         "wild_card": f"A less obvious pick worth exploring: {beginner_desc}. It's not the most predictable fit from your answers, but people with your mix of interests sometimes end up loving it.",
     }[tier]
+
+    # Name the person's own answers when they actually point at this career,
+    # so the result reads as built from what they said rather than generic.
+    own = (matched["interests"] + matched["technology"])[:2]
+    if own:
+        joined = " and ".join(a.lower() for a in own)
+        why += f" You told us you are drawn to {joined}."
 
     return CareerRecommendation(
         path_slug=slug,

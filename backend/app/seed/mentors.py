@@ -195,23 +195,22 @@ FOUNDING_MENTOR_EMAIL = "opeyemitoriola41@gmail.com"
 
 FOUNDING_MENTOR = dict(
     display_name="Toriola Opeyemi",
-    headline="Software Engineer | Cybersecurity Expert",
+    headline="Cloud Security Mentor | Cloud Engineer",
     bio=(
-        "I mentor people who are figuring out how to break into tech, especially complete "
-        "beginners with little or no technical background. My focus is software engineering, "
-        "cybersecurity, and cloud security: what to learn first, how to structure your learning "
-        "path, and how to avoid the mistakes that slow beginners down most. If you're stuck on "
-        "'where do I even start,' that's exactly what I help with."
+        "I mentor people breaking into cloud security and cloud engineering, especially complete "
+        "beginners with little or no technical background. My focus areas are cloud security, cloud "
+        "engineering, AWS security, security automation, and DevSecOps: what to learn first, how to "
+        "structure your learning path, and how to avoid the mistakes that slow beginners down most. "
+        "If you're stuck on 'where do I even start,' that's exactly what I help with."
     ),
     avatar_seed="toriola",
     avatar_url="/mentors/toriola.jpg",
-    # Tags shown on the marketplace card/profile. Only "software-engineering",
-    # "cybersecurity" and "cloud-security" are real CareerPath slugs today;
-    # "devsecops" and "security-automation" aren't CareerPath slugs yet
-    # so they won't drive path-filtered matching, but they're real areas
-    # Toriola mentors in and render fine as plain tags (see mobile-engineering
-    # mentor below for the same pattern).
-    paths=["software-engineering", "cybersecurity", "cloud-security", "devsecops", "cloud-engineering", "security-automation"],
+    # Mentorship areas shown on the marketplace card and profile. "cloud-security"
+    # and "cloud-engineering" are real CareerPath slugs, so they drive
+    # path-filtered matching; "aws-security", "security-automation" and
+    # "devsecops" are real areas Toriola mentors in that are not catalogue
+    # careers, and render as plain tags (same pattern as the mobile mentor).
+    paths=["cloud-security", "cloud-engineering", "aws-security", "security-automation", "devsecops"],
     years_experience=None,
     hourly_rate_cents=0,
     currency="USD",
@@ -221,9 +220,9 @@ FOUNDING_MENTOR = dict(
     mentorship_formats=["video_call"],
     session_durations_minutes=[30, 60],
     value_proposition=(
-        "Toriola mentors beginners entering cybersecurity and can help you understand what to "
-        "learn first, how to structure your learning journey, and how to avoid common beginner "
-        "mistakes."
+        "Toriola mentors people entering cloud security and cloud engineering and can help you "
+        "understand what to learn first, how to structure your learning journey, and how to avoid "
+        "common beginner mistakes."
     ),
     focus_beginner_friendly=True,
     contact_email=FOUNDING_MENTOR_EMAIL,

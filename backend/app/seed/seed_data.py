@@ -243,14 +243,25 @@ async def seed_mentors(db: AsyncSession) -> None:
         if existing_founder.availability_note == old_default:
             existing_founder.availability_note = "Availability coming soon: check back or ask a question."
             changed = True
-        # One-time positioning update: Toriola's headline/tags were narrowed
-        # to cybersecurity/cloud security only. Only touch a row that still
-        # holds that exact original headline, so a real dashboard edit is
-        # never overwritten.
-        old_headline = "Cybersecurity & Cloud Security Engineer | Cybersecurity Mentor"
-        if existing_founder.headline == old_headline:
+        # One-time positioning updates. Toriola's headline, bio, value
+        # proposition and mentorship areas have been repositioned twice
+        # (cybersecurity only, then software engineering plus cybersecurity,
+        # now cloud security plus cloud engineering). Each field is replaced
+        # only while it still holds one of the exact earlier seeded values,
+        # so a real dashboard edit is never overwritten.
+        previous_headlines = (
+            "Cybersecurity & Cloud Security Engineer | Cybersecurity Mentor",
+            "Software Engineer | Cybersecurity Expert",
+        )
+        if existing_founder.headline in previous_headlines:
             existing_founder.headline = FOUNDING_MENTOR["headline"]
             existing_founder.paths = FOUNDING_MENTOR["paths"]
+            changed = True
+        if (existing_founder.bio or "").startswith("I mentor people who are figuring out how to break into tech"):
+            existing_founder.bio = FOUNDING_MENTOR["bio"]
+            changed = True
+        if (existing_founder.value_proposition or "").startswith("Toriola mentors beginners entering cybersecurity"):
+            existing_founder.value_proposition = FOUNDING_MENTOR["value_proposition"]
             changed = True
         if changed:
             await db.commit()

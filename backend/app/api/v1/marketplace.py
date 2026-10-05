@@ -93,7 +93,7 @@ async def get_mentor(mentor_id: str, db: AsyncSession = Depends(get_db)):
     # whichever form was given. This is the one dynamic mentor-profile route
     # in the app; a slug is a value for its existing {mentor_id} segment,
     # not a second, conflicting route.
-    mentor = await marketplace_service.get_mentor(db, mentor_id)
+    mentor = await marketplace_service.get_public_mentor(db, mentor_id)
     if mentor is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Mentor not found")
     return mentor
@@ -103,7 +103,7 @@ async def get_mentor(mentor_id: str, db: AsyncSession = Depends(get_db)):
 async def list_mentor_reviews(mentor_id: str, db: AsyncSession = Depends(get_db)):
     # Resolve slug-or-uuid to the mentor's real id first, since
     # MentorReview rows are always keyed on the real UUID.
-    mentor = await marketplace_service.get_mentor(db, mentor_id)
+    mentor = await marketplace_service.get_public_mentor(db, mentor_id)
     if mentor is None:
         return []
     return await marketplace_service.list_reviews(db, mentor.id)
@@ -116,7 +116,7 @@ async def book_session(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    mentor = await marketplace_service.get_mentor(db, mentor_id)
+    mentor = await marketplace_service.get_public_mentor(db, mentor_id)
     if mentor is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Mentor not found")
     message = payload.message or payload.note  # `note` kept as a deprecated alias, never silently dropped
@@ -136,7 +136,7 @@ async def ask_question(
     """Lightweight 'Ask a Question' CTA — an async inbox item, not a
     scheduled session. Reuses MentorSession (duration_minutes=0 marks it as
     a question rather than a booked slot) instead of a whole new table."""
-    mentor = await marketplace_service.get_mentor(db, mentor_id)
+    mentor = await marketplace_service.get_public_mentor(db, mentor_id)
     if mentor is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Mentor not found")
     session = await marketplace_service.book_session(

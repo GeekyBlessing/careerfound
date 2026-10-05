@@ -58,7 +58,9 @@ _GOAL_LABELS = {
 
 
 async def list_mentors(db: AsyncSession, path_slug: str | None, min_rating: float | None) -> list[Mentor]:
-    query = select(Mentor).where(Mentor.is_active.is_(True))
+    # Seeded fictional personas (is_demo) are never public marketplace
+    # content: only real mentors are listed, matched and bookable.
+    query = select(Mentor).where(Mentor.is_active.is_(True), Mentor.is_demo.is_(False))
     result = await db.execute(query)
     mentors = list(result.scalars().all())
     if path_slug:
@@ -90,6 +92,15 @@ async def get_mentor(db: AsyncSession, mentor_id: uuid.UUID | str) -> Mentor | N
     else:
         result = await db.execute(select(Mentor).where(Mentor.slug == mentor_id))
     return result.scalar_one_or_none()
+
+
+async def get_public_mentor(db: AsyncSession, mentor_id: uuid.UUID | str) -> Mentor | None:
+    """get_mentor for public routes: a seeded demo persona resolves to None
+    (a 404), exactly as if it did not exist."""
+    mentor = await get_mentor(db, mentor_id)
+    if mentor is None or mentor.is_demo:
+        return None
+    return mentor
 
 
 def _charge_placeholder(amount_cents: int, currency: str) -> str | None:

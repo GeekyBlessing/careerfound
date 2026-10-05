@@ -32,6 +32,10 @@ class AssessmentAnswers(BaseModel):
     career_timeline: str | None = None
     existing_skills: list[str] = []
     risk_tolerant: bool | None = None
+    # "Discover Your Direction" journey (ids defined in app/ai/assessment_signals.py)
+    tech_interests: list[str] = []
+    career_direction: str | None = None
+    preferred_category: str | None = None
 
 
 class AssessmentSubmitRequest(BaseModel):
