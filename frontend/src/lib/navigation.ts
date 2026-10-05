@@ -2,6 +2,7 @@ import {
   Bot,
   Briefcase,
   Compass,
+  FileSearch,
   FolderGit2,
   Gauge,
   Layers,
@@ -38,7 +39,7 @@ export interface NavItem {
 }
 
 export interface NavGroup {
-  key: "explore" | "build" | "prepare" | "guidance";
+  key: "explore" | "build" | "prepare" | "guidance" | "jobs";
   label: string;
   /** One editorial line shown beside the group's links. */
   blurb: string;
@@ -155,6 +156,20 @@ export const NAV_GROUPS: NavGroup[] = [
         description: "Learn alongside other people on the same path.",
         icon: Layers,
         match: ["/community"],
+      },
+    ],
+  },
+  {
+    key: "jobs",
+    label: "Jobs",
+    blurb: "Read a posting the way a hiring manager will, and know what to fix before you apply.",
+    items: [
+      {
+        href: "/job-matcher",
+        label: "Job Description Analyzer",
+        description: "Paste a posting. See what you can prove, and what to build before you apply.",
+        icon: FileSearch,
+        match: ["/job-matcher"],
       },
     ],
   },

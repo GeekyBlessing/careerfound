@@ -79,3 +79,36 @@ export interface SkillGap {
   listed_skills?: ListedSkill[];
   how_it_works?: string;
 }
+
+export interface JobAnalysisResult {
+  recognised: number;
+  match_pct: number | null;
+  verdict: "ready" | "strengthen" | "unclear";
+  verdict_label: string;
+  reasons: string[];
+  strong_matches: { skill: string; requirement: "required" | "preferred"; mentions: number; evidence: string[] }[];
+  in_progress: { skill: string; requirement: "required" | "preferred"; evidence: string[]; close_with: { kind: string; title: string; href: string } | null }[];
+  gaps: { skill: string; requirement: "required" | "preferred"; close_with: { kind: string; title: string; href: string } | null; listed_by_you: boolean }[];
+  listed_not_proven: string[];
+  before_applying: { title: string; href: string; why: string }[];
+  not_on_your_roadmap: string[];
+  flags: { key: string; text: string }[];
+  method: string;
+}
+
+export interface JobAnalysisSummary {
+  id: string;
+  title: string;
+  company: string;
+  source_url: string;
+  match_pct: number | null;
+  verdict: "ready" | "strengthen" | "unclear";
+  verdict_label: string;
+  analysed_at: string | null;
+  created_at: string | null;
+}
+
+export interface JobAnalysis extends JobAnalysisSummary {
+  description: string;
+  result: JobAnalysisResult;
+}

@@ -38,11 +38,12 @@ describe("global navigation", () => {
   });
 
   it("has the groups the brief calls for, with the expected destinations", () => {
-    expect(NAV_GROUPS.map((g) => g.label)).toEqual(["Explore", "Build", "Prepare", "Guidance"]);
+    expect(NAV_GROUPS.map((g) => g.label)).toEqual(["Explore", "Build", "Prepare", "Guidance", "Jobs"]);
     const hrefs = (key: string) => NAV_GROUPS.find((g) => g.key === key)!.items.map((i) => i.href);
     expect(hrefs("explore")).toEqual(["/careers", "/onboarding", "/roadmap"]);
     expect(hrefs("build")).toEqual(["/projects", "/portfolio", "/mentor"]);
     expect(hrefs("prepare")).toEqual(["/readiness", "/skill-gap"])
+    expect(hrefs("jobs")).toEqual(["/job-matcher"])
     expect(hrefs("guidance")).toEqual(expect.arrayContaining(["/mentors", "/consultation"]));
   });
 
