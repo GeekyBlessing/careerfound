@@ -7,7 +7,7 @@ from app.api.deps import get_current_user
 from app.core.rate_limit import limiter
 from app.db.session import get_db
 from app.models.user import User
-from app.schemas.lab import ChecklistUpdate, InterviewUpdate, MilestoneUpdate, RepositoryUpdate
+from app.schemas.lab import ChecklistUpdate, InterviewUpdate, MilestoneUpdate, RepositoryUpdate, ReviewSubmission
 from app.services import lab_service
 from app.services.lab_service import LabError
 
@@ -108,5 +108,13 @@ async def complete(project_id: uuid.UUID, user: User = Depends(get_current_user)
 async def portfolio(project_id: uuid.UUID, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
     try:
         return await lab_service.add_to_portfolio(db, user, project_id)
+    except LabError as exc:
+        raise _fail(exc) from exc
+
+
+@router.post("/projects/{project_id}/submit-review")
+async def submit_review(project_id: uuid.UUID, payload: ReviewSubmission, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+    try:
+        return await lab_service.submit_for_review(db, user, project_id, payload.note)
     except LabError as exc:
         raise _fail(exc) from exc

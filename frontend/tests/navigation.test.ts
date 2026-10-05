@@ -27,7 +27,7 @@ describe("global navigation", () => {
     ...NAV_GROUPS.flatMap((g) => g.items.map((i) => i.href)),
     ...MORE_LINKS.map((l) => l.href),
     ...ACCOUNT_LINKS.map((l) => l.href),
-    ...Object.values(ROLE_LINKS).map((l) => l.href),
+    ...Object.values(ROLE_LINKS).flat().map((l) => l.href),
     ...SIGNED_OUT_ACCOUNT_LINKS.map((l) => l.href),
     GET_STARTED_HREF,
   ];

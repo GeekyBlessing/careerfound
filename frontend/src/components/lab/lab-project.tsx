@@ -18,6 +18,8 @@ import { GithubWorkflow } from "./github-workflow";
 import { InterviewPrep } from "./interview-prep";
 import { MilestoneList } from "./milestones";
 import { ReadmeBuilder } from "./readme-builder";
+import { VerificationPanel } from "./verification-panel";
+import { VerifiedBadge } from "@/components/career/verified-badge";
 
 const NAV = [
   { id: "overview", label: "Overview" },
@@ -26,6 +28,7 @@ const NAV = [
   { id: "milestones", label: "Milestones" },
   { id: "document", label: "Document" },
   { id: "github", label: "Publish to GitHub" },
+  { id: "verify", label: "Get it reviewed" },
   { id: "complete", label: "Complete and portfolio" },
   { id: "interview", label: "Interview prep" },
   { id: "guidance", label: "Hints and mistakes" },
@@ -105,7 +108,10 @@ export function LabProjectView({ id, onNotLab }: { id: string; onNotLab: () => v
                 {detail.milestones_done} of {detail.milestones_total} milestones
               </Meta>
               <Meta label="Status">
-                <StageBadge stage={detail.stage} label={detail.stage_label} />
+                <span className="inline-flex flex-wrap items-center gap-2">
+                  <StageBadge stage={detail.stage} label={detail.stage_label} />
+                  <VerifiedBadge badge={detail.verification.badge} reviewer={detail.verification.reviewer_name} date={detail.verification.reviewed_at} size="sm" />
+                </span>
               </Meta>
             </dl>
             <div className="mt-6">
@@ -259,8 +265,18 @@ export function LabProjectView({ id, onNotLab }: { id: string; onNotLab: () => v
                 />
               </section>
 
+              <section aria-labelledby="verify">
+                <SectionHeading
+                  n="07"
+                  id="verify"
+                  title="Get it reviewed"
+                  kicker="Two different things can be true of your project. CareerFound can check that your repository exists, and a person can read the work and verify it."
+                />
+                <VerificationPanel detail={detail} busy={busy === "review"} onSubmit={async (note) => act("review", () => api.post<LabProjectDetail>(`${base}/submit-review`, { note }))} />
+              </section>
+
               <section aria-labelledby="complete">
-                <SectionHeading n="07" id="complete" title="Complete and add to your portfolio" kicker="Completion is based on the evidence above, not on opening the page." />
+                <SectionHeading n="08" id="complete" title="Complete and add to your portfolio" kicker="Completion is based on the evidence above, not on opening the page." />
                 <CompletionPanel
                   detail={detail}
                   busy={busy}
@@ -272,7 +288,7 @@ export function LabProjectView({ id, onNotLab }: { id: string; onNotLab: () => v
               </section>
 
               <section aria-labelledby="interview">
-                <SectionHeading n="08" id="interview" title="Interview prep" kicker="Questions an interviewer could ask about this exact project. Write answers you could say out loud." />
+                <SectionHeading n="09" id="interview" title="Interview prep" kicker="Questions an interviewer could ask about this exact project. Write answers you could say out loud." />
                 <InterviewPrep
                   detail={detail}
                   saving={busy === "interview"}
@@ -283,7 +299,7 @@ export function LabProjectView({ id, onNotLab }: { id: string; onNotLab: () => v
               </section>
 
               <section aria-labelledby="guidance">
-                <SectionHeading n="09" id="guidance" title="Hints and common mistakes" />
+                <SectionHeading n="10" id="guidance" title="Hints and common mistakes" />
                 <div className="mt-5 grid gap-8 md:grid-cols-2">
                   <BulletBlock title="Hints" items={detail.hints} />
                   <BulletBlock title="Common mistakes" items={detail.common_mistakes} />

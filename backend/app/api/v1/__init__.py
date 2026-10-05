@@ -13,6 +13,7 @@ from app.api.v1 import (
     marketplace,
     mentor,
     portfolio,
+    review,
     roadmap,
     service_requests,
     simulations,
@@ -31,6 +32,7 @@ api_router.include_router(dashboard.router)
 api_router.include_router(mentor.router)
 api_router.include_router(portfolio.router)
 api_router.include_router(lab.router)
+api_router.include_router(review.router)
 api_router.include_router(marketplace.router)
 api_router.include_router(community.router)
 api_router.include_router(simulations.router)

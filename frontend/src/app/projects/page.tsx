@@ -12,6 +12,7 @@ import { DifficultyMeter } from "@/components/ui/difficulty-meter";
 import { ProgressBar } from "@/components/ui/progress";
 import { SkeletonCard } from "@/components/ui/skeleton";
 import { StageBadge } from "@/components/lab/common";
+import { VerifiedBadge } from "@/components/career/verified-badge";
 import { api, ApiError } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import type { RoleProjectCatalogEntry } from "@/types";
@@ -205,6 +206,7 @@ function ProjectRow({ p, n, titles }: { p: LabProjectSummary; n: number; titles:
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <h3 className="font-display text-lg font-semibold tracking-tight text-ink-100 group-hover:text-accent-light">{p.title}</h3>
             <StageBadge stage={p.stage} label={p.stage_label} />
+            <VerifiedBadge badge={p.verification?.badge ?? null} size="sm" />
           </div>
           <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-ink-400">{p.summary}</p>
           <div className="mt-3 flex flex-wrap gap-1.5">

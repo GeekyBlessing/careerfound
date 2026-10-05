@@ -101,8 +101,8 @@ export function GlobalNav() {
   const switchIfOpen = (key: NavGroup["key"]) => setOpenMenu((cur) => (cur ? key : cur));
 
   const activeGroup = NAV_GROUPS.find((g) => g.key === openMenu);
-  const accountActive = pathMatches(pathname, ["/dashboard", "/settings", "/mentor-dashboard", "/admin"]);
-  const roleLink = user ? ROLE_LINKS[user.role] : undefined;
+  const accountActive = pathMatches(pathname, ["/dashboard", "/settings", "/mentor-dashboard", "/admin", "/reviews"]);
+  const roleLinks = user ? ROLE_LINKS[user.role] ?? [] : [];
 
   return (
     <>
@@ -196,7 +196,7 @@ export function GlobalNav() {
                       <p className="truncate text-xs text-ink-500">{user.email}</p>
                     </div>
                     <ul className="border-t border-[rgb(var(--fg-tint)/0.08)] pt-1">
-                      {[...ACCOUNT_LINKS, ...(roleLink ? [roleLink] : [])].map((l) => (
+                      {[...ACCOUNT_LINKS, ...roleLinks].map((l) => (
                         <li key={l.href}>
                           <Link
                             href={l.href}
@@ -397,7 +397,7 @@ export function GlobalNav() {
             <ul className="mt-2">
               {user ? (
                 <>
-                  {[...ACCOUNT_LINKS, ...(roleLink ? [roleLink] : [])].map((l) => (
+                  {[...ACCOUNT_LINKS, ...roleLinks].map((l) => (
                     <li key={l.href}>
                       <Link
                         href={l.href}

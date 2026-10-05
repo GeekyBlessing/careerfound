@@ -39,6 +39,7 @@ from app.seed.lab.universal import (
     UNIVERSAL_INTERVIEW,
 )
 from app.services import portfolio_service, repo_check, roadmap_service
+from app.services.verification import verification as compute_verification
 
 STAGE_ORDER = [key for key, _, _ in STAGES]
 STAGE_LABEL = {key: label for key, label, _ in STAGES}
@@ -170,7 +171,7 @@ def derive(project: Project, progress: ProjectLabProgress | None, item: Portfoli
     unmet = [c["text"] for c in lab["criteria"] if not checklist.get(c["key"])]
     if unmet:
         missing.append(f"{len(unmet)} completion criteria still to confirm")
-    return {
+    out = {
         "flags": flags,
         "stage": stage,
         "stage_label": STAGE_LABEL.get(stage, "Not started"),
@@ -185,6 +186,8 @@ def derive(project: Project, progress: ProjectLabProgress | None, item: Portfoli
         "repo_check": check,
         "repo_ok": repo_ok,
     }
+    out["verification"] = compute_verification(progress, out, project.kind)
+    return out
 
 
 def _summary(project: Project, state: dict, ids_by_slug: dict[str, uuid.UUID], ready: bool) -> dict:
@@ -208,6 +211,7 @@ def _summary(project: Project, state: dict, ids_by_slug: dict[str, uuid.UUID], r
         "milestones_total": state["milestones_total"],
         "recommended_before": [ids_by_slug[s] for s in lab["recommended_before"] if s in ids_by_slug],
         "ready": ready,
+        "verification": {"tier": state["verification"]["tier"], "badge": state["verification"]["badge"]},
     }
 
 
@@ -372,6 +376,16 @@ async def project_detail(db: AsyncSession, user: User, project_id: uuid.UUID) ->
         "stage": state["stage"],
         "stage_label": state["stage_label"],
         "flags": flags,
+        "verification": state["verification"],
+        "lifecycle": [
+            {"key": "started", "label": "Started", "reached": flags["started"]},
+            {"key": "in_progress", "label": "In progress", "reached": flags["in_progress"]},
+            {"key": "completed", "label": "Completed", "reached": flags["completed"]},
+            {"key": "submitted", "label": "Submitted for review", "reached": state["verification"]["tier"] in {"in_review", "verified", "changes_requested"}},
+            {"key": "verified", "label": "Verified", "reached": state["verification"]["tier"] == "verified"},
+            {"key": "portfolio_ready", "label": "Portfolio ready", "reached": flags["portfolio_ready"]},
+            {"key": "interview_ready", "label": "Interview ready", "reached": flags["interview_ready"]},
+        ],
         "stages": [{"key": k, "label": label, "description": desc, "reached": flags[k]} for k, label, desc in STAGES],
         "milestones_done": len(done),
         "milestones_total": state["milestones_total"],
@@ -444,6 +458,46 @@ def _regress_if_incomplete(project: Project, progress: ProjectLabProgress) -> No
         progress.completed_at = None
 
 
+def _clear_review(progress: ProjectLabProgress) -> None:
+    progress.review_status = "none"
+    progress.submitted_at = None
+    progress.submitted_note = ""
+    progress.submitted_repo_url = ""
+    progress.reviewer_id = None
+    progress.reviewer_name = ""
+    progress.reviewed_at = None
+    progress.review_note = ""
+
+
+MAX_SUBMIT_NOTE = 1000
+
+
+async def submit_for_review(db: AsyncSession, user: User, project_id: uuid.UUID, note: str) -> dict:
+    """Ask a reviewer to read the project. This only queues the request: the
+    project becomes Verified when a reviewer approves it, never before."""
+    project = await _project(db, project_id)
+    progress = await _progress(db, user.id, project.id)
+    item = await _item(db, user.id, project.id)
+    state = derive(project, progress, item, await _legacy_done(db, user.id, project.id))
+    ver = state["verification"]
+    if progress is None or not ver["can_submit"]:
+        if ver["tier"] == "in_review":
+            raise LabError("This project is already waiting for a reviewer.", 400)
+        if ver["tier"] == "verified":
+            raise LabError("This project is already verified.", 400)
+        raise LabError(" ".join(ver["submit_blockers"]) or "This project is not ready for review yet.", 400)
+    progress.review_status = "pending"
+    progress.submitted_at = datetime.now(timezone.utc)
+    progress.submitted_note = (note or "").strip()[:MAX_SUBMIT_NOTE]
+    progress.submitted_repo_url = progress.repo_url
+    progress.reviewer_id = None
+    progress.reviewer_name = ""
+    progress.reviewed_at = None
+    progress.review_note = ""
+    await db.commit()
+    return await project_detail(db, user, project_id)
+
+
 async def start(db: AsyncSession, user: User, project_id: uuid.UUID) -> dict:
     project = await _project(db, project_id)
     if await _progress(db, user.id, project.id) is None and await _legacy_done(db, user.id, project.id):
@@ -494,6 +548,8 @@ async def set_repository(db: AsyncSession, user: User, project_id: uuid.UUID, ur
     if progress.repo_url != canonical:
         progress.repo_url = canonical
         progress.repo_check = {}
+        # A review applies to one repository. A new link starts over.
+        _clear_review(progress)
     await db.commit()
     return await project_detail(db, user, project_id)
 

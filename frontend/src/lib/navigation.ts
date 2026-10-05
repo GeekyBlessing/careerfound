@@ -1,5 +1,6 @@
 import {
   Bot,
+  ClipboardCheck,
   Briefcase,
   Compass,
   FileSearch,
@@ -190,9 +191,13 @@ export const ACCOUNT_LINKS: { href: string; label: string; icon: LucideIcon; mat
   { href: "/settings#settings", label: "Settings", icon: Settings, match: ["/settings"] },
 ];
 
-export const ROLE_LINKS: Record<string, { href: string; label: string; icon: LucideIcon; match: string[] }> = {
-  mentor: { href: "/mentor-dashboard", label: "Mentor dashboard", icon: MessageCircle, match: ["/mentor-dashboard"] },
-  admin: { href: "/admin", label: "Admin", icon: UserCog, match: ["/admin"] },
+type RoleLink = { href: string; label: string; icon: LucideIcon; match: string[] };
+
+const REVIEWS_LINK: RoleLink = { href: "/reviews", label: "Project reviews", icon: ClipboardCheck, match: ["/reviews"] };
+
+export const ROLE_LINKS: Record<string, RoleLink[]> = {
+  mentor: [{ href: "/mentor-dashboard", label: "Mentor dashboard", icon: MessageCircle, match: ["/mentor-dashboard"] }, REVIEWS_LINK],
+  admin: [{ href: "/admin", label: "Admin", icon: UserCog, match: ["/admin"] }, REVIEWS_LINK],
 };
 
 export const SIGNED_OUT_ACCOUNT_LINKS = [

@@ -10,6 +10,29 @@ export interface LabFlags {
   interview_ready: boolean;
 }
 
+export type VerificationTier = "none" | "evidence_checked" | "in_review" | "changes_requested" | "verified";
+
+export interface VerificationBadge {
+  title: string;
+  tier: "verified" | "evidence_checked";
+}
+
+export interface LabVerification {
+  tier: VerificationTier;
+  badge: VerificationBadge | null;
+  copy: string;
+  stale: boolean;
+  can_submit: boolean;
+  submit_blockers: string[];
+  review_status: string;
+  submitted_at: string | null;
+  reviewer_name: string;
+  reviewed_at: string | null;
+  review_note: string;
+  repo_url: string;
+  automated_checks: { public: boolean; readme: boolean; commits: boolean; no_env_committed: boolean; gitignore: boolean; tests: boolean; license: boolean };
+}
+
 export interface LabProjectSummary {
   id: string;
   slug: string;
@@ -29,6 +52,7 @@ export interface LabProjectSummary {
   milestones_total: number;
   recommended_before: string[];
   ready: boolean;
+  verification?: { tier: VerificationTier; badge: VerificationBadge | null };
 }
 
 export interface LabCurriculum {
@@ -166,6 +190,8 @@ export interface LabProjectDetail {
   stage: LabStageKey | null;
   stage_label: string;
   flags: LabFlags;
+  verification: LabVerification;
+  lifecycle: { key: string; label: string; reached: boolean }[];
   stages: { key: LabStageKey; label: string; description: string; reached: boolean }[];
   milestones_done: number;
   milestones_total: number;

@@ -15,3 +15,13 @@ class RepositoryUpdate(BaseModel):
 
 class InterviewUpdate(BaseModel):
     answers: dict[str, str] = Field(default_factory=dict, max_length=40)
+
+
+class ReviewSubmission(BaseModel):
+    note: str = Field(default="", max_length=1000)
+
+
+class ReviewDecision(BaseModel):
+    decision: str = Field(max_length=20)
+    note: str = Field(max_length=2000)
+    opened_repository: bool = False
