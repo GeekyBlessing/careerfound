@@ -29,10 +29,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.career import CareerPath
 from app.models.lab import ProjectLabProgress
 from app.models.portfolio import PortfolioItem
-from app.models.progress import ProgressStatus, UserProgress, UserSimulationAttempt, UserSkillProgress
-from app.models.roadmap import Lesson, Project, Quiz, Roadmap, RoadmapPhase, RoadmapStatus, SkillNode
+from app.models.progress import ProgressStatus, UserProgress, UserSimulationAttempt
+from app.models.roadmap import Lesson, Project, Quiz, Roadmap, RoadmapPhase, RoadmapStatus
 from app.models.user import User
-from app.services import lab_service
+from app.services import lab_service, skill_gap_analyzer
 from app.services.verification import verification
 
 # Weights add up to 100 when every signal is available.
@@ -146,14 +146,9 @@ async def compute(db: AsyncSession, user: User) -> dict:
     learning_total = len(lessons) + len(quizzes)
     learning_done = len(lessons_done) + len(quizzes_done)
 
-    # ---- skills (mastery earned by lessons, quizzes and projects)
-    nodes = (await db.execute(select(SkillNode).where(SkillNode.path_id == path.id))).scalars().all()
-    mastery = {
-        r.skill_node_id: r.mastery_pct
-        for r in (await db.execute(select(UserSkillProgress).where(UserSkillProgress.user_id == user.id))).scalars().all()
-    }
-    node_scores = sorted(((mastery.get(n.id, 0), n.label) for n in nodes))
-    skills_pct = round(sum(s for s, _ in node_scores) / len(node_scores)) if node_scores else 0
+    # ---- skills (how much of each skill's lessons and projects is finished)
+    skill_rows = await skill_gap_analyzer.coverage(db, user.id, path.id)
+    skills_pct = skill_gap_analyzer.skills_pct(skill_rows)
 
     # ---- projects, documentation, proof, interview (Project Lab)
     lab_projects = await lab_service._career_projects(db, path.id)
@@ -229,7 +224,7 @@ async def compute(db: AsyncSession, user: User) -> dict:
 
     raw = {
         "learning": (_pct(learning_done, learning_total), f"{learning_done} of {learning_total} lessons and checkpoint quizzes finished on your {path.name} roadmap." if learning_total else "Lessons for this career are not published yet."),
-        "skills": (skills_pct, f"Average mastery across {len(nodes)} {path.name} skills. Mastery grows when you finish lessons, quizzes and projects." if nodes else "Skill tracking is not set up for this career yet."),
+        "skills": (skills_pct, f"{sum(1 for r in skill_rows if r['status'] == 'strong')} of {len(skill_rows)} {path.name} skills are strong, meaning every lesson and project that teaches them is finished." if skill_rows else "Skill tracking is not set up for this career yet."),
         "projects": (_pct(projects_current, projects_target), projects_detail),
         "documentation": (_pct(documented_n, DOC_TARGET), f"{documented_n} of {DOC_TARGET} completed projects have a README on a public repository."),
         "proof": (_pct(proof_points, PROOF_TARGET), f"{published_n} published and {verified_n} reviewed. A published repository counts for half, a reviewer approval adds the other half. Target: {PROOF_TARGET} projects."),
@@ -273,7 +268,7 @@ async def compute(db: AsyncSession, user: User) -> dict:
         "done_ids": done_ids,
         "quizzes": quizzes,
         "done_quiz_ids": done_quiz_ids,
-        "node_scores": node_scores,
+        "skill_rows": skill_rows,
         "lab_rows": lab_rows,
         "has_lab": has_lab,
         "portfolio_n": portfolio_n,
@@ -346,9 +341,11 @@ def _action(key: str, ctx: dict) -> dict | None:
         return None
 
     if key == "skills":
-        weakest = next(((s, label) for s, label in ctx["node_scores"] if s < 100), None)
-        if weakest:
-            return _a(f"Strengthen {weakest[1]}", "It is your lowest skill on this path. The skill gap page shows which lessons and projects build it.", "/skill-gap", "See your skill gaps")
+        rows_ = [r for r in ctx["skill_rows"] if r["status"] != "strong"]
+        rows_.sort(key=lambda r: (0 if r["status"] == "developing" else 1))
+        if rows_:
+            label = rows_[0]["node"].label
+            return _a(f"Close the gap in {label}", "The skill gap page shows which lessons and projects build it, in order.", "/skill-gap", "See your skill gaps")
         return None
 
     if key == "projects":

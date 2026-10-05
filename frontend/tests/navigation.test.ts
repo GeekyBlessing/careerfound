@@ -42,7 +42,7 @@ describe("global navigation", () => {
     const hrefs = (key: string) => NAV_GROUPS.find((g) => g.key === key)!.items.map((i) => i.href);
     expect(hrefs("explore")).toEqual(["/careers", "/onboarding", "/roadmap"]);
     expect(hrefs("build")).toEqual(["/projects", "/portfolio", "/mentor"]);
-    expect(hrefs("prepare")).toEqual(["/readiness"])
+    expect(hrefs("prepare")).toEqual(["/readiness", "/skill-gap"])
     expect(hrefs("guidance")).toEqual(expect.arrayContaining(["/mentors", "/consultation"]));
   });
 
