@@ -251,6 +251,7 @@ export interface PortfolioItem {
   case_study_md: string;
   skills_demonstrated: string[];
   is_published: boolean;
+  repo_url?: string;
 }
 
 export interface Mentor {

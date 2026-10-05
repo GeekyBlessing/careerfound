@@ -24,6 +24,9 @@ export type AnalyticsEvent =
   | "roadmap_started"
   | "project_completed"
   | "portfolio_item_generated"
+  | "lab_project_started"
+  | "lab_repo_checked"
+  | "lab_interview_saved"
   | "ai_mentor_message_sent"
   | "service_request_submitted";
 

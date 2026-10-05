@@ -205,6 +205,8 @@ async def submit_exercise(
 async def submit_project(project_id: uuid.UUID, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
     try:
         await roadmap_service.submit_project(db, user.id, project_id)
+    except roadmap_service.LabManagedProject as exc:
+        raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from exc
     except roadmap_service.RoadmapError as exc:
         raise HTTPException(status.HTTP_404_NOT_FOUND, str(exc)) from exc
 

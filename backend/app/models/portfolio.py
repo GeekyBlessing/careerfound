@@ -19,3 +19,6 @@ class PortfolioItem(Base, UUIDMixin, TimestampMixin):
     case_study_md: Mapped[str] = mapped_column(Text, default="")
     skills_demonstrated: Mapped[list] = mapped_column(JSON, default=list)
     is_published: Mapped[bool] = mapped_column(Boolean, default=False)
+    # Where the work lives (a GitHub repository), copied from the Project Lab
+    # when the entry is created from a lab project.
+    repo_url: Mapped[str] = mapped_column(String(300), default="")

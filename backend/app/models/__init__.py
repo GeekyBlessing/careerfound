@@ -21,6 +21,7 @@ from app.models.marketplace import (  # noqa: F401
     MentorReview,
     MentorSession,
 )
+from app.models.lab import ProjectLabProgress  # noqa: F401
 from app.models.portfolio import PortfolioItem  # noqa: F401
 from app.models.progress import (  # noqa: F401
     DailyMission,

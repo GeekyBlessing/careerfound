@@ -45,6 +45,7 @@ from app.seed.catalogue_sync import (
     sync_light_roadmap_content,
 )
 from app.seed.mentors import FOUNDING_MENTOR, MENTORS, MOBILE_ENGINEERING_MENTOR
+from app.seed.lab_sync import sync_all_lab_curricula
 from app.seed.roadmap_content import CYBERSECURITY, SOFTWARE_ENGINEERING
 from app.seed.roadmap_content_extra import PATH_PROJECTS
 from app.seed.simulations import SIMULATIONS
@@ -417,6 +418,7 @@ async def main() -> None:
     async with AsyncSessionLocal() as db:
         paths = await seed_career_paths(db)
         await seed_roadmap_content(db, paths)
+        await sync_all_lab_curricula(db)
         await seed_simulations(db, paths)
         await seed_mentors(db)
         await normalize_mentor_tags(db)

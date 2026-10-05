@@ -150,6 +150,11 @@ function PortfolioEditor({ item, onSaved }: { item: PortfolioItem; onSaved: (ite
                 ) : (
                   <Badge tone="neutral" className="mt-1">Draft, not published</Badge>
                 )}
+                {item.repo_url && (
+                  <a href={item.repo_url} target="_blank" rel="noopener noreferrer" className="focus-ring mt-2 block break-all rounded text-xs text-accent-light hover:underline">
+                    {item.repo_url.replace("https://", "")}
+                  </a>
+                )}
               </div>
             </div>
           </div>

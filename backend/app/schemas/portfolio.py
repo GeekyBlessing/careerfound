@@ -19,6 +19,7 @@ class PortfolioItemOut(BaseModel):
     case_study_md: str
     skills_demonstrated: list[str]
     is_published: bool
+    repo_url: str = ""
 
     model_config = {"from_attributes": True}
 

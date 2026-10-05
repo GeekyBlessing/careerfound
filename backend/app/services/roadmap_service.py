@@ -26,6 +26,10 @@ class RoadmapError(Exception):
     pass
 
 
+class LabManagedProject(RoadmapError):
+    """The project is completed through the Project Lab, not a bare submit."""
+
+
 async def generate_roadmap(db: AsyncSession, user_id: uuid.UUID, path_slug: str) -> Roadmap:
     result = await db.execute(select(CareerPath).where(CareerPath.slug == canonical_slug(path_slug)))
     path = result.scalar_one_or_none()
@@ -114,10 +118,15 @@ async def complete_lesson(db: AsyncSession, user_id: uuid.UUID, lesson_id: uuid.
     await db.commit()
 
 
-async def submit_project(db: AsyncSession, user_id: uuid.UUID, project_id: uuid.UUID) -> None:
+async def submit_project(db: AsyncSession, user_id: uuid.UUID, project_id: uuid.UUID, *, via_lab: bool = False) -> None:
     project = (await db.execute(select(Project).where(Project.id == project_id))).scalar_one_or_none()
     if project is None:
         raise RoadmapError("Project not found.")
+    # Project Lab projects are completed from the Lab, where completion is
+    # checked against evidence. A bare submit would let a user mark finished
+    # work they never did.
+    if project.lab and not via_lab:
+        raise LabManagedProject("This project is completed in the Project Lab, once your milestones and checklist are done.")
 
     result = await db.execute(
         select(UserProgress).where(UserProgress.user_id == user_id, UserProgress.project_id == project_id)

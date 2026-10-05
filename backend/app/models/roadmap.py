@@ -76,6 +76,16 @@ class Project(Base, UUIDMixin, TimestampMixin):
     difficulty: Mapped[int] = mapped_column(Integer, default=1)
     skill_node_id: Mapped[uuid.UUID | None] = mapped_column(GUID(), ForeignKey("skill_nodes.id"), nullable=True)
 
+    # Project Lab fields (see app/seed/lab). A project with `lab` set is part
+    # of a career's job-ready curriculum; the columns above stay filled so
+    # every older surface (roadmap, catalogue, mentor review) keeps working.
+    slug: Mapped[str | None] = mapped_column(String(100), nullable=True, index=True)
+    level: Mapped[str | None] = mapped_column(String(20), nullable=True)  # beginner | intermediate | advanced | job_ready
+    sequence: Mapped[int | None] = mapped_column(Integer, nullable=True)  # order inside the career's curriculum
+    est_hours: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    kind: Mapped[str | None] = mapped_column(String(20), nullable=True)  # code | case_study
+    lab: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+
 
 class Quiz(Base, UUIDMixin, TimestampMixin):
     __tablename__ = "quizzes"

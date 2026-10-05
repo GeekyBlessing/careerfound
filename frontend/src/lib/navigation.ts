@@ -72,8 +72,8 @@ export const NAV_GROUPS: NavGroup[] = [
       },
       {
         href: "/projects",
-        label: "Projects",
-        description: "Real builds with feedback, so you finish with proof.",
+        label: "Project Lab",
+        description: "A project path for your career, from first tool to job ready.",
         icon: FolderGit2,
         match: ["/projects"],
       },

@@ -24,6 +24,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Alert } from "@/components/ui/alert";
 import { PathTrack, type PathWaypoint } from "@/components/marketing/path-track";
+import { ProjectLabCard } from "@/components/lab/dashboard-card";
 import { SmartMentorRecommendation } from "@/components/mentors/smart-mentor-recommendation";
 import { api, ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
@@ -159,6 +160,8 @@ export default function DashboardPage() {
               </Card>
             )}
           </div>
+
+          <ProjectLabCard />
 
           <div className="grid gap-6 lg:grid-cols-2 lg:items-start lg:gap-8">
             {dashboard.readiness && <ReadinessCard readiness={dashboard.readiness} />}

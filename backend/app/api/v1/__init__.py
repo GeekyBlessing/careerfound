@@ -8,6 +8,7 @@ from app.api.v1 import (
     community,
     config,
     dashboard,
+    lab,
     marketplace,
     mentor,
     portfolio,
@@ -27,6 +28,7 @@ api_router.include_router(roadmap.router)
 api_router.include_router(dashboard.router)
 api_router.include_router(mentor.router)
 api_router.include_router(portfolio.router)
+api_router.include_router(lab.router)
 api_router.include_router(marketplace.router)
 api_router.include_router(community.router)
 api_router.include_router(simulations.router)

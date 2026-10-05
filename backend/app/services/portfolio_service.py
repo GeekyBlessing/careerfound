@@ -45,6 +45,12 @@ async def generate_portfolio_item(db: AsyncSession, user: User, project_id: uuid
     item.linkedin_blurb = copy.linkedin_blurb
     item.case_study_md = copy.case_study_md
     item.skills_demonstrated = copy.skills_demonstrated
+    if project.lab:
+        # A Project Lab project carries its own authored skills and CV line,
+        # which are more specific than anything generated from the title.
+        item.skills_demonstrated = list(project.lab.get("skills", []))
+        if project.lab.get("cv_bullet"):
+            item.cv_bullet = project.lab["cv_bullet"]
 
     await db.commit()
     await db.refresh(item)

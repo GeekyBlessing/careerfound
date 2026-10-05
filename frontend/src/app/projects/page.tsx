@@ -1,227 +1,282 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Clock, LayoutGrid, Search, Wrench, ArrowRight } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { ArrowRight, Clock } from "lucide-react";
 import { AppShell } from "@/components/layout/app-shell";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Input, Label } from "@/components/ui/input";
 import { Alert } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { DifficultyMeter } from "@/components/ui/difficulty-meter";
+import { ProgressBar } from "@/components/ui/progress";
 import { SkeletonCard } from "@/components/ui/skeleton";
-import { EmptyState } from "@/components/ui/empty-state";
+import { StageBadge } from "@/components/lab/common";
 import { api, ApiError } from "@/lib/api";
 import { cn } from "@/lib/utils";
-import type { RoleProjectCatalogEntry, CareerProjectItem } from "@/types";
+import type { RoleProjectCatalogEntry } from "@/types";
+import type { LabCareerOption, LabCurriculum, LabProjectSummary } from "@/types/lab";
 
-const TIER_TONE: Record<CareerProjectItem["difficulty_label"], "success" | "accent" | "danger"> = {
-  Beginner: "success",
-  Intermediate: "accent",
-  Expert: "danger",
-};
+export default function ProjectLabPage() {
+  return (
+    <Suspense fallback={null}>
+      <ProjectLab />
+    </Suspense>
+  );
+}
 
-type DifficultyFilter = "all" | CareerProjectItem["difficulty_label"];
+function ProjectLab() {
+  const router = useRouter();
+  const params = useSearchParams();
+  const requested = params.get("career");
 
-const DIFFICULTY_FILTERS: { key: DifficultyFilter; label: string }[] = [
-  { key: "all", label: "All levels" },
-  { key: "Beginner", label: "Beginner" },
-  { key: "Intermediate", label: "Intermediate" },
-  { key: "Expert", label: "Expert" },
-];
-
-export default function ProjectsByRolePage() {
   const [catalog, setCatalog] = useState<RoleProjectCatalogEntry[] | null>(null);
+  const [labCareers, setLabCareers] = useState<LabCareerOption[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [activeRole, setActiveRole] = useState<string | null>(null);
-  const [query, setQuery] = useState("");
-  const [difficulty, setDifficulty] = useState<DifficultyFilter>("all");
+  const [curriculum, setCurriculum] = useState<LabCurriculum | null>(null);
+  const [loadingCurriculum, setLoadingCurriculum] = useState(false);
 
   useEffect(() => {
-    api
-      .get<RoleProjectCatalogEntry[]>("/careers/projects/catalog")
-      .then(setCatalog)
-      .catch((err) => setError(err instanceof ApiError ? err.message : "Couldn't load the project catalog."));
+    Promise.all([api.get<RoleProjectCatalogEntry[]>("/careers/projects/catalog"), api.get<LabCareerOption[]>("/lab/careers")])
+      .then(([c, l]) => {
+        setCatalog(c);
+        setLabCareers(l);
+      })
+      .catch((err) => setError(err instanceof ApiError ? err.message : "Couldn't load the Project Lab."));
   }, []);
 
-  const totalProjects = useMemo(() => (catalog ?? []).reduce((sum, entry) => sum + entry.projects.length, 0), [catalog]);
+  const labSlugs = useMemo(() => new Set(labCareers.map((c) => c.slug)), [labCareers]);
+  const selected = useMemo(() => {
+    if (!catalog) return null;
+    if (requested && catalog.some((e) => e.path.slug === requested)) return requested;
+    return labCareers[0]?.slug ?? catalog[0]?.path.slug ?? null;
+  }, [catalog, requested, labCareers]);
 
-  const activeEntry = useMemo(() => (catalog ?? []).find((entry) => entry.path.slug === activeRole) ?? null, [catalog, activeRole]);
+  useEffect(() => {
+    setCurriculum(null);
+    if (!selected || !labSlugs.has(selected)) return;
+    setLoadingCurriculum(true);
+    api
+      .get<LabCurriculum>(`/lab/careers/${selected}`)
+      .then(setCurriculum)
+      .catch((err) => setError(err instanceof ApiError ? err.message : "Couldn't load this curriculum."))
+      .finally(() => setLoadingCurriculum(false));
+  }, [selected, labSlugs]);
 
-  const visibleProjects = useMemo(() => {
-    if (!activeEntry) return [];
-    const q = query.trim().toLowerCase();
-    return activeEntry.projects.filter((p) => {
-      if (difficulty !== "all" && p.difficulty_label !== difficulty) return false;
-      if (!q) return true;
-      return p.title.toLowerCase().includes(q) || p.teaches.toLowerCase().includes(q);
-    });
-  }, [activeEntry, query, difficulty]);
+  const entry = catalog?.find((e) => e.path.slug === selected) ?? null;
+  const flat = curriculum?.levels.flatMap((l) => l.projects) ?? [];
+  const titles = Object.fromEntries(flat.map((p) => [p.id, p.title]));
 
   return (
     <AppShell>
-      <div className="space-y-8">
-        <div>
-          <p className="eyebrow">
-            <LayoutGrid className="h-3.5 w-3.5" /> Project discovery
+      <div className="space-y-10">
+        <header className="max-w-3xl">
+          <p className="eyebrow">Project Lab</p>
+          <h1 className="mt-2 font-display text-h1 font-semibold tracking-tight text-ink-100">Build the projects that make you hireable</h1>
+          <p className="mt-3 text-sm leading-relaxed text-ink-400">
+            Every career has its own project path, from a first small tool to a flagship you can talk about for most of an interview. Each project teaches real skills,
+            produces something you can publish, and ends with documentation, a portfolio entry and interview answers in your own words.
           </p>
-          <h1 className="mt-1 font-display text-h1 font-semibold tracking-tight text-ink-100">Projects by role</h1>
-          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-400">
-            Browse real, hands-on projects organized by career role. Pick a role to see what you would actually
-            build, at every difficulty level, before you commit to a roadmap.
-          </p>
-          {catalog && (
-            <p className="mt-2 text-xs text-ink-500">
-              {catalog.length} roles, {totalProjects} projects
-            </p>
-          )}
-        </div>
+        </header>
 
         {error && <Alert>{error}</Alert>}
-
-        {!catalog && !error && (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <SkeletonCard />
-            <SkeletonCard />
-            <SkeletonCard />
-          </div>
-        )}
+        {!catalog && !error && <SkeletonCard />}
 
         {catalog && (
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {catalog.map((entry) => {
-              const active = entry.path.slug === activeRole;
-              return (
-                <button
-                  key={entry.path.slug}
-                  onClick={() => setActiveRole(active ? null : entry.path.slug)}
-                  aria-pressed={active}
-                  className={cn(
-                    "focus-ring rounded-2xl border p-4 text-left transition-all duration-150 ease-smooth active:translate-y-px",
-                    active
-                      ? "border-accent/40 bg-accent/10 shadow-xs"
-                      : "border-[rgb(var(--fg-tint)/0.08)] bg-[rgb(var(--fg-tint)/0.03)] hover:border-[rgb(var(--fg-tint)/0.16)] hover:bg-[rgb(var(--fg-tint)/0.05)]"
-                  )}
-                >
-                  <p className={cn("text-sm font-semibold", active ? "text-accent-light" : "text-ink-100")}>{entry.path.name}</p>
-                  <p className="mt-1 text-xs text-ink-500">
-                    {entry.projects.length} project{entry.projects.length === 1 ? "" : "s"}
-                  </p>
-                  <div className="mt-2 flex items-center gap-1.5 text-[11px] text-ink-500">
-                    <Wrench className="h-3 w-3" />
-                    <span className="truncate">{entry.path.tools.slice(0, 3).join(", ")}</span>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        )}
-
-        {activeEntry && (
-          <div className="space-y-4">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h2 className="text-lg font-semibold tracking-tight text-ink-100">{activeEntry.path.name} projects</h2>
-                <p className="text-sm text-ink-500">{activeEntry.path.summary}</p>
-              </div>
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                <div className="relative">
-                  <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-500" aria-hidden="true" />
-                  <Label htmlFor="project-search" className="sr-only">
-                    Search projects
-                  </Label>
-                  <Input
-                    id="project-search"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Search projects"
-                    aria-label="Search projects"
-                    className="w-full pl-8 sm:w-56"
-                  />
-                </div>
-                <Link href={`/careers/${activeEntry.path.slug}`}>
-                  <Button className="w-full gap-1.5 whitespace-nowrap sm:w-auto">
-                    Start this roadmap <ArrowRight className="h-3.5 w-3.5" />
-                  </Button>
-                </Link>
-              </div>
+          <div className="flex flex-col gap-4 border-y border-[rgb(var(--fg-tint)/0.1)] py-4 sm:flex-row sm:items-end sm:justify-between">
+            <div className="sm:w-80">
+              <label htmlFor="lab-career" className="font-mono text-[10px] uppercase tracking-wide text-ink-500">
+                Career
+              </label>
+              <select
+                id="lab-career"
+                value={selected ?? ""}
+                onChange={(e) => router.replace(`/projects?career=${e.target.value}`)}
+                className="focus-ring mt-1.5 w-full rounded-xl border border-[rgb(var(--fg-tint)/0.14)] bg-base-950 px-3 py-2.5 text-sm text-ink-100"
+              >
+                <optgroup label="Full project curriculum">
+                  {catalog.filter((e) => labSlugs.has(e.path.slug)).map((e) => (
+                    <option key={e.path.slug} value={e.path.slug}>
+                      {e.path.name}
+                    </option>
+                  ))}
+                </optgroup>
+                <optgroup label="Guided projects, curriculum coming">
+                  {catalog.filter((e) => !labSlugs.has(e.path.slug)).map((e) => (
+                    <option key={e.path.slug} value={e.path.slug}>
+                      {e.path.name}
+                    </option>
+                  ))}
+                </optgroup>
+              </select>
             </div>
-
-            <div className="flex flex-wrap gap-1.5" role="group" aria-label="Filter by difficulty">
-              {DIFFICULTY_FILTERS.map((f) => (
-                <button
-                  key={f.key}
-                  onClick={() => setDifficulty(f.key)}
-                  aria-pressed={difficulty === f.key}
-                  className={cn(
-                    "focus-ring whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-medium transition-all duration-150 ease-smooth active:translate-y-px",
-                    f.key === difficulty
-                      ? "border-accent/40 bg-accent/15 text-accent-light shadow-xs"
-                      : "border-[rgb(var(--fg-tint)/0.1)] text-ink-400 hover:border-[rgb(var(--fg-tint)/0.2)] hover:bg-[rgb(var(--fg-tint)/0.04)]"
-                  )}
-                >
-                  {f.label}
-                </button>
-              ))}
-            </div>
-
-            {visibleProjects.length > 0 ? (
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {visibleProjects.map((project) => (
-                  <Link key={project.id} href={`/projects/${project.id}`} className="focus-ring block rounded-2xl">
-                    <Card interactive className="flex h-full flex-col p-4">
-                      <div className="flex items-center justify-between gap-2">
-                        <Badge tone={TIER_TONE[project.difficulty_label]}>{project.difficulty_label}</Badge>
-                        <span className="flex items-center gap-1 text-[11px] text-ink-500">
-                          <Clock className="h-3 w-3" /> {project.estimated_duration}
-                        </span>
-                      </div>
-                      <p className="mt-3 font-display text-sm font-semibold tracking-tight text-ink-100">{project.title}</p>
-                      <p className="mt-1.5 flex-1 text-xs leading-relaxed text-ink-500">{project.teaches}</p>
-                      {project.prerequisites.length > 0 && (
-                        <div className="mt-3">
-                          <p className="text-[11px] font-medium text-ink-300">Skills you&apos;ll use</p>
-                          <div className="mt-1.5 flex flex-wrap gap-1">
-                            {project.prerequisites.slice(0, 4).map((skill) => (
-                              <Badge key={skill} tone="neutral" className="text-[10px]">
-                                {skill}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                      {activeEntry.path.tools.length > 0 && (
-                        <p className="mt-3 flex items-center gap-1.5 text-[11px] text-ink-500">
-                          <Wrench className="h-3 w-3 shrink-0" />
-                          <span className="truncate">{activeEntry.path.tools.slice(0, 3).join(", ")}</span>
-                        </p>
-                      )}
-                    </Card>
-                  </Link>
-                ))}
-              </div>
-            ) : (
-              <EmptyState
-                icon={Search}
-                title="No projects match your filters"
-                description={`Try a different search term or difficulty level within ${activeEntry.path.name}.`}
-              />
+            {curriculum?.available && curriculum.totals && (
+              <dl className="flex flex-wrap gap-x-7 gap-y-3 text-xs">
+                <Stat label="Projects" value={curriculum.totals.projects ?? 0} />
+                <Stat label="Completed" value={curriculum.totals.completed ?? 0} />
+                <Stat label="Published" value={curriculum.totals.published ?? 0} />
+                <Stat label="In portfolio" value={curriculum.totals.portfolio_ready ?? 0} />
+                <Stat label="Interview ready" value={curriculum.totals.interview_ready ?? 0} />
+              </dl>
             )}
           </div>
         )}
 
-        {catalog && catalog.length > 0 && !activeEntry && (
-          <Alert variant="info">Pick a role above to see its full project list.</Alert>
+        {loadingCurriculum && <SkeletonCard />}
+
+        {curriculum?.available && (
+          <div className="space-y-14">
+            <NextUp curriculum={curriculum} flat={flat} />
+            {curriculum.levels.map((level, li) => (
+              <section key={level.level} aria-labelledby={`level-${level.level}`}>
+                <div className="flex flex-wrap items-end justify-between gap-3 border-t border-[rgb(var(--fg-tint)/0.14)] pt-5">
+                  <div className="max-w-2xl">
+                    <p className="font-mono text-xs text-ink-500">{String(li + 1).padStart(2, "0")}</p>
+                    <h2 id={`level-${level.level}`} className="mt-1 font-display text-h2 font-semibold tracking-tight text-ink-100">
+                      {level.label}
+                    </h2>
+                    <p className="mt-2 text-sm leading-relaxed text-ink-400">{level.blurb}</p>
+                  </div>
+                  <p className="font-mono text-[11px] text-ink-500">
+                    {level.projects.filter((p) => p.flags.completed).length} of {level.projects.length} complete
+                  </p>
+                </div>
+                <ol className="mt-4 divide-y divide-[rgb(var(--fg-tint)/0.08)] border-b border-[rgb(var(--fg-tint)/0.08)]">
+                  {level.projects.map((p, i) => (
+                    <ProjectRow key={p.id} p={p} n={i + 1} titles={titles} />
+                  ))}
+                </ol>
+              </section>
+            ))}
+            {curriculum.evidence_note && <p className="max-w-3xl border-t border-[rgb(var(--fg-tint)/0.1)] pt-4 text-xs leading-relaxed text-ink-500">{curriculum.evidence_note}</p>}
+          </div>
         )}
 
-        {catalog && catalog.length === 0 && (
-          <EmptyState
-            icon={LayoutGrid}
-            title="No projects available yet"
-            description="We're still building out role-based projects. Check back soon."
-          />
-        )}
+        {entry && !labSlugs.has(entry.path.slug) && <GuidedProjects entry={entry} />}
       </div>
     </AppShell>
+  );
+}
+
+function Stat({ label, value }: { label: string; value: number }) {
+  return (
+    <div>
+      <dt className="font-mono text-[10px] uppercase tracking-wide text-ink-500">{label}</dt>
+      <dd className="mt-1 font-display text-xl font-semibold text-ink-100">{value}</dd>
+    </div>
+  );
+}
+
+function NextUp({ curriculum, flat }: { curriculum: LabCurriculum; flat: LabProjectSummary[] }) {
+  const current = flat.find((p) => p.flags.started && !p.flags.completed);
+  const next = flat.find((p) => p.id === curriculum.next_project_id);
+  const target = current ?? next;
+  if (!target) {
+    return (
+      <div className="rounded-xl border border-success/40 bg-success/5 p-5 text-sm text-ink-300">
+        You have completed every project in this path. Publish them, add them to your portfolio and finish your interview answers.
+      </div>
+    );
+  }
+  return (
+    <div className="flex flex-col gap-4 rounded-xl border border-accent/30 bg-accent/5 p-5 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <p className="font-mono text-[10px] uppercase tracking-wide text-accent-light">{current ? "Continue where you left off" : "Start here"}</p>
+        <p className="mt-1.5 font-display text-lg font-semibold text-ink-100">{target.title}</p>
+        <p className="mt-1 max-w-xl text-sm text-ink-400">{target.summary}</p>
+      </div>
+      <Link href={`/projects/${target.id}`} className="focus-ring inline-flex rounded-xl">
+        <Button className="gap-1.5" tabIndex={-1}>
+          {current ? "Continue project" : "Open project"} <ArrowRight className="h-3.5 w-3.5" />
+        </Button>
+      </Link>
+    </div>
+  );
+}
+
+function ProjectRow({ p, n, titles }: { p: LabProjectSummary; n: number; titles: Record<string, string> }) {
+  const pct = p.milestones_total ? Math.round((p.milestones_done / p.milestones_total) * 100) : 0;
+  const before = p.recommended_before.map((id) => titles[id]).filter(Boolean);
+  return (
+    <li>
+      <Link href={`/projects/${p.id}`} className="focus-ring group grid gap-x-8 gap-y-3 rounded py-5 md:grid-cols-[2.5rem_minmax(0,1fr)_13rem]">
+        <span className="hidden font-mono text-xs text-ink-500 md:block">{String(n).padStart(2, "0")}</span>
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <h3 className="font-display text-lg font-semibold tracking-tight text-ink-100 group-hover:text-accent-light">{p.title}</h3>
+            <StageBadge stage={p.stage} label={p.stage_label} />
+          </div>
+          <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-ink-400">{p.summary}</p>
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {p.skills.slice(0, 5).map((s) => (
+              <span key={s} className="rounded-[0.25rem] border border-[rgb(var(--fg-tint)/0.12)] px-1.5 py-0.5 text-[11px] text-ink-400">
+                {s}
+              </span>
+            ))}
+          </div>
+          <p className="mt-3 max-w-2xl text-xs leading-relaxed text-ink-500">
+            <span className="font-medium text-ink-300">You produce: </span>
+            {p.deliverable}
+          </p>
+          {before.length > 0 && (
+            <p className={cn("mt-2 text-xs", p.ready ? "text-ink-500" : "text-warning")}>
+              {p.ready ? "You have done the recommended projects: " : "Recommended first: "}
+              {before.join(", ")}
+            </p>
+          )}
+        </div>
+        <div className="flex flex-row items-center justify-between gap-4 md:flex-col md:items-start md:justify-start md:gap-3">
+          <span className="inline-flex items-center gap-1.5 text-xs text-ink-400">
+            <Clock className="h-3.5 w-3.5" aria-hidden="true" /> about {p.est_hours} hours
+          </span>
+          <DifficultyMeter level={p.difficulty} />
+          <div className="w-28 md:w-full">
+            <ProgressBar value={pct} tone={p.flags.completed ? "success" : "accent"} />
+            <p className="mt-1 font-mono text-[10px] text-ink-500">
+              {p.milestones_done} of {p.milestones_total} milestones
+            </p>
+          </div>
+        </div>
+      </Link>
+    </li>
+  );
+}
+
+function GuidedProjects({ entry }: { entry: RoleProjectCatalogEntry }) {
+  return (
+    <section aria-labelledby="guided">
+      <div className="border-t border-[rgb(var(--fg-tint)/0.14)] pt-5">
+        <h2 id="guided" className="font-display text-h2 font-semibold tracking-tight text-ink-100">
+          {entry.path.name}
+        </h2>
+        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-400">
+          The full Project Lab curriculum for this career, with milestones, a GitHub workflow, documentation and interview preparation, is still being written. Until then, these are guided
+          projects you can start from the roadmap.
+        </p>
+        <Link href={`/careers/${entry.path.slug}`} className="focus-ring mt-4 inline-flex rounded-xl">
+          <Button className="gap-1.5" tabIndex={-1}>
+            See the {entry.path.name} roadmap <ArrowRight className="h-3.5 w-3.5" />
+          </Button>
+        </Link>
+      </div>
+      <ol className="mt-6 divide-y divide-[rgb(var(--fg-tint)/0.08)] border-y border-[rgb(var(--fg-tint)/0.08)]">
+        {entry.projects.map((project) => (
+          <li key={project.id}>
+            <Link href={`/projects/${project.id}`} className="focus-ring group flex flex-col gap-1.5 rounded py-4 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
+              <div className="min-w-0">
+                <p className="font-display text-base font-semibold text-ink-100 group-hover:text-accent-light">{project.title}</p>
+                <p className="mt-1 text-sm text-ink-400">{project.teaches}</p>
+              </div>
+              <div className="flex flex-shrink-0 items-center gap-3 text-xs text-ink-500">
+                <Badge>{project.difficulty_label}</Badge>
+                <span className="inline-flex items-center gap-1">
+                  <Clock className="h-3 w-3" aria-hidden="true" /> {project.estimated_duration}
+                </span>
+              </div>
+            </Link>
+          </li>
+        ))}
+      </ol>
+    </section>
   );
 }
