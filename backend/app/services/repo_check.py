@@ -48,6 +48,9 @@ def evaluate(state: dict) -> dict:
         "commits": int(state.get("commit_count") or 0) >= MIN_COMMITS,
         "gitignore": bool(state.get("gitignore")),
         "no_env_committed": state.get("reachable", False) and not state.get("env_committed", False),
+        # Shown as extra evidence. Neither is required to pass the check.
+        "tests": bool(state.get("tests")),
+        "license": bool(state.get("license")),
     }
     state["checks"] = checks
     state["passed"] = bool(checks["public"] and checks["readme"] and checks["commits"] and checks["no_env_committed"])
@@ -64,6 +67,8 @@ async def inspect_repository(url: str) -> dict:
         "readme": False,
         "gitignore": False,
         "env_committed": False,
+        "tests": False,
+        "license": False,
         "commit_count": 0,
         "error": "",
     }
@@ -102,6 +107,9 @@ async def inspect_repository(url: str) -> dict:
             if root.status_code == 200 and isinstance(root.json(), list):
                 names = {str(item.get("name", "")) for item in root.json()}
                 state["gitignore"] = ".gitignore" in names
+                lowered = {n.lower() for n in names}
+                state["tests"] = bool(lowered & {"tests", "test", "__tests__", "spec", "specs"}) or any(n.startswith("test_") or n.endswith("_test.py") for n in lowered)
+                state["license"] = any(n.startswith("license") or n.startswith("licence") for n in lowered)
                 state["env_committed"] = any(n == ".env" or (n.startswith(".env.") and n not in {".env.example", ".env.sample", ".env.template"}) for n in names)
     except httpx.HTTPError:
         state["error"] = "Could not reach GitHub from the server. Check again in a moment."

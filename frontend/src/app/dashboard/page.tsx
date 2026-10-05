@@ -9,7 +9,6 @@ import {
   ArrowDown,
   MessageCircle,
   Flag,
-  Trophy,
   Sparkles,
   Lightbulb,
   Clock,
@@ -19,25 +18,18 @@ import { AppShell, StreakBadge } from "@/components/layout/app-shell";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ProgressBar, ReadinessDial } from "@/components/ui/progress";
+import { ProgressBar } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Alert } from "@/components/ui/alert";
 import { PathTrack, type PathWaypoint } from "@/components/marketing/path-track";
 import { ProjectLabCard } from "@/components/lab/dashboard-card";
+import { CareerReadinessCard } from "@/components/career/readiness-card";
 import { SmartMentorRecommendation } from "@/components/mentors/smart-mentor-recommendation";
 import { api, ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { formatMinutes, formatRelativeTime } from "@/lib/utils";
 import type { Dashboard, MissionTask, PhaseItem, Roadmap } from "@/types";
-
-const READINESS_LABELS: { key: keyof NonNullable<Dashboard["readiness"]>; label: string }[] = [
-  { key: "knowledge_pct", label: "Knowledge" },
-  { key: "projects_pct", label: "Projects" },
-  { key: "portfolio_pct", label: "Portfolio" },
-  { key: "interview_pct", label: "Interview readiness" },
-  { key: "practical_pct", label: "Practical skills" },
-];
 
 /** A completed project/quiz doesn't carry its own minute estimate in the
  * roadmap payload the way a lesson does, so this reuses the same fixed
@@ -164,7 +156,7 @@ export default function DashboardPage() {
           <ProjectLabCard />
 
           <div className="grid gap-6 lg:grid-cols-2 lg:items-start lg:gap-8">
-            {dashboard.readiness && <ReadinessCard readiness={dashboard.readiness} />}
+            <CareerReadinessCard />
             <RecentActivity items={dashboard.recent_activity} />
           </div>
         </div>
@@ -447,46 +439,6 @@ function RecentActivity({ items }: { items: Dashboard["recent_activity"] }) {
             </li>
           ))}
         </ul>
-      )}
-    </Card>
-  );
-}
-
-function ReadinessCard({ readiness }: { readiness: NonNullable<Dashboard["readiness"]> }) {
-  const segments = READINESS_LABELS.map((item) => ({ key: item.key, label: item.label, value: readiness[item.key] as number }));
-  return (
-    <Card className="p-6">
-      <div className="flex items-center gap-2">
-        <Trophy className="h-4 w-4 text-accent-light" />
-        <p className="eyebrow">Tech Readiness Score</p>
-      </div>
-      <p className="mt-1 text-xs text-ink-500">Five real signals from your own activity, not a random number.</p>
-      <div className="mt-5 flex items-center justify-center">
-        <ReadinessDial segments={segments} overall={readiness.overall} />
-      </div>
-      <ul className="mt-5 grid grid-cols-1 gap-x-4 gap-y-1.5 font-mono text-[11px] text-ink-400">
-        {READINESS_LABELS.map((item) => (
-          <li key={item.key} className="flex items-center justify-between">
-            <span className="flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-accent-light" aria-hidden="true" />
-              {item.label}
-            </span>
-            <span className="text-ink-300">{readiness[item.key]}%</span>
-          </li>
-        ))}
-      </ul>
-      {readiness.next_actions.length > 0 && (
-        <div className="mt-5 border-t border-[rgb(var(--fg-tint)/0.1)] pt-4">
-          <p className="mb-2 text-xs font-medium text-ink-300">What would move your score up:</p>
-          <ul className="space-y-2 text-xs text-ink-500">
-            {readiness.next_actions.map((a, i) => (
-              <li key={i} className="flex gap-2">
-                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-accent" aria-hidden="true" />
-                {a}
-              </li>
-            ))}
-          </ul>
-        </div>
       )}
     </Card>
   );

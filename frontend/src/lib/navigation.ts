@@ -3,6 +3,7 @@ import {
   Briefcase,
   Compass,
   FolderGit2,
+  Gauge,
   Layers,
   type LucideIcon,
   LayoutDashboard,
@@ -36,7 +37,7 @@ export interface NavItem {
 }
 
 export interface NavGroup {
-  key: "explore" | "build" | "guidance";
+  key: "explore" | "build" | "prepare" | "guidance";
   label: string;
   /** One editorial line shown beside the group's links. */
   blurb: string;
@@ -70,13 +71,6 @@ export const NAV_GROUPS: NavGroup[] = [
         icon: Map,
         match: ["/roadmap"],
       },
-      {
-        href: "/projects",
-        label: "Project Lab",
-        description: "A project path for your career, from first tool to job ready.",
-        icon: FolderGit2,
-        match: ["/projects"],
-      },
     ],
   },
   {
@@ -84,6 +78,13 @@ export const NAV_GROUPS: NavGroup[] = [
     label: "Build",
     blurb: "Turn what you learn into work you can show, with help when you are stuck.",
     items: [
+      {
+        href: "/projects",
+        label: "Project Lab",
+        description: "A project path for your career, from first tool to job ready.",
+        icon: FolderGit2,
+        match: ["/projects"],
+      },
       {
         href: "/portfolio",
         label: "Portfolio",
@@ -97,6 +98,20 @@ export const NAV_GROUPS: NavGroup[] = [
         description: "Hints before answers, code review and mock interviews, on call.",
         icon: Bot,
         match: ["/mentor"],
+      },
+    ],
+  },
+  {
+    key: "prepare",
+    label: "Prepare",
+    blurb: "Know where you stand before an employer does, and close the gaps that matter.",
+    items: [
+      {
+        href: "/readiness",
+        label: "Career Readiness",
+        description: "One score from seven real signals, with the next thing to do.",
+        icon: Gauge,
+        match: ["/readiness"],
       },
     ],
   },

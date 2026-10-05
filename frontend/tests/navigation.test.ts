@@ -37,11 +37,12 @@ describe("global navigation", () => {
     expect(missing).toEqual([]);
   });
 
-  it("has the three groups the brief calls for, with the expected destinations", () => {
-    expect(NAV_GROUPS.map((g) => g.label)).toEqual(["Explore", "Build", "Guidance"]);
+  it("has the groups the brief calls for, with the expected destinations", () => {
+    expect(NAV_GROUPS.map((g) => g.label)).toEqual(["Explore", "Build", "Prepare", "Guidance"]);
     const hrefs = (key: string) => NAV_GROUPS.find((g) => g.key === key)!.items.map((i) => i.href);
-    expect(hrefs("explore")).toEqual(["/careers", "/onboarding", "/roadmap", "/projects"]);
-    expect(hrefs("build")).toEqual(["/portfolio", "/mentor"]);
+    expect(hrefs("explore")).toEqual(["/careers", "/onboarding", "/roadmap"]);
+    expect(hrefs("build")).toEqual(["/projects", "/portfolio", "/mentor"]);
+    expect(hrefs("prepare")).toEqual(["/readiness"])
     expect(hrefs("guidance")).toEqual(expect.arrayContaining(["/mentors", "/consultation"]));
   });
 
@@ -56,7 +57,7 @@ describe("global navigation", () => {
     const explore = NAV_GROUPS[0]!;
     expect(groupIsActive("/assessment/results", explore)).toBe(true);
     expect(groupIsActive("/portfolio", explore)).toBe(false);
-    expect(groupIsActive("/mentors/abc", NAV_GROUPS[2]!)).toBe(true);
+    expect(groupIsActive("/mentors/abc", NAV_GROUPS.find((g) => g.key === "guidance")!)).toBe(true);
   });
 
   it("no link, label or description uses a long dash", () => {

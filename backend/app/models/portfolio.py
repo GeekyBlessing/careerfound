@@ -22,3 +22,7 @@ class PortfolioItem(Base, UUIDMixin, TimestampMixin):
     # Where the work lives (a GitHub repository), copied from the Project Lab
     # when the entry is created from a lab project.
     repo_url: Mapped[str] = mapped_column(String(300), default="")
+    # Structured, editable case study (overview, problem, solution, ...). Empty
+    # until the person generates a draft from their own project work.
+    case_study: Mapped[dict] = mapped_column(JSON, default=dict)
+    live_url: Mapped[str] = mapped_column(String(300), default="")

@@ -4,6 +4,7 @@ from app.api.v1 import (
     admin,
     assessment,
     auth,
+    career,
     careers,
     community,
     config,
@@ -23,6 +24,7 @@ api_router.include_router(auth.router)
 api_router.include_router(users.router)
 api_router.include_router(config.router)
 api_router.include_router(careers.router)
+api_router.include_router(career.router)
 api_router.include_router(assessment.router)
 api_router.include_router(roadmap.router)
 api_router.include_router(dashboard.router)

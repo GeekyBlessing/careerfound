@@ -1,7 +1,7 @@
 import datetime
 import uuid
 
-from sqlalchemy import JSON, DateTime, ForeignKey, String, UniqueConstraint
+from sqlalchemy import JSON, DateTime, ForeignKey, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base, GUID, TimestampMixin, UUIDMixin
@@ -28,3 +28,15 @@ class ProjectLabProgress(Base, UUIDMixin, TimestampMixin):
     repo_url: Mapped[str] = mapped_column(String(300), default="")
     repo_check: Mapped[dict] = mapped_column(JSON, default=dict)  # last repository check result
     interview_answers: Mapped[dict] = mapped_column(JSON, default=dict)  # question key -> the person's own notes
+
+    # Human review. Verification is only ever claimed when a real reviewer
+    # (a mentor or an admin) approved this exact repository. submitted_* is
+    # set by the learner, reviewed_* by the reviewer, never by the learner.
+    submitted_at: Mapped[datetime.datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    submitted_note: Mapped[str] = mapped_column(Text, default="")
+    submitted_repo_url: Mapped[str] = mapped_column(String(300), default="")
+    review_status: Mapped[str] = mapped_column(String(20), default="none")  # none | pending | approved | changes_requested
+    reviewer_id: Mapped[uuid.UUID | None] = mapped_column(GUID(), ForeignKey("users.id"), nullable=True)
+    reviewer_name: Mapped[str] = mapped_column(String(160), default="")
+    reviewed_at: Mapped[datetime.datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    review_note: Mapped[str] = mapped_column(Text, default="")
