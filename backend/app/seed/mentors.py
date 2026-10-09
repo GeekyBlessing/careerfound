@@ -235,7 +235,7 @@ FOUNDING_MENTOR = dict(
 )
 
 
-# --- Second real mentor: mobile engineering --------------------------------
+# --- Second real mentor: full-stack engineering --------------------------------
 #
 # A real, non-demo profile, following the exact same "only what was actually
 # provided" rule as FOUNDING_MENTOR above. display_name and years_experience
@@ -252,17 +252,23 @@ FOUNDING_MENTOR = dict(
 # consultation_* is deliberately left blank so mentor_price_label() and the
 # marketplace/profile UI never fall back to an hourly-rate display for this
 # mentor - see lib/utils.ts::mentorPriceLabel.
-MOBILE_ENGINEERING_MENTOR = dict(
+FULLSTACK_MENTOR = dict(
     slug="mobile-engineering-mentor",
-    display_name="David Oladotun Egundey",
-    headline="Mobile Engineer",
+    display_name="David Oladotun Egundeyi",
+    headline="Full-Stack Engineer",
     bio=(
-        "Get practical guidance on mobile development, building real applications, structuring "
-        "projects, debugging, and preparing for a career in mobile engineering."
+        "Get practical guidance on full-stack engineering: building real web applications from the "
+        "interface to the database, structuring projects, debugging, and preparing for a career "
+        "as a full-stack engineer."
     ),
     avatar_seed="mobile-engineering-mentor",
     avatar_url="/mentors/mobile-engineering-mentor.jpg",
-    paths=["mobile-engineering", "mobile-development", "app-development"],
+    # Career slugs drive path-filtered matching; the rest are the skills he
+    # mentors in, shown as plain tags on his card and profile.
+    paths=[
+        "full-stack-development", "frontend-development", "backend-engineering",
+        "javascript", "typescript", "react", "node", "rest-apis", "sql", "git", "deployment",
+    ],
     years_experience=4,
     hourly_rate_cents=0,
     currency="USD",
@@ -272,8 +278,8 @@ MOBILE_ENGINEERING_MENTOR = dict(
     mentorship_formats=["video_call"],
     session_durations_minutes=[30, 60],
     value_proposition=(
-        "Structured guidance for anyone building toward a mobile engineering career: what to learn "
-        "first, how to build real projects, and how to get job-ready."
+        "Structured guidance for anyone building toward a full-stack engineering career: what to learn "
+        "first, how to build real projects across the frontend and backend, and how to get job-ready."
     ),
     focus_beginner_friendly=True,
     contact_email=None,

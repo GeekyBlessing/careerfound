@@ -44,7 +44,7 @@ from app.seed.catalogue_sync import (
     sync_career_fields,
     sync_light_roadmap_content,
 )
-from app.seed.mentors import FOUNDING_MENTOR, MENTORS, MOBILE_ENGINEERING_MENTOR
+from app.seed.mentors import FOUNDING_MENTOR, MENTORS, FULLSTACK_MENTOR
 from app.seed.lab_sync import sync_all_lab_curricula
 from app.seed.roadmap_content import CYBERSECURITY, SOFTWARE_ENGINEERING
 from app.seed.roadmap_content_extra import PATH_PROJECTS
@@ -272,23 +272,23 @@ async def seed_mentors(db: AsyncSession) -> None:
         if changed:
             await db.commit()
 
-    # A second real, non-demo mentor (mobile engineering). Keyed on
+    # A second real, non-demo mentor (full-stack engineering). Keyed on
     # avatar_seed rather than contact_email or display_name for idempotency,
     # since no verified email exists yet for this profile and display_name
     # itself changed (a temporary role label -> the mentor's real name) once
     # that was supplied — avatar_seed has stayed "mobile-engineering-mentor"
     # since this mentor's row was first created, so it's the stable key.
     existing_mobile_mentor = (
-        await db.execute(select(Mentor).where(Mentor.avatar_seed == MOBILE_ENGINEERING_MENTOR["avatar_seed"]))
+        await db.execute(select(Mentor).where(Mentor.avatar_seed == FULLSTACK_MENTOR["avatar_seed"]))
     ).scalars().first()
     if not existing_mobile_mentor:
         db.add(
             Mentor(
-                **MOBILE_ENGINEERING_MENTOR,
+                **FULLSTACK_MENTOR,
                 is_verified=False,
                 is_active=True,
                 is_demo=False,
-                is_founding_mentor=True,
+                is_founding_mentor=False,
             )
         )
         await db.commit()
@@ -300,13 +300,23 @@ async def seed_mentors(db: AsyncSession) -> None:
         # re-running this seed script.
         changed = False
         if not existing_mobile_mentor.slug:
-            existing_mobile_mentor.slug = MOBILE_ENGINEERING_MENTOR["slug"]
+            existing_mobile_mentor.slug = FULLSTACK_MENTOR["slug"]
             changed = True
         if existing_mobile_mentor.display_name == "Mobile Engineering Mentor":
-            existing_mobile_mentor.display_name = MOBILE_ENGINEERING_MENTOR["display_name"]
+            existing_mobile_mentor.display_name = FULLSTACK_MENTOR["display_name"]
+            changed = True
+        # One-time repositioning from the earlier mobile engineering profile
+        # (and the misspelt surname) to full-stack engineering, as a regular
+        # mentor rather than a founding one. Applied only while the row still
+        # holds the earlier seeded headline, so later dashboard edits and a
+        # deliberately re-set founding flag are never overwritten.
+        if existing_mobile_mentor.headline == "Mobile Engineer":
+            for field in ("display_name", "headline", "bio", "paths", "value_proposition"):
+                setattr(existing_mobile_mentor, field, FULLSTACK_MENTOR[field])
+            existing_mobile_mentor.is_founding_mentor = False
             changed = True
         if existing_mobile_mentor.years_experience is None:
-            existing_mobile_mentor.years_experience = MOBILE_ENGINEERING_MENTOR["years_experience"]
+            existing_mobile_mentor.years_experience = FULLSTACK_MENTOR["years_experience"]
             changed = True
         if changed:
             await db.commit()

@@ -6,7 +6,7 @@ from sqlalchemy import select
 
 from app.db.session import AsyncSessionLocal
 from app.models.marketplace import Mentor
-from app.seed.mentors import FOUNDING_MENTOR, MOBILE_ENGINEERING_MENTOR
+from app.seed.mentors import FOUNDING_MENTOR, FULLSTACK_MENTOR
 from app.seed.seed_data import seed_mentors
 
 pytestmark = pytest.mark.asyncio
@@ -19,7 +19,7 @@ async def test_public_listing_contains_only_the_real_mentors(client):
     assert demo_count > 0, "demo personas stay in the database, just hidden"
 
     listing = (await client.get("/api/v1/mentors")).json()
-    assert {m["display_name"] for m in listing} == {"Toriola Opeyemi", "David Oladotun Egundey"}
+    assert {m["display_name"] for m in listing} == {"Toriola Opeyemi", "David Oladotun Egundeyi"}
     assert all(m["is_demo"] is False for m in listing)
 
     # Filtering by a career a demo persona used to cover returns no demo mentor.
@@ -50,7 +50,11 @@ async def test_real_mentor_profiles_carry_the_verified_positioning(client):
     assert toriola["mentorship_duration_label"] == "2 months"
 
     dotun = (await client.get("/api/v1/mentors/mobile-engineering-mentor")).json()
-    assert dotun["headline"] == "Mobile Engineer"
+    assert dotun["display_name"] == "David Oladotun Egundeyi"
+    assert dotun["headline"] == "Full-Stack Engineer"
+    assert dotun["is_founding_mentor"] is False
+    assert dotun["paths"][:3] == ["full-stack-development", "frontend-development", "backend-engineering"]
+    assert {"javascript", "typescript", "react", "sql"} <= set(dotun["paths"])
     assert dotun["mentorship_price_label"] == "₦250,000 ($200)"
     assert dotun["mentorship_duration_label"] == "2 months"
 
@@ -78,4 +82,26 @@ async def test_existing_founder_row_is_repositioned_once_and_edits_are_kept():
         await db.refresh(founder)
         assert founder.headline == "My own headline"
 
-    assert MOBILE_ENGINEERING_MENTOR["paths"][0] == "mobile-engineering"
+    assert FULLSTACK_MENTOR["paths"][0] == "full-stack-development"
+
+
+async def test_the_earlier_mobile_profile_becomes_full_stack_and_loses_the_founding_label_once():
+    async with AsyncSessionLocal() as db:
+        await seed_mentors(db)
+        row = (await db.execute(select(Mentor).where(Mentor.avatar_seed == FULLSTACK_MENTOR["avatar_seed"]))).scalar_one()
+        row.display_name, row.headline = "David Oladotun Egundey", "Mobile Engineer"
+        row.paths, row.is_founding_mentor = ["mobile-engineering", "mobile-development"], True
+        await db.commit()
+
+        await seed_mentors(db)
+        await db.refresh(row)
+        assert (row.display_name, row.headline) == ("David Oladotun Egundeyi", "Full-Stack Engineer")
+        assert row.is_founding_mentor is False
+        assert row.paths == FULLSTACK_MENTOR["paths"]
+
+        # A later dashboard edit, and a deliberately re-set founding flag, survive another deploy.
+        row.headline, row.is_founding_mentor = "Senior Full-Stack Engineer", True
+        await db.commit()
+        await seed_mentors(db)
+        await db.refresh(row)
+        assert row.headline == "Senior Full-Stack Engineer" and row.is_founding_mentor is True

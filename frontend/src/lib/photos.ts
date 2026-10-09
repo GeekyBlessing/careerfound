@@ -57,7 +57,7 @@ export const PHOTOS = {
   },
   dotun: {
     src: "/mentors/mobile-engineering-mentor.jpg",
-    alt: "David Oladotun Egundey, a real CareerFound mobile engineering mentor",
+    alt: "David Oladotun Egundeyi, a real CareerFound full-stack engineering mentor",
     available: true,
     focal: "50% 20%",
     ratio: "4 / 5",

@@ -800,24 +800,24 @@ export default function LandingPage() {
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src="/mentors/mobile-engineering-mentor.jpg"
-                      alt="David Oladotun Egundey, a real CareerFound mobile engineering mentor"
+                      alt="David Oladotun Egundeyi, a real CareerFound full-stack engineering mentor"
                       className="aspect-[4/5] w-full object-cover object-[50%_20%]"
                     />
                     <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/45 to-transparent" />
                     <div className="absolute bottom-5 left-5 right-5 text-white">
-                      <p className="font-mono text-[11px] uppercase tracking-wide text-white/75">Mobile Engineering Mentor</p>
-                      <p className="mt-1 font-display text-2xl font-semibold tracking-tight sm:text-3xl">David Oladotun Egundey</p>
+                      <p className="font-mono text-[11px] uppercase tracking-wide text-white/75">Full-Stack Engineering Mentor</p>
+                      <p className="mt-1 font-display text-2xl font-semibold tracking-tight sm:text-3xl">David Oladotun Egundeyi</p>
                     </div>
                   </div>
-                  <p className="mt-5 text-sm font-medium text-ink-200">Mobile Engineer &middot; 4 years of experience</p>
+                  <p className="mt-5 text-sm font-medium text-ink-200">Full-Stack Engineer &middot; 4 years of experience</p>
                   <div className="mt-3 flex flex-wrap gap-1.5">
-                    {["Mobile Engineering", "App Development"].map((t) => (
+                    {["Full-Stack Development", "JavaScript", "React", "Node", "SQL"].map((t) => (
                       <Badge key={t} tone="warm">{t}</Badge>
                     ))}
                   </div>
                   <p className="mt-4 text-sm leading-relaxed text-ink-500">
-                    Practical guidance on building real applications, structuring projects, debugging, and
-                    preparing for a career in mobile engineering.
+                    Practical guidance on building real web applications from the interface to the database,
+                    structuring projects, debugging, and preparing for a career as a full-stack engineer.
                   </p>
                   <div className="mt-4 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
                     <span><span className="text-2xl font-semibold text-ink-100">$200</span> <span className="text-xs text-ink-500">or &#8358;250,000, 2 months</span></span>
