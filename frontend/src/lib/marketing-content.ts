@@ -105,7 +105,7 @@ export const faqs = [
   },
   {
     q: "What career paths are available?",
-    a: `${CAREER_PATH_COUNT} tech career paths today, grouped into ${CAREER_CATEGORIES.length} categories for browsing. Security: cybersecurity, security operations, penetration testing and cloud security. Engineering: software engineering, frontend, backend, full-stack, mobile and QA. Cloud and infrastructure: cloud engineering, DevOps and solutions architecture. Data and AI: data analysis, data science, data engineering and AI engineering. Design and product: UI/UX design, product design, product management and graphic design. Operations and digital: IT support, no-code and automation, and technical writing. Browse the full directory on the Career Paths page.`,
+    a: `${CAREER_PATH_COUNT} tech career paths today, grouped into ${CAREER_CATEGORIES.length} categories for browsing: software engineering; cloud, infrastructure and DevOps; cybersecurity; data and artificial intelligence; design and product; and IT, automation and technical communication. Each career has its own page, roadmap and projects, and related careers link across categories. Browse the full directory on the Career Paths page.`,
   },
   {
     q: "How do the projects work?",

@@ -2,6 +2,7 @@ import uuid
 
 from pydantic import BaseModel, model_validator
 
+from app.services.career_depth import content_depth, has_project_lab
 from app.services.career_taxonomy import category_label
 
 
@@ -41,11 +42,18 @@ class CareerPathOut(BaseModel):
     who_its_for: str = ""
     portfolio_expectations: list[str] = []
     career_progression: list[str] = []
+    # How much learning content sits behind this career today: "full" is a
+    # complete lesson, quiz and Project Lab curriculum; "guided" is the stage
+    # by stage roadmap with three graded projects. Shown on the career page.
+    depth: str = "guided"
+    project_lab: bool = False
 
     @model_validator(mode="after")
-    def _fill_category_label(self):
+    def _fill_derived_fields(self):
         if not self.category_label:
             self.category_label = category_label(self.category)
+        self.depth = content_depth(self.slug)
+        self.project_lab = has_project_lab(self.slug)
         return self
 
     model_config = {"from_attributes": True}

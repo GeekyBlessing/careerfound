@@ -7,71 +7,98 @@ are authored once as undirected edges below and expanded into symmetric
 Keep this file free of long dash characters (scripts/check_dashes.py).
 """
 
-# Display order: category order, then the order within each category.
+# Display order: category order, then the order within each category. The
+# categories follow career_taxonomy.CATEGORIES.
 CATALOGUE_ORDER = [
-    # Security
-    "cybersecurity", "security-operations", "penetration-testing", "cloud-security",
-    # Engineering
-    "software-engineering", "frontend-development", "backend-engineering",
-    "full-stack-development", "mobile-development", "qa-engineering",
-    # Cloud & Infrastructure
-    "cloud-engineering", "devops-engineering", "solutions-architecture",
-    # Data & AI
-    "data-analysis", "data-science", "data-engineering", "ai-engineering",
+    # Software Engineering
+    "software-engineering", "frontend-development", "backend-engineering", "full-stack-development",
+    "mobile-development", "game-development", "qa-engineering", "embedded-systems-engineering",
+    # Cloud, Infrastructure & DevOps
+    "cloud-engineering", "devops-engineering", "site-reliability-engineering", "platform-engineering",
+    "solutions-architecture", "systems-administration", "network-engineering", "database-administration",
+    # Cybersecurity
+    "cybersecurity", "security-operations", "penetration-testing", "cloud-security", "application-security",
+    "digital-forensics-incident-response", "security-engineering", "identity-access-management",
+    "governance-risk-compliance", "detection-engineering",
+    # Data & Artificial Intelligence
+    "data-analysis", "business-intelligence-engineering", "data-engineering", "data-science",
+    "machine-learning-engineering", "ai-engineering", "mlops-engineering", "analytics-engineering",
     # Design & Product
-    "ui-ux-design", "product-design", "product-management", "graphic-design",
-    # Operations & Digital
-    "it-support", "no-code-automation", "technical-writing",
+    "ui-ux-design", "product-design", "graphic-design", "motion-design", "product-management",
+    "business-analysis", "ux-research",
+    # IT, Automation & Technical Communication
+    "it-support", "it-service-management", "no-code-development", "workflow-automation",
+    "technical-writing", "solutions-consulting", "technical-support-engineering",
 ]
 
+# Undirected "worth exploring next" links. A career lives in one category only;
+# this is how someone finds the neighbouring paths in other categories.
 EDGES = [
-    # Security
-    ("cybersecurity", "security-operations"),
-    ("cybersecurity", "penetration-testing"),
-    ("cybersecurity", "cloud-security"),
-    ("cybersecurity", "it-support"),
-    ("security-operations", "cloud-security"),
-    ("security-operations", "penetration-testing"),
-    # Engineering
-    ("software-engineering", "frontend-development"),
-    ("software-engineering", "backend-engineering"),
-    ("software-engineering", "full-stack-development"),
-    ("software-engineering", "mobile-development"),
-    ("software-engineering", "qa-engineering"),
-    ("software-engineering", "technical-writing"),
-    ("frontend-development", "full-stack-development"),
-    ("backend-engineering", "full-stack-development"),
-    ("frontend-development", "mobile-development"),
-    ("frontend-development", "ui-ux-design"),
-    ("backend-engineering", "cloud-engineering"),
-    ("backend-engineering", "data-engineering"),
-    ("backend-engineering", "solutions-architecture"),
-    ("backend-engineering", "technical-writing"),
-    ("qa-engineering", "devops-engineering"),
-    # Cloud and infrastructure
-    ("cloud-engineering", "devops-engineering"),
-    ("cloud-engineering", "solutions-architecture"),
-    ("cloud-engineering", "cloud-security"),
-    ("devops-engineering", "solutions-architecture"),
-    ("it-support", "cloud-engineering"),
+    # Software engineering
+    ("software-engineering", "frontend-development"), ("software-engineering", "backend-engineering"),
+    ("software-engineering", "full-stack-development"), ("software-engineering", "mobile-development"),
+    ("software-engineering", "qa-engineering"), ("software-engineering", "game-development"),
+    ("software-engineering", "embedded-systems-engineering"), ("software-engineering", "technical-writing"),
+    ("frontend-development", "full-stack-development"), ("frontend-development", "mobile-development"),
+    ("frontend-development", "ui-ux-design"), ("backend-engineering", "full-stack-development"),
+    ("backend-engineering", "cloud-engineering"), ("backend-engineering", "data-engineering"),
+    ("backend-engineering", "solutions-architecture"), ("backend-engineering", "technical-writing"),
+    ("backend-engineering", "ai-engineering"), ("backend-engineering", "database-administration"),
+    ("backend-engineering", "platform-engineering"), ("mobile-development", "game-development"),
+    ("game-development", "motion-design"), ("qa-engineering", "devops-engineering"),
+    ("qa-engineering", "technical-support-engineering"), ("embedded-systems-engineering", "network-engineering"),
+    ("embedded-systems-engineering", "security-engineering"),
+    # Cloud, infrastructure and DevOps
+    ("cloud-engineering", "devops-engineering"), ("cloud-engineering", "solutions-architecture"),
+    ("cloud-engineering", "cloud-security"), ("cloud-engineering", "platform-engineering"),
+    ("cloud-engineering", "systems-administration"), ("cloud-engineering", "network-engineering"),
+    ("cloud-engineering", "database-administration"), ("cloud-engineering", "site-reliability-engineering"),
+    ("devops-engineering", "solutions-architecture"), ("devops-engineering", "site-reliability-engineering"),
+    ("devops-engineering", "platform-engineering"), ("devops-engineering", "mlops-engineering"),
+    ("devops-engineering", "application-security"), ("site-reliability-engineering", "platform-engineering"),
+    ("site-reliability-engineering", "systems-administration"), ("platform-engineering", "mlops-engineering"),
+    ("systems-administration", "it-support"), ("systems-administration", "network-engineering"),
+    ("systems-administration", "identity-access-management"), ("systems-administration", "it-service-management"),
+    ("network-engineering", "cybersecurity"), ("network-engineering", "security-engineering"),
+    ("network-engineering", "it-support"), ("database-administration", "data-engineering"),
+    ("database-administration", "systems-administration"), ("it-support", "cloud-engineering"),
+    # Cybersecurity
+    ("cybersecurity", "security-operations"), ("cybersecurity", "penetration-testing"),
+    ("cybersecurity", "cloud-security"), ("cybersecurity", "it-support"),
+    ("cybersecurity", "governance-risk-compliance"), ("cybersecurity", "digital-forensics-incident-response"),
+    ("cybersecurity", "identity-access-management"), ("security-operations", "cloud-security"),
+    ("security-operations", "penetration-testing"), ("security-operations", "detection-engineering"),
+    ("security-operations", "digital-forensics-incident-response"), ("detection-engineering", "digital-forensics-incident-response"),
+    ("detection-engineering", "security-engineering"), ("penetration-testing", "application-security"),
+    ("application-security", "software-engineering"), ("application-security", "security-engineering"),
+    ("cloud-security", "identity-access-management"), ("cloud-security", "security-engineering"),
+    ("security-engineering", "identity-access-management"), ("governance-risk-compliance", "identity-access-management"),
+    ("governance-risk-compliance", "business-analysis"), ("governance-risk-compliance", "it-service-management"),
     # Data and AI
-    ("data-analysis", "data-science"),
-    ("data-analysis", "data-engineering"),
-    ("data-analysis", "product-management"),
-    ("data-analysis", "no-code-automation"),
-    ("data-science", "data-engineering"),
-    ("data-science", "ai-engineering"),
-    ("data-engineering", "ai-engineering"),
-    ("backend-engineering", "ai-engineering"),
+    ("data-analysis", "data-science"), ("data-analysis", "data-engineering"),
+    ("data-analysis", "product-management"), ("data-analysis", "workflow-automation"),
+    ("data-analysis", "business-intelligence-engineering"), ("data-analysis", "analytics-engineering"),
+    ("data-analysis", "business-analysis"), ("business-intelligence-engineering", "analytics-engineering"),
+    ("business-intelligence-engineering", "data-engineering"), ("analytics-engineering", "data-engineering"),
+    ("data-science", "data-engineering"), ("data-science", "machine-learning-engineering"),
+    ("data-science", "ai-engineering"), ("machine-learning-engineering", "ai-engineering"),
+    ("machine-learning-engineering", "mlops-engineering"), ("machine-learning-engineering", "backend-engineering"),
+    ("data-engineering", "ai-engineering"), ("data-engineering", "mlops-engineering"),
+    ("ai-engineering", "mlops-engineering"),
     # Design and product
-    ("ui-ux-design", "product-design"),
-    ("ui-ux-design", "graphic-design"),
-    ("product-design", "product-management"),
-    ("product-design", "graphic-design"),
-    # Operations and digital
-    ("it-support", "no-code-automation"),
-    ("no-code-automation", "product-management"),
-    ("technical-writing", "product-management"),
+    ("ui-ux-design", "product-design"), ("ui-ux-design", "graphic-design"), ("ui-ux-design", "ux-research"),
+    ("ui-ux-design", "motion-design"), ("product-design", "product-management"),
+    ("product-design", "graphic-design"), ("product-design", "ux-research"),
+    ("graphic-design", "motion-design"), ("product-management", "business-analysis"),
+    ("product-management", "ux-research"), ("business-analysis", "solutions-consulting"),
+    # IT, automation and technical communication
+    ("it-support", "it-service-management"), ("it-support", "technical-support-engineering"),
+    ("it-support", "workflow-automation"), ("it-service-management", "technical-support-engineering"),
+    ("it-service-management", "workflow-automation"), ("workflow-automation", "no-code-development"),
+    ("workflow-automation", "product-management"), ("no-code-development", "product-management"),
+    ("no-code-development", "frontend-development"), ("technical-writing", "product-management"),
+    ("technical-writing", "technical-support-engineering"), ("solutions-consulting", "solutions-architecture"),
+    ("solutions-consulting", "technical-support-engineering"),
 ]
 
 
@@ -199,10 +226,10 @@ _META = {
     ),
     "ai-engineering": dict(
         category="data-ai",
-        keywords=["ai engineer", "machine learning engineer", "ml engineer", "ml", "mlops", "deep learning", "pytorch", "llm", "rag", "generative ai", "genai", "nlp", "python", "ai/ml", "neural networks"],
-        who_its_for="People strong in programming and maths who want to build models and AI features into real products. Competitive, with a steep first year.",
-        portfolio_expectations=["A classical ML project with honest evaluation", "A deep learning model served behind an API", "An LLM or retrieval application with a measured quality score", "A short write-up of what failed first and what you changed"],
-        career_progression=["Junior AI or ML Engineer", "AI Engineer", "Senior AI Engineer or MLOps Engineer", "Staff AI Engineer, Applied Research Engineer or AI Team Lead"],
+        keywords=['ai engineer', 'ai developer', 'llm engineer', 'llm', 'large language model', 'generative ai', 'genai', 'rag', 'retrieval augmented generation', 'prompt engineering', 'prompt engineer', 'ai agents', 'chatbot', 'openai', 'anthropic', 'langchain', 'vector database', 'embeddings', 'ai application developer'],
+        who_its_for='Software-minded people who want to build products that use language models. It is a software job first, so you need real programming skills. The field changes quickly, which suits people who enjoy re-learning tools and testing claims for themselves.',
+        portfolio_expectations=['A structured-output service with a fixed test set and a record of how prompt changes moved the score', 'A tool-calling assistant that validates arguments and handles provider errors', 'A retrieval app over real documents with citations and a measured hit rate', 'A short write-up of failures, costs and the guardrails you added'],
+        career_progression=['Junior AI Engineer or Software Engineer (AI features)', 'AI Engineer', 'Senior AI Engineer', 'Staff AI Engineer, AI Platform Lead or Engineering Manager'],
     ),
     "ui-ux-design": dict(
         category="design-product",
@@ -239,12 +266,12 @@ _META = {
         portfolio_expectations=["A home lab that shows you can set up and fix real machines", "Sample knowledge base articles and troubleshooting guides", "A write-up of tickets resolved, with steps and outcomes", "A short project that automated one repetitive support task"],
         career_progression=["Help Desk Technician", "IT Support Specialist", "Systems or Network Administrator", "Cloud, Security or IT Manager (a common launchpad into other paths)"],
     ),
-    "no-code-automation": dict(
+    "workflow-automation": dict(
         category="operations-digital",
-        keywords=["no code", "nocode", "low code", "automation", "zapier", "make", "airtable", "bubble", "webflow", "workflow", "internal tools", "citizen developer"],
-        who_its_for="Practical problem solvers who want to build working tools fast without learning to program first, including future freelancers.",
-        portfolio_expectations=["Three automations that solve real problems, with before and after time saved", "A working internal tool built in a no-code platform", "A small client-style project with a brief, scope and delivery", "Notes on failures and how you made automations reliable"],
-        career_progression=["Automation Specialist", "No-Code Developer or Operations Automation Lead", "Automation Consultant or Freelance Builder", "Operations Manager, Product Owner or a move into software engineering"],
+        keywords=['workflow automation', 'automation specialist', 'business process automation', 'zapier', 'zapier expert', 'make.com', 'integromat', 'n8n', 'power automate', 'airtable automation', 'webhooks', 'rpa', 'revops', 'operations automation', 'process automation', 'integration specialist'],
+        who_its_for='Practical problem solvers who like noticing wasted effort and fixing it. You do not need to code to start, but you need patience with detail, because the hard part is making automations that survive messy real data.',
+        portfolio_expectations=['Three automations for real processes, each with a diagram and before and after time saved', 'A branching workflow that handles missing fields and duplicates without breaking', 'A workflow with error handling that alerts a person when it fails', "An owner's guide for one automation, written for someone non-technical"],
+        career_progression=['Automation Specialist', 'Automation Engineer or Operations Automation Lead', 'Automation Consultant, Freelance Builder or RevOps Manager', 'Head of Operations Systems, Product Owner or a move into software engineering'],
     ),
     "technical-writing": dict(
         category="operations-digital",
@@ -255,4 +282,17 @@ _META = {
     ),
 }
 
-CATALOGUE_META = {slug: {**meta, "related_slugs": _related(slug)} for slug, meta in _META.items()}
+from app.seed.new_careers import CATEGORY_BY_SLUG, NEW_META  # noqa: E402
+
+for _slug, _meta in NEW_META.items():
+    _META[_slug] = dict(category=CATEGORY_BY_SLUG[_slug], **_meta)
+
+def _ordered_related(slug: str) -> list[str]:
+    """Neighbours in the same category first (specialisations and siblings),
+    then the ones in other categories, each group in catalogue order."""
+    category = _META[slug]["category"]
+    position = {s: i for i, s in enumerate(CATALOGUE_ORDER)}
+    return sorted(_related(slug), key=lambda other: (_META[other]["category"] != category, position[other]))
+
+
+CATALOGUE_META = {slug: {**meta, "related_slugs": _ordered_related(slug)} for slug, meta in _META.items()}

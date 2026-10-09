@@ -14,7 +14,7 @@ from pathlib import Path
 import pytest
 from sqlalchemy import select
 
-from app.ai.providers import _BEGINNER_EXPLAINERS, _pick_top_three, _score_paths
+from app.ai.providers import _BEGINNER_EXPLAINERS, _TRAIT_WEIGHTS, _pick_top_three, _score_paths
 from app.db.session import AsyncSessionLocal
 from app.models.career import CareerPath
 from app.models.marketplace import Mentor
@@ -49,7 +49,7 @@ def _words(text: str) -> set[str]:
 
 def test_catalogue_has_unique_slugs_in_declared_order():
     slugs = [p["slug"] for p in CAREER_PATHS]
-    assert len(slugs) == len(set(slugs)) == 24
+    assert len(slugs) == len(set(slugs)) == 48
     assert slugs == CATALOGUE_ORDER
 
 
@@ -59,9 +59,14 @@ def test_every_career_has_one_valid_category_and_categories_are_not_careers():
     used = {p["category"] for p in CAREER_PATHS}
     assert used == set(CATEGORY_SLUGS), "every category should contain careers"
 
+    # A category is a group, never a career. Two categories share their name
+    # with their general career (Cybersecurity, Software Engineering) because
+    # that is what the field is called; no other label may match a career.
     names = {p["name"].lower() for p in CAREER_PATHS}
-    for label in CATEGORY_LABELS.values():
-        assert label.lower() not in names, f"category '{label}' must not also be a career"
+    for slug, label in CATEGORY_LABELS.items():
+        if label.lower() in names:
+            assert label in ("Cybersecurity", "Software Engineering"), f"category '{label}' must not also be a career"
+            assert BY_SLUG[label.lower().replace(" ", "-")]["category"] == slug
     for slug in CATEGORY_SLUGS:
         assert slug not in BY_SLUG
 
@@ -77,10 +82,75 @@ def test_career_names_never_stutter():
         assert not (len(words) == 2 and stem.startswith(words[1]) and words[1] in label_words), path["name"]
 
 
-def test_ai_engineering_is_the_single_ai_career():
-    ai = [p["slug"] for p in CAREER_PATHS if "ai" in p["slug"].split("-") or "ml" in p["slug"].split("-")]
-    assert ai == ["ai-engineering"]
+def test_ai_engineering_and_machine_learning_engineering_teach_different_things():
     assert BY_SLUG["ai-engineering"]["name"] == "AI Engineering"
+    assert BY_SLUG["machine-learning-engineering"]["name"] == "Machine Learning Engineering"
+    ai_text = " ".join(
+        [BY_SLUG["ai-engineering"]["summary"]] + BY_SLUG["ai-engineering"]["tools"] + BY_SLUG["ai-engineering"]["skills_required"]
+        + [proj["title"] for ph in PATH_PROJECTS["ai-engineering"]["phases"] for proj in ph["projects"]]
+    ).lower()
+    ml_text = " ".join(
+        [BY_SLUG["machine-learning-engineering"]["summary"]] + BY_SLUG["machine-learning-engineering"]["tools"]
+        + BY_SLUG["machine-learning-engineering"]["skills_required"]
+        + [proj["title"] for ph in PATH_PROJECTS["machine-learning-engineering"]["phases"] for proj in ph["projects"]]
+    ).lower()
+    # AI Engineering builds on foundation models; ML Engineering trains and serves its own models.
+    for term in ("llm", "prompt", "retrieval", "tool"):
+        assert term in ai_text, term
+        assert term not in ml_text, term
+    for term in ("validation", "leakage", "xgboost", "pytorch"):
+        assert term in ml_text, term
+    assert not set(BY_SLUG["ai-engineering"]["tools"]) & set(BY_SLUG["machine-learning-engineering"]["tools"]) - {"Python", "FastAPI"}
+    assert "machine-learning-engineering" in BY_SLUG["ai-engineering"]["related_slugs"]
+
+
+def test_ui_ux_and_product_design_have_clearly_different_outcomes():
+    assert BY_SLUG["ui-ux-design"]["portfolio_expectations"] != BY_SLUG["product-design"]["portfolio_expectations"]
+    ux = " ".join(BY_SLUG["ui-ux-design"]["portfolio_expectations"]).lower()
+    pd = " ".join(BY_SLUG["product-design"]["portfolio_expectations"]).lower()
+    assert "usability" in ux and "design system" in pd
+    assert "design system" not in ux and "usability" not in pd
+
+
+def test_the_catalogue_is_exactly_the_agreed_forty_eight_careers_in_six_categories():
+    agreed = {
+        "engineering": ["Software Engineering", "Frontend Development", "Backend Development", "Full-Stack Development",
+                        "Mobile Engineering", "Game Development", "QA Engineering", "Embedded Systems Engineering"],
+        "cloud-infrastructure": ["Cloud Engineering", "DevOps Engineering", "Site Reliability Engineering (SRE)",
+                                 "Platform Engineering", "Solutions Architecture", "Systems Administration",
+                                 "Network Engineering", "Database Administration"],
+        "security": ["Cybersecurity", "Security Operations (SOC Analyst)", "Penetration Testing", "Cloud Security Engineering",
+                     "Application Security Engineering", "Digital Forensics and Incident Response", "Security Engineering",
+                     "Identity and Access Management (IAM)", "Governance, Risk and Compliance (GRC)", "Detection Engineering"],
+        "data-ai": ["Data Analysis", "Business Intelligence Engineering", "Data Engineering", "Data Science",
+                    "Machine Learning Engineering", "AI Engineering", "MLOps Engineering", "Analytics Engineering"],
+        "design-product": ["UI/UX Design", "Product Design", "Graphic Design", "Motion Design", "Product Management",
+                           "Business Analysis", "UX Research"],
+        "operations-digital": ["IT Support", "IT Service Management", "No-Code Development", "Workflow Automation",
+                               "Technical Writing", "Solutions Consulting", "Technical Support Engineering"],
+    }
+    assert list(agreed) == CATEGORY_SLUGS
+    for category, names in agreed.items():
+        assert sorted(p["name"] for p in CAREER_PATHS if p["category"] == category) == sorted(names), category
+    assert [CATEGORY_LABELS[c] for c in CATEGORY_SLUGS] == [
+        "Software Engineering", "Cloud, Infrastructure & DevOps", "Cybersecurity", "Data & Artificial Intelligence",
+        "Design & Product", "IT, Automation & Technical Communication",
+    ]
+
+
+def test_every_published_career_passes_the_content_rules():
+    """Required sections, no placeholders, no invented salaries, no long dashes and nothing copied between careers."""
+    from app.seed.catalogue_validation import check_catalogue
+
+    problems = check_catalogue([dict(p) for p in CAREER_PATHS], dict(PATH_PROJECTS), light_only=set(PATH_PROJECTS))
+    assert problems == []
+
+
+def test_no_career_is_empty_or_listed_twice_under_a_different_name():
+    names = [p["name"].lower() for p in CAREER_PATHS]
+    assert len(set(names)) == len(names)
+    summaries = {p["summary"].lower() for p in CAREER_PATHS}
+    assert len(summaries) == len(CAREER_PATHS)
 
 
 def test_every_career_page_is_complete():
@@ -110,6 +180,12 @@ def test_related_careers_exist_are_mutual_and_never_self():
         for other in p["related_slugs"]:
             assert other in BY_SLUG, f"{slug} -> {other}"
             assert slug in BY_SLUG[other]["related_slugs"], f"{slug} -> {other} is not mutual"
+
+
+def test_every_category_links_out_to_careers_in_other_categories():
+    for category in CATEGORY_SLUGS:
+        outward = {BY_SLUG[o]["category"] for p in CAREER_PATHS if p["category"] == category for o in p["related_slugs"]} - {category}
+        assert outward, f"{category} careers never point anywhere else"
 
 
 def test_the_documented_relationships_exist():
@@ -187,6 +263,14 @@ def _searchable(path: dict) -> str:
         ("aws", {"cloud-engineering", "cloud-security", "devops-engineering", "solutions-architecture"}),
         ("python", {"software-engineering", "backend-engineering", "data-engineering", "data-science", "ai-engineering", "cybersecurity"}),
         ("figma", {"ui-ux-design", "product-design", "graphic-design"}),
+        ("flutter", {"mobile-development"}),
+        ("siem", {"security-operations", "detection-engineering"}),
+        ("terraform", {"cloud-engineering", "devops-engineering"}),
+        ("iam", {"identity-access-management", "cloud-security"}),
+        ("kubernetes", {"devops-engineering", "platform-engineering", "site-reliability-engineering"}),
+        ("dbt", {"analytics-engineering", "data-engineering"}),
+        ("zapier", {"workflow-automation"}),
+        ("bubble", {"no-code-development"}),
     ],
 )
 def test_example_searches_reach_the_expected_careers(term, expected):
@@ -270,12 +354,12 @@ async def test_api_lists_the_catalogue_with_categories_and_serves_legacy_urls(cl
     await _seed_all()
 
     listing = (await client.get("/api/v1/careers")).json()
-    assert len(listing) == 24
+    assert len(listing) == 48
     by_slug = {c["slug"]: c for c in listing}
     assert by_slug["cybersecurity"]["category"] == "security"
-    assert by_slug["cybersecurity"]["category_label"] == "Security"
-    assert by_slug["cloud-engineering"]["category_label"] == "Cloud & Infrastructure"
-    assert by_slug["technical-writing"]["category_label"] == "Operations & Digital"
+    assert by_slug["cybersecurity"]["category_label"] == "Cybersecurity"
+    assert by_slug["cloud-engineering"]["category_label"] == "Cloud, Infrastructure & DevOps"
+    assert by_slug["technical-writing"]["category_label"] == "IT, Automation & Technical Communication"
     assert by_slug["cybersecurity"]["related_slugs"]
 
     for old, new in LEGACY_SLUG_REDIRECTS.items():
@@ -309,9 +393,9 @@ async def test_legacy_rows_are_renamed_in_place_keeping_their_ids():
         assert "soc-analysis" not in paths
         renamed = paths["security-operations"]
         assert renamed.id == legacy_id
-        assert renamed.name == "Security Operations (SOC)"
+        assert renamed.name == "Security Operations (SOC Analyst)"
         assert renamed.category == "security"
-        assert len(paths) == 24
+        assert len(paths) == 48
 
 
 @pytest.mark.asyncio
@@ -368,3 +452,133 @@ async def test_mentor_filter_accepts_old_and_new_slugs(client):
         listing = await client.get("/api/v1/mentors", params={"path": slug})
         assert listing.status_code == 200
         assert any(m["display_name"] == "Pipeline Pro" for m in listing.json()), slug
+
+
+# --- retargeting a career without losing anyone's progress -------------------
+
+
+@pytest.mark.asyncio
+async def test_no_code_automation_row_becomes_workflow_automation_keeping_its_id_and_progress():
+    ids = await _seed_all()
+    async with AsyncSessionLocal() as db:
+        users = await seed_users(db)
+        row = (await db.execute(select(CareerPath).where(CareerPath.slug == "workflow-automation"))).scalar_one()
+        # Put the row back the way an older database has it.
+        row.slug, row.name = "no-code-automation", "No-Code / Automation"
+        project = (await db.execute(
+            select(Project).join(RoadmapPhase, Project.phase_id == RoadmapPhase.id)
+            .where(RoadmapPhase.path_id == row.id).order_by(Project.difficulty)
+        )).scalars().first()
+        db.add(UserProgress(user_id=users["demo@careerfound.dev"].id, project_id=project.id, status=ProgressStatus.completed))
+        await db.commit()
+        old_id, project_id = row.id, project.id
+
+        paths = await seed_career_paths(db)
+        await seed_roadmap_content(db, paths)
+        assert "no-code-automation" not in paths
+        assert paths["workflow-automation"].id == old_id == ids["workflow-automation"]
+        assert paths["workflow-automation"].name == "Workflow Automation"
+        progress = (await db.execute(select(UserProgress).where(UserProgress.project_id == project_id))).scalars().all()
+        assert len(progress) == 1
+
+
+@pytest.mark.asyncio
+async def test_retargeting_moves_a_used_project_and_drops_unused_skills_phases_and_projects():
+    """Simulates the old AI Engineering roadmap (ML projects, a fourth phase, numerical-computing skills)."""
+    await _seed_all()
+    async with AsyncSessionLocal() as db:
+        users = await seed_users(db)
+        path = (await db.execute(select(CareerPath).where(CareerPath.slug == "ai-engineering"))).scalar_one()
+        phases = {p.title: p for p in (await db.execute(select(RoadmapPhase).where(RoadmapPhase.path_id == path.id))).scalars().all()}
+        old_phase = RoadmapPhase(path_id=path.id, order_index=3, title="Building with LLMs", summary="old", unlocks_at_skill_pct=0)
+        db.add(old_phase)
+        await db.flush()
+        used = (await db.execute(select(Project).where(Project.phase_id == phases["Advanced Practice"].id))).scalars().one()
+        used.phase_id = old_phase.id  # the retrieval project used to live in the fourth phase
+        unused = Project(phase_id=phases["Foundations"].id, order_index=5, title="Linear regression from scratch", teaches="x",
+                         prerequisites=[], expected_output="x", steps=[], hints=[], common_mistakes=[], difficulty=1)
+        from app.models.roadmap import SkillNode
+        stale_skill = SkillNode(path_id=path.id, key="python_numerical_computing", label="Old skill", category="foundation")
+        db.add_all([unused, stale_skill])
+        await db.flush()
+        db.add(UserProgress(user_id=users["demo@careerfound.dev"].id, project_id=used.id, status=ProgressStatus.in_progress))
+        await db.commit()
+        used_id, advanced_id, path_id = used.id, phases["Advanced Practice"].id, path.id
+
+        await seed_roadmap_content(db, await seed_career_paths(db))
+        db.expire_all()
+
+        phase_titles = {p.title for p in (await db.execute(select(RoadmapPhase).where(RoadmapPhase.path_id == path_id))).scalars().all()}
+        assert phase_titles == {"Foundations", "Building Real Skills", "Advanced Practice"}
+        moved = (await db.execute(select(Project).where(Project.id == used_id))).scalar_one()
+        assert moved.phase_id == advanced_id
+        titles = {p.title for p in (await db.execute(
+            select(Project).join(RoadmapPhase, Project.phase_id == RoadmapPhase.id).where(RoadmapPhase.path_id == path_id)
+        )).scalars().all()}
+        assert "Linear regression from scratch" not in titles
+        assert len(titles) == 3
+        keys = {n.key for n in (await db.execute(select(SkillNode).where(SkillNode.path_id == path_id))).scalars().all()}
+        assert "python_numerical_computing" not in keys and len(keys) == 6
+
+
+@pytest.mark.asyncio
+async def test_seeding_twice_changes_nothing_and_every_career_has_a_roadmap():
+    await _seed_all()
+    async with AsyncSessionLocal() as db:
+        from sqlalchemy import func
+
+        async def counts():
+            return [(await db.execute(select(func.count()).select_from(m))).scalar_one() for m in (CareerPath, RoadmapPhase, Project)]
+
+        first = await counts()
+        await seed_roadmap_content(db, await seed_career_paths(db))
+        assert await counts() == first
+        assert first[0] == 48
+        empty = (await db.execute(
+            select(CareerPath.slug).where(~CareerPath.id.in_(select(RoadmapPhase.path_id)))
+        )).scalars().all()
+        assert empty == []
+
+
+# --- the assessment still works across the whole catalogue -------------------
+
+
+def test_the_assessment_can_recommend_every_career_and_never_an_unknown_one():
+    from app.ai.assessment_signals import INTERESTS, STRENGTHS, TECH_INTERESTS
+
+    catalogue = [{"slug": p["slug"], "category": p["category"], "name": p["name"]} for p in CAREER_PATHS]
+    for table in (INTERESTS, STRENGTHS, TECH_INTERESTS):
+        for tag, (_label, boosts) in table.items():
+            assert set(boosts) <= set(BY_SLUG), (tag, set(boosts) - set(BY_SLUG))
+
+    # Every career must be reachable: some honest set of answers (its own tags
+    # and traits, optionally the matching category) lands it in the top three.
+    tables = (("things_enjoyed", INTERESTS), ("existing_skills", STRENGTHS), ("tech_interests", TECH_INTERESTS))
+    unreachable = []
+    for slug, career in BY_SLUG.items():
+        ranked = {key: [t for _, t in sorted(((v[1].get(slug, 0), t) for t, v in table.items() if v[1].get(slug, 0) >= 3), reverse=True)]
+                  for key, table in tables}
+        found = False
+        for counts in itertools.product((1, 3), repeat=3):
+            for traits in (list(_TRAIT_WEIGHTS[slug]), []):
+                for with_category in (True, False):
+                    profile = {t: True for t in traits}
+                    for (key, _table), k in zip(tables, counts):
+                        profile[key] = ranked[key][:k]
+                    if with_category:
+                        profile["preferred_category"] = career["category"]
+                    picks = _pick_top_three(_score_paths(profile, catalogue))
+                    assert len({p["slug"] for p, _ in picks}) == 3 and {p["slug"] for p, _ in picks} <= set(BY_SLUG)
+                    found = found or slug in {p["slug"] for p, _ in picks}
+        if not found:
+            unreachable.append(slug)
+    assert unreachable == []
+
+
+def test_displayed_fit_scores_keep_the_ranking_order():
+    catalogue = [{"slug": p["slug"], "category": p["category"], "name": p["name"]} for p in CAREER_PATHS]
+    profile = {t: True for t in _TRAIT_WEIGHTS["cybersecurity"]} | {"things_enjoyed": ["security", "puzzles"], "tech_interests": ["security"]}
+    scores = [score for _path, score in _score_paths(profile, catalogue)]
+    assert scores == sorted(scores, reverse=True)
+    assert len(set(scores[:3])) == 3
+    assert all(0 <= s <= 100 for s in scores)

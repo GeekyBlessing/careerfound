@@ -11,12 +11,12 @@ from __future__ import annotations
 
 # (slug, label, short blurb) in display order.
 CATEGORIES: list[tuple[str, str, str]] = [
-    ("security", "Security", "Protect systems, detect threats and test defences."),
-    ("engineering", "Engineering", "Build software for the web, mobile and beyond."),
-    ("cloud-infrastructure", "Cloud & Infrastructure", "Run, ship and design the platforms software lives on."),
-    ("data-ai", "Data & AI", "Turn data into decisions, pipelines, models and AI products."),
+    ("engineering", "Software Engineering", "Build software for the web, phones, games and devices."),
+    ("cloud-infrastructure", "Cloud, Infrastructure & DevOps", "Run, ship and design the platforms software lives on."),
+    ("security", "Cybersecurity", "Protect systems, detect threats and test defences."),
+    ("data-ai", "Data & Artificial Intelligence", "Turn data into decisions, pipelines, models and AI products."),
     ("design-product", "Design & Product", "Shape what gets built and how it looks, feels and works."),
-    ("operations-digital", "Operations & Digital", "Support teams, automate work and communicate technical ideas."),
+    ("operations-digital", "IT, Automation & Technical Communication", "Support teams, automate work and explain technical ideas."),
 ]
 
 CATEGORY_SLUGS: list[str] = [slug for slug, _label, _blurb in CATEGORIES]
@@ -26,7 +26,7 @@ CATEGORY_LABELS: dict[str, str] = {slug: label for slug, label, _blurb in CATEGO
 # roadmaps, assessment results, mentor tags, ?path= links) keep working.
 LEGACY_SLUG_REDIRECTS: dict[str, str] = {
     "ai-ml-engineering": "ai-engineering",
-    "machine-learning-engineering": "ai-engineering",
+    "no-code-automation": "workflow-automation",
     "soc-analysis": "security-operations",
     "devops": "devops-engineering",
 }

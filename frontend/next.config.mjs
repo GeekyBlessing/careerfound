@@ -4,7 +4,7 @@
 // LEGACY_CAREER_SLUGS in src/lib/career-categories.ts.
 const LEGACY_CAREER_SLUGS = {
   "ai-ml-engineering": "ai-engineering",
-  "machine-learning-engineering": "ai-engineering",
+  "no-code-automation": "workflow-automation",
   "soc-analysis": "security-operations",
   devops: "devops-engineering",
 };

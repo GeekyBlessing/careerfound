@@ -26,8 +26,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.career import CareerPath
 from app.models.marketplace import Mentor, MentorApplication
 from app.models.portfolio import PortfolioItem
-from app.models.progress import UserProgress
-from app.models.roadmap import Project, RoadmapPhase, SkillEdge, SkillNode
+from app.models.progress import UserProgress, UserSkillProgress
+from app.models.roadmap import Lesson, Project, Quiz, RoadmapPhase, SkillEdge, SkillNode
 from app.services.career_taxonomy import LEGACY_SLUG_REDIRECTS, canonical_slug
 
 PROJECT_FIELDS = ("teaches", "prerequisites", "expected_output", "steps", "hints", "common_mistakes", "difficulty")
@@ -90,8 +90,23 @@ async def _project_is_referenced(db: AsyncSession, project_id: uuid.UUID) -> boo
     return False
 
 
+async def _skill_is_referenced(db: AsyncSession, skill_id: uuid.UUID) -> bool:
+    for model in (UserSkillProgress, Lesson, Project):
+        if (await db.execute(select(model.id).where(model.skill_node_id == skill_id).limit(1))).first():
+            return True
+    return False
+
+
 async def sync_light_roadmap_content(db: AsyncSession, path: CareerPath, content: dict) -> None:
-    """Bring a path's skills, phases and projects in line with `content`."""
+    """Bring a path's skills, phases and projects in line with `content`.
+
+    Nothing a learner has touched is lost: a project with progress or a
+    portfolio item is moved to its new phase instead of being recreated, and
+    is never deleted; skills still used by a lesson, project or mastery row
+    are kept. Only unreferenced leftovers (an old project, a skill the career
+    no longer teaches, an emptied phase) are removed, so a career can be
+    retargeted without leaving orphans on its roadmap.
+    """
     nodes = {n.key: n for n in (await db.execute(select(SkillNode).where(SkillNode.path_id == path.id))).scalars().all()}
     for skill in content["skills"]:
         node = nodes.get(skill["key"])
@@ -104,19 +119,29 @@ async def sync_light_roadmap_content(db: AsyncSession, path: CareerPath, content
             node.label = skill["label"]
             node.category = skill["category"]
 
-    existing_edges = {
-        (e.from_skill_id, e.to_skill_id)
-        for e in (await db.execute(select(SkillEdge).where(SkillEdge.path_id == path.id))).scalars().all()
-    }
-    for from_key, to_key in content["skill_edges"]:
-        pair = (nodes[from_key].id, nodes[to_key].id)
-        if pair not in existing_edges:
-            db.add(SkillEdge(path_id=path.id, from_skill_id=pair[0], to_skill_id=pair[1]))
+    wanted_pairs = {(nodes[a].id, nodes[b].id) for a, b in content["skill_edges"]}
+    existing_edges = {}
+    for e in (await db.execute(select(SkillEdge).where(SkillEdge.path_id == path.id))).scalars().all():
+        pair = (e.from_skill_id, e.to_skill_id)
+        if pair in wanted_pairs and pair not in existing_edges:
+            existing_edges[pair] = e
+        else:
+            await db.delete(e)  # an edge the content no longer has (or a duplicate)
+    for pair in wanted_pairs - set(existing_edges):
+        db.add(SkillEdge(path_id=path.id, from_skill_id=pair[0], to_skill_id=pair[1]))
 
     phases = {
         p.title: p
         for p in (await db.execute(select(RoadmapPhase).where(RoadmapPhase.path_id == path.id))).scalars().all()
     }
+    wanted_phase_titles = {p["title"] for p in content["phases"]}
+    all_projects = {}
+    for project in (
+        await db.execute(select(Project).join(RoadmapPhase, Project.phase_id == RoadmapPhase.id).where(RoadmapPhase.path_id == path.id))
+    ).scalars().all():
+        all_projects.setdefault(project.title, project)
+
+    wanted_titles: set[str] = set()
     for phase_idx, phase_data in enumerate(content["phases"]):
         phase = phases.get(phase_data["title"])
         if phase is None:
@@ -126,29 +151,54 @@ async def sync_light_roadmap_content(db: AsyncSession, path: CareerPath, content
             )
             db.add(phase)
             await db.flush()
+            phases[phase.title] = phase
         else:
             phase.order_index = phase_idx
             phase.summary = phase_data["summary"]
 
         skill_id = nodes[phase_data["skill_key"]].id if phase_data.get("skill_key") in nodes else None
-        projects = {
-            p.title: p for p in (await db.execute(select(Project).where(Project.phase_id == phase.id))).scalars().all()
-        }
-        wanted_titles = set()
         for proj_idx, proj_data in enumerate(phase_data.get("projects", [])):
             wanted_titles.add(proj_data["title"])
-            project = projects.get(proj_data["title"])
+            project = all_projects.get(proj_data["title"])
             if project is None:
                 project = Project(phase_id=phase.id, order_index=proj_idx, title=proj_data["title"], skill_node_id=skill_id,
                                   **{f: proj_data[f] for f in PROJECT_FIELDS})
                 db.add(project)
+                all_projects[proj_data["title"]] = project
             else:
+                project.phase_id = phase.id
                 project.order_index = proj_idx
                 project.skill_node_id = skill_id
                 for f in PROJECT_FIELDS:
                     setattr(project, f, proj_data[f])
 
-        for title, project in projects.items():
-            if title not in wanted_titles and not await _project_is_referenced(db, project.id):
-                await db.delete(project)
+    # Remove projects the content no longer lists, unless a learner used them.
+    for title, project in list(all_projects.items()):
+        if title not in wanted_titles and project.id is not None and not await _project_is_referenced(db, project.id):
+            await db.delete(project)
+    await db.flush()
+
+    # Remove phases the content no longer has, once they are empty.
+    for title, phase in phases.items():
+        if title in wanted_phase_titles:
+            continue
+        still_used = False
+        for model in (Project, Lesson, Quiz):
+            if (await db.execute(select(model.id).where(model.phase_id == phase.id).limit(1))).first():
+                still_used = True
+        if not still_used:
+            await db.delete(phase)
+    await db.flush()
+
+    # Remove skills the career no longer teaches, unless something still uses them.
+    for key, node in nodes.items():
+        if key in {s["key"] for s in content["skills"]}:
+            continue
+        if not await _skill_is_referenced(db, node.id):
+            for e in (await db.execute(select(SkillEdge).where(
+                (SkillEdge.from_skill_id == node.id) | (SkillEdge.to_skill_id == node.id)
+            ))).scalars().all():
+                await db.delete(e)
+            await db.flush()
+            await db.delete(node)
     await db.commit()

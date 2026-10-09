@@ -52,6 +52,9 @@ export interface CareerPath {
   who_its_for: string;
   portfolio_expectations: string[];
   career_progression: string[];
+  /** "full" is a complete lesson and Project Lab curriculum; "guided" is the staged roadmap with three graded projects. */
+  depth: "full" | "guided";
+  project_lab: boolean;
 }
 
 export interface SkillTransfer {

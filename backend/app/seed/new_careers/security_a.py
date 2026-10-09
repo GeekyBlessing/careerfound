@@ -1,0 +1,570 @@
+"""New Cybersecurity careers, batch A: application security, digital forensics
+and incident response, and security engineering."""
+
+CAREERS = [
+    dict(
+        slug="application-security", name="Application Security Engineering",
+        summary="Work inside engineering teams to stop vulnerabilities before release: threat model designs, review code, run SAST, dependency and secret scanning in CI, and help developers fix what turns up.",
+        beginner_summary="You'll learn how common web and API bugs look in code, how to find them with review and scanners, and how to get them fixed by the people who wrote them.",
+        difficulty=4, avg_timeline_weeks=44,
+        entry_roles=["Application Security Analyst", "Junior Application Security Engineer", "Junior Software Engineer (with a security focus)", "Junior Penetration Tester"],
+        tools=["Semgrep", "CodeQL", "OWASP ZAP", "Trivy", "Dependabot", "gitleaks", "GitHub Actions", "Python"],
+        remote_potential=85,
+        earning_notes="Most application security engineers started as developers or penetration testers, so pay tends to follow software engineering pay once you are trusted with a team. Dedicated junior roles exist but are few; a common route is a developer role where you become the person who cares about security, or a testing role that moves into code and pipelines. Being able to write fixes, not only reports, is what moves you up.",
+        icon="bug",
+        skills_required=["Reading code in at least one language to spot vulnerable patterns", "Threat modelling a design with STRIDE before it is built", "Knowing the OWASP Top 10 and API security risks as code level bugs", "Running and tuning SAST, dependency and secret scanning in CI", "Triaging findings and agreeing fixes with developers", "Writing automated authorization and security tests"],
+        certifications=["CompTIA Security+", "Burp Suite Certified Practitioner (PortSwigger, hands on and web focused)", "CSSLP (ISC2 Certified Secure Software Lifecycle Professional; needs several years of experience, so a later goal)"],
+        interview_prep=[
+            "Walk through how you would threat model a password reset feature using STRIDE",
+            "Explain the difference between SAST, SCA, DAST and secret scanning, and where each fits in a pipeline",
+            "Your first scanner run on a legacy repository reports 300 findings and the developers are annoyed. What do you do",
+            "A developer says a SQL injection finding is a false positive because the frontend validates the input. How do you respond",
+            "A secret was pushed to a public repository ten minutes ago and then deleted in the next commit. What do you do",
+            "What is broken object level authorization, and why do scanners usually miss it",
+        ],
+        learning_resources=[
+            {"label": "PortSwigger Web Security Academy", "note": "Free, hands on labs for every major web vulnerability class, with explanations of how each one happens in code."},
+            {"label": "OWASP Cheat Sheet Series", "note": "Free, practical guidance on how to prevent specific bugs such as injection, XSS and broken access control."},
+            {"label": "Threat Modeling: Designing for Security by Adam Shostack", "note": "The standard book on STRIDE and on running threat modelling with real engineering teams."},
+        ],
+        roadmap_outline={
+            "beginner": [
+                "Learn how a web request travels from browser to server and read requests in your browser's developer tools",
+                "Get comfortable reading and writing one language (Python or JavaScript) and use Git on every project",
+                "Work through the injection, XSS and access control labs on the PortSwigger Web Security Academy",
+                "Read the OWASP Top 10 and find what each risk looks like in source code, not only in a request",
+            ],
+            "intermediate": [
+                "Review a small app by hand using the OWASP Cheat Sheet Series, then compare your findings with what Semgrep and Bandit report",
+                "Learn the common authentication mistakes: weak session handling, JWT misuse and broken password reset flows",
+                "Add SAST, dependency, container and secret scanning to a GitHub Actions pipeline and make it fail a pull request",
+                "Learn to tell true positives from false positives, and to suppress a finding with a written reason",
+                "Learn how dependencies get vulnerable: lockfiles, transitive packages and automated update pull requests",
+            ],
+            "advanced": [
+                "Threat model a feature with STRIDE at design time and turn the threats into testable requirements",
+                "Study the OWASP API Security Top 10 and write automated tests that catch authorization bugs scanners cannot see",
+                "Practise triage: rate severity, agree a fix date and write tickets that developers will actually pick up",
+                "Learn how a security champions programme works and run a short secure coding session for developers",
+                "Consider CSSLP once you have the years of experience it requires",
+            ],
+        },
+    ),
+    dict(
+        slug="digital-forensics-incident-response", name="Digital Forensics and Incident Response",
+        summary="Investigate what happened after a system is compromised or misused: preserve evidence, analyse disks and memory, rebuild a timeline, help contain the incident and write findings others can rely on.",
+        beginner_summary="You'll learn to copy evidence without changing it, find traces that Windows leaves behind, and turn them into a timeline and a clear written report.",
+        difficulty=4, avg_timeline_weeks=40,
+        entry_roles=["SOC Analyst (Tier 1)", "Junior Incident Response Analyst", "Digital Forensics Technician", "Junior Forensic Analyst"],
+        tools=["Autopsy", "FTK Imager", "The Sleuth Kit", "Volatility 3", "KAPE", "Eric Zimmerman's Tools", "Plaso", "Windows Event Viewer"],
+        remote_potential=55,
+        earning_notes="Dedicated forensics roles are rare at entry level, so most people arrive through a SOC, IT support or a law enforcement or compliance background and move across after showing they can investigate carefully. Incident response consultancies and larger in-house teams do the most hiring. GIAC certifications are respected but expensive, and many people get an employer to fund them rather than buying them first. Pay rises with the range of cases you have led and how well you write them up.",
+        icon="search",
+        skills_required=["Handling evidence: write blocking, hashing and chain of custody", "Analysing disk images and Windows artefacts such as the MFT, registry, prefetch and event logs", "Analysing memory images to find processes and connections", "Building and reading timelines from many sources", "Following an incident response lifecycle such as NIST SP 800-61", "Writing findings that separate fact from inference"],
+        certifications=["CompTIA Security+", "GIAC Certified Incident Handler (GCIH)", "GIAC Certified Forensic Examiner (GCFE)", "GIAC Certified Forensic Analyst (GCFA)", "EC-Council Computer Hacking Forensic Investigator (CHFI)"],
+        interview_prep=[
+            "What is the order of volatility, and how does it change what you collect first on a live machine",
+            "A manager asks you to look at a laptop that an employee is suspected of using to copy company data. What do you do before touching it",
+            "A server is running and may be compromised. Do you pull the power, and what do you capture first",
+            "Explain the difference between $STANDARD_INFORMATION and $FILE_NAME timestamps in the NTFS MFT and why it matters for timestomping",
+            "What does a prefetch file tell you, and what can it not tell you",
+            "What is the difference between containment and eradication, and what goes wrong if you rush eradication",
+        ],
+        learning_resources=[
+            {"label": "13Cubed (YouTube)", "note": "Free, clear video walkthroughs of Windows forensics, memory analysis and incident response tools."},
+            {"label": "SANS DFIR posters and cheat sheets", "note": "Free reference sheets covering Windows artefacts, memory analysis and timeline work."},
+            {"label": "Volatility 3 documentation", "note": "The official guide to the memory forensics framework used in most practice cases."},
+        ],
+        roadmap_outline={
+            "beginner": [
+                "Learn how file systems store data: NTFS and FAT, what deletion really does, and where metadata lives",
+                "Learn evidence handling: write blocking, hashing, forensic image formats and chain of custody",
+                "Image a drive you prepared yourself with FTK Imager and verify it by hash",
+                "Recover deleted files from that image in Autopsy and document exactly what you did",
+            ],
+            "intermediate": [
+                "Learn the main Windows artefacts: event logs, registry hives, prefetch, the MFT, jump lists and browser history",
+                "Collect and parse artefacts from a virtual machine with KAPE and Eric Zimmerman's tools",
+                "Build a timeline from several sources and learn to filter it down to the minutes that matter",
+                "Analyse a public memory image with Volatility 3 to find a malicious process and its network connections",
+                "Learn the NIST SP 800-61 incident response lifecycle and how containment decisions affect evidence",
+            ],
+            "advanced": [
+                "Work a complete public case with disk, memory and network evidence and answer a set of investigative questions",
+                "Detect timestomping and log clearing, and learn how attackers try to remove their traces",
+                "Write a report with an executive summary, a UTC timeline, indicators of compromise and stated confidence",
+                "Practise containment and eradication planning without destroying evidence you still need",
+                "Prepare for GCIH or GCFE once you are working in or near an incident response team",
+            ],
+        },
+    ),
+    dict(
+        slug="security-engineering", name="Security Engineering",
+        summary="Design, build and run an organisation's security controls: system hardening, endpoint protection, vulnerability management, secrets and certificates, network segmentation, and the Python automation that keeps them running.",
+        beginner_summary="You'll learn to lock down servers, find and rank their weaknesses, manage secrets and certificates safely, and automate the repetitive security work.",
+        difficulty=4, avg_timeline_weeks=40,
+        entry_roles=["Systems Administrator", "Vulnerability Management Analyst", "IT Security Administrator", "Junior Security Engineer"],
+        tools=["Ansible", "OpenSCAP", "Lynis", "OpenVAS", "HashiCorp Vault", "Wazuh", "OpenSSL", "Python"],
+        remote_potential=75,
+        earning_notes="This is usually a step after IT support, systems administration or a security analyst role, not a first job; a junior security engineer title exists in some larger companies but is uncommon. The usual route is to run systems or a vulnerability programme first, then take over the building of the controls. Pay rises with the scope you own (a fleet, a programme, a platform) and with how much you can automate.",
+        icon="wrench",
+        skills_required=["Hardening operating systems against a published baseline", "Running a vulnerability management programme and prioritising by exploitability", "Deploying and tuning endpoint protection and monitoring agents", "Managing secrets and an internal certificate authority safely", "Designing network segmentation that limits movement between systems", "Automating security tasks with Python and configuration management"],
+        certifications=["CompTIA Security+", "CompTIA CySA+", "Red Hat Certified System Administrator (RHCSA)", "HashiCorp Certified: Vault Associate", "CISSP (ISC2; needs years of experience, so a later goal)"],
+        interview_prep=[
+            "You have 5,000 open vulnerability findings. How do you decide what to fix first",
+            "A critical CVE is announced on a Friday and your scanner shows 400 affected servers. What do you do in the first day",
+            "An internal certificate expires at 2am and a payment batch job fails. How do you stop it happening again",
+            "Why would you not apply every CIS Level 2 setting to a production server without testing",
+            "How would you roll an EDR agent out to 2,000 endpoints without breaking the business",
+            "Where should an application's database password live, and why not in an environment file in git",
+        ],
+        learning_resources=[
+            {"label": "CIS Benchmarks (Linux and Windows)", "note": "Free to download with registration, the most widely used hardening baselines, with a reason for every setting."},
+            {"label": "HashiCorp Developer tutorials for Vault", "note": "Official, free step by step tutorials for secrets engines, authentication methods and the PKI engine."},
+            {"label": "Ansible documentation", "note": "The official getting started guide and module reference for automating configuration across many machines."},
+        ],
+        roadmap_outline={
+            "beginner": [
+                "Get solid with Linux administration: users, permissions, services, SSH, firewalld or ufw, and logs",
+                "Learn Windows administration basics, including group policy and local security settings",
+                "Learn what a hardening baseline is and read the sections of a CIS Benchmark for one operating system",
+                "Harden a virtual machine by hand and measure the result with Lynis and OpenSCAP",
+            ],
+            "intermediate": [
+                "Learn Ansible and turn your manual hardening into an idempotent playbook you can run twice",
+                "Run a vulnerability scanner such as OpenVAS and learn why authenticated scans find more than unauthenticated ones",
+                "Prioritise findings with CVSS, EPSS and the CISA known exploited list, then set remediation deadlines",
+                "Deploy an endpoint agent such as Wazuh to a few machines and tune out the noisy rules",
+                "Study for CompTIA Security+ and then CySA+ while you work in an IT or analyst role",
+            ],
+            "advanced": [
+                "Stand up HashiCorp Vault and put application secrets in it with least privilege access",
+                "Build a small internal certificate authority with an offline root and automate certificate renewal",
+                "Segment a lab network with firewall rules so that one compromised host cannot reach the rest",
+                "Write Python tools that pull data from a scanner or agent and report on it",
+                "Take on a programme end to end, with owners, deadlines and an exceptions process, before aiming for CISSP",
+            ],
+        },
+    ),
+]
+
+META = {
+    "application-security": dict(
+        keywords=["appsec", "application security", "application security engineer", "product security", "software security", "secure code review", "secure sdlc", "ssdlc", "devsecops", "threat modeling", "threat modelling", "stride", "owasp", "owasp top 10", "api security", "sast", "dast", "sca", "semgrep", "codeql", "owasp zap", "security champion"],
+        who_its_for="Developers who enjoy security, and analysts or testers who like reading code. You need to be comfortable in at least one programming language, and the catch is that the hard part is rarely finding the bug: it is getting a busy team to fix it and keeping the scanners quiet enough that people still read them.",
+        portfolio_expectations=[
+            "A secure code review report on a practice app, with each finding rated, explained and given a code level fix",
+            "A repository with a CI pipeline running SAST, dependency, container and secret scanning, and a write-up of what you tuned and why",
+            "A STRIDE threat model with a data flow diagram for a feature you designed, turned into security requirements and tests",
+            "A set of automated authorization tests for an API that catch bugs a scanner missed",
+        ],
+        career_progression=["Application Security Analyst or Junior Software Engineer", "Application Security Engineer", "Senior Application Security Engineer or Product Security Engineer", "Staff Application Security Engineer, Security Architect or Application Security Manager"],
+    ),
+    "digital-forensics-incident-response": dict(
+        keywords=["dfir", "digital forensics", "computer forensics", "cyber forensics", "forensic analyst", "forensic examiner", "incident responder", "incident response analyst", "incident handler", "memory forensics", "disk forensics", "evidence handling", "chain of custody", "autopsy", "volatility", "kape", "gcfe", "gcfa", "gcih", "chfi"],
+        who_its_for="Patient, methodical people who would rather be right than fast, and who can write clearly. The catch is that dedicated roles are few at entry level, live incidents mean long and unpredictable hours, and your conclusions may be read by lawyers, so you have to be able to show how you know what you claim.",
+        portfolio_expectations=[
+            "A forensic report on a public practice case, written so a non-technical reader can follow it",
+            "A chain of custody form and acquisition log for a disk image you made and verified by hash",
+            "A filtered timeline of a Windows machine with notes on which entries matter and why",
+            "A memory analysis write-up that finds a malicious process, with the Volatility 3 commands you ran",
+        ],
+        career_progression=["SOC Analyst or Digital Forensics Technician", "Incident Response Analyst or Forensic Analyst", "Senior DFIR Analyst or Incident Response Consultant", "DFIR Lead, Principal Forensic Investigator or Incident Response Manager"],
+    ),
+    "security-engineering": dict(
+        keywords=["security engineer", "infrastructure security", "systems security", "security administrator", "vulnerability management", "vulnerability analyst", "system hardening", "cis benchmarks", "openscap", "lynis", "edr", "endpoint security", "hashicorp vault", "secrets management", "pki", "certificate management", "patch management", "nessus", "openvas", "ansible", "security automation"],
+        who_its_for="People who like building and running systems and want the security side of that work. It is usually a step after IT support, systems administration or a security analyst role, so expect a year or two of hands on experience first. The catch is that much of the work is slow and operational, such as chasing patches and renewing certificates, rather than exciting incident work.",
+        portfolio_expectations=[
+            "A hardening Ansible role with a before and after OpenSCAP or Lynis result that anyone can re-run",
+            "A vulnerability management write-up: scan results, how you ranked them with CVSS, EPSS and known exploited data, and the remediation deadlines you proposed",
+            "A small internal certificate authority or Vault setup, documented with a diagram and a tested renewal",
+            "A Python tool that automates one security chore, with a README that explains how to run it",
+        ],
+        career_progression=["Systems Administrator or Security Analyst", "Security Administrator or Vulnerability Management Analyst", "Security Engineer", "Senior Security Engineer, Security Architect or Head of Security Engineering"],
+    ),
+}
+
+PROJECTS = {
+    "application-security": {
+        "skills": [
+            {"key": "secure_code_review", "label": "Secure Code Review", "category": "foundation"},
+            {"key": "appsec_scanning_tools", "label": "SAST, SCA and Secret Scanning Tools", "category": "core"},
+            {"key": "ci_security_gates", "label": "Security Gates in CI", "category": "core"},
+            {"key": "threat_modelling", "label": "Threat Modelling with STRIDE", "category": "advanced"},
+            {"key": "api_security_testing", "label": "API Security Testing", "category": "advanced"},
+        ],
+        "skill_edges": [
+            ("secure_code_review", "appsec_scanning_tools"),
+            ("appsec_scanning_tools", "ci_security_gates"),
+            ("ci_security_gates", "threat_modelling"),
+            ("threat_modelling", "api_security_testing"),
+        ],
+        "phases": [
+            {
+                "title": "Foundations",
+                "summary": "Learn to read code the way a reviewer does: find injection, XSS, broken access control and leaked secrets by eye, then see which of them the free scanners catch.",
+                "skill_key": "secure_code_review",
+                "projects": [
+                    {
+                        "title": "Review a small Flask app with five planted flaws, fix them and prove each fix with a test",
+                        "teaches": "how common web vulnerabilities look in source code, and how to fix and regression test each one.",
+                        "prerequisites": ["Python 3 installed and basic Flask knowledge", "Git and a code editor", "Linux, macOS or WSL (Semgrep does not run natively on Windows)"],
+                        "expected_output": "A repository with a small Flask app, a pytest file that failed before the fixes and passes after, and a one page review listing each finding with its CWE, severity and fix.",
+                        "steps": [
+                            "Create a project folder and a virtual environment with `python3 -m venv .venv && source .venv/bin/activate`, then run `pip install flask pytest bandit semgrep`.",
+                            "Write app.py (about 60 lines) with an SQLite notes table and five planted flaws: a `/search?q=` route that builds SQL with an f-string, a `/hello?name=` route that returns the name inside raw HTML, a `/notes/<id>` route that returns any note without checking the owner, a hard coded `app.secret_key`, and `app.run(debug=True)`. Run it only on localhost.",
+                            "Before running any tool, review the file by hand using the OWASP Cheat Sheet Series pages on SQL injection prevention, XSS prevention and authorization. Write a findings list: file, line, bug class and the impact if exploited.",
+                            "Run `bandit -r .` and `semgrep scan --config p/owasp-top-ten --config p/python .`. Compare the output with your manual list and note which flaws each tool missed (the missing owner check is the usual one).",
+                            "Write pytest tests first and watch them fail: a search for `' OR '1'='1` must not return every row, a `<script>` name must come back escaped, and user 2 requesting user 1's note must get a 403 or 404.",
+                            "Fix the code: use a parameterised query such as `cur.execute('SELECT * FROM notes WHERE title LIKE ?', (f'%{q}%',))`, escape output with `markupsafe.escape` or render through a template, compare the note's owner with `session['user_id']`, read the secret key from `os.environ['SECRET_KEY']`, and remove `debug=True`.",
+                            "Re-run pytest, bandit and semgrep until the tests pass and the planted findings are gone. Commit before and after as separate commits so the diff shows the fixes.",
+                            "Write the one page review: for each finding give the CWE (CWE-89 SQL injection, CWE-79 XSS, CWE-639 object reference without authorization, CWE-798 hard coded credentials, CWE-489 active debug code), a severity with your reasoning, and the fix.",
+                        ],
+                        "hints": [
+                            "Start by finding every place user input enters the app, then follow each one to where it is used. Most injection bugs are visible that way.",
+                            "A scanner that finds nothing about the owner check is not wrong, it simply cannot know who is allowed to see which note. That needs a test or a human.",
+                            "Write the failing test before the fix. It proves the bug was real and stops it coming back.",
+                            "Once you are comfortable, repeat the exercise on a larger practice app such as OWASP Juice Shop, reading its source on GitHub.",
+                        ],
+                        "common_mistakes": [
+                            "Running the scanners first and treating their output as the whole review, which trains you to miss logic and authorization bugs.",
+                            "Fixing XSS by deleting `<script>` tags instead of escaping output for the context it lands in.",
+                            "Wrapping the SQL string in a helper function and calling it fixed, when the query is still built from user input.",
+                            "Deploying the vulnerable version anywhere other than your own machine.",
+                        ],
+                        "difficulty": 1,
+                    }
+                ],
+            },
+            {
+                "title": "Building Real Skills",
+                "summary": "Put the scanners where developers will meet them: wire SAST, dependency, secret and container checks into a GitHub Actions pipeline, then triage the first noisy run like a real team would.",
+                "skill_key": "ci_security_gates",
+                "projects": [
+                    {
+                        "title": "Add Semgrep, gitleaks, Trivy and CodeQL to a GitHub Actions pipeline and triage the first run",
+                        "teaches": "how to build a CI security gate that blocks real problems without drowning developers in noise.",
+                        "prerequisites": ["The Flask app from the secure code review project", "A free GitHub account", "Basic GitHub Actions workflow syntax"],
+                        "expected_output": "A public repository whose pull requests are blocked by failing security checks, plus a triage table that records every finding as true or false positive with a fix, owner and deadline.",
+                        "steps": [
+                            "Push the fixed Flask app to a new public GitHub repository (public repositories get code scanning and Actions for free). On a separate branch add `requirements.txt` pinning an old release such as `PyYAML==5.3.1` or `requests==2.19.1`, and a file holding a made up string shaped like a GitHub token (`ghp_` followed by 36 random letters and digits). Never use a real credential.",
+                            "Turn on Dependabot alerts and security updates under Settings, Code security, and add `.github/dependabot.yml` with update entries for the `pip` and `github-actions` ecosystems on a weekly schedule.",
+                            "Turn on CodeQL under Settings, Code security, Code scanning, Set up, Default, with Python selected, and confirm it appears in the repository's Security tab.",
+                            "Create `.github/workflows/security.yml`, triggered on `pull_request` and pushes to main, with three jobs: Semgrep (`semgrep scan --config p/owasp-top-ten --error --sarif --output semgrep.sarif`), gitleaks (run the release binary with `gitleaks detect --source . --redact --exit-code 1`, or `gitleaks git` on newer releases) and Trivy (the aquasecurity/trivy-action with `scan-type: fs`, `severity: HIGH,CRITICAL` and `exit-code: 1`). Pin every third party action to a full commit SHA, not a tag.",
+                            "Open a pull request from the branch with the bad dependency and the fake token. Confirm the checks fail, then add a branch rule under Settings, Rules that requires them to pass before merging.",
+                            "Triage every finding in a table with the columns tool, finding, true or false positive, whether the vulnerable code is actually reachable, fix, owner and deadline. Write one sentence of reasoning for each verdict.",
+                            "Fix the true positives: upgrade the packages (or merge Dependabot's pull request), remove the token, and write down the rotation steps you would take if it were real. Note that rewriting git history does not help a secret already seen by others; rotating it does.",
+                            "Suppress a genuine false positive narrowly, with a comment on the line such as `# nosemgrep: <rule-id>` plus the reason, or an entry in `.trivyignore` with a comment and a review date. Do not add blanket ignores.",
+                            "Push the changes, get the pull request green, and write a short summary: what the pipeline catches, how long it takes to run, how many findings were noise, and what you would tune next.",
+                        ],
+                        "hints": [
+                            "If gitleaks does not flag your fake token, check the rule's entropy and stopword settings: made up values containing words like 'example' or 'test' are often skipped on purpose.",
+                            "Start with checks that report only, make them blocking after you have tuned the noise. A gate developers learn to bypass is worse than none.",
+                            "Pinning actions to a commit SHA stops a changed or hijacked tag from running new code in your pipeline. Dependabot can keep the pins updated.",
+                            "Reachability matters: a vulnerable function in a library you never call is a lower priority than one on a request path.",
+                        ],
+                        "common_mistakes": [
+                            "Making every check blocking on day one so developers disable them or work around them.",
+                            "Fixing a leaked secret by deleting it in a later commit and not rotating it.",
+                            "Suppressing findings without a reason or review date, so nobody knows later whether they are still safe.",
+                            "Treating the severity label from a tool as the final priority without asking whether the code is reachable.",
+                        ],
+                        "difficulty": 3,
+                    }
+                ],
+            },
+            {
+                "title": "Advanced Practice",
+                "summary": "Work at design time and at API level: threat model a feature before it exists, turn the threats into automated tests, and learn what a DAST scan finds and what only a test can find.",
+                "skill_key": "threat_modelling",
+                "projects": [
+                    {
+                        "title": "Threat model a document sharing API before building it, then test its authorization and scan it with ZAP",
+                        "teaches": "how to find design flaws with STRIDE, turn them into testable requirements, and see where automated scanners stop.",
+                        "prerequisites": ["The CI pipeline project", "Python and basic FastAPI or Flask knowledge", "Docker installed", "Familiarity with JWT based login"],
+                        "expected_output": "A STRIDE threat model with a data flow diagram, a set of security requirements, a pytest suite that checks them, a ZAP API scan report, and a comparison showing which method found which problem.",
+                        "steps": [
+                            "In OWASP Threat Dragon (the free desktop app), draw a data flow diagram for a document sharing API: browser, API, database and file storage, with trust boundaries between the internet, the API and the data stores.",
+                            "Walk every element and data flow with STRIDE and record at least 12 threats in a table: threat, STRIDE category, likelihood, impact and mitigation. Include a user reading another user's document by changing an ID, a user setting their own role through a profile update, brute forcing the login, a forged token, and verbose errors leaking internals.",
+                            "Turn the six highest risks into security requirements written as testable statements, for example 'A user can only read documents they own or that were shared with them.'",
+                            "Build the API quickly, the way a time pressured team would: FastAPI with `POST /login` (two seeded users, issuing a JWT with PyJWT), `GET /documents/{id}`, `POST /documents/{id}/share` and `PATCH /me`, with no owner check and a profile update that accepts any field.",
+                            "Write pytest tests with FastAPI's TestClient, one per requirement, using two users. Run them and confirm the cross-user read and the role change tests fail.",
+                            "Start the API with `uvicorn app:app --host 0.0.0.0` and run a ZAP API scan: `docker run -v $(pwd):/zap/wrk/:rw -t ghcr.io/zaproxy/zaproxy:stable zap-api-scan.py -t http://<host-ip>:8000/openapi.json -f openapi -r zap-report.html`.",
+                            "Build a comparison table with one row per threat and three columns: predicted by the threat model, caught by your tests, reported by ZAP. Expect ZAP to miss the authorization flaws and to report mostly headers and configuration.",
+                            "Fix the API (check ownership on every document route, accept only an allowed list of fields on `PATCH /me`, add login rate limiting) until the tests pass, and add the pytest suite to the GitHub Actions workflow from the previous project.",
+                            "Write a one page security review: residual risks, what you accepted and why, who owns each follow-up, and what you would test next.",
+                        ],
+                        "hints": [
+                            "If ZAP cannot reach the API from Docker on Linux, add `--network host`; on Mac or Windows use `host.docker.internal` in the target URL.",
+                            "Threat model data flows and trust boundaries first, and only then think about attackers. Starting with the attackers produces a list of ideas, not coverage.",
+                            "Test every route with a token from the wrong user, the same user with the wrong role, and no token at all. This one habit finds a large share of API bugs.",
+                            "The OWASP API Security Top 10 (2023) lists broken object level authorization first for a reason, and your tests should reflect that.",
+                        ],
+                        "common_mistakes": [
+                            "Skipping the diagram and listing threats from memory, which misses whole data flows.",
+                            "Trusting a clean ZAP report as proof that authorization works.",
+                            "Writing requirements too vaguely to test, such as 'the API must be secure'.",
+                            "Fixing only the routes that failed and not applying the same check to every route that touches documents.",
+                        ],
+                        "difficulty": 5,
+                    }
+                ],
+            },
+        ],
+    },
+    "digital-forensics-incident-response": {
+        "skills": [
+            {"key": "evidence_handling", "label": "Evidence Handling and Acquisition", "category": "foundation"},
+            {"key": "windows_artefacts", "label": "Windows Artefact Analysis", "category": "core"},
+            {"key": "timeline_analysis", "label": "Timeline Analysis", "category": "core"},
+            {"key": "memory_forensics", "label": "Memory Forensics", "category": "advanced"},
+            {"key": "ir_lifecycle_reporting", "label": "Incident Response Lifecycle and Reporting", "category": "advanced"},
+        ],
+        "skill_edges": [
+            ("evidence_handling", "windows_artefacts"),
+            ("windows_artefacts", "timeline_analysis"),
+            ("timeline_analysis", "memory_forensics"),
+            ("memory_forensics", "ir_lifecycle_reporting"),
+        ],
+        "phases": [
+            {
+                "title": "Foundations",
+                "summary": "Learn the discipline that makes evidence usable: acquire a drive without changing it, prove the copy is exact by hash, keep a chain of custody and recover deleted files.",
+                "skill_key": "evidence_handling",
+                "projects": [
+                    {
+                        "title": "Acquire a disk image the forensic way, verify it by hash and recover deleted files in Autopsy",
+                        "teaches": "evidence handling from first contact to analysis: documentation, imaging, hash verification and file recovery.",
+                        "prerequisites": ["A Windows PC (FTK Imager runs on Windows only)", "A spare USB stick of 8 GB or less, or a small virtual hard disk", "Basic idea of what a hash is"],
+                        "expected_output": "A verified E01 image of a drive you prepared, a completed chain of custody form, recovered deleted files matched to the originals by hash, and a short acquisition report.",
+                        "steps": [
+                            "Prepare the evidence source: use a spare USB stick, or in Disk Management choose Action, Create VHD (1 GB), initialise and format it NTFS. Copy about ten mixed files onto it (documents, JPEG images, a text file), then delete three of them with Shift+Delete.",
+                            "Start a chain of custody form (a simple table with item ID, description, serial number, who handed it over, who received it, date and time in UTC, location and reason) and a case notes file. Record the drive's make and serial number and the time zone of your machine.",
+                            "Protect the source from writes. In a lab you can set the registry value `HKLM\\SYSTEM\\CurrentControlSet\\Control\\StorageDevicePolicies\\WriteProtect` to 1 (DWORD), but note that real casework uses a hardware write blocker. If you use a VHD, mount it so it appears as a physical drive.",
+                            "In FTK Imager choose File, Create Disk Image, Physical Drive, then pick the E01 format. Fill in the case number, evidence number and your name as examiner, and tick 'Verify images after they are created'.",
+                            "Compare the MD5 and SHA1 values in FTK Imager's summary with its verification result; they must match. Also run `Get-FileHash -Algorithm SHA256 .\\image.E01` in PowerShell and record it, labelled as the hash of the container file, which is a different number from the hash of the source data.",
+                            "Open Autopsy (free from sleuthkit.org), create a case, choose Add Data Source, Disk Image, and add your E01. Run the default ingest modules, including File Type Identification and Extension Mismatch Detector.",
+                            "Open Data Sources, then Deleted Files, find your three deleted files, right click and use Extract File(s). Hash each recovered file with `Get-FileHash` and compare it with the original you kept.",
+                            "Make a copy of a small text file, change one character, and hash both versions to see that any change produces a completely different value. Write this beside your results as your explanation of why hashing proves integrity.",
+                            "Write the acquisition report: tools and versions, source details, hashes, times in UTC, what you recovered and how, and the limits of what you did.",
+                        ],
+                        "hints": [
+                            "Deleting a file removes its directory entry and marks the space free, but the data often stays until it is overwritten. Recovery works because of that.",
+                            "Always work from the image, never from the original drive. Keep the original untouched once the image is verified.",
+                            "Write times in UTC and note your machine's time zone. Mixed time zones ruin timelines later.",
+                            "When you are comfortable, repeat the Autopsy steps on a public practice image, such as the NIST CFReDS Hacking Case or a scenario from Digital Corpora.",
+                        ],
+                        "common_mistakes": [
+                            "Plugging the evidence drive into Windows with no write protection and letting the system write to it.",
+                            "Confusing the hash of the E01 file with the hash of the data inside it.",
+                            "Forgetting to record who held the drive and when, which breaks the chain of custody.",
+                            "Assuming every deleted file can be recovered; SSDs with TRIM and overwritten space may lose them for good.",
+                        ],
+                        "difficulty": 1,
+                    }
+                ],
+            },
+            {
+                "title": "Building Real Skills",
+                "summary": "Learn to read what Windows records about user activity: create a known sequence of actions in a virtual machine, then rebuild it from event logs, prefetch, the MFT, the registry and browser data.",
+                "skill_key": "windows_artefacts",
+                "projects": [
+                    {
+                        "title": "Reconstruct a known sequence of user activity from Windows artefacts and rebuild it as a timeline",
+                        "teaches": "how the main Windows artefacts record activity, how their timestamps differ, and how to merge them into one timeline.",
+                        "prerequisites": ["The evidence handling project", "VirtualBox and a Windows 10 or 11 Enterprise evaluation ISO from the Microsoft Evaluation Center", "KAPE (free registration with Kroll) and Eric Zimmerman's Tools (free)"],
+                        "expected_output": "A table matching each action you performed to the artefacts that recorded it, a merged timeline of the activity window, and a short findings note that cites an artefact for every claim.",
+                        "steps": [
+                            "Create a Windows VM and take a snapshot called 'clean'. In an administrator prompt run `auditpol /set /subcategory:\"Process Creation\" /success:enable` so that process creation events (4688) are logged.",
+                            "Keep a notes file with the real time of each action as you go. Perform: create a user with `net user tempadmin Passw0rd-Lab1 /add` and add it to the administrators group with `net localgroup administrators tempadmin /add`; download a small portable tool in Edge and unzip it; run it from the Downloads folder; open a text file from Documents; create a service with `sc create labsvc binPath= \"C:\\Windows\\System32\\notepad.exe\"`; and clear the Application log with `wevtutil cl Application`.",
+                            "From an administrator prompt run KAPE against the live system: `kape.exe --tsource C: --tdest C:\\KAPE_out\\target --target !SANS_Triage --mdest C:\\KAPE_out\\module --module !EZParser`. Copy the output folders to your host.",
+                            "Open the event log output in Timeline Explorer and find 4720 (user created), 4732 (member added to a local group), 4688 (process created), 7045 (service installed, in the System log) and 104 (a log was cleared, in the System log). Note each event's time.",
+                            "Find the downloaded archive in the MFTECmd output and read its created time. Find the tool you ran in the PECmd output and note its last run time and run count. Open Edge's `History` database in DB Browser for SQLite and look at the `downloads` and `urls` tables, remembering that Chromium stores times as microseconds since 1601.",
+                            "Open the registry hives with Registry Explorer and find evidence of the new account in the SAM hive and of recent documents in the user's NTUSER.DAT.",
+                            "Fill in a table with one row per action: your real time, the artefacts that show it, the time each artefact gives, and any difference caused by UTC against local time.",
+                            "Merge the MFT, prefetch and event log CSVs for the 30 minute activity window into one sorted sheet in Timeline Explorer, or with a short pandas script, and mark the rows that matter.",
+                            "Write a findings note, for example 'Account tempadmin was created at 14:02:11 UTC (Security event 4720)', that cites the artefact for every statement and lists what the artefacts did not show, such as the contents of the text file you opened.",
+                        ],
+                        "hints": [
+                            "Windows servers have prefetch disabled by default, but client versions of Windows keep it on, so use a Windows 10 or 11 VM for this exercise.",
+                            "Event logs are in UTC internally but tools may display local time. Check each tool's setting before comparing times.",
+                            "Compare the 0x10 and 0x30 timestamp columns in MFTECmd output; a mismatch is a classic sign of timestomping.",
+                            "Clearing a log leaves a record of the clearing itself, which is often more interesting than what was removed.",
+                        ],
+                        "common_mistakes": [
+                            "Not writing down what you did, so there is no ground truth to check your analysis against.",
+                            "Reading prefetch as proof of what a program did, when it only shows that it ran and when.",
+                            "Mixing local time and UTC rows in a timeline.",
+                            "Running analysis tools that write into the evidence folder instead of a separate output folder.",
+                        ],
+                        "difficulty": 3,
+                    }
+                ],
+            },
+            {
+                "title": "Advanced Practice",
+                "summary": "Work a complete multi-host intrusion from raw evidence: combine network, memory and disk findings into a timeline and write the kind of report an incident manager can act on.",
+                "skill_key": "ir_lifecycle_reporting",
+                "projects": [
+                    {
+                        "title": "Investigate a public multi-host intrusion case with disk, memory and network evidence and write the incident report",
+                        "teaches": "how to combine evidence from several sources into one account of an intrusion and report it with stated confidence.",
+                        "prerequisites": ["The Windows artefacts project", "Wireshark, Volatility 3, Autopsy, Eric Zimmerman's Tools and Plaso (or its Docker image) installed", "Several gigabytes of free disk space"],
+                        "expected_output": "An incident report with an executive summary, a UTC timeline, indicators of compromise, ATT&CK technique mapping, root cause and containment and eradication recommendations, with each conclusion tied to its evidence.",
+                        "steps": [
+                            "Download 'Case 001, The Stolen Szechuan Sauce' from DFIR Madness (domain controller and desktop disk images, memory captures and a packet capture, with a list of case questions). Verify the published hashes. If it is unavailable, use another public multi-source case such as a Magnet Forensics CTF or CyberDefenders challenge.",
+                            "Set up your working structure: a read-only evidence folder, a separate output folder, a notes file and a hash log. Write the scope as the questions you must answer and the order you will work in.",
+                            "Start with the packet capture in Wireshark. Find the external addresses talking to internal hosts, how the attacker first connected, which hosts they reached, and any file downloads or outbound traffic. Note times and addresses in your timeline.",
+                            "Analyse the memory images with Volatility 3: run `vol -f <image> windows.info`, then `windows.pslist`, `windows.pstree`, `windows.cmdline`, `windows.netscan` and `windows.malfind`. Look for odd parent and child processes, unusual paths and connections to the addresses from the packet capture.",
+                            "Open the disk images in Autopsy and parse them with KAPE and Eric Zimmerman's Tools. Look for the dropped file and how it persists (new services with event 7045, Run keys, scheduled tasks). Compare the 0x10 and 0x30 timestamps in MFTECmd output for signs of timestomping.",
+                            "Build a combined timeline with Plaso: `log2timeline.py --storage-file case.plaso <image>`, then `psort.py -o l2tcsv -w timeline.csv case.plaso` with a date filter around the incident. Open it in Timeline Explorer and merge it with your packet capture and memory notes.",
+                            "Map what you observed to MITRE ATT&CK techniques (initial access, execution, persistence, defence evasion, command and control, and any data theft), with the evidence for each. Mark each statement as observed or inferred.",
+                            "Write the report following the NIST SP 800-61 lifecycle: a half page executive summary, scope, UTC timeline, indicators of compromise (addresses, hashes, file names), root cause, containment and eradication recommendations that do not destroy evidence still needed, recovery steps, lessons learned, and a statement of confidence and limits.",
+                            "After you finish, compare your answers with the case's published answers or other public write-ups. List what you missed or got wrong and what you would change in your method.",
+                        ],
+                        "hints": [
+                            "Work out the order of events from the network and memory first, then confirm with disk artefacts. It keeps you from drowning in disk data.",
+                            "Volatility 3 downloads Windows symbol tables on first use, so the first run needs internet access and takes longer.",
+                            "Keep a running list of questions you cannot yet answer. Some can never be answered from the evidence, and the report should say so.",
+                            "NIST SP 800-61 Revision 2 is the four phase lifecycle most teams still teach (preparation, detection and analysis, containment, eradication and recovery, post-incident activity); a newer revision maps the same work to the NIST Cybersecurity Framework 2.0.",
+                        ],
+                        "common_mistakes": [
+                            "Presenting an inference as a fact, for example saying data was stolen because a large transfer occurred, without evidence of what was in it.",
+                            "Reporting only what fits the first theory and ignoring evidence that contradicts it.",
+                            "Writing the report for other analysts only, with no summary a manager can act on.",
+                            "Recommending an immediate rebuild of affected hosts before the evidence is preserved.",
+                        ],
+                        "difficulty": 5,
+                    }
+                ],
+            },
+        ],
+    },
+    "security-engineering": {
+        "skills": [
+            {"key": "system_hardening", "label": "System Hardening", "category": "foundation"},
+            {"key": "vulnerability_management", "label": "Vulnerability Management", "category": "core"},
+            {"key": "endpoint_and_network_controls", "label": "Endpoint and Network Controls", "category": "core"},
+            {"key": "secrets_and_pki", "label": "Secrets Management and Internal PKI", "category": "advanced"},
+            {"key": "security_automation", "label": "Security Automation with Python and Ansible", "category": "advanced"},
+        ],
+        "skill_edges": [
+            ("system_hardening", "vulnerability_management"),
+            ("vulnerability_management", "endpoint_and_network_controls"),
+            ("endpoint_and_network_controls", "secrets_and_pki"),
+            ("secrets_and_pki", "security_automation"),
+        ],
+        "phases": [
+            {
+                "title": "Foundations",
+                "summary": "Learn what a hardening baseline is by applying one: lock down a fresh Linux server by hand, measure it with Lynis and OpenSCAP, and decide which findings you will not fix.",
+                "skill_key": "system_hardening",
+                "projects": [
+                    {
+                        "title": "Harden a fresh Linux server to a CIS style baseline and measure it with Lynis and OpenSCAP",
+                        "teaches": "how hardening baselines work, how to measure compliance, and how to judge which settings to apply.",
+                        "prerequisites": ["VirtualBox or VMware", "An AlmaLinux 9 or Rocky Linux 9 minimal ISO", "Comfort with the Linux command line and SSH"],
+                        "expected_output": "A hardened virtual machine with before and after OpenSCAP reports and Lynis hardening scores, a written baseline document, and a list of failed rules you chose to accept with reasons.",
+                        "steps": [
+                            "Install AlmaLinux 9 minimal in a VM (2 GB RAM, 20 GB disk), create a non-root user with sudo, copy your SSH key to it, and take a snapshot called 'stock'.",
+                            "Install the scanner: `sudo dnf install -y openscap-scanner scap-security-guide git`. List the content with `ls /usr/share/xml/scap/ssg/content/` and the profiles in your distribution's data stream with `oscap info <file>-ds.xml`.",
+                            "Run a baseline scan using the exact CIS Level 1 server profile ID that `oscap info` shows: `sudo oscap xccdf eval --profile <profile-id> --results before.xml --report before.html <file>-ds.xml`. Open before.html and note the number of passed and failed rules.",
+                            "Run Lynis: `git clone https://github.com/CISOfy/lynis`, then `cd lynis && sudo ./lynis audit system`. Record the hardening index and the list of warnings and suggestions.",
+                            "Fix findings by hand in small groups, reading the rationale on each failed rule in before.html: SSH settings in `/etc/ssh/sshd_config.d/` (no root login, key authentication only once key login is tested, a low `MaxAuthTries`), firewalld allowing only SSH (`firewall-cmd --list-all`), automatic updates with dnf-automatic, auditd rules, a password policy, unused services (`systemctl list-unit-files --state=enabled`) and kernel settings in `/etc/sysctl.d/`. Test a new SSH login from a second terminal before closing the first.",
+                            "Re-run both scans into after.html and a second Lynis report, and compare the passed rule count and hardening index.",
+                            "Choose two failed rules you deliberately will not fix (for example separate partitions that need a different install layout) and write a risk acceptance for each: the risk, why it is acceptable here, and when to revisit it.",
+                            "Write the baseline document: each change, why it was made, how to verify it, how to roll it back, and the before and after scores. Save your changes as commands in a `harden.sh` file; you will turn them into Ansible in the next phase.",
+                        ],
+                        "hints": [
+                            "`oscap xccdf generate fix --profile <profile-id> --fix-type ansible --output fix.yml <file>-ds.xml` writes the remediation for a profile. Read it before using it, because it will change things you may not want.",
+                            "A score of 100 is not the goal. Every setting has a cost, and the skill is deciding which ones are worth it for this system.",
+                            "Snapshot before each group of changes so you can roll back when something breaks.",
+                            "Keep the sshd change last in each group and test it from a second session.",
+                        ],
+                        "common_mistakes": [
+                            "Locking yourself out of SSH by disabling password login before testing key login.",
+                            "Chasing a perfect score by applying every setting, including ones that break the services you need.",
+                            "Running the generated remediation script without reading it.",
+                            "Not recording what you changed, so the result cannot be repeated on another server.",
+                        ],
+                        "difficulty": 1,
+                    }
+                ],
+            },
+            {
+                "title": "Building Real Skills",
+                "summary": "Run a small vulnerability management programme: scan a lab network, rank the findings by how likely they are to be exploited, set remediation deadlines and prove the numbers go down.",
+                "skill_key": "vulnerability_management",
+                "projects": [
+                    {
+                        "title": "Run a vulnerability scan, rank findings with CVSS, EPSS and known exploited data, and set remediation deadlines",
+                        "teaches": "how a vulnerability management cycle works, and why severity scores alone are not a priority list.",
+                        "prerequisites": ["The hardening project", "VirtualBox with a host-only network", "Docker and Docker Compose", "Basic Python and pandas"],
+                        "expected_output": "A prioritised remediation list built by a Python script, a short policy of tiers and deadlines, and a rescan showing fewer high-priority findings after fixes.",
+                        "steps": [
+                            "Create a VirtualBox host-only network that has no route to the internet or your home network. Attach your hardened AlmaLinux VM and a Metasploitable 2 VM (a deliberately vulnerable image; never connect it to a real network).",
+                            "Install Greenbone Community Edition on your host using the official Greenbone Community Containers Docker Compose instructions. The first vulnerability feed sync takes a long time, so start it early. Open the web interface on port 9392.",
+                            "Create a target for the two VM addresses, then a task using the 'Full and fast' scan configuration, and run it. If you can, add SSH credentials to the target so the scan is authenticated.",
+                            "Export the results as 'CSV Results' from the report page.",
+                            "Write a Python script with pandas that loads the CSV, keeps host, name, CVSS and the CVEs column, and splits rows with several CVEs into one row per CVE.",
+                            "Enrich the data: query the FIRST EPSS API (`https://api.first.org/data/v1/epss?cve=CVE-...`) for each CVE and download the CISA Known Exploited Vulnerabilities catalogue (known_exploited_vulnerabilities.json). Add EPSS score and an 'in KEV' flag to each row.",
+                            "Define tiers using rules you can defend: for example P1 if the CVE is in the KEV catalogue or its EPSS score is high; P2 if CVSS is 7 or above; P3 for the rest. Write down why you chose the thresholds, and choose deadlines for each tier, such as 7, 30 and 90 days.",
+                            "Output the sorted remediation list as a CSV and a one page summary. Fix the top items on the hardened VM (patching or configuration), then rescan and show the change in counts per tier.",
+                            "Add an exceptions section to the summary: who can accept a risk, for how long, and what is recorded.",
+                        ],
+                        "hints": [
+                            "EPSS estimates the probability that a vulnerability will see exploitation activity in the next 30 days. CVSS measures how bad it would be, not how likely it is.",
+                            "An authenticated scan sees installed package versions and finds more than an unauthenticated one, usually with fewer false positives.",
+                            "Many scanner rows have no CVE or several; handle blank and multiple values in your script before you merge.",
+                            "Only scan systems you own or have written permission to scan.",
+                        ],
+                        "common_mistakes": [
+                            "Sorting by CVSS alone and treating a long list of 'critical' findings as the priority order.",
+                            "Counting the same vulnerability once per port or per plugin, which inflates the numbers.",
+                            "Bridging the vulnerable VM to a real network.",
+                            "Setting deadlines the operations team has no way of meeting, so every item becomes an exception.",
+                        ],
+                        "difficulty": 3,
+                    }
+                ],
+            },
+            {
+                "title": "Advanced Practice",
+                "summary": "Build the trust infrastructure many systems quietly depend on: an offline root CA, a Vault-backed intermediate that issues short-lived certificates, mutual TLS, and scoped application secrets.",
+                "skill_key": "secrets_and_pki",
+                "projects": [
+                    {
+                        "title": "Build an internal PKI with an offline root and a HashiCorp Vault intermediate, with automated certificate renewal and scoped secrets",
+                        "teaches": "how an internal certificate authority is structured and run, how short-lived certificates are renewed automatically, and how to give applications only the secrets they need.",
+                        "prerequisites": ["The vulnerability management project", "A Linux VM with nginx installed", "Basic OpenSSL and TLS knowledge", "Python and the hvac library"],
+                        "expected_output": "A working lab with an offline root CA, a Vault intermediate CA issuing 24 hour certificates, an nginx server requiring client certificates, an automated renewal that has run unattended, a scoped AppRole for an application, and a runbook.",
+                        "steps": [
+                            "Download the Vault binary from HashiCorp's releases. Write `vault.hcl` with `storage \"file\" { path = \"./data\" }` and a listener on 127.0.0.1:8200 with TLS disabled (acceptable for a lab only). Run `vault server -config=vault.hcl` and set `VAULT_ADDR=http://127.0.0.1:8200`.",
+                            "Run `vault operator init -key-shares=3 -key-threshold=2`, store the unseal keys and root token in a file with mode 600, and unseal with `vault operator unseal` twice. Enable userpass login, write an admin policy, log in as that user, enable an audit device with `vault audit enable file file_path=./audit.log`, and revoke the root token.",
+                            "Create the root CA with OpenSSL, keeping its key protected by a passphrase and off the Vault VM: `openssl req -x509 -newkey rsa:4096 -keyout root.key -out root.crt -days 3650 -subj '/CN=Lab Root CA' -addext 'basicConstraints=critical,CA:TRUE' -addext 'keyUsage=critical,keyCertSign,cRLSign'`.",
+                            "Enable Vault's PKI engine at `pki_int` and generate a CSR with `vault write -field=csr pki_int/intermediate/generate/internal common_name='Lab Intermediate CA'`. Sign it with the root using `openssl x509 -req` and an extension file with `basicConstraints=critical,CA:TRUE,pathlen:0` and `keyUsage=critical,keyCertSign,cRLSign`, then load the result with `vault write pki_int/intermediate/set-signed certificate=@int_chain.pem`.",
+                            "Create a role (`vault write pki_int/roles/lab-servers allowed_domains=lab.internal allow_subdomains=true max_ttl=72h`) and issue a 24 hour certificate for `web.lab.internal` with `vault write -format=json pki_int/issue/lab-servers common_name=web.lab.internal ttl=24h`. Install it in nginx, add the name to `/etc/hosts`, and check `curl --cacert root.crt https://web.lab.internal`.",
+                            "Require mutual TLS: add `ssl_client_certificate` (the CA chain) and `ssl_verify_client on;` to nginx, issue a client certificate from a second role, and prove that `curl` succeeds with `--cert` and `--key` and is refused without them.",
+                            "Automate renewal: write a script (bash or Python) that uses `openssl x509 -checkend` to see whether the certificate is within a few hours of expiry, re-issues it from Vault, installs it and reloads nginx. Run it from a systemd timer, set the role's TTL to 15 minutes for the test, and confirm the certificate was renewed with no manual step.",
+                            "Enable the KV v2 engine (`vault secrets enable -path=secret kv-v2`), store a fake database password at `secret/app/db`, and create an AppRole whose policy can only read that path. Write a short Python script using `hvac` that logs in with the AppRole and reads the secret, and show that reading any other path returns a permission error.",
+                            "Write the runbook and diagram: who holds the root key and unseal keys, what happens when Vault is sealed or down, how to renew the intermediate before it expires, how to revoke a certificate and publish the CRL, and what you would do if the intermediate key were compromised.",
+                        ],
+                        "hints": [
+                            "The offline root exists so that its key is almost never online. The intermediate can be replaced; the root cannot without re-trusting everywhere.",
+                            "Short-lived certificates reduce the need for revocation, but only if renewal is reliable. That is why you test renewal with a 15 minute TTL.",
+                            "Revoke the initial root token as soon as you have a named admin, and use the audit log to see what your own policies actually allowed.",
+                            "Vault's file storage and disabled TLS are for a lab. For anything real you would use integrated storage, TLS on the listener and an automated unseal method.",
+                        ],
+                        "common_mistakes": [
+                            "Leaving the root CA key on the same machine as the intermediate.",
+                            "Issuing certificates with very long lifetimes so renewal is never tested.",
+                            "Giving an application a broad Vault policy 'to make it work' instead of reading the permission error and narrowing the policy.",
+                            "Writing the unseal keys and root token into the repository or a shared document.",
+                        ],
+                        "difficulty": 5,
+                    }
+                ],
+            },
+        ],
+    },
+}

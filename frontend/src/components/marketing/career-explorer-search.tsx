@@ -88,7 +88,9 @@ export function CareerExplorerSearch() {
                 <span className="block truncate text-sm font-medium text-ink-100 group-hover:text-accent-light">{career.name}</span>
                 {matchedOn && <span className="block truncate text-xs text-ink-500">{matchedOn}</span>}
               </span>
-              <span className="hidden font-mono text-[10px] uppercase tracking-wide text-ink-500 sm:inline">{career.category_label}</span>
+              {career.category_label.toLowerCase() !== career.name.toLowerCase() && (
+                <span className="hidden font-mono text-[10px] uppercase tracking-wide text-ink-500 sm:inline">{career.category_label}</span>
+              )}
             </span>
             <ArrowRight className="h-3.5 w-3.5 flex-shrink-0 text-ink-500 opacity-0 transition-opacity group-hover:opacity-100" />
           </Link>

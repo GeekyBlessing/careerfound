@@ -1,169 +1,5 @@
 [
   {
-    "slug": "cybersecurity",
-    "name": "Cybersecurity",
-    "category": "security",
-    "summary": "The broad foundation of security: how attacks work, how defences are built, and which specialisation (security operations, cloud security or penetration testing) fits you best.",
-    "keywords": [
-      "cyber security",
-      "infosec",
-      "information security",
-      "security analyst",
-      "network security",
-      "threat",
-      "blue team",
-      "security+"
-    ],
-    "entry_roles": [
-      "Junior Security Analyst",
-      "IT Security Support",
-      "Security Associate"
-    ],
-    "tools": [
-      "Wireshark",
-      "Linux",
-      "Python",
-      "Nmap",
-      "Splunk"
-    ],
-    "skills_required": [
-      "Networking fundamentals (TCP/IP, DNS, HTTP)",
-      "Linux command line",
-      "Recognizing common attack patterns",
-      "Log analysis and pattern recognition",
-      "Basic scripting for automation"
-    ],
-    "related_slugs": [
-      "security-operations",
-      "penetration-testing",
-      "cloud-security",
-      "it-support"
-    ],
-    "category_label": "Security"
-  },
-  {
-    "slug": "security-operations",
-    "name": "Security Operations (SOC)",
-    "category": "security",
-    "summary": "Monitor an organisation's systems in real time, triage alerts, investigate incidents and escalate real attacks.",
-    "keywords": [
-      "soc",
-      "soc analyst",
-      "blue team",
-      "siem",
-      "incident response",
-      "threat detection",
-      "alert triage",
-      "monitoring",
-      "security operations center"
-    ],
-    "entry_roles": [
-      "SOC Analyst (Tier 1)",
-      "Security Monitoring Analyst"
-    ],
-    "tools": [
-      "Splunk",
-      "Wireshark",
-      "Windows Event Logs",
-      "MITRE ATT&CK",
-      "Ticketing systems"
-    ],
-    "skills_required": [
-      "Reading and triaging SIEM alerts",
-      "Networking fundamentals",
-      "Recognizing common attack signatures",
-      "Clear incident documentation and communication",
-      "Staying calm and methodical under time pressure"
-    ],
-    "related_slugs": [
-      "cybersecurity",
-      "cloud-security",
-      "penetration-testing"
-    ],
-    "category_label": "Security"
-  },
-  {
-    "slug": "penetration-testing",
-    "name": "Penetration Testing",
-    "category": "security",
-    "summary": "Legally break into systems on purpose to find weaknesses before criminals do.",
-    "keywords": [
-      "pentest",
-      "pen testing",
-      "ethical hacking",
-      "red team",
-      "offensive security",
-      "vulnerability assessment",
-      "bug bounty",
-      "hacker",
-      "burp suite"
-    ],
-    "entry_roles": [
-      "Junior Penetration Tester",
-      "Security Consultant (junior)",
-      "Application Security Analyst"
-    ],
-    "tools": [
-      "Kali Linux",
-      "Burp Suite",
-      "Python",
-      "Metasploit"
-    ],
-    "skills_required": [
-      "Networking and web application fundamentals",
-      "Common vulnerability classes (OWASP Top 10)",
-      "Scripting for exploit development and automation",
-      "Methodical, ethical testing process",
-      "Clear vulnerability reporting and communication"
-    ],
-    "related_slugs": [
-      "cybersecurity",
-      "security-operations"
-    ],
-    "category_label": "Security"
-  },
-  {
-    "slug": "cloud-security",
-    "name": "Cloud Security",
-    "category": "security",
-    "summary": "Protect internet-based (cloud) systems from misconfigurations and attackers.",
-    "keywords": [
-      "cloud security engineer",
-      "iam",
-      "aws security",
-      "azure security",
-      "devsecops",
-      "cspm",
-      "misconfiguration",
-      "guardduty",
-      "zero trust"
-    ],
-    "entry_roles": [
-      "Junior Cloud Security Analyst",
-      "Cloud Security Associate"
-    ],
-    "tools": [
-      "AWS",
-      "Azure",
-      "IAM",
-      "GuardDuty",
-      "Python"
-    ],
-    "skills_required": [
-      "Cloud fundamentals across at least one major provider",
-      "Identity and access management (IAM)",
-      "Common cloud misconfiguration patterns",
-      "Security monitoring and alerting",
-      "Networking and firewall fundamentals"
-    ],
-    "related_slugs": [
-      "cybersecurity",
-      "security-operations",
-      "cloud-engineering"
-    ],
-    "category_label": "Security"
-  },
-  {
     "slug": "software-engineering",
     "name": "Software Engineering",
     "category": "engineering",
@@ -204,10 +40,13 @@
       "backend-engineering",
       "full-stack-development",
       "mobile-development",
+      "game-development",
       "qa-engineering",
+      "embedded-systems-engineering",
+      "application-security",
       "technical-writing"
     ],
-    "category_label": "Engineering"
+    "category_label": "Software Engineering"
   },
   {
     "slug": "frontend-development",
@@ -247,13 +86,14 @@
       "software-engineering",
       "full-stack-development",
       "mobile-development",
-      "ui-ux-design"
+      "ui-ux-design",
+      "no-code-development"
     ],
-    "category_label": "Engineering"
+    "category_label": "Software Engineering"
   },
   {
     "slug": "backend-engineering",
-    "name": "Backend Engineering",
+    "name": "Backend Development",
     "category": "engineering",
     "summary": "Build the servers, databases, and APIs that power an app behind the scenes.",
     "keywords": [
@@ -291,12 +131,15 @@
       "software-engineering",
       "full-stack-development",
       "cloud-engineering",
-      "data-engineering",
+      "platform-engineering",
       "solutions-architecture",
-      "technical-writing",
-      "ai-engineering"
+      "database-administration",
+      "data-engineering",
+      "machine-learning-engineering",
+      "ai-engineering",
+      "technical-writing"
     ],
-    "category_label": "Engineering"
+    "category_label": "Software Engineering"
   },
   {
     "slug": "full-stack-development",
@@ -336,11 +179,11 @@
       "frontend-development",
       "backend-engineering"
     ],
-    "category_label": "Engineering"
+    "category_label": "Software Engineering"
   },
   {
     "slug": "mobile-development",
-    "name": "Mobile Development",
+    "name": "Mobile Engineering",
     "category": "engineering",
     "summary": "Build the apps people carry in their pocket for iOS and Android, from first screen to app store release.",
     "keywords": [
@@ -379,9 +222,66 @@
     ],
     "related_slugs": [
       "software-engineering",
-      "frontend-development"
+      "frontend-development",
+      "game-development"
     ],
-    "category_label": "Engineering"
+    "category_label": "Software Engineering"
+  },
+  {
+    "slug": "game-development",
+    "name": "Game Development",
+    "category": "engineering",
+    "summary": "Program the gameplay, controls, physics, menus and save systems of a game, and keep it running smoothly every frame.",
+    "keywords": [
+      "game developer",
+      "game programmer",
+      "gameplay programmer",
+      "video game programmer",
+      "unity",
+      "unity developer",
+      "c# unity",
+      "godot",
+      "gdscript",
+      "unreal engine",
+      "game engine",
+      "indie game developer",
+      "gamedev",
+      "game dev",
+      "game jam",
+      "itch.io",
+      "tools programmer",
+      "game design programming"
+    ],
+    "entry_roles": [
+      "Junior Gameplay Programmer",
+      "Junior Game Developer",
+      "Unity Developer (junior)",
+      "Tools Programmer (junior)"
+    ],
+    "tools": [
+      "Godot",
+      "Unity",
+      "C#",
+      "GDScript",
+      "Git/GitHub",
+      "itch.io",
+      "Aseprite",
+      "Unreal Engine"
+    ],
+    "skills_required": [
+      "Writing a game loop and handling input with frame-rate independent movement",
+      "Collision, physics and the maths of vectors needed for movement and aiming",
+      "Structuring behaviour with state machines, events and data-driven design",
+      "Building menus, UI, audio hooks, and save and load systems",
+      "Profiling frame time and fixing performance problems",
+      "Scoping a game small enough to finish, test with players and ship"
+    ],
+    "related_slugs": [
+      "software-engineering",
+      "mobile-development",
+      "motion-design"
+    ],
+    "category_label": "Software Engineering"
   },
   {
     "slug": "qa-engineering",
@@ -417,9 +317,64 @@
     ],
     "related_slugs": [
       "software-engineering",
-      "devops-engineering"
+      "devops-engineering",
+      "technical-support-engineering"
     ],
-    "category_label": "Engineering"
+    "category_label": "Software Engineering"
+  },
+  {
+    "slug": "embedded-systems-engineering",
+    "name": "Embedded Systems Engineering",
+    "category": "engineering",
+    "summary": "Write C and C++ firmware that runs directly on microcontrollers, reading sensors and controlling hardware within tight memory, timing and power limits.",
+    "keywords": [
+      "embedded engineer",
+      "embedded software engineer",
+      "firmware engineer",
+      "firmware developer",
+      "embedded c",
+      "microcontroller",
+      "arduino",
+      "esp32",
+      "stm32",
+      "raspberry pi pico",
+      "rtos",
+      "freertos",
+      "iot developer",
+      "embedded linux",
+      "hardware software",
+      "device programming"
+    ],
+    "entry_roles": [
+      "Junior Embedded Software Engineer",
+      "Firmware Engineer (junior)",
+      "Embedded Test Engineer",
+      "Hardware Support Engineer"
+    ],
+    "tools": [
+      "C",
+      "C++",
+      "Arduino",
+      "ESP32",
+      "STM32",
+      "Raspberry Pi Pico",
+      "FreeRTOS",
+      "Logic analyzer"
+    ],
+    "skills_required": [
+      "Writing reliable C and C++ with careful memory use and no operating system conveniences",
+      "Using GPIO, interrupts, timers and ADC to interact with hardware",
+      "Communicating over UART, I2C and SPI and reading the datasheet to do it",
+      "Reasoning about real time behaviour, task priorities and shared data in an RTOS",
+      "Debugging with a logic analyzer, oscilloscope, multimeter and serial logs",
+      "Basic electronics: voltage, current, resistors, pull-ups and power budgets"
+    ],
+    "related_slugs": [
+      "software-engineering",
+      "network-engineering",
+      "security-engineering"
+    ],
+    "category_label": "Software Engineering"
   },
   {
     "slug": "cloud-engineering",
@@ -458,13 +413,18 @@
       "Basic scripting for automation"
     ],
     "related_slugs": [
-      "backend-engineering",
       "devops-engineering",
+      "site-reliability-engineering",
+      "platform-engineering",
       "solutions-architecture",
+      "systems-administration",
+      "network-engineering",
+      "database-administration",
+      "backend-engineering",
       "cloud-security",
       "it-support"
     ],
-    "category_label": "Cloud & Infrastructure"
+    "category_label": "Cloud, Infrastructure & DevOps"
   },
   {
     "slug": "devops-engineering",
@@ -505,11 +465,134 @@
       "Monitoring and incident response fundamentals"
     ],
     "related_slugs": [
-      "qa-engineering",
       "cloud-engineering",
-      "solutions-architecture"
+      "site-reliability-engineering",
+      "platform-engineering",
+      "solutions-architecture",
+      "qa-engineering",
+      "application-security",
+      "mlops-engineering"
     ],
-    "category_label": "Cloud & Infrastructure"
+    "category_label": "Cloud, Infrastructure & DevOps"
+  },
+  {
+    "slug": "site-reliability-engineering",
+    "name": "Site Reliability Engineering (SRE)",
+    "category": "cloud-infrastructure",
+    "summary": "Keep production services reliable using engineering: define reliability targets, measure them, alert on what matters, respond to incidents and automate away repetitive operations work.",
+    "keywords": [
+      "sre",
+      "site reliability engineer",
+      "site reliability engineering",
+      "reliability engineer",
+      "production engineer",
+      "slo",
+      "sli",
+      "error budget",
+      "burn rate",
+      "prometheus",
+      "grafana",
+      "opentelemetry",
+      "observability",
+      "monitoring",
+      "alerting",
+      "on-call",
+      "incident response",
+      "postmortem",
+      "toil",
+      "alertmanager"
+    ],
+    "entry_roles": [
+      "Junior SRE (where the title exists)",
+      "Junior DevOps Engineer",
+      "Systems Engineer",
+      "Production Support Engineer",
+      "Systems Administrator"
+    ],
+    "tools": [
+      "Prometheus",
+      "Grafana",
+      "OpenTelemetry",
+      "Alertmanager",
+      "Linux",
+      "Python",
+      "Kubernetes",
+      "Terraform"
+    ],
+    "skills_required": [
+      "Defining SLIs, SLOs and error budgets for a service",
+      "Monitoring and observability: metrics, logs and traces",
+      "Alert design that pages on user impact rather than noise",
+      "Incident response, communication and blameless postmortems",
+      "Automating repetitive operational work in Python or shell",
+      "Capacity planning and safe failure testing"
+    ],
+    "related_slugs": [
+      "cloud-engineering",
+      "devops-engineering",
+      "platform-engineering",
+      "systems-administration"
+    ],
+    "category_label": "Cloud, Infrastructure & DevOps"
+  },
+  {
+    "slug": "platform-engineering",
+    "name": "Platform Engineering",
+    "category": "cloud-infrastructure",
+    "summary": "Build the internal platform other engineers deploy on: templates, self-service infrastructure and a developer portal, run as a product with real users.",
+    "keywords": [
+      "platform engineer",
+      "platform engineering",
+      "internal developer platform",
+      "idp",
+      "developer portal",
+      "backstage",
+      "golden path",
+      "paved road",
+      "terraform modules",
+      "helm",
+      "argocd",
+      "gitops",
+      "kubernetes",
+      "developer experience",
+      "devex",
+      "policy as code",
+      "self-service infrastructure",
+      "kyverno",
+      "open policy agent",
+      "infrastructure platform"
+    ],
+    "entry_roles": [
+      "Junior DevOps Engineer",
+      "Junior Cloud Engineer",
+      "Junior Backend Developer",
+      "Infrastructure Engineer (junior)"
+    ],
+    "tools": [
+      "Terraform",
+      "Kubernetes",
+      "Helm",
+      "Backstage",
+      "ArgoCD",
+      "GitHub Actions",
+      "Kyverno",
+      "Docker"
+    ],
+    "skills_required": [
+      "Infrastructure as code with reusable, versioned Terraform modules",
+      "Kubernetes and Helm as a deployment surface for other teams",
+      "Designing golden paths and CI templates that developers choose to use",
+      "GitOps delivery and policy as code guardrails",
+      "Treating the platform as a product: user research, documentation and adoption metrics"
+    ],
+    "related_slugs": [
+      "cloud-engineering",
+      "devops-engineering",
+      "site-reliability-engineering",
+      "backend-engineering",
+      "mlops-engineering"
+    ],
+    "category_label": "Cloud, Infrastructure & DevOps"
   },
   {
     "slug": "solutions-architecture",
@@ -547,11 +630,760 @@
       "Evaluating build-versus-buy decisions"
     ],
     "related_slugs": [
-      "backend-engineering",
       "cloud-engineering",
+      "devops-engineering",
+      "backend-engineering",
+      "solutions-consulting"
+    ],
+    "category_label": "Cloud, Infrastructure & DevOps"
+  },
+  {
+    "slug": "systems-administration",
+    "name": "Systems Administration",
+    "category": "cloud-infrastructure",
+    "summary": "Run the servers and services an organisation depends on: install, secure, patch, back up, monitor and fix Linux and Windows machines, and automate the routine work.",
+    "keywords": [
+      "sysadmin",
+      "system administrator",
+      "systems administrator",
+      "linux administrator",
+      "linux admin",
+      "windows administrator",
+      "windows server",
+      "active directory",
+      "group policy",
+      "powershell",
+      "bash",
+      "server administration",
+      "proxmox",
+      "hyper-v",
+      "virtualbox",
+      "dns",
+      "dhcp",
+      "backups",
+      "patching",
+      "it administrator",
+      "server admin"
+    ],
+    "entry_roles": [
+      "Junior Systems Administrator",
+      "Systems Administrator",
+      "IT Administrator",
+      "Linux Administrator (junior)",
+      "Infrastructure Technician"
+    ],
+    "tools": [
+      "Linux",
+      "Windows Server",
+      "Active Directory",
+      "PowerShell",
+      "Bash",
+      "Proxmox",
+      "Hyper-V",
+      "VirtualBox"
+    ],
+    "skills_required": [
+      "Linux and Windows Server installation and configuration",
+      "User, group and permission management across systems",
+      "Patching, backup and restore procedures, including testing restores",
+      "Scripting repeated tasks in bash and PowerShell",
+      "Directory services, DNS and DHCP administration",
+      "Basic monitoring, troubleshooting and clear documentation"
+    ],
+    "related_slugs": [
+      "cloud-engineering",
+      "site-reliability-engineering",
+      "network-engineering",
+      "database-administration",
+      "identity-access-management",
+      "it-support",
+      "it-service-management"
+    ],
+    "category_label": "Cloud, Infrastructure & DevOps"
+  },
+  {
+    "slug": "network-engineering",
+    "name": "Network Engineering",
+    "category": "cloud-infrastructure",
+    "summary": "Design, configure and troubleshoot the switches, routers, firewalls and links that connect offices, data centres and users, and automate the repetitive changes.",
+    "keywords": [
+      "network engineer",
+      "network administrator",
+      "network support",
+      "noc technician",
+      "noc engineer",
+      "junior network engineer",
+      "ccna",
+      "comptia network+",
+      "network+",
+      "cisco",
+      "routing and switching",
+      "ospf",
+      "bgp",
+      "vlan",
+      "subnetting",
+      "packet tracer",
+      "gns3",
+      "eve-ng",
+      "wireshark",
+      "network automation",
+      "netmiko",
+      "tcp/ip",
+      "firewall",
+      "vpn",
+      "wifi",
+      "lan wan"
+    ],
+    "entry_roles": [
+      "Junior Network Engineer",
+      "Network Support Engineer",
+      "NOC Technician",
+      "Network Administrator (junior)"
+    ],
+    "tools": [
+      "Cisco Packet Tracer",
+      "GNS3",
+      "EVE-NG",
+      "Wireshark",
+      "Netmiko",
+      "NAPALM",
+      "Ansible",
+      "Python"
+    ],
+    "skills_required": [
+      "IP addressing and subnetting, including VLSM",
+      "Switching: VLANs, trunking and spanning tree",
+      "Routing with static routes, OSPF and the basics of BGP",
+      "Securing a network with ACLs, NAT, firewalls and VPNs",
+      "Troubleshooting layer by layer with CLI tools and packet captures",
+      "Scripting repetitive device changes with Python or Ansible"
+    ],
+    "related_slugs": [
+      "cloud-engineering",
+      "systems-administration",
+      "embedded-systems-engineering",
+      "cybersecurity",
+      "security-engineering",
+      "it-support"
+    ],
+    "category_label": "Cloud, Infrastructure & DevOps"
+  },
+  {
+    "slug": "database-administration",
+    "name": "Database Administration",
+    "category": "cloud-infrastructure",
+    "summary": "Keep production databases fast, secure and recoverable: install and configure them, manage access, back up and restore, tune slow queries and plan upgrades.",
+    "keywords": [
+      "dba",
+      "database administrator",
+      "database administration",
+      "postgresql dba",
+      "postgres",
+      "postgresql",
+      "mysql dba",
+      "sql server dba",
+      "database support",
+      "junior dba",
+      "sql developer",
+      "query tuning",
+      "database performance",
+      "backup and recovery",
+      "point in time recovery",
+      "replication",
+      "failover",
+      "explain analyze",
+      "indexing",
+      "dp-300",
+      "pgadmin",
+      "database security",
+      "database upgrades"
+    ],
+    "entry_roles": [
+      "Junior Database Administrator",
+      "Database Support Analyst",
+      "SQL Developer (junior)",
+      "Data Support Engineer"
+    ],
+    "tools": [
+      "PostgreSQL",
+      "MySQL",
+      "Microsoft SQL Server",
+      "pgAdmin",
+      "pgBackRest",
+      "pg_stat_statements",
+      "Patroni",
+      "Docker"
+    ],
+    "skills_required": [
+      "Writing and reading SQL well enough to understand what an application is asking of the database",
+      "Managing roles, privileges and authentication so each user has only the access they need",
+      "Backing up, restoring and recovering to a point in time, and proving the restore works",
+      "Reading query plans and choosing indexes that help without slowing writes",
+      "Monitoring, routine maintenance and capacity planning (vacuum, statistics, disk, connections)",
+      "Planning replication, failover and version upgrades with a rollback plan"
+    ],
+    "related_slugs": [
+      "cloud-engineering",
+      "systems-administration",
+      "backend-engineering",
+      "data-engineering"
+    ],
+    "category_label": "Cloud, Infrastructure & DevOps"
+  },
+  {
+    "slug": "cybersecurity",
+    "name": "Cybersecurity",
+    "category": "security",
+    "summary": "The broad foundation of security: how attacks work, how defences are built, and which specialisation (security operations, cloud security or penetration testing) fits you best.",
+    "keywords": [
+      "cyber security",
+      "infosec",
+      "information security",
+      "security analyst",
+      "network security",
+      "threat",
+      "blue team",
+      "security+"
+    ],
+    "entry_roles": [
+      "Junior Security Analyst",
+      "IT Security Support",
+      "Security Associate"
+    ],
+    "tools": [
+      "Wireshark",
+      "Linux",
+      "Python",
+      "Nmap",
+      "Splunk"
+    ],
+    "skills_required": [
+      "Networking fundamentals (TCP/IP, DNS, HTTP)",
+      "Linux command line",
+      "Recognizing common attack patterns",
+      "Log analysis and pattern recognition",
+      "Basic scripting for automation"
+    ],
+    "related_slugs": [
+      "security-operations",
+      "penetration-testing",
+      "cloud-security",
+      "digital-forensics-incident-response",
+      "identity-access-management",
+      "governance-risk-compliance",
+      "network-engineering",
+      "it-support"
+    ],
+    "category_label": "Cybersecurity"
+  },
+  {
+    "slug": "security-operations",
+    "name": "Security Operations (SOC Analyst)",
+    "category": "security",
+    "summary": "Monitor an organisation's systems in real time, triage alerts, investigate incidents and escalate real attacks.",
+    "keywords": [
+      "soc",
+      "soc analyst",
+      "blue team",
+      "siem",
+      "incident response",
+      "threat detection",
+      "alert triage",
+      "monitoring",
+      "security operations center"
+    ],
+    "entry_roles": [
+      "SOC Analyst (Tier 1)",
+      "Security Monitoring Analyst"
+    ],
+    "tools": [
+      "Splunk",
+      "Wireshark",
+      "Windows Event Logs",
+      "MITRE ATT&CK",
+      "Ticketing systems"
+    ],
+    "skills_required": [
+      "Reading and triaging SIEM alerts",
+      "Networking fundamentals",
+      "Recognizing common attack signatures",
+      "Clear incident documentation and communication",
+      "Staying calm and methodical under time pressure"
+    ],
+    "related_slugs": [
+      "cybersecurity",
+      "penetration-testing",
+      "cloud-security",
+      "digital-forensics-incident-response",
+      "detection-engineering"
+    ],
+    "category_label": "Cybersecurity"
+  },
+  {
+    "slug": "penetration-testing",
+    "name": "Penetration Testing",
+    "category": "security",
+    "summary": "Legally break into systems on purpose to find weaknesses before criminals do.",
+    "keywords": [
+      "pentest",
+      "pen testing",
+      "ethical hacking",
+      "red team",
+      "offensive security",
+      "vulnerability assessment",
+      "bug bounty",
+      "hacker",
+      "burp suite"
+    ],
+    "entry_roles": [
+      "Junior Penetration Tester",
+      "Security Consultant (junior)",
+      "Application Security Analyst"
+    ],
+    "tools": [
+      "Kali Linux",
+      "Burp Suite",
+      "Python",
+      "Metasploit"
+    ],
+    "skills_required": [
+      "Networking and web application fundamentals",
+      "Common vulnerability classes (OWASP Top 10)",
+      "Scripting for exploit development and automation",
+      "Methodical, ethical testing process",
+      "Clear vulnerability reporting and communication"
+    ],
+    "related_slugs": [
+      "cybersecurity",
+      "security-operations",
+      "application-security"
+    ],
+    "category_label": "Cybersecurity"
+  },
+  {
+    "slug": "cloud-security",
+    "name": "Cloud Security Engineering",
+    "category": "security",
+    "summary": "Protect internet-based (cloud) systems from misconfigurations and attackers.",
+    "keywords": [
+      "cloud security engineer",
+      "iam",
+      "aws security",
+      "azure security",
+      "devsecops",
+      "cspm",
+      "misconfiguration",
+      "guardduty",
+      "zero trust"
+    ],
+    "entry_roles": [
+      "Junior Cloud Security Analyst",
+      "Cloud Security Associate"
+    ],
+    "tools": [
+      "AWS",
+      "Azure",
+      "IAM",
+      "GuardDuty",
+      "Python"
+    ],
+    "skills_required": [
+      "Cloud fundamentals across at least one major provider",
+      "Identity and access management (IAM)",
+      "Common cloud misconfiguration patterns",
+      "Security monitoring and alerting",
+      "Networking and firewall fundamentals"
+    ],
+    "related_slugs": [
+      "cybersecurity",
+      "security-operations",
+      "security-engineering",
+      "identity-access-management",
+      "cloud-engineering"
+    ],
+    "category_label": "Cybersecurity"
+  },
+  {
+    "slug": "application-security",
+    "name": "Application Security Engineering",
+    "category": "security",
+    "summary": "Work inside engineering teams to stop vulnerabilities before release: threat model designs, review code, run SAST, dependency and secret scanning in CI, and help developers fix what turns up.",
+    "keywords": [
+      "appsec",
+      "application security",
+      "application security engineer",
+      "product security",
+      "software security",
+      "secure code review",
+      "secure sdlc",
+      "ssdlc",
+      "devsecops",
+      "threat modeling",
+      "threat modelling",
+      "stride",
+      "owasp",
+      "owasp top 10",
+      "api security",
+      "sast",
+      "dast",
+      "sca",
+      "semgrep",
+      "codeql",
+      "owasp zap",
+      "security champion"
+    ],
+    "entry_roles": [
+      "Application Security Analyst",
+      "Junior Application Security Engineer",
+      "Junior Software Engineer (with a security focus)",
+      "Junior Penetration Tester"
+    ],
+    "tools": [
+      "Semgrep",
+      "CodeQL",
+      "OWASP ZAP",
+      "Trivy",
+      "Dependabot",
+      "gitleaks",
+      "GitHub Actions",
+      "Python"
+    ],
+    "skills_required": [
+      "Reading code in at least one language to spot vulnerable patterns",
+      "Threat modelling a design with STRIDE before it is built",
+      "Knowing the OWASP Top 10 and API security risks as code level bugs",
+      "Running and tuning SAST, dependency and secret scanning in CI",
+      "Triaging findings and agreeing fixes with developers",
+      "Writing automated authorization and security tests"
+    ],
+    "related_slugs": [
+      "penetration-testing",
+      "security-engineering",
+      "software-engineering",
       "devops-engineering"
     ],
-    "category_label": "Cloud & Infrastructure"
+    "category_label": "Cybersecurity"
+  },
+  {
+    "slug": "digital-forensics-incident-response",
+    "name": "Digital Forensics and Incident Response",
+    "category": "security",
+    "summary": "Investigate what happened after a system is compromised or misused: preserve evidence, analyse disks and memory, rebuild a timeline, help contain the incident and write findings others can rely on.",
+    "keywords": [
+      "dfir",
+      "digital forensics",
+      "computer forensics",
+      "cyber forensics",
+      "forensic analyst",
+      "forensic examiner",
+      "incident responder",
+      "incident response analyst",
+      "incident handler",
+      "memory forensics",
+      "disk forensics",
+      "evidence handling",
+      "chain of custody",
+      "autopsy",
+      "volatility",
+      "kape",
+      "gcfe",
+      "gcfa",
+      "gcih",
+      "chfi"
+    ],
+    "entry_roles": [
+      "SOC Analyst (Tier 1)",
+      "Junior Incident Response Analyst",
+      "Digital Forensics Technician",
+      "Junior Forensic Analyst"
+    ],
+    "tools": [
+      "Autopsy",
+      "FTK Imager",
+      "The Sleuth Kit",
+      "Volatility 3",
+      "KAPE",
+      "Eric Zimmerman's Tools",
+      "Plaso",
+      "Windows Event Viewer"
+    ],
+    "skills_required": [
+      "Handling evidence: write blocking, hashing and chain of custody",
+      "Analysing disk images and Windows artefacts such as the MFT, registry, prefetch and event logs",
+      "Analysing memory images to find processes and connections",
+      "Building and reading timelines from many sources",
+      "Following an incident response lifecycle such as NIST SP 800-61",
+      "Writing findings that separate fact from inference"
+    ],
+    "related_slugs": [
+      "cybersecurity",
+      "security-operations",
+      "detection-engineering"
+    ],
+    "category_label": "Cybersecurity"
+  },
+  {
+    "slug": "security-engineering",
+    "name": "Security Engineering",
+    "category": "security",
+    "summary": "Design, build and run an organisation's security controls: system hardening, endpoint protection, vulnerability management, secrets and certificates, network segmentation, and the Python automation that keeps them running.",
+    "keywords": [
+      "security engineer",
+      "infrastructure security",
+      "systems security",
+      "security administrator",
+      "vulnerability management",
+      "vulnerability analyst",
+      "system hardening",
+      "cis benchmarks",
+      "openscap",
+      "lynis",
+      "edr",
+      "endpoint security",
+      "hashicorp vault",
+      "secrets management",
+      "pki",
+      "certificate management",
+      "patch management",
+      "nessus",
+      "openvas",
+      "ansible",
+      "security automation"
+    ],
+    "entry_roles": [
+      "Systems Administrator",
+      "Vulnerability Management Analyst",
+      "IT Security Administrator",
+      "Junior Security Engineer"
+    ],
+    "tools": [
+      "Ansible",
+      "OpenSCAP",
+      "Lynis",
+      "OpenVAS",
+      "HashiCorp Vault",
+      "Wazuh",
+      "OpenSSL",
+      "Python"
+    ],
+    "skills_required": [
+      "Hardening operating systems against a published baseline",
+      "Running a vulnerability management programme and prioritising by exploitability",
+      "Deploying and tuning endpoint protection and monitoring agents",
+      "Managing secrets and an internal certificate authority safely",
+      "Designing network segmentation that limits movement between systems",
+      "Automating security tasks with Python and configuration management"
+    ],
+    "related_slugs": [
+      "cloud-security",
+      "application-security",
+      "identity-access-management",
+      "detection-engineering",
+      "embedded-systems-engineering",
+      "network-engineering"
+    ],
+    "category_label": "Cybersecurity"
+  },
+  {
+    "slug": "identity-access-management",
+    "name": "Identity and Access Management (IAM)",
+    "category": "security",
+    "summary": "Control who can sign in to what: create and remove accounts as people join and leave, set up single sign-on and MFA, grant the right access, and prove it to auditors.",
+    "keywords": [
+      "iam",
+      "identity and access management",
+      "identity management",
+      "access management",
+      "iam analyst",
+      "iam engineer",
+      "identity engineer",
+      "identity administrator",
+      "sso",
+      "single sign-on",
+      "saml",
+      "oauth",
+      "oauth 2.0",
+      "openid connect",
+      "oidc",
+      "mfa",
+      "multi-factor authentication",
+      "passkeys",
+      "entra id",
+      "azure ad",
+      "active directory",
+      "okta",
+      "keycloak",
+      "rbac",
+      "privileged access management",
+      "pam",
+      "scim",
+      "conditional access",
+      "access review",
+      "identity governance",
+      "joiner mover leaver",
+      "sc-300"
+    ],
+    "entry_roles": [
+      "Junior IAM Analyst",
+      "Identity and Access Administrator",
+      "Access Management Analyst",
+      "IT Support Analyst (identity focus)"
+    ],
+    "tools": [
+      "Microsoft Entra ID",
+      "Active Directory",
+      "Okta",
+      "Keycloak",
+      "PowerShell",
+      "Postman"
+    ],
+    "skills_required": [
+      "Identity lifecycle management (joiner, mover, leaver)",
+      "Authentication protocols (SAML, OAuth 2.0, OpenID Connect) and how to troubleshoot them",
+      "Multi-factor authentication and passkey rollout",
+      "Role based access design and least privilege",
+      "Conditional access and privileged access policy design",
+      "Access reviews and audit evidence"
+    ],
+    "related_slugs": [
+      "cybersecurity",
+      "cloud-security",
+      "security-engineering",
+      "governance-risk-compliance",
+      "systems-administration"
+    ],
+    "category_label": "Cybersecurity"
+  },
+  {
+    "slug": "governance-risk-compliance",
+    "name": "Governance, Risk and Compliance (GRC)",
+    "category": "security",
+    "summary": "The largely non-coding side of security: write policies, assess and track risk, map controls to frameworks like ISO/IEC 27001 and SOC 2, gather audit evidence and review vendors.",
+    "keywords": [
+      "grc",
+      "governance risk and compliance",
+      "governance risk compliance",
+      "compliance analyst",
+      "risk analyst",
+      "it risk",
+      "iso 27001",
+      "iso/iec 27001",
+      "iso27001",
+      "soc 2",
+      "soc2",
+      "nist csf",
+      "pci dss",
+      "gdpr",
+      "it audit",
+      "security compliance",
+      "information security compliance",
+      "risk register",
+      "risk assessment",
+      "vendor risk",
+      "third party risk",
+      "tprm",
+      "security policy",
+      "cisa",
+      "crisc",
+      "cism",
+      "isms",
+      "audit evidence",
+      "security awareness"
+    ],
+    "entry_roles": [
+      "Junior GRC Analyst",
+      "Compliance Analyst",
+      "IT Risk Analyst (junior)",
+      "Security Compliance Associate"
+    ],
+    "tools": [
+      "Microsoft Excel",
+      "Google Sheets",
+      "ISO/IEC 27001",
+      "NIST Cybersecurity Framework",
+      "SOC 2",
+      "PCI DSS",
+      "Jira"
+    ],
+    "skills_required": [
+      "Writing clear, enforceable policies and standards",
+      "Qualitative risk assessment and risk register upkeep",
+      "Reading control frameworks (ISO/IEC 27001, SOC 2, NIST CSF) and mapping controls to them",
+      "Collecting and organising audit evidence",
+      "Third party and vendor risk review",
+      "Explaining risk to non-technical people and getting teams to act on it"
+    ],
+    "related_slugs": [
+      "cybersecurity",
+      "identity-access-management",
+      "business-analysis",
+      "it-service-management"
+    ],
+    "category_label": "Cybersecurity"
+  },
+  {
+    "slug": "detection-engineering",
+    "name": "Detection Engineering",
+    "category": "security",
+    "summary": "Build and maintain the detections the SOC responds to: write rules as code, test them against real attack behaviour, map coverage to MITRE ATT&CK and tune out false positives.",
+    "keywords": [
+      "detection engineer",
+      "detection engineering",
+      "detection as code",
+      "siem",
+      "sigma",
+      "sigma rules",
+      "splunk",
+      "spl",
+      "elastic",
+      "elastic security",
+      "kql",
+      "eql",
+      "microsoft sentinel",
+      "mitre att&ck",
+      "att&ck",
+      "atomic red team",
+      "purple team",
+      "threat detection",
+      "detection rules",
+      "sysmon",
+      "use case development",
+      "log source onboarding",
+      "alert tuning",
+      "false positive tuning",
+      "sc-200",
+      "gcda"
+    ],
+    "entry_roles": [
+      "SOC Analyst (Tier 2)",
+      "Threat Detection Analyst",
+      "SIEM Engineer (junior)",
+      "Junior Detection Engineer (uncommon)"
+    ],
+    "tools": [
+      "Splunk",
+      "Elastic Security (SIEM)",
+      "Microsoft Sentinel",
+      "Sigma",
+      "MITRE ATT&CK",
+      "Atomic Red Team",
+      "Sysmon",
+      "Git/GitHub"
+    ],
+    "skills_required": [
+      "Writing detection logic in Sigma and at least one SIEM query language (SPL, KQL or EQL)",
+      "Knowing what attackers do on hosts and what traces it leaves in logs",
+      "Mapping detections to MITRE ATT&CK and reasoning about coverage gaps",
+      "Testing detections with adversary emulation such as Atomic Red Team",
+      "Measuring and tuning false positives and alert quality",
+      "Version control, code review and CI for detection content"
+    ],
+    "related_slugs": [
+      "security-operations",
+      "digital-forensics-incident-response",
+      "security-engineering"
+    ],
+    "category_label": "Cybersecurity"
   },
   {
     "slug": "data-analysis",
@@ -592,12 +1424,125 @@
       "Turning findings into a clear narrative for non-technical people"
     ],
     "related_slugs": [
-      "data-science",
+      "business-intelligence-engineering",
       "data-engineering",
+      "data-science",
+      "analytics-engineering",
       "product-management",
-      "no-code-automation"
+      "business-analysis",
+      "workflow-automation"
     ],
-    "category_label": "Data & AI"
+    "category_label": "Data & Artificial Intelligence"
+  },
+  {
+    "slug": "business-intelligence-engineering",
+    "name": "Business Intelligence Engineering",
+    "category": "data-ai",
+    "summary": "Build and look after the governed reporting layer a company runs on: dimensional models, shared KPI definitions, Power BI or Tableau semantic models, row level security and refresh schedules people can trust.",
+    "keywords": [
+      "business intelligence",
+      "bi developer",
+      "bi engineer",
+      "power bi",
+      "power bi developer",
+      "tableau",
+      "tableau developer",
+      "dax",
+      "power query",
+      "semantic model",
+      "star schema",
+      "dimensional modelling",
+      "dimensional modeling",
+      "kpi",
+      "row level security",
+      "rls",
+      "incremental refresh",
+      "data model",
+      "reporting",
+      "dashboards",
+      "pl-300",
+      "ssas"
+    ],
+    "entry_roles": [
+      "Junior BI Developer",
+      "BI Analyst",
+      "Reporting Analyst",
+      "Power BI Developer (junior)"
+    ],
+    "tools": [
+      "Power BI",
+      "DAX",
+      "Power Query",
+      "Tableau",
+      "SQL",
+      "PostgreSQL",
+      "DAX Studio",
+      "Tabular Editor"
+    ],
+    "skills_required": [
+      "Dimensional modelling: choosing the grain, building facts and dimensions, handling slowly changing dimensions",
+      "Writing DAX measures or Tableau calculations that respect filter context",
+      "Defining KPIs precisely, with an owner, a formula and known exceptions",
+      "Row level security design and testing",
+      "Refresh design, performance tuning and report usage monitoring",
+      "Data quality checking that catches bad numbers before users see them"
+    ],
+    "related_slugs": [
+      "data-analysis",
+      "data-engineering",
+      "analytics-engineering"
+    ],
+    "category_label": "Data & Artificial Intelligence"
+  },
+  {
+    "slug": "data-engineering",
+    "name": "Data Engineering",
+    "category": "data-ai",
+    "summary": "Build the pipelines that move and organize data so others can use it.",
+    "keywords": [
+      "data engineer",
+      "etl",
+      "elt",
+      "pipelines",
+      "airflow",
+      "warehouse",
+      "spark",
+      "dbt",
+      "bigquery",
+      "snowflake",
+      "python",
+      "sql",
+      "data modelling"
+    ],
+    "entry_roles": [
+      "Junior Data Engineer",
+      "Analytics Engineer (junior)",
+      "ETL Developer"
+    ],
+    "tools": [
+      "SQL",
+      "Python",
+      "Airflow",
+      "Cloud data warehouses"
+    ],
+    "skills_required": [
+      "Advanced SQL and database design",
+      "Python for data pipelines",
+      "ETL/ELT pipeline design",
+      "Cloud data warehouse fundamentals",
+      "Data quality and validation practices"
+    ],
+    "related_slugs": [
+      "data-analysis",
+      "business-intelligence-engineering",
+      "data-science",
+      "ai-engineering",
+      "mlops-engineering",
+      "analytics-engineering",
+      "backend-engineering",
+      "database-administration"
+    ],
+    "category_label": "Data & Artificial Intelligence"
   },
   {
     "slug": "data-science",
@@ -640,105 +1585,244 @@
     "related_slugs": [
       "data-analysis",
       "data-engineering",
+      "machine-learning-engineering",
       "ai-engineering"
     ],
-    "category_label": "Data & AI"
+    "category_label": "Data & Artificial Intelligence"
   },
   {
-    "slug": "data-engineering",
-    "name": "Data Engineering",
+    "slug": "machine-learning-engineering",
+    "name": "Machine Learning Engineering",
     "category": "data-ai",
-    "summary": "Build the pipelines that move and organize data so others can use it.",
+    "summary": "Train, evaluate and serve machine learning models: build features, choose honest validation and metrics, find where a model fails, and package it behind an API other software can call.",
     "keywords": [
-      "data engineer",
-      "etl",
-      "elt",
-      "pipelines",
-      "airflow",
-      "warehouse",
-      "spark",
-      "dbt",
-      "bigquery",
-      "snowflake",
-      "python",
-      "sql",
-      "data modelling"
+      "machine learning engineer",
+      "ml engineer",
+      "mle",
+      "applied machine learning",
+      "applied ml",
+      "scikit-learn",
+      "sklearn",
+      "xgboost",
+      "lightgbm",
+      "gradient boosting",
+      "pytorch",
+      "deep learning",
+      "feature engineering",
+      "model training",
+      "model deployment",
+      "model serving",
+      "fastapi",
+      "supervised learning",
+      "kaggle",
+      "data leakage"
     ],
     "entry_roles": [
-      "Junior Data Engineer",
-      "Analytics Engineer (junior)",
-      "ETL Developer"
+      "Junior Machine Learning Engineer",
+      "Associate ML Engineer",
+      "Software Engineer (ML team)",
+      "Junior Data Scientist"
     ],
     "tools": [
-      "SQL",
       "Python",
-      "Airflow",
-      "Cloud data warehouses"
+      "scikit-learn",
+      "XGBoost",
+      "LightGBM",
+      "PyTorch",
+      "FastAPI",
+      "pandas",
+      "Jupyter"
     ],
     "skills_required": [
-      "Advanced SQL and database design",
-      "Python for data pipelines",
-      "ETL/ELT pipeline design",
-      "Cloud data warehouse fundamentals",
-      "Data quality and validation practices"
+      "Python and pandas fluency, including writing code other people can run",
+      "Validation design: baselines, split strategy and spotting data leakage",
+      "Choosing metrics and thresholds that match the cost of different errors",
+      "Training and tuning gradient boosted trees and neural networks",
+      "Error analysis: finding which cases a model gets wrong and why",
+      "Packaging a model and serving it through an API, in batch or online"
     ],
     "related_slugs": [
-      "backend-engineering",
-      "data-analysis",
       "data-science",
-      "ai-engineering"
+      "ai-engineering",
+      "mlops-engineering",
+      "backend-engineering"
     ],
-    "category_label": "Data & AI"
+    "category_label": "Data & Artificial Intelligence"
   },
   {
     "slug": "ai-engineering",
     "name": "AI Engineering",
     "category": "data-ai",
-    "summary": "Build and ship AI-powered products: train and evaluate machine learning models, and build applications on top of large language models.",
+    "summary": "Build products on top of foundation models: design prompts and tool calls, ground answers in your own documents with retrieval, and measure whether the application works before it ships.",
     "keywords": [
       "ai engineer",
-      "machine learning engineer",
-      "ml engineer",
-      "ml",
-      "mlops",
-      "deep learning",
-      "pytorch",
+      "ai developer",
+      "llm engineer",
       "llm",
-      "rag",
+      "large language model",
       "generative ai",
       "genai",
-      "nlp",
-      "python",
-      "ai/ml",
-      "neural networks"
+      "rag",
+      "retrieval augmented generation",
+      "prompt engineering",
+      "prompt engineer",
+      "ai agents",
+      "chatbot",
+      "openai",
+      "anthropic",
+      "langchain",
+      "vector database",
+      "embeddings",
+      "ai application developer"
     ],
     "entry_roles": [
       "Junior AI Engineer",
-      "Junior ML Engineer",
-      "AI Application Developer"
+      "AI Application Developer",
+      "Software Engineer (AI features)",
+      "Prompt and Evaluation Engineer"
     ],
     "tools": [
       "Python",
-      "NumPy/pandas",
-      "scikit-learn",
-      "PyTorch",
-      "LLM APIs",
-      "Vector databases"
+      "Anthropic API",
+      "OpenAI API",
+      "Pydantic",
+      "FastAPI",
+      "LangChain",
+      "LlamaIndex",
+      "pgvector"
     ],
     "skills_required": [
-      "Python for data science",
-      "Linear algebra and statistics fundamentals",
-      "Classical machine learning (regression, classification)",
-      "Model evaluation and avoiding overfitting",
-      "Basic neural networks and deep learning concepts",
-      "Building applications on LLM APIs, including retrieval and evaluation"
+      "Python and calling web APIs reliably, including timeouts, retries and rate limits",
+      "Prompt design and getting validated structured output from a model",
+      "Tool calling and multi-step workflows where the model chooses actions",
+      "Retrieval: chunking, embeddings, vector search and grounding answers in sources",
+      "Evaluation: building test sets, grading answers and comparing prompt or model changes",
+      "Cost, latency, safety and prompt injection awareness in a deployed application"
     ],
     "related_slugs": [
-      "data-science",
       "data-engineering",
+      "data-science",
+      "machine-learning-engineering",
+      "mlops-engineering",
       "backend-engineering"
     ],
-    "category_label": "Data & AI"
+    "category_label": "Data & Artificial Intelligence"
+  },
+  {
+    "slug": "mlops-engineering",
+    "name": "MLOps Engineering",
+    "category": "data-ai",
+    "summary": "Build the machinery that ships and runs models reliably: versioned data and experiments, automated training pipelines, containerised serving, and monitoring that shows when a model has gone stale.",
+    "keywords": [
+      "mlops",
+      "mlops engineer",
+      "machine learning operations",
+      "ml platform",
+      "ml platform engineer",
+      "mlflow",
+      "dvc",
+      "model registry",
+      "experiment tracking",
+      "model monitoring",
+      "drift detection",
+      "data drift",
+      "bentoml",
+      "kserve",
+      "kubeflow",
+      "evidently",
+      "ml pipelines",
+      "ci/cd for ml",
+      "model deployment"
+    ],
+    "entry_roles": [
+      "Junior DevOps Engineer",
+      "Junior Machine Learning Engineer",
+      "Junior Data Engineer",
+      "Junior MLOps Engineer (uncommon as a first role)"
+    ],
+    "tools": [
+      "MLflow",
+      "DVC",
+      "Docker",
+      "GitHub Actions",
+      "Prefect",
+      "Airflow",
+      "BentoML",
+      "Evidently"
+    ],
+    "skills_required": [
+      "Reproducibility: versioning data, code, parameters and models together",
+      "Experiment tracking and model registry practice",
+      "Building and scheduling training pipelines with retries and validation steps",
+      "CI/CD for machine learning code, including quality gates on model metrics",
+      "Containerising and serving models, and measuring their latency and resource use",
+      "Monitoring for data drift and degraded predictions, and responding to it"
+    ],
+    "related_slugs": [
+      "data-engineering",
+      "machine-learning-engineering",
+      "ai-engineering",
+      "devops-engineering",
+      "platform-engineering"
+    ],
+    "category_label": "Data & Artificial Intelligence"
+  },
+  {
+    "slug": "analytics-engineering",
+    "name": "Analytics Engineering",
+    "category": "data-ai",
+    "summary": "Own the SQL transformation layer in the warehouse: turn raw loaded tables into tested, documented, version-controlled models and metrics that analysts and dashboards can rely on.",
+    "keywords": [
+      "analytics engineer",
+      "analytics engineering",
+      "dbt",
+      "dbt core",
+      "dbt cloud",
+      "elt",
+      "data transformation",
+      "data modelling",
+      "data modeling",
+      "data marts",
+      "semantic layer",
+      "metrics layer",
+      "metricflow",
+      "duckdb",
+      "snapshots",
+      "data contracts",
+      "data warehouse",
+      "sql",
+      "jinja"
+    ],
+    "entry_roles": [
+      "Junior Analytics Engineer",
+      "Associate Analytics Engineer",
+      "BI Developer",
+      "Data Modeller (junior)"
+    ],
+    "tools": [
+      "dbt",
+      "SQL",
+      "DuckDB",
+      "PostgreSQL",
+      "Git/GitHub",
+      "GitHub Actions",
+      "Jinja",
+      "SQLFluff"
+    ],
+    "skills_required": [
+      "Advanced SQL: CTEs, window functions, deduplication and readable modular queries",
+      "Layered data modelling: staging, intermediate and mart models",
+      "Testing and documenting data models, and reading failures as bugs",
+      "Incremental loading and snapshots for data that arrives late or changes",
+      "Defining metrics once in a semantic layer",
+      "Git, code review and CI applied to analytics code"
+    ],
+    "related_slugs": [
+      "data-analysis",
+      "business-intelligence-engineering",
+      "data-engineering"
+    ],
+    "category_label": "Data & Artificial Intelligence"
   },
   {
     "slug": "ui-ux-design",
@@ -776,9 +1860,11 @@
       "Accessibility fundamentals"
     ],
     "related_slugs": [
-      "frontend-development",
       "product-design",
-      "graphic-design"
+      "graphic-design",
+      "motion-design",
+      "ux-research",
+      "frontend-development"
     ],
     "category_label": "Design & Product"
   },
@@ -818,51 +1904,9 @@
     ],
     "related_slugs": [
       "ui-ux-design",
+      "graphic-design",
       "product-management",
-      "graphic-design"
-    ],
-    "category_label": "Design & Product"
-  },
-  {
-    "slug": "product-management",
-    "name": "Product Management",
-    "category": "design-product",
-    "summary": "Decide what a product should do next and why.",
-    "keywords": [
-      "product manager",
-      "pm",
-      "apm",
-      "roadmap",
-      "prioritization",
-      "product strategy",
-      "metrics",
-      "discovery",
-      "prd",
-      "user stories",
-      "agile"
-    ],
-    "entry_roles": [
-      "Associate Product Manager",
-      "Product Analyst",
-      "Technical Product Owner"
-    ],
-    "tools": [
-      "Roadmapping tools",
-      "Analytics basics",
-      "User research"
-    ],
-    "skills_required": [
-      "Prioritization frameworks",
-      "Writing clear product requirements",
-      "Basic data analysis and metrics literacy",
-      "Stakeholder communication",
-      "User research fundamentals"
-    ],
-    "related_slugs": [
-      "data-analysis",
-      "product-design",
-      "no-code-automation",
-      "technical-writing"
+      "ux-research"
     ],
     "category_label": "Design & Product"
   },
@@ -906,7 +1950,223 @@
     ],
     "related_slugs": [
       "ui-ux-design",
-      "product-design"
+      "product-design",
+      "motion-design"
+    ],
+    "category_label": "Design & Product"
+  },
+  {
+    "slug": "motion-design",
+    "name": "Motion Design",
+    "category": "design-product",
+    "summary": "Bring brands and products to life with animation: logo and explainer videos, interface micro-interactions and motion that ships as video or Lottie files, planned with timing, easing and sound.",
+    "keywords": [
+      "motion designer",
+      "motion graphics",
+      "animation",
+      "animator",
+      "after effects",
+      "lottie",
+      "bodymovin",
+      "micro-interactions",
+      "explainer video",
+      "video editing",
+      "kinetic typography",
+      "easing",
+      "storyboard",
+      "premiere pro",
+      "logo animation",
+      "ui animation",
+      "rive",
+      "brand video"
+    ],
+    "entry_roles": [
+      "Junior Motion Designer",
+      "Motion Graphics Artist (junior)",
+      "Junior Video Editor with motion skills",
+      "Social Media Motion Designer"
+    ],
+    "tools": [
+      "Adobe After Effects",
+      "Figma",
+      "LottieFiles",
+      "Adobe Illustrator",
+      "Adobe Premiere Pro",
+      "DaVinci Resolve",
+      "Rive"
+    ],
+    "skills_required": [
+      "Animation principles (timing, spacing, easing, anticipation, follow through)",
+      "Storyboarding and planning a piece before animating it",
+      "Keyframe animation and layer structure in After Effects",
+      "Designing UI motion that helps users instead of distracting them",
+      "Exporting for the target: Lottie, video formats and file size budgets",
+      "Basic sound design and editing so motion lands on the beat"
+    ],
+    "related_slugs": [
+      "ui-ux-design",
+      "graphic-design",
+      "game-development"
+    ],
+    "category_label": "Design & Product"
+  },
+  {
+    "slug": "product-management",
+    "name": "Product Management",
+    "category": "design-product",
+    "summary": "Decide what a product should do next and why.",
+    "keywords": [
+      "product manager",
+      "pm",
+      "apm",
+      "roadmap",
+      "prioritization",
+      "product strategy",
+      "metrics",
+      "discovery",
+      "prd",
+      "user stories",
+      "agile"
+    ],
+    "entry_roles": [
+      "Associate Product Manager",
+      "Product Analyst",
+      "Technical Product Owner"
+    ],
+    "tools": [
+      "Roadmapping tools",
+      "Analytics basics",
+      "User research"
+    ],
+    "skills_required": [
+      "Prioritization frameworks",
+      "Writing clear product requirements",
+      "Basic data analysis and metrics literacy",
+      "Stakeholder communication",
+      "User research fundamentals"
+    ],
+    "related_slugs": [
+      "product-design",
+      "business-analysis",
+      "ux-research",
+      "data-analysis",
+      "no-code-development",
+      "workflow-automation",
+      "technical-writing"
+    ],
+    "category_label": "Design & Product"
+  },
+  {
+    "slug": "business-analysis",
+    "name": "Business Analysis",
+    "category": "design-product",
+    "summary": "Work out what a business actually needs, then write it down clearly enough for a team to build and test: interviews, process maps, user stories with acceptance criteria and checks against the data.",
+    "keywords": [
+      "business analyst",
+      "ba",
+      "requirements",
+      "requirements gathering",
+      "user stories",
+      "acceptance criteria",
+      "bpmn",
+      "process mapping",
+      "process modelling",
+      "use cases",
+      "gap analysis",
+      "uat",
+      "stakeholder",
+      "jira",
+      "confluence",
+      "ecba",
+      "cbap",
+      "systems analyst"
+    ],
+    "entry_roles": [
+      "Junior Business Analyst",
+      "Associate Business Analyst",
+      "Business Systems Analyst (junior)",
+      "Operations or Process Analyst",
+      "Requirements Analyst (junior)"
+    ],
+    "tools": [
+      "Jira",
+      "Confluence",
+      "Camunda Modeler",
+      "Bizagi Modeler",
+      "Lucidchart",
+      "Miro",
+      "SQL",
+      "Microsoft Excel"
+    ],
+    "skills_required": [
+      "Eliciting needs through stakeholder interviews and workshops",
+      "Process modelling in BPMN, as-is and to-be",
+      "Writing requirements, user stories and Given/When/Then acceptance criteria",
+      "Gap analysis, impact analysis and prioritisation (MoSCoW)",
+      "Requirements traceability and user acceptance test planning",
+      "Checking assumptions in data with basic SQL"
+    ],
+    "related_slugs": [
+      "product-management",
+      "governance-risk-compliance",
+      "data-analysis",
+      "solutions-consulting"
+    ],
+    "category_label": "Design & Product"
+  },
+  {
+    "slug": "ux-research",
+    "name": "UX Research",
+    "category": "design-product",
+    "summary": "Find out what users do and need through interviews, surveys, usability tests and card sorts, then turn the evidence into findings that change what a team builds.",
+    "keywords": [
+      "ux researcher",
+      "user researcher",
+      "user research",
+      "usability testing",
+      "interviews",
+      "surveys",
+      "card sorting",
+      "tree testing",
+      "diary study",
+      "personas",
+      "journey map",
+      "dovetail",
+      "maze",
+      "optimal workshop",
+      "research ops",
+      "design research",
+      "sus",
+      "affinity mapping"
+    ],
+    "entry_roles": [
+      "Junior UX Researcher",
+      "Associate UX Researcher",
+      "Research Assistant (UX)",
+      "Usability Analyst",
+      "Research Operations Coordinator"
+    ],
+    "tools": [
+      "Dovetail",
+      "Maze",
+      "Optimal Workshop",
+      "Miro",
+      "Google Forms",
+      "UserTesting",
+      "Zoom"
+    ],
+    "skills_required": [
+      "Planning studies: research questions, methods, recruitment and ethics (consent, privacy)",
+      "Interviewing and moderating sessions without leading participants",
+      "Survey design and quantitative basics (task success, SUS)",
+      "Card sorting and tree testing for information architecture",
+      "Synthesis with affinity mapping and thematic analysis",
+      "Communicating findings so a team acts on them"
+    ],
+    "related_slugs": [
+      "ui-ux-design",
+      "product-design",
+      "product-management"
     ],
     "category_label": "Design & Product"
   },
@@ -944,53 +2204,184 @@
       "Systematic problem-solving under time pressure"
     ],
     "related_slugs": [
-      "cybersecurity",
+      "it-service-management",
+      "workflow-automation",
+      "technical-support-engineering",
       "cloud-engineering",
-      "no-code-automation"
+      "systems-administration",
+      "network-engineering",
+      "cybersecurity"
     ],
-    "category_label": "Operations & Digital"
+    "category_label": "IT, Automation & Technical Communication"
   },
   {
-    "slug": "no-code-automation",
-    "name": "No-Code / Automation",
+    "slug": "it-service-management",
+    "name": "IT Service Management",
     "category": "operations-digital",
-    "summary": "Build working software tools without writing much or any code.",
+    "summary": "Run IT as a service people can rely on: handle incidents, problems, changes and requests through agreed processes, a service catalogue and measured targets.",
+    "keywords": [
+      "itsm",
+      "itil",
+      "itil 4",
+      "itil foundation",
+      "service desk",
+      "service desk analyst",
+      "servicenow",
+      "servicenow administrator",
+      "jira service management",
+      "freshservice",
+      "incident management",
+      "problem management",
+      "change management",
+      "service catalogue",
+      "service catalog",
+      "cmdb",
+      "sla",
+      "service management"
+    ],
+    "entry_roles": [
+      "Service Desk Analyst",
+      "Incident Coordinator",
+      "Junior ITSM Analyst",
+      "Junior ServiceNow Administrator",
+      "IT Service Coordinator"
+    ],
+    "tools": [
+      "ServiceNow",
+      "Jira Service Management",
+      "Freshservice",
+      "ITIL 4",
+      "Excel / Google Sheets",
+      "SQL",
+      "Confluence"
+    ],
+    "skills_required": [
+      "Designing and running incident, problem, change and request processes",
+      "Writing service catalogue entries, SLAs and OLAs that can actually be measured",
+      "Configuring a service management tool: queues, workflows, forms and automation rules",
+      "Reading service metrics (resolution time, first contact resolution, satisfaction) and acting on them",
+      "Maintaining configuration records and knowledge articles that people trust"
+    ],
+    "related_slugs": [
+      "it-support",
+      "workflow-automation",
+      "technical-support-engineering",
+      "systems-administration",
+      "governance-risk-compliance"
+    ],
+    "category_label": "IT, Automation & Technical Communication"
+  },
+  {
+    "slug": "no-code-development",
+    "name": "No-Code Development",
+    "category": "operations-digital",
+    "summary": "Build working web apps, websites and internal tools on visual platforms, with a real data model, user logins, payments and a published product people can use.",
     "keywords": [
       "no code",
       "nocode",
+      "no-code developer",
+      "no code developer",
       "low code",
-      "automation",
-      "zapier",
-      "make",
-      "airtable",
       "bubble",
+      "bubble.io",
+      "flutterflow",
       "webflow",
-      "workflow",
+      "webflow developer",
+      "airtable",
+      "softr",
+      "glide",
+      "glide apps",
+      "app builder",
       "internal tools",
-      "citizen developer"
+      "visual development",
+      "freelance web designer",
+      "mvp builder"
+    ],
+    "entry_roles": [
+      "No-Code Developer",
+      "Junior Webflow Developer",
+      "Bubble Developer (junior)",
+      "Freelance App Builder",
+      "Internal Tools Builder"
+    ],
+    "tools": [
+      "Bubble",
+      "FlutterFlow",
+      "Webflow",
+      "Airtable",
+      "Softr",
+      "Glide",
+      "Stripe"
+    ],
+    "skills_required": [
+      "Data modelling: tables, relationships and fields in a no-code database",
+      "Building pages, forms and logic in a visual app builder",
+      "Setting up authentication and privacy rules so users see only their own data",
+      "Responsive layout, basic SEO and page performance",
+      "Judging platform limits and knowing when custom code or an engineer is needed"
+    ],
+    "related_slugs": [
+      "workflow-automation",
+      "frontend-development",
+      "product-management"
+    ],
+    "category_label": "IT, Automation & Technical Communication"
+  },
+  {
+    "slug": "workflow-automation",
+    "name": "Workflow Automation",
+    "category": "operations-digital",
+    "summary": "Find repetitive business processes and replace them with reliable automations that connect apps, move data and alert people when something goes wrong.",
+    "keywords": [
+      "workflow automation",
+      "automation specialist",
+      "business process automation",
+      "zapier",
+      "zapier expert",
+      "make.com",
+      "integromat",
+      "n8n",
+      "power automate",
+      "airtable automation",
+      "webhooks",
+      "rpa",
+      "revops",
+      "operations automation",
+      "process automation",
+      "integration specialist"
     ],
     "entry_roles": [
       "Automation Specialist",
-      "No-Code Developer"
+      "Business Process Automation Analyst",
+      "Marketing or Revenue Operations Associate",
+      "Junior Integration Specialist"
     ],
     "tools": [
-      "Zapier/Make",
+      "Zapier",
+      "Make",
+      "n8n",
       "Airtable",
-      "Webflow/Bubble"
+      "Google Sheets",
+      "Slack",
+      "Power Automate",
+      "Webhooks"
     ],
     "skills_required": [
-      "Workflow and process thinking",
-      "Connecting apps via APIs without writing code",
-      "Database/spreadsheet structuring (Airtable)",
-      "Basic logic (conditionals, triggers)",
-      "Client or stakeholder communication for freelance work"
+      "Process mapping: breaking a manual task into triggers, steps and decisions",
+      "Connecting apps with automation platforms, webhooks and simple API calls",
+      "Structuring data in spreadsheets and Airtable so automations can rely on it",
+      "Conditional logic, branching, filters and looping over lists of records",
+      "Error handling, retries and alerting so failures never pass unnoticed",
+      "Documenting a workflow and handing it over to a non-technical owner"
     ],
     "related_slugs": [
-      "data-analysis",
       "it-support",
+      "it-service-management",
+      "no-code-development",
+      "data-analysis",
       "product-management"
     ],
-    "category_label": "Operations & Digital"
+    "category_label": "IT, Automation & Technical Communication"
   },
   {
     "slug": "technical-writing",
@@ -1027,10 +2418,121 @@
       "Working with subject-matter experts to extract accurate information"
     ],
     "related_slugs": [
+      "technical-support-engineering",
       "software-engineering",
       "backend-engineering",
       "product-management"
     ],
-    "category_label": "Operations & Digital"
+    "category_label": "IT, Automation & Technical Communication"
+  },
+  {
+    "slug": "solutions-consulting",
+    "name": "Solutions Consulting",
+    "category": "operations-digital",
+    "summary": "Help customers decide whether a technical product fits their problem: run discovery, give demos, build proofs of concept, answer security questions and hand off a clear scope.",
+    "keywords": [
+      "solutions consultant",
+      "sales engineer",
+      "solutions engineer",
+      "pre-sales",
+      "presales",
+      "pre sales engineer",
+      "technical sales",
+      "customer engineer",
+      "demo engineer",
+      "proof of concept",
+      "poc",
+      "rfp",
+      "discovery call",
+      "technical consultant",
+      "hubspot",
+      "salesforce"
+    ],
+    "entry_roles": [
+      "Associate Solutions Consultant",
+      "Junior Sales Engineer",
+      "Pre-Sales Associate",
+      "Implementation Consultant",
+      "Customer Success Engineer"
+    ],
+    "tools": [
+      "HubSpot CRM",
+      "Salesforce",
+      "Postman",
+      "Loom",
+      "Miro",
+      "Google Sheets",
+      "Stripe"
+    ],
+    "skills_required": [
+      "Running discovery calls that uncover the real problem and who decides",
+      "Mapping customer needs to product features honestly, including what the product cannot do",
+      "Demonstrating a product through a customer story rather than a feature tour",
+      "Building small proof of concept integrations and answering security and integration questions",
+      "Scoping work and estimating effort in hours, with clear assumptions and risks"
+    ],
+    "related_slugs": [
+      "technical-support-engineering",
+      "solutions-architecture",
+      "business-analysis"
+    ],
+    "category_label": "IT, Automation & Technical Communication"
+  },
+  {
+    "slug": "technical-support-engineering",
+    "name": "Technical Support Engineering",
+    "category": "operations-digital",
+    "summary": "Solve hard customer problems with a technical product such as an API or SaaS app: reproduce issues, read logs, query data, write bug reports for engineers and keep upset customers informed.",
+    "keywords": [
+      "technical support engineer",
+      "support engineer",
+      "customer support engineer",
+      "application support engineer",
+      "application support analyst",
+      "tier 2 support",
+      "tier 3 support",
+      "api support",
+      "saas support",
+      "developer support",
+      "product support engineer",
+      "escalation engineer",
+      "zendesk",
+      "intercom",
+      "har file",
+      "postman",
+      "debugging"
+    ],
+    "entry_roles": [
+      "Technical Support Engineer",
+      "Support Engineer (Tier 1 or 2)",
+      "Application Support Analyst",
+      "Customer Support Specialist (technical product)",
+      "Junior Developer Support Engineer"
+    ],
+    "tools": [
+      "Zendesk",
+      "Intercom",
+      "Jira",
+      "Postman",
+      "curl",
+      "Chrome DevTools",
+      "SQL",
+      "Git/GitHub"
+    ],
+    "skills_required": [
+      "Reproducing a customer's issue in a clean environment",
+      "Reading logs, HAR files and API responses to find the failing step",
+      "Debugging API calls with Postman and curl, and inspecting data with SQL",
+      "Writing engineering quality bug reports and escalating with the right evidence",
+      "Writing knowledge base articles and communicating clearly with frustrated customers"
+    ],
+    "related_slugs": [
+      "it-support",
+      "it-service-management",
+      "technical-writing",
+      "solutions-consulting",
+      "qa-engineering"
+    ],
+    "category_label": "IT, Automation & Technical Communication"
   }
 ]

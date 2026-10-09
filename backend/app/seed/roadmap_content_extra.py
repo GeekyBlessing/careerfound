@@ -1233,137 +1233,112 @@ PATH_PROJECTS = {
     },
     "ai-engineering": {
         "skills": [
-            {"key": "python_numerical_computing", "label": "Python Numerical Computing (NumPy/pandas)", "category": "foundation"},
-            {"key": "feature_engineering", "label": "Feature Engineering & Preprocessing", "category": "foundation"},
-            {"key": "classical_ml_modeling", "label": "Classical ML Modeling (scikit-learn)", "category": "core"},
-            {"key": "deep_learning_with_pytorch", "label": "Deep Learning with PyTorch", "category": "advanced"},
-            {"key": "llm_application_development", "label": "Building with LLM APIs", "category": "core"},
-            {"key": "rag_and_evaluation", "label": "Retrieval, Evaluation & Deployment of LLM Apps", "category": "advanced"},
+            {
+                "key": "python_api_foundations",
+                "label": "Python and API Foundations",
+                "category": "foundation"
+            },
+            {
+                "key": "prompting_structured_output",
+                "label": "Prompting and Structured Output",
+                "category": "foundation"
+            },
+            {
+                "key": "llm_application_development",
+                "label": "Building with LLM APIs and Tool Calling",
+                "category": "core"
+            },
+            {
+                "key": "retrieval_and_grounding",
+                "label": "Retrieval and Grounding (RAG)",
+                "category": "core"
+            },
+            {
+                "key": "rag_and_evaluation",
+                "label": "Evaluating LLM Applications",
+                "category": "advanced"
+            },
+            {
+                "key": "production_llm_apps",
+                "label": "Cost, Safety and Deployment",
+                "category": "advanced"
+            }
         ],
         "skill_edges": [
-            ("python_numerical_computing", "feature_engineering"),
-            ("feature_engineering", "classical_ml_modeling"),
-            ("classical_ml_modeling", "deep_learning_with_pytorch"),
-            ("deep_learning_with_pytorch", "llm_application_development"),
-            ("llm_application_development", "rag_and_evaluation"),
+            [
+                "python_api_foundations",
+                "prompting_structured_output"
+            ],
+            [
+                "prompting_structured_output",
+                "llm_application_development"
+            ],
+            [
+                "llm_application_development",
+                "retrieval_and_grounding"
+            ],
+            [
+                "retrieval_and_grounding",
+                "rag_and_evaluation"
+            ],
+            [
+                "rag_and_evaluation",
+                "production_llm_apps"
+            ]
         ],
         "phases": [
             {
                 "title": "Foundations",
-                "summary": "Implement the math behind machine learning by hand with NumPy so gradient descent and loss functions stop being a black box.",
-                "skill_key": "python_numerical_computing",
+                "summary": "Call a hosted model from Python, learn what a prompt can and cannot control, and measure results against a labelled set from the very first project.",
+                "skill_key": "python_api_foundations",
                 "projects": [
                     {
-                        "title": "Build a linear regression model from scratch with NumPy to predict housing prices",
-                        "teaches": "the math behind linear regression via gradient descent, vectorized NumPy operations, and proper train/test splitting",
-                        "prerequisites": ["Python basics", "Basic linear algebra (vectors, dot products)", "High school statistics"],
-                        "expected_output": "A notebook that implements gradient descent linear regression from scratch (no scikit-learn) on a small housing dataset, with a loss curve and a predicted-vs-actual scatter plot.",
+                        "title": "Build a support-message classifier with an LLM API and score it on 40 labelled examples",
+                        "teaches": "calling a hosted model from Python, writing a clear prompt, and measuring accuracy against a fixed labelled set instead of judging by feel",
+                        "prerequisites": [
+                            "Python basics (functions, dictionaries, reading a CSV)",
+                            "An API key for any LLM provider with a free or low-cost tier, or a local model running in Ollama"
+                        ],
+                        "expected_output": "A Python script that sends 40 customer messages to a model, gets back one of five categories, and prints accuracy and a confusion table, plus a short log of three prompt versions and their scores.",
                         "steps": [
-                            "Load a small tabular dataset (e.g., the California housing CSV or a synthetic one) into a pandas DataFrame.",
-                            "Split the data into train and test sets manually (e.g., 80/20 with np.random.shuffle).",
-                            "Normalize/standardize the features (subtract mean, divide by std) so gradient descent converges properly.",
-                            "Implement the hypothesis function y_pred = X @ weights + bias using NumPy matrix multiplication.",
-                            "Implement the mean squared error loss function and its gradient with respect to weights and bias.",
-                            "Write a training loop that updates weights via gradient descent for N epochs, printing loss every 100 epochs.",
-                            "Plot the loss curve over epochs and a scatter plot of predicted vs. actual prices on the test set.",
+                            "Pick five intents from the public Banking77 dataset on Hugging Face (for example card arrival, lost card, exchange rate, top up failed, pending transfer) and copy 8 messages for each into a CSV with the true label.",
+                            "Create a virtual environment, install the provider's Python package and store the API key in an environment variable, never in the code.",
+                            "Write a function that sends one message with a system prompt listing the five categories and asking for the category name only.",
+                            "Loop over the 40 rows, store the predictions in a new column and print overall accuracy.",
+                            "Print a confusion table with pandas.crosstab and read the wrong answers one by one.",
+                            "Write a second prompt version with a one-line definition and one example per category, run it and record the new score.",
+                            "Set temperature to 0, run the same prompt twice and check the two runs agree.",
+                            "Log prompt version, accuracy, total tokens and approximate cost for each run in a small table in your README."
                         ],
                         "hints": [
-                            "Always normalize features before gradient descent, unscaled features (square footage in the thousands vs. bedroom count 1-5) cause the loss to diverge or converge extremely slowly.",
-                            "Use vectorized NumPy operations (X @ weights) instead of Python for-loops over rows, faster and less error-prone.",
-                            "If your loss is increasing instead of decreasing, your learning rate is almost always too high.",
-                            "Check the shapes of your matrices at every step with .shape, mismatched shapes are the most common bug.",
+                            "Keep the label set small and the instructions short for your first prompt, then add detail only where the confusion table shows mistakes.",
+                            "Ask for the category name only and compare in code after lower-casing, so wording differences do not count as errors.",
+                            "Do not tune the prompt on all 40 rows and then call the score your result. Keep 10 rows aside that you only score once at the end.",
+                            "Read the token usage in the API response so you learn what each run costs."
                         ],
                         "common_mistakes": [
-                            "Forgetting to add a bias/intercept term, forcing the regression line through the origin.",
-                            "Using a learning rate that's too large, causing the loss to explode to NaN.",
-                            "Normalizing the full dataset before splitting into train/test, leaking test set statistics into training.",
-                            "Evaluating only on training data and never checking test set performance, hiding overfitting.",
+                            "Judging the prompt by trying three messages instead of the whole labelled set.",
+                            "Committing the API key to a public repository.",
+                            "Counting 'Card Arrival' and 'card_arrival' as different answers because the output was never normalised.",
+                            "Changing the prompt and the examples at the same time, so you cannot tell which change helped."
                         ],
-                        "difficulty": 1,
+                        "difficulty": 1
                     }
-                ],
+                ]
             },
             {
                 "title": "Building Real Skills",
-                "summary": "Build a full scikit-learn pipeline for a realistic classification problem and evaluate it the way a real ML team would.",
-                "skill_key": "classical_ml_modeling",
-                "projects": [
-                    {
-                        "title": "Build and tune a customer churn classifier with scikit-learn",
-                        "teaches": "building a full sklearn Pipeline with preprocessing and a model, cross-validation, hyperparameter tuning, and evaluating classifiers beyond accuracy",
-                        "prerequisites": ["pandas data wrangling", "Basic supervised learning concepts", "scikit-learn basics"],
-                        "expected_output": "A trained classification pipeline (e.g., RandomForestClassifier) on a churn dataset like Telco Customer Churn, with a cross-validated ROC-AUC score, a confusion matrix, and a feature importance chart, wrapped in a single sklearn Pipeline object.",
-                        "steps": [
-                            "Load the Telco Customer Churn dataset (or similar) and check class balance, churn is usually imbalanced.",
-                            "Build a preprocessing pipeline using ColumnTransformer: OneHotEncoder for categoricals, StandardScaler for numerics.",
-                            "Chain the preprocessor and a classifier (e.g., RandomForestClassifier) into a single sklearn Pipeline.",
-                            "Use train_test_split with stratify=y to preserve class balance in train/test.",
-                            "Run GridSearchCV or RandomizedSearchCV with StratifiedKFold over key hyperparameters (n_estimators, max_depth).",
-                            "Evaluate the final model on the held-out test set with precision, recall, F1, and ROC-AUC, not just accuracy.",
-                            "Plot a confusion matrix and the top 10 features by importance (feature_importances_ or permutation importance).",
-                            "Write a short note on whether the model's false negatives (missed churners) are acceptable for the business use case.",
-                        ],
-                        "hints": [
-                            "With imbalanced churn data, accuracy is misleading, a model predicting 'no churn' for everyone can still hit 85% accuracy while being useless.",
-                            "Wrap preprocessing in a Pipeline so cross-validation fits the scaler/encoder only on each training fold, avoiding leakage.",
-                            "Use class_weight='balanced' or SMOTE if the churn class is small, and compare results with and without it.",
-                            "GridSearchCV can be slow, start with RandomizedSearchCV over a wider range, then narrow down.",
-                        ],
-                        "common_mistakes": [
-                            "Fitting the scaler/encoder on the entire dataset before splitting, leaking test data statistics into training.",
-                            "Judging the model purely on accuracy when the classes are imbalanced.",
-                            "One-hot encoding high-cardinality categorical columns without checking for a resulting explosion in feature count.",
-                            "Tuning hyperparameters by looking at test set performance directly instead of using cross-validation, overfitting to the test set.",
-                        ],
-                        "difficulty": 3,
-                    }
-                ],
-            },
-            {
-                "title": "Advanced Practice",
-                "summary": "Fine-tune a real neural network with PyTorch and ship it as a working inference API, the full path from model to product.",
-                "skill_key": "deep_learning_with_pytorch",
-                "projects": [
-                    {
-                        "title": "Train and deploy an image classifier with PyTorch, including a REST API for inference",
-                        "teaches": "fine-tuning a pretrained CNN in PyTorch, avoiding overfitting with augmentation and learning rate scheduling, and serving the trained model behind an API",
-                        "prerequisites": ["scikit-learn model building experience", "Basic neural network concepts (layers, activation functions, backprop)", "PyTorch tensors and autograd basics", "Basic FastAPI/Flask"],
-                        "expected_output": "A fine-tuned image classifier (e.g., ResNet18 transfer learning on a CIFAR-subset or custom dataset) with documented validation accuracy, saved as a .pt checkpoint, served through a FastAPI endpoint that accepts an image upload and returns predicted class and confidence.",
-                        "steps": [
-                            "Choose an image classification dataset (e.g., a subset of CIFAR-10 or a custom dataset with 3-5 classes).",
-                            "Build a PyTorch Dataset/DataLoader with transforms (resize, normalize, RandomHorizontalFlip for augmentation).",
-                            "Load a pretrained model (torchvision.models.resnet18(pretrained=True)) and replace the final fully-connected layer for your class count.",
-                            "Freeze early layers initially, train only the new head, then optionally unfreeze and fine-tune the whole network at a lower learning rate.",
-                            "Write a training loop with CrossEntropyLoss, an Adam optimizer, and a validation loop tracking accuracy per epoch.",
-                            "Add early stopping or learning rate scheduling based on validation loss to avoid overfitting.",
-                            "Save the best checkpoint with torch.save(model.state_dict(), ...) and write an inference function that loads it and predicts on a new image.",
-                            "Wrap the inference function in a FastAPI POST /predict endpoint and test it locally on held-out images, documenting accuracy and latency.",
-                        ],
-                        "hints": [
-                            "Use transfer learning (a pretrained ResNet) rather than training from scratch, with a small dataset, training from scratch will badly overfit.",
-                            "Watch train vs. validation loss curves together, a widening gap means overfitting, which augmentation or dropout can help fix.",
-                            "Set model.eval() and wrap inference in torch.no_grad() when serving predictions, since dropout/batchnorm behave differently in train mode.",
-                            "Normalize input images at inference time with the exact same mean/std used during training, or predictions will be silently wrong.",
-                        ],
-                        "common_mistakes": [
-                            "Forgetting model.eval() before inference, leaving dropout/batchnorm in training mode and producing inconsistent predictions.",
-                            "Using too high a learning rate when fine-tuning a pretrained model, destroying the pretrained weights ('catastrophic forgetting').",
-                            "Not applying the same preprocessing/normalization at inference time as during training.",
-                            "Loading the entire model on every API request instead of loading it once at startup, causing severe latency.",
-                        ],
-                        "difficulty": 5,
-                    }
-                ],
-            },
-            {
-                "title": "Building with LLMs",
-                "summary": "Build applications on top of large language models: structured outputs and tool use first, then retrieval, evaluation and deployment.",
+                "summary": "Get validated structured output and tool calling working in a small service, with the retries, logging and cost tracking a real application needs.",
                 "skill_key": "llm_application_development",
                 "projects": [
                     {
                         "title": "Build an LLM-powered assistant with structured outputs and tool calling",
                         "teaches": "calling an LLM API, designing prompts, forcing structured JSON outputs validated with a schema, calling tools, and handling errors, retries and cost",
-                        "prerequisites": ["Python and API basics", "Basic prompt engineering", "An API key for an LLM provider"],
+                        "prerequisites": [
+                            "Python and API basics",
+                            "Basic prompt engineering",
+                            "An API key for an LLM provider"
+                        ],
                         "expected_output": "A small Python service that takes free-text support requests, returns validated JSON (category, urgency, summary), calls at least one tool such as an order lookup, and logs token usage, with a test file of 20 example inputs and their expected results.",
                         "steps": [
                             "Choose a narrow task, such as classifying and summarising customer support emails, and write 20 realistic example inputs.",
@@ -1372,26 +1347,38 @@ PATH_PROJECTS = {
                             "Add one tool the model can call, such as a function that looks up an order, and handle the tool-call loop.",
                             "Add timeouts, retry with backoff and a fallback response for provider errors.",
                             "Log prompt version, latency and token counts for every call.",
-                            "Run the 20 examples, record accuracy by hand, and improve the prompt twice, noting what changed the results.",
+                            "Run the 20 examples, record accuracy by hand, and improve the prompt twice, noting what changed the results."
                         ],
                         "hints": [
                             "Keep temperature low for extraction and classification so results are repeatable.",
                             "Validate outputs in code. Never trust that the model returned the shape you asked for.",
                             "Save the exact prompt version with every result so you can tell which change helped.",
-                            "Check cost early. Long prompts repeated thousands of times add up quickly.",
+                            "Check cost early. Long prompts repeated thousands of times add up quickly."
                         ],
                         "common_mistakes": [
                             "Judging quality by trying three inputs instead of a fixed test set.",
                             "Parsing free text from the model with string matching instead of structured outputs.",
                             "Putting API keys in the repository.",
-                            "Letting a model-chosen tool call run without validating its arguments.",
+                            "Letting a model-chosen tool call run without validating its arguments."
                         ],
-                        "difficulty": 3,
-                    },
+                        "difficulty": 3
+                    }
+                ]
+            },
+            {
+                "title": "Advanced Practice",
+                "summary": "Ground a model in real documents with retrieval, measure retrieval and answer quality separately, then add guardrails and deploy the app.",
+                "skill_key": "rag_and_evaluation",
+                "projects": [
                     {
                         "title": "Build a retrieval-augmented generation app, measure its answer quality and deploy it",
                         "teaches": "chunking and embedding documents, storing vectors, retrieving context, grounding answers with citations, evaluating retrieval and answers against a test set, and serving the app behind an API",
-                        "prerequisites": ["LLM API experience", "Basic SQL or vector database concepts", "FastAPI or Flask basics", "Docker basics"],
+                        "prerequisites": [
+                            "LLM API experience",
+                            "Basic SQL or vector database concepts",
+                            "FastAPI or Flask basics",
+                            "Docker basics"
+                        ],
                         "expected_output": "A deployed question-answering API over a real document set (for example a product's documentation) that cites its sources, backed by a vector store, with an evaluation report measuring retrieval hit rate and answer correctness on at least 30 test questions and a before and after comparison of one improvement.",
                         "steps": [
                             "Collect a document set you can legally use, such as an open-source project's docs, and split it into chunks with sensible sizes and overlap.",
@@ -1401,25 +1388,25 @@ PATH_PROJECTS = {
                             "Measure retrieval hit rate (was the right chunk in the top k) and answer correctness, using manual grading plus a rubric-based LLM judge you spot-check.",
                             "Make one improvement, such as a different chunk size, hybrid search or reranking, and report the metrics before and after.",
                             "Wrap the pipeline in a FastAPI endpoint with input limits and rate limiting, and containerise it.",
-                            "Deploy it somewhere reachable and write up failure cases, such as questions the documents cannot answer and how the app refuses them.",
+                            "Deploy it somewhere reachable and write up failure cases, such as questions the documents cannot answer and how the app refuses them."
                         ],
                         "hints": [
                             "Evaluate retrieval separately from generation. Most bad answers start with bad retrieval.",
                             "Tell the model to say it does not know when the context is insufficient, and test that case on purpose.",
                             "Change one thing at a time so you know what moved the numbers.",
-                            "Spot-check any LLM-based judge by hand on a sample, since judges have their own biases.",
+                            "Spot-check any LLM-based judge by hand on a sample, since judges have their own biases."
                         ],
                         "common_mistakes": [
                             "Chunking blindly by character count and splitting answers in half.",
                             "Skipping evaluation and shipping on the strength of a few good-looking demos.",
                             "Stuffing too many chunks into the prompt, which raises cost and lowers answer quality.",
-                            "Ignoring prompt injection from retrieved documents in an app that handles untrusted content.",
+                            "Ignoring prompt injection from retrieved documents in an app that handles untrusted content."
                         ],
-                        "difficulty": 5,
-                    },
-                ],
-            },
-        ],
+                        "difficulty": 5
+                    }
+                ]
+            }
+        ]
     },
     "product-design": {
         "skills": [
@@ -2014,19 +2001,51 @@ PATH_PROJECTS = {
             },
         ],
     },
-    "no-code-automation": {
+    "workflow-automation": {
         "skills": [
-            {"key": "automation_logic", "label": "Automation Logic & Triggers", "category": "foundation"},
-            {"key": "spreadsheet_database_thinking", "label": "Spreadsheet/Database Thinking (Airtable)", "category": "core"},
-            {"key": "nca_workflow_orchestration", "label": "Multi-Step Workflow Orchestration", "category": "core"},
-            {"key": "no_code_app_building", "label": "No-Code App & Website Building (Webflow/Bubble)", "category": "advanced"},
-            {"key": "api_webhook_integration", "label": "API & Webhook Integration in No-Code Tools", "category": "advanced"},
+            {
+                "key": "automation_logic",
+                "label": "Triggers, Actions and Filters",
+                "category": "foundation"
+            },
+            {
+                "key": "spreadsheet_database_thinking",
+                "label": "Spreadsheet and Airtable Data Structuring",
+                "category": "foundation"
+            },
+            {
+                "key": "nca_workflow_orchestration",
+                "label": "Multi-Step Workflow Orchestration",
+                "category": "core"
+            },
+            {
+                "key": "api_webhook_integration",
+                "label": "Webhooks and API Integration",
+                "category": "core"
+            },
+            {
+                "key": "workflow_reliability",
+                "label": "Error Handling, Monitoring and Handover",
+                "category": "advanced"
+            }
         ],
         "skill_edges": [
-            ("automation_logic", "spreadsheet_database_thinking"),
-            ("spreadsheet_database_thinking", "nca_workflow_orchestration"),
-            ("nca_workflow_orchestration", "no_code_app_building"),
-            ("no_code_app_building", "api_webhook_integration"),
+            [
+                "automation_logic",
+                "spreadsheet_database_thinking"
+            ],
+            [
+                "spreadsheet_database_thinking",
+                "nca_workflow_orchestration"
+            ],
+            [
+                "nca_workflow_orchestration",
+                "api_webhook_integration"
+            ],
+            [
+                "api_webhook_integration",
+                "workflow_reliability"
+            ]
         ],
         "phases": [
             {
@@ -2037,7 +2056,11 @@ PATH_PROJECTS = {
                     {
                         "title": "Build a 'New Form Submission to Slack' Zap",
                         "teaches": "how trigger-action automation works and how to connect apps without writing code",
-                        "prerequisites": ["A free Zapier account", "A Google account", "A Slack workspace (or Discord)"],
+                        "prerequisites": [
+                            "A free Zapier account",
+                            "A Google account",
+                            "A Slack workspace (or Discord)"
+                        ],
                         "expected_output": "A live Zapier automation (a Zap) that automatically posts a formatted Slack message every time someone submits a Google Form.",
                         "steps": [
                             "Create a Google Form with 3-4 fields (e.g., name, email, message).",
@@ -2046,22 +2069,22 @@ PATH_PROJECTS = {
                             "Add a 'Slack - Send Channel Message' action step.",
                             "Use Zapier's field-mapping to insert the form's answers into the Slack message text.",
                             "Test the Zap with a sample form submission and confirm the Slack message appears correctly formatted.",
-                            "Turn the Zap on and submit a real test response to confirm it fires automatically.",
+                            "Turn the Zap on and submit a real test response to confirm it fires automatically."
                         ],
                         "hints": [
                             "Zapier's 'Test trigger' step pulls a real past submission, use it to check your field mapping before turning the Zap on.",
                             "Use Slack's mrkdwn formatting (*bold*, _italic_) directly in the message field for a cleaner-looking notification.",
-                            "If the trigger doesn't show new data, check the Google account permissions Zapier was granted.",
+                            "If the trigger doesn't show new data, check the Google account permissions Zapier was granted."
                         ],
                         "common_mistakes": [
                             "Leaving the Zap in draft/off mode and wondering why nothing fires.",
                             "Hardcoding placeholder text in the Slack message instead of mapping the actual form field, so every message looks the same.",
                             "Not testing with real data first, causing the Zap to fail silently on edge cases like empty fields.",
-                            "Choosing the wrong trigger event (e.g., 'New Response in Spreadsheet' vs 'New Form Response') and getting duplicate or missed triggers.",
+                            "Choosing the wrong trigger event (e.g., 'New Response in Spreadsheet' vs 'New Form Response') and getting duplicate or missed triggers."
                         ],
-                        "difficulty": 1,
+                        "difficulty": 1
                     }
-                ],
+                ]
             },
             {
                 "title": "Building Real Skills",
@@ -2071,7 +2094,11 @@ PATH_PROJECTS = {
                     {
                         "title": "Build a Multi-Step Lead Qualification Pipeline with Airtable + Zapier",
                         "teaches": "conditional branching (Paths/Filters), relational data modeling in Airtable, and multi-app workflow orchestration",
-                        "prerequisites": ["Completed a basic single-step Zap", "Airtable account", "Understanding of Airtable tables/views"],
+                        "prerequisites": [
+                            "Completed a basic single-step Zap",
+                            "Airtable account",
+                            "Understanding of Airtable tables/views"
+                        ],
                         "expected_output": "A working pipeline where leads submitted via a form are scored, routed to different follow-up actions based on criteria, and tracked in an Airtable CRM base.",
                         "steps": [
                             "Build an Airtable base with a Leads table (fields: Name, Email, Company Size, Budget, Status).",
@@ -2081,67 +2108,67 @@ PATH_PROJECTS = {
                             "For the Hot Lead path, send a Slack alert to sales AND update the Airtable Status field to 'Priority'.",
                             "For the Cold Lead path, enroll the contact in a scheduled follow-up email via a Delay step plus an email action.",
                             "Add a native Airtable automation that changes a record's view/color when Status changes, to visually track pipeline stage.",
-                            "Test with at least 3 different sample leads to confirm each path fires correctly.",
+                            "Test with at least 3 different sample leads to confirm each path fires correctly."
                         ],
                         "hints": [
                             "Use Zapier's Paths feature instead of chaining separate Zaps with Filters, it's far easier to debug one branching Zap than five linked ones.",
                             "Airtable linked records let you connect a Leads table to a Companies table instead of retyping company data every time.",
                             "Add a Zapier Delay step before follow-up emails so cold leads don't get contacted immediately after form submission.",
-                            "Use Airtable's single-select field type for Status so downstream automations can reliably match on exact values.",
+                            "Use Airtable's single-select field type for Status so downstream automations can reliably match on exact values."
                         ],
                         "common_mistakes": [
                             "Building separate parallel Zaps for each branch instead of one Zap with Paths, making the logic hard to maintain.",
                             "Forgetting to update the Status field in every path, leaving some records stuck with no visible state.",
                             "Not handling the case where a required field like Budget is blank, causing the filter logic to break.",
-                            "Testing only the happy path and never checking what happens when a filter condition evaluates false.",
+                            "Testing only the happy path and never checking what happens when a filter condition evaluates false."
                         ],
-                        "difficulty": 3,
+                        "difficulty": 3
                     }
-                ],
+                ]
             },
             {
                 "title": "Advanced Practice",
-                "summary": "Combine a real front-end app, a payment processor, and background API automations into a production-grade no-code SaaS product.",
-                "skill_key": "api_webhook_integration",
+                "summary": "Take webhooks, duplicate protection and error handling from theory to a workflow a business could rely on, with a failure log and alert you can trust.",
+                "skill_key": "workflow_reliability",
                 "projects": [
                     {
-                        "title": "Launch a Full No-Code SaaS: Client Portal Built on Bubble + Airtable + Stripe + Make",
-                        "teaches": "building a production no-code application with user authentication, a database backend, payment processing, and custom API/webhook integrations",
+                        "title": "Build an order-to-fulfilment workflow with webhooks, retries and a failure log in Make",
+                        "teaches": "receiving data through a webhook, validating it, writing to several apps, and handling failures with retries, a log table and an alert instead of failing silently",
                         "prerequisites": [
-                            "Experience with multi-step Zapier/Make automations",
-                            "Airtable relational database design",
-                            "Basic understanding of REST APIs and webhooks",
-                            "A Stripe account",
+                            "Two earlier multi-step automations built in Zapier or Make",
+                            "An Airtable account",
+                            "A Slack workspace or Discord server",
+                            "Basic understanding of JSON"
                         ],
-                        "expected_output": "A deployed, publicly accessible web app built in Bubble where users can sign up, log in, submit requests, pay via Stripe, and see real-time status updates, backed by a database and Make.com scenarios handling background automation and third-party API calls.",
+                        "expected_output": "A Make scenario that receives order data on a webhook, rejects bad payloads, creates an Airtable record once per order, notifies the team in Slack, and logs any failure to a separate table with an alert, tested against at least eight sample payloads.",
                         "steps": [
-                            "Design the data model in Bubble's native database: Users, Projects, Payments, Status.",
-                            "Build the front-end in Bubble: signup/login using Bubble's built-in User authentication, a dashboard page, and a 'New Request' form.",
-                            "Integrate Stripe using Bubble's Stripe plugin to charge users on request submission (start in Stripe test mode with test cards).",
-                            "Set up a Make.com scenario triggered by a webhook from Bubble (via the API Connector) whenever a new request is submitted.",
-                            "In Make, chain steps to call an external API (e.g., a shipping-rate or AI text-generation API) and write the response back into Bubble via Bubble's Data API.",
-                            "Add error-handling in Make: a router that checks the API response status and sends a Slack alert plus retries once on failure instead of failing silently.",
-                            "Add a real-time status indicator on the Bubble dashboard using conditional workflows so users see 'Processing' to 'Complete' without refreshing.",
-                            "Deploy the app to a live URL, switch Stripe to live mode, and run a full end-to-end test with a real small transaction.",
-                            "Document the system with a simple architecture diagram showing how Bubble, Make, the database, Stripe, and the external API connect.",
+                            "Create an Airtable base with an Orders table (order id, customer email, item, quantity, status) and a Failures table (order id, reason, raw payload, time).",
+                            "In Make, create a scenario that starts with a Custom webhook module and copy the webhook URL.",
+                            "Send a sample JSON order to the webhook from a free tool such as Hoppscotch or curl so Make learns the data structure.",
+                            "Add a filter that stops payloads with no email or a quantity below one, and route those to a module that writes a row to the Failures table.",
+                            "Add an Airtable search step by order id, then a router that creates the order only when none exists, so a repeated payload does not create a duplicate.",
+                            "Add a Slack message for each new order and an error handler route on the Airtable and Slack modules with a retry and a failure-log entry.",
+                            "Send eight test payloads: valid, duplicate, missing email, quantity zero, an extra unexpected field, and a malformed JSON body. Record what each one did.",
+                            "Turn the scenario on, read the execution history in Make and fix anything that behaved differently from what you expected.",
+                            "Draw the scenario as a diagram and write a one page owner's guide that says what to check when the Slack alert for a failure appears."
                         ],
                         "hints": [
-                            "Bubble's API Connector needs the external API's auth headers configured once, test each call individually there before wiring it into a workflow.",
-                            "Make.com's error handler routes (not just Zapier-style filters) let you retry, resume, or ignore failures per module, use them instead of hoping nothing ever fails.",
-                            "Keep Stripe in test mode with test card 4242 4242 4242 4242 until every workflow path is verified end-to-end.",
-                            "Log every incoming webhook payload to a dedicated 'Logs' table during development so you can debug exactly what the external API sent back.",
+                            "Build the happy path first and send one clean payload before adding filters and error handling.",
+                            "Use the order id as the key for duplicate checks, never the customer's email.",
+                            "Store the raw payload in the Failures table so you can replay a failed order later.",
+                            "Turn on the scenario's execution history and read it after every test run."
                         ],
                         "common_mistakes": [
-                            "Wiring Stripe directly to production before testing the refund/failed-payment path, leaving no graceful handling for a declined card.",
-                            "Building the Make scenario with no error handling, so one failed API call breaks the whole automation silently.",
-                            "Storing sensitive API keys in a Bubble workflow visible to page elements instead of using backend workflows or private keys.",
-                            "Ignoring Bubble's workflow run limits and API rate limits on lower-tier plans, causing the app to silently stop updating under real usage.",
+                            "Testing with only valid data and finding the broken cases only when a real customer hits them.",
+                            "Letting an error handler ignore the failure with no log and no alert.",
+                            "Creating a record without first checking whether the order already exists.",
+                            "Leaving the webhook URL unprotected in a public place such as a shared screenshot."
                         ],
-                        "difficulty": 5,
+                        "difficulty": 5
                     }
-                ],
-            },
-        ],
+                ]
+            }
+        ]
     },
     "it-support": {
         "skills": [
@@ -2772,3 +2799,11 @@ PATH_PROJECTS = {
         ],
     },
 }
+
+
+# Roadmaps for the careers added in the catalogue restructure live beside
+# their career content in app/seed/new_careers and join the same catalogue.
+from app.seed.new_careers import NEW_PROJECTS  # noqa: E402
+
+assert not set(NEW_PROJECTS) & set(PATH_PROJECTS), "a new career repeats an existing roadmap"
+PATH_PROJECTS.update(NEW_PROJECTS)

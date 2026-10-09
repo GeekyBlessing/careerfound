@@ -1,0 +1,745 @@
+"""New careers: IT, Automation & Technical Communication."""
+
+CAREERS = [
+    dict(
+        slug="it-service-management", name="IT Service Management",
+        summary="Run IT as a service people can rely on: handle incidents, problems, changes and requests through agreed processes, a service catalogue and measured targets.",
+        beginner_summary="You'll learn how a service desk is organised, how ITIL practices like incident and change management work, and how to measure and improve a service using a ticketing tool.",
+        difficulty=2, avg_timeline_weeks=26,
+        entry_roles=["Service Desk Analyst", "Incident Coordinator", "Junior ITSM Analyst", "Junior ServiceNow Administrator", "IT Service Coordinator"],
+        tools=["ServiceNow", "Jira Service Management", "Freshservice", "ITIL 4", "Excel / Google Sheets", "SQL", "Confluence"],
+        remote_potential=65,
+        earning_notes="This is rarely a first job. Most people arrive from a service desk or support role and move into process, tooling or coordination work. Pay rises with platform skills (especially ServiceNow administration), ownership of a process such as change or problem management, and the ability to show measured improvement. Large organisations and managed service providers do most of the hiring.",
+        icon="clipboard",
+        skills_required=["Designing and running incident, problem, change and request processes", "Writing service catalogue entries, SLAs and OLAs that can actually be measured", "Configuring a service management tool: queues, workflows, forms and automation rules", "Reading service metrics (resolution time, first contact resolution, satisfaction) and acting on them", "Maintaining configuration records and knowledge articles that people trust"],
+        certifications=["ITIL 4 Foundation", "ServiceNow Certified System Administrator"],
+        interview_prep=[
+            "Explain the difference between an incident, a problem and a change, with an example of each",
+            "What is the difference between an SLA and an OLA, and who owns each",
+            "A service has missed its resolution target for three weeks in a row. How do you find out why",
+            "A senior manager asks for an emergency change to be pushed through without approval. What do you do",
+            "Ten similar incidents arrive in one morning. How do you decide whether to open a problem record",
+            "Which two service desk metrics would you report to a director, and what could each one hide",
+        ],
+        learning_resources=[
+            {"label": "ServiceNow Now Learning", "note": "Free official courses for the platform, including a path toward the System Administrator exam."},
+            {"label": "Atlassian Jira Service Management documentation", "note": "Free official guides for setting up request types, queues, SLAs and automation."},
+            {"label": "ITIL Foundation: ITIL 4 Edition", "note": "The official guide to the ITIL 4 practices and service value system, used for the Foundation exam."},
+        ],
+        roadmap_outline={
+            "beginner": [
+                "Learn what a service is, and how a service desk differs from fixing individual machines",
+                "Learn the ITIL 4 service value system and the main practices: incident, problem, change, request and knowledge",
+                "Open a free Jira Service Management project and work tickets through a full lifecycle",
+                "Learn to read a ticket queue by priority, impact and urgency",
+            ],
+            "intermediate": [
+                "Write a service catalogue with request types, owners and fulfilment steps",
+                "Define SLAs and OLAs and configure them as timers in a tool",
+                "Build a ticket dataset and calculate resolution time, first contact resolution and breach rates",
+                "Request a free ServiceNow developer instance and learn its incident, change and CMDB tables",
+            ],
+            "advanced": [
+                "Model business services and configuration items in a CMDB and link incidents to them",
+                "Run a problem investigation from repeated incidents to a root cause and a known error record",
+                "Design a change process with standard, normal and emergency changes and an approval route",
+                "Build a continual improvement register and prove one change with before and after metrics",
+                "Prepare for ITIL 4 Foundation and the ServiceNow Certified System Administrator exam",
+            ],
+        },
+    ),
+    dict(
+        slug="no-code-development", name="No-Code Development",
+        summary="Build working web apps, websites and internal tools on visual platforms, with a real data model, user logins, payments and a published product people can use.",
+        beginner_summary="You'll learn to model data, design pages and build app logic in visual tools like Bubble, Webflow and Airtable, and to know when a project needs real code.",
+        difficulty=2, avg_timeline_weeks=20,
+        entry_roles=["No-Code Developer", "Junior Webflow Developer", "Bubble Developer (junior)", "Freelance App Builder", "Internal Tools Builder"],
+        tools=["Bubble", "FlutterFlow", "Webflow", "Airtable", "Softr", "Glide", "Stripe"],
+        remote_potential=90,
+        earning_notes="Most people start with freelance or small client work, a side project, or an internal tools role in a small company. A few live, working products with real users count for more than any course. Pay depends on whether you can scope a client's problem, price your own time and say plainly what a platform cannot do. Full-time roles exist but are less common than project work.",
+        icon="blocks",
+        skills_required=["Data modelling: tables, relationships and fields in a no-code database", "Building pages, forms and logic in a visual app builder", "Setting up authentication and privacy rules so users see only their own data", "Responsive layout, basic SEO and page performance", "Judging platform limits and knowing when custom code or an engineer is needed"],
+        certifications=[],
+        interview_prep=[
+            "Walk through the data model of an app you built and explain why you split it into those tables",
+            "How do you stop one user from reading another user's records in an app you built",
+            "A client wants a custom report that the platform cannot produce. What do you say and do",
+            "Your Bubble app slows down once a page lists a few thousand records. How do you find the cause and fix it",
+            "A customer says their test payment worked but no order appears in the app. How do you investigate",
+            "When would you tell a client to hire a developer instead of building it in a no-code tool",
+        ],
+        learning_resources=[
+            {"label": "Bubble Academy", "note": "Free official lessons covering Bubble's database, workflows and responsive design."},
+            {"label": "Webflow University", "note": "Free official video lessons on layout, the CMS, interactions and publishing."},
+            {"label": "Stripe testing documentation", "note": "Official guidance and test card numbers for trying payments safely without real money."},
+        ],
+        roadmap_outline={
+            "beginner": [
+                "Learn relational data basics: tables, fields, links between tables and unique records",
+                "Build a linked-table base in Airtable with views, forms and calculated fields",
+                "Put a simple front end on your data with Softr or Glide",
+                "Learn basic page layout: containers, spacing, breakpoints and why mobile comes first",
+            ],
+            "intermediate": [
+                "Build a CMS-driven site in Webflow with collection pages and a dynamic list",
+                "Add SEO basics: page titles, descriptions, headings, alt text and a sitemap",
+                "Measure a published page with Lighthouse and fix the biggest performance problems",
+                "Learn Bubble's editor: data types, repeating groups, workflows and conditions",
+            ],
+            "advanced": [
+                "Add user sign-up, login and privacy rules in Bubble, then test them as two different users",
+                "Take a test payment with Stripe in test mode and update the order when it succeeds",
+                "Build a mobile app screen flow in FlutterFlow and compare it with the web version",
+                "Write a limits document for each project: scale, cost, lock-in and what would need code",
+                "Scope and deliver one small project for a real or friendly client with a written brief",
+            ],
+        },
+    ),
+    dict(
+        slug="solutions-consulting", name="Solutions Consulting",
+        summary="Help customers decide whether a technical product fits their problem: run discovery, give demos, build proofs of concept, answer security questions and hand off a clear scope.",
+        beginner_summary="You'll learn to ask good discovery questions, demo a product around a customer's problem, build a small proof of concept and estimate the work to deliver it.",
+        difficulty=3, avg_timeline_weeks=30,
+        entry_roles=["Associate Solutions Consultant", "Junior Sales Engineer", "Pre-Sales Associate", "Implementation Consultant", "Customer Success Engineer"],
+        tools=["HubSpot CRM", "Salesforce", "Postman", "Loom", "Miro", "Google Sheets", "Stripe"],
+        remote_potential=70,
+        earning_notes="This is seldom a first job. People usually come from support, implementation, consulting or a technical sales development role, then move across once they can demo and scope with confidence. Many companies pay a base plus a variable part tied to the sales team's results, so look at how that is structured. Pay rises with experience in a specific product area and a record of deals you helped win.",
+        icon="presentation",
+        skills_required=["Running discovery calls that uncover the real problem and who decides", "Mapping customer needs to product features honestly, including what the product cannot do", "Demonstrating a product through a customer story rather than a feature tour", "Building small proof of concept integrations and answering security and integration questions", "Scoping work and estimating effort in hours, with clear assumptions and risks"],
+        certifications=["AWS Certified Cloud Practitioner", "AWS Certified Solutions Architect - Associate", "Salesforce Certified Platform Administrator"],
+        interview_prep=[
+            "Walk me through how you would prepare for and run a first discovery call with a company you know little about",
+            "A customer asks for a feature the product does not have. What do you say in the meeting and what do you do afterwards",
+            "Midway through a live demo the feature you are showing breaks. What do you do",
+            "A prospect's security team sends a 60 question questionnaire and you can answer only 40. How do you handle the rest",
+            "Estimate the effort to connect a customer's CRM to our product, and explain what you would need to know first",
+            "How do you hand a won deal to the delivery team so the customer does not have to repeat themselves",
+        ],
+        learning_resources=[
+            {"label": "Salesforce Trailhead", "note": "Free, hands-on modules on the CRM, including sales process and reporting."},
+            {"label": "HubSpot Academy", "note": "Free courses on CRM use, sales process and discovery conversations."},
+            {"label": "Postman Learning Center", "note": "Official free guides to building and sharing API requests and collections."},
+        ],
+        roadmap_outline={
+            "beginner": [
+                "Learn how a B2B sale works: lead, discovery, demo, proposal, close and handoff",
+                "Learn the basics of APIs, JSON and how software products connect to each other",
+                "Set up a free HubSpot CRM account and log a fictional deal with contacts and next steps",
+                "Practise explaining a technical product to a non-technical person in two minutes",
+            ],
+            "intermediate": [
+                "Write a discovery question guide and run it on a friend playing a customer, then review the recording",
+                "Pick a public product with an API and learn it well enough to demo around a customer story",
+                "Build a Postman collection that proves one integration idea, then record it with Loom",
+                "Learn the common security and compliance questions: single sign-on, encryption, data location, audit reports",
+            ],
+            "advanced": [
+                "Respond to a fictional RFP, marking each answer as yes, no, roadmap or custom work",
+                "Break a customer project into tasks and estimate hours with stated assumptions and risks",
+                "Write a handoff document that a delivery team could start from without another call",
+                "Rehearse handling objections and live demo failures, and get feedback from someone in sales",
+                "Study for AWS Certified Cloud Practitioner if cloud products are your target",
+            ],
+        },
+    ),
+    dict(
+        slug="technical-support-engineering", name="Technical Support Engineering",
+        summary="Solve hard customer problems with a technical product such as an API or SaaS app: reproduce issues, read logs, query data, write bug reports for engineers and keep upset customers informed.",
+        beginner_summary="You'll learn to reproduce a customer's problem, find the cause with browser tools, API requests and SQL, and write clear bug reports and help articles.",
+        difficulty=3, avg_timeline_weeks=28,
+        entry_roles=["Technical Support Engineer", "Support Engineer (Tier 1 or 2)", "Application Support Analyst", "Customer Support Specialist (technical product)", "Junior Developer Support Engineer"],
+        tools=["Zendesk", "Intercom", "Jira", "Postman", "curl", "Chrome DevTools", "SQL", "Git/GitHub"],
+        remote_potential=85,
+        earning_notes="Many people enter through a first-line customer support role at a software company and move up as they show they can debug. Companies selling APIs and developer tools often hire from adjacent roles and value written clarity. Pay rises with the difficulty of the product, on-call or tier 3 responsibility, and a record of fixes that saved engineering time.",
+        icon="wrench",
+        skills_required=["Reproducing a customer's issue in a clean environment", "Reading logs, HAR files and API responses to find the failing step", "Debugging API calls with Postman and curl, and inspecting data with SQL", "Writing engineering quality bug reports and escalating with the right evidence", "Writing knowledge base articles and communicating clearly with frustrated customers"],
+        certifications=[],
+        interview_prep=[
+            "A customer says our API returns a 500 error but only for some requests. What do you ask for and what do you check first",
+            "A customer is angry that the same bug has been open for two weeks. Write the first two sentences of your reply",
+            "Walk me through the contents of a bug report that an engineer would be glad to receive",
+            "You cannot reproduce a customer's problem. What do you do next",
+            "How would you use a HAR file to work out whether a failing page is a front end or a back end problem",
+            "When do you escalate to engineering, and when should you keep working on a ticket yourself",
+        ],
+        learning_resources=[
+            {"label": "Postman Learning Center", "note": "Official free guides to sending requests, reading responses and writing tests for APIs."},
+            {"label": "Chrome DevTools documentation", "note": "Official Google documentation for the Network, Console and Application panels."},
+            {"label": "SQLBolt", "note": "Free interactive lessons that teach the SQL needed to inspect and filter data."},
+        ],
+        roadmap_outline={
+            "beginner": [
+                "Learn how the web works: HTTP methods, status codes, headers, JSON and cookies",
+                "Send and read API requests with curl and Postman until status codes make sense",
+                "Learn the Network and Console panels in browser DevTools",
+                "Learn SQL SELECT, WHERE, JOIN and GROUP BY well enough to inspect a database",
+            ],
+            "intermediate": [
+                "Run an open source web product locally with Docker and break it on purpose",
+                "Capture and read a HAR file, then sanitise it before sharing",
+                "Read application logs and trace one request from the browser to the server",
+                "Practise writing a clear reply to a customer who has hit an error",
+            ],
+            "advanced": [
+                "Write a reproducible bug report with environment, steps, expected result, actual result and evidence",
+                "Escalate an issue to engineering with a short summary, impact and what you already ruled out",
+                "Turn a solved problem into a knowledge base article and a runbook another agent can follow",
+                "Set up macros, tags and a priority scheme in a free Zendesk trial and use them on sample tickets",
+                "Practise explaining a root cause to an engineer and to a customer in two different ways",
+            ],
+        },
+    ),
+]
+
+
+META = {
+    "it-service-management": dict(
+        keywords=["itsm", "itil", "itil 4", "itil foundation", "service desk", "service desk analyst", "servicenow", "servicenow administrator", "jira service management", "freshservice", "incident management", "problem management", "change management", "service catalogue", "service catalog", "cmdb", "sla", "service management"],
+        who_its_for="People who like making a messy process orderly and are happy to work through other teams, rules and measurements. You need patience for process and documentation, and the catch is that the work can feel administrative until you can show a metric that improved because of your change.",
+        portfolio_expectations=[
+            "A sample ticket dataset you generated and a metrics report on resolution time, first contact resolution and SLA breaches",
+            "A configured Jira Service Management project with a service catalogue, request types, SLA timers and queues",
+            "A ServiceNow developer instance showing configuration items, a linked incident, a problem record and a change request",
+            "A continual improvement write-up with a before and after measurement for one process change",
+        ],
+        career_progression=["Service Desk Analyst", "ITSM Analyst or ServiceNow Administrator", "Service Delivery Manager or Process Owner (change or problem)", "IT Service Manager, ITSM Platform Lead or Head of Service Management"],
+    ),
+    "no-code-development": dict(
+        keywords=["no code", "nocode", "no-code developer", "no code developer", "low code", "bubble", "bubble.io", "flutterflow", "webflow", "webflow developer", "airtable", "softr", "glide", "glide apps", "app builder", "internal tools", "visual development", "freelance web designer", "mvp builder"],
+        who_its_for="Practical builders who want to ship a working product without learning a programming language first, and many future freelancers. The catch is that platforms have real limits on scale, cost and customisation, so you need to be honest with clients about when a project outgrows no-code.",
+        portfolio_expectations=[
+            "A live Webflow site with a CMS, proper page titles and descriptions, and a Lighthouse score you improved",
+            "A Bubble or FlutterFlow app with sign-up, privacy rules and a payment taken in Stripe test mode",
+            "An Airtable base with linked tables and a Softr or Glide front end for a real use case",
+            "A limits document for each project that says what would need custom code and why",
+        ],
+        career_progression=["No-Code Developer (junior or freelance)", "No-Code Developer or Webflow/Bubble Specialist", "Senior No-Code Developer or Agency Lead", "Freelance Consultant, Product Owner or a move into software engineering"],
+    ),
+    "solutions-consulting": dict(
+        keywords=["solutions consultant", "sales engineer", "solutions engineer", "pre-sales", "presales", "pre sales engineer", "technical sales", "customer engineer", "demo engineer", "proof of concept", "poc", "rfp", "discovery call", "technical consultant", "hubspot", "salesforce"],
+        who_its_for="Technical people who enjoy talking to customers, explaining things simply and being the person in the room who connects a problem to a product. The catch is that it is customer facing, depends on communication more than depth in any one stack, and success is tied to sales outcomes you do not fully control.",
+        portfolio_expectations=[
+            "A discovery question guide with a recorded practice call and a written discovery summary",
+            "A recorded demo built around a customer story, plus a Postman collection that proves one integration",
+            "A mock RFP response with honest yes, no, roadmap and custom work answers",
+            "A scoping document with an effort estimate in hours, stated assumptions and a handoff note for delivery",
+        ],
+        career_progression=["Associate Solutions Consultant", "Solutions Consultant or Sales Engineer", "Senior Solutions Consultant", "Principal Solutions Consultant, Pre-Sales Manager or Solutions Architect"],
+    ),
+    "technical-support-engineering": dict(
+        keywords=["technical support engineer", "support engineer", "customer support engineer", "application support engineer", "application support analyst", "tier 2 support", "tier 3 support", "api support", "saas support", "developer support", "product support engineer", "escalation engineer", "zendesk", "intercom", "har file", "postman", "debugging"],
+        who_its_for="Curious problem solvers who like finding out why something broke and then explaining it clearly, including to someone who is annoyed. The catch is that the queue never ends and you are often the first to hear about problems you cannot fix yourself.",
+        portfolio_expectations=[
+            "An engineering quality bug report for a real open source issue, with steps, environment, evidence and impact",
+            "A reproduction write-up that includes a sanitised HAR file, log excerpts and the SQL used to inspect data",
+            "A knowledge base article and a runbook for a common failure in an open source product",
+            "A set of customer replies for an upset or confused customer, with a short note on why each is written the way it is",
+        ],
+        career_progression=["Technical Support Engineer (tier 1 or 2)", "Senior Technical Support Engineer", "Escalation Engineer or Support Team Lead", "Support Engineering Manager, Site Reliability Engineer or Software Engineer"],
+    ),
+}
+
+
+PROJECTS = {
+    "it-service-management": {
+        "skills": [
+            {"key": "itsm_metrics", "label": "Service Metrics and Ticket Data", "category": "foundation"},
+            {"key": "incident_request_handling", "label": "Incident and Request Management", "category": "core"},
+            {"key": "service_catalogue_sla", "label": "Service Catalogues and SLAs", "category": "core"},
+            {"key": "cmdb_and_change", "label": "CMDB and Change Management", "category": "advanced"},
+            {"key": "problem_and_improvement", "label": "Problem Management and Continual Improvement", "category": "advanced"},
+        ],
+        "skill_edges": [
+            ("itsm_metrics", "incident_request_handling"),
+            ("incident_request_handling", "service_catalogue_sla"),
+            ("service_catalogue_sla", "cmdb_and_change"),
+            ("cmdb_and_change", "problem_and_improvement"),
+        ],
+        "phases": [
+            {
+                "title": "Foundations",
+                "summary": "Generate a realistic set of service desk tickets and learn the handful of metrics every service manager is asked about, including what each one can hide.",
+                "skill_key": "itsm_metrics",
+                "projects": [
+                    {
+                        "title": "Generate a Sample Ticket Dataset and Build a Service Desk Metrics Report",
+                        "teaches": "how service desk data is structured and how to calculate resolution time, first contact resolution, SLA breach rate and satisfaction from tickets",
+                        "prerequisites": ["Python 3 installed, or a spreadsheet tool such as Google Sheets", "Basic comfort with filtering and averages in a spreadsheet"],
+                        "expected_output": "A CSV of about 300 invented tickets and a one page metrics report with charts and written findings that name one problem the data suggests and one limit of the data.",
+                        "steps": [
+                            "Write a short Python script (use the random module with a fixed seed so results repeat) that creates tickets.csv with columns: ticket_id, opened_at, resolved_at, category, priority, channel, resolved_first_contact, csat_score.",
+                            "Use five categories (Password Reset, Software Install, Hardware, Network, Access Request) and four priorities (P1 to P4), and make P1 tickets rare and slower on purpose so the data has a pattern to find.",
+                            "Make resolved_at always later than opened_at and leave about 5 percent of csat_score blank, as real surveys do.",
+                            "Open the CSV in Google Sheets and add a column for resolution hours using (resolved_at minus opened_at) times 24.",
+                            "Define SLA targets in a small table (for example P1 resolved in 4 hours, P2 in 8, P3 in 24, P4 in 72) and add a breach column that compares resolution hours with the target.",
+                            "Build a pivot table that shows ticket volume, average resolution hours, breach rate and first contact resolution rate by category and by priority.",
+                            "Make two charts, one for volume by category and one for breach rate by priority, and write three sentences under each saying what it shows.",
+                            "Add a short section called 'What these numbers hide' that gives one example, such as an average resolution time that is distorted by a few very old tickets.",
+                        ],
+                        "hints": [
+                            "Use the median as well as the average for resolution time, because a few very slow tickets can pull an average up a lot.",
+                            "First contact resolution is only meaningful if you define it up front: resolved by the first agent without being reassigned or reopened.",
+                            "Plant a story in the data, for example Access Request tickets that breach far more often, so your findings are real findings about the data you made.",
+                            "Keep the script in the project so anyone can regenerate the same CSV from the same seed.",
+                        ],
+                        "common_mistakes": [
+                            "Reporting only an average resolution time and not looking at its spread by priority.",
+                            "Counting reopened tickets as resolved first time, which inflates first contact resolution.",
+                            "Making the data perfectly clean, so nothing interesting appears and the report has nothing to say.",
+                            "Using real company or employee data instead of invented data.",
+                        ],
+                        "difficulty": 1,
+                    }
+                ],
+            },
+            {
+                "title": "Building Real Skills",
+                "summary": "Stand up a working service desk in a free tool, define what can be requested and how fast it must be answered, and prove it works by running tickets through it.",
+                "skill_key": "service_catalogue_sla",
+                "projects": [
+                    {
+                        "title": "Design a Service Catalogue with SLAs in Jira Service Management",
+                        "teaches": "how request types, queues, SLA timers and automation turn a written service catalogue into a working service desk",
+                        "prerequisites": ["The metrics project or equivalent knowledge of SLA targets", "A free Atlassian account and a Jira Service Management free plan site", "Understanding of the difference between an incident and a service request"],
+                        "expected_output": "A configured Jira Service Management project with at least six request types, SLA timers, queues, one automation rule and a short knowledge base, plus a one page service catalogue document with owners and targets.",
+                        "steps": [
+                            "Sign up for Jira Service Management on the free plan and create a project from the IT service management template.",
+                            "Write a service catalogue in a document first: for each of six services (for example New Starter Setup, Software Request, VPN Access, Password Reset, Report an Outage, Request a Laptop) record the owner, who can request it, the form fields needed and the target time.",
+                            "Create matching request types in the portal, group them sensibly, and add only the form fields you wrote down.",
+                            "Open Project settings, then SLAs, and create a time to first response goal and a time to resolution goal with different targets for each priority.",
+                            "Build queues for 'New and unassigned', 'Breaching soon' and 'Waiting for customer' using JQL filters on status and SLA fields.",
+                            "Add an automation rule, for example one that raises a ticket's priority or adds a comment when a P1 incident has had no response for 15 minutes.",
+                            "Write three knowledge base articles in the linked Confluence space and connect them so the portal suggests them while a customer types their request.",
+                            "Create ten test tickets from the portal as different request types, move them through their lifecycles and read the SLA results.",
+                        ],
+                        "hints": [
+                            "Pause the SLA clock while waiting for the customer, because otherwise your breaches measure the customer's slowness, not yours.",
+                            "Keep request type forms short, because every extra field is a reason for the customer to give up and email instead.",
+                            "Write the catalogue entry before touching the tool so you configure what you decided, not what the tool defaults to.",
+                            "Check plan limits and available features on the free plan before designing something that needs a paid feature.",
+                        ],
+                        "common_mistakes": [
+                            "Creating dozens of request types that overlap, so customers cannot tell which to choose.",
+                            "Setting an SLA target no one can meet, so every ticket breaches and the metric is ignored.",
+                            "Confusing an incident (something broke) with a service request (something asked for) and putting both in one queue.",
+                            "Building automation before testing the manual flow end to end.",
+                        ],
+                        "difficulty": 3,
+                    }
+                ],
+            },
+            {
+                "title": "Advanced Practice",
+                "summary": "Model a small business's services in a CMDB, then run an incident through problem and change management on a ServiceNow developer instance and record the improvement.",
+                "skill_key": "cmdb_and_change",
+                "projects": [
+                    {
+                        "title": "Run Incident, Problem and Change Records Through a ServiceNow CMDB",
+                        "teaches": "how configuration items, incidents, problems and changes link together in a real ITSM platform and how a recurring fault becomes a controlled fix",
+                        "prerequisites": ["Completed a service catalogue and SLA project", "A free ServiceNow Personal Developer Instance from the ServiceNow developer site", "Familiarity with ITIL 4 incident, problem and change practices"],
+                        "expected_output": "A ServiceNow developer instance holding a small CMDB, five related incidents, one problem with a known error record, one approved change and a written post implementation review that compares incident counts before and after.",
+                        "steps": [
+                            "Request a Personal Developer Instance from the ServiceNow developer site and log in as the admin user.",
+                            "Create a business service called 'Customer Web Shop' and three configuration items (a web server, a database server, a load balancer) with relationships showing what depends on what.",
+                            "Open five incidents over a simulated month that all describe the same symptom (for example the shop is slow at 9am), each linked to the affected configuration item with a priority and a resolution note.",
+                            "From the incident list, create a problem record, link all five incidents to it, and record the investigation steps and the root cause (for example a database backup job that runs at 9am).",
+                            "Record a known error with a workaround so the service desk can resolve future incidents faster while the fix is pending.",
+                            "Raise a normal change request to move the backup job to 2am, fill in the risk assessment, implementation plan, back out plan and test plan, and move it through approval.",
+                            "Write a short CAB (change advisory board) agenda with the change on it and a decision with reasons, then close the change as successful.",
+                            "Add a continual improvement entry and a post implementation review stating how many incidents the problem caused before the change and how many occurred afterward, using further test incidents.",
+                        ],
+                        "hints": [
+                            "Developer instances can hibernate after a period of inactivity, so log in again to wake yours and keep your work.",
+                            "Use the platform's own tables and forms instead of customising them, because that is what an admin exam and a real job will ask about first.",
+                            "A back out plan should be specific enough that someone else could follow it at night without calling you.",
+                            "Write the root cause as a cause, not a symptom: 'the backup job competes for database disk' not 'the shop is slow'.",
+                        ],
+                        "common_mistakes": [
+                            "Opening a problem record for a single incident instead of a pattern.",
+                            "Treating the workaround as the permanent fix and never closing the problem.",
+                            "Skipping the back out plan, risk assessment or testing evidence on the change record.",
+                            "Building a huge CMDB with every item you can think of, instead of a small accurate one tied to a business service.",
+                        ],
+                        "difficulty": 5,
+                    }
+                ],
+            },
+        ],
+    },
+    "no-code-development": {
+        "skills": [
+            {"key": "nocode_data_modelling", "label": "Data Modelling in a No-Code Database", "category": "foundation"},
+            {"key": "front_end_portals", "label": "Front Ends on Existing Data", "category": "core"},
+            {"key": "cms_sites_seo", "label": "CMS Sites, SEO and Performance", "category": "core"},
+            {"key": "app_logic_auth", "label": "App Logic, Authentication and Privacy Rules", "category": "advanced"},
+            {"key": "payments_and_limits", "label": "Payments and Platform Limits", "category": "advanced"},
+        ],
+        "skill_edges": [
+            ("nocode_data_modelling", "front_end_portals"),
+            ("front_end_portals", "cms_sites_seo"),
+            ("cms_sites_seo", "app_logic_auth"),
+            ("app_logic_auth", "payments_and_limits"),
+        ],
+        "phases": [
+            {
+                "title": "Foundations",
+                "summary": "Learn to think in tables and links by modelling a real situation in Airtable, then show part of it to users through a simple front end.",
+                "skill_key": "nocode_data_modelling",
+                "projects": [
+                    {
+                        "title": "Model a Community Tool Library in Airtable and Publish a Softr Portal",
+                        "teaches": "relational data modelling with linked records, rollups and views, and how a front end tool reads from a base",
+                        "prerequisites": ["A free Airtable account", "A free Softr account", "A written list of what a small tool lending library needs to track"],
+                        "expected_output": "An Airtable base with Tools, Members and Loans tables, a working form for new loans, and a Softr portal that lists only available tools with a detail page for each.",
+                        "steps": [
+                            "On paper list what the library tracks: tools, members, and each time a member borrows a tool. Decide which items are separate tables (Tools, Members, Loans) rather than columns.",
+                            "Create the three tables in Airtable. In Loans, add linked record fields to Tools and Members, plus Date Out, Due Date and Returned (checkbox).",
+                            "Add a formula field in Loans called Overdue that is true when the loan is not returned and the due date has passed.",
+                            "In Tools, add a rollup that counts unreturned loans, and a formula field Available that is true when that count is 0.",
+                            "Create a grid view filtered to overdue loans and a form view that members could use to request a loan.",
+                            "Enter 15 tools, 6 members and 12 loans, including two overdue ones and one tool currently on loan, to test your formulas.",
+                            "Connect the base to Softr, build a list page of tools filtered to Available is true, and add a detail page showing the description and photo.",
+                            "Publish the portal, open it in a private browser window, and confirm that borrowed tools do not appear and that member email addresses are not visible.",
+                        ],
+                        "hints": [
+                            "If you find yourself typing the same value many times in a column, it probably wants to be its own table.",
+                            "Name fields the way a user would say them, because those names appear in the front end.",
+                            "Check what a Softr page exposes by default, and hide fields such as email addresses that visitors should not see.",
+                            "Test formulas with edge cases such as a loan due today and a tool with two loans, one returned and one not.",
+                        ],
+                        "common_mistakes": [
+                            "Putting everything in one wide table, then fighting duplicate data later.",
+                            "Using text fields where a linked record or select field would keep values consistent.",
+                            "Publishing a front end without checking which fields visitors can actually see.",
+                            "Entering only perfect test data, so the formulas are never proven.",
+                        ],
+                        "difficulty": 1,
+                    }
+                ],
+            },
+            {
+                "title": "Building Real Skills",
+                "summary": "Build a site with dynamic content in Webflow, then make it findable and fast, which is the work most paying no-code clients actually want done.",
+                "skill_key": "cms_sites_seo",
+                "projects": [
+                    {
+                        "title": "Build a CMS-Driven Webflow Site for a Local Business and Fix Its Lighthouse Score",
+                        "teaches": "Webflow layout, collections and dynamic templates, responsive breakpoints, on-page SEO and measured performance work",
+                        "prerequisites": ["A free Webflow account", "Completed an Airtable or other data modelling project", "A made-up or friendly local business, such as a bakery or bike repair shop, with a short brief"],
+                        "expected_output": "A published Webflow site with a Home page, a CMS collection (such as Services or Menu items) with a dynamic list and a template page, responsive layouts at tablet and phone widths, and a before and after Lighthouse report.",
+                        "steps": [
+                            "Write a half page brief: the business, its three main customer goals (for example see prices, find opening hours, book) and the pages needed.",
+                            "Create a new Webflow project, set up site-wide styles for headings, body text and colours, and build a navbar and footer once so every page reuses them.",
+                            "Create a CMS collection called Services with fields for name, slug, short description, price, image and category, and add at least eight items.",
+                            "Add a dynamic list to the Home page that shows three featured services, and design the Services collection template page that fills itself from each item.",
+                            "Check the layout at tablet, mobile landscape and mobile portrait breakpoints and fix anything that overflows or becomes hard to tap.",
+                            "Set a unique page title and meta description for every page and for the collection template using CMS fields, and write alt text for every image.",
+                            "Publish the site, then run Chrome DevTools Lighthouse in an incognito window and save the Performance, Accessibility and SEO scores.",
+                            "Fix the three biggest issues Lighthouse reports (typically oversized images, missing alt text or unused fonts), republish, run Lighthouse again and write a short before and after summary.",
+                        ],
+                        "hints": [
+                            "Compress and size images before upload, because large images are the most common cause of a slow no-code site.",
+                            "Use classes and a clear naming scheme from the start, as one page is easy to edit and fifteen are not.",
+                            "Check current plan limits for CMS items and publishing before you design the site, so the build matches what the plan allows.",
+                            "Run Lighthouse in an incognito window so extensions do not change the score.",
+                        ],
+                        "common_mistakes": [
+                            "Designing at desktop width only and checking phones last-minute.",
+                            "Using the same title and description on every page.",
+                            "Making each service its own hand-built page rather than using a CMS template.",
+                            "Chasing a perfect score instead of fixing the few issues that matter.",
+                        ],
+                        "difficulty": 3,
+                    }
+                ],
+            },
+            {
+                "title": "Advanced Practice",
+                "summary": "Build an app where different users must see different data and pay for something, then test that it is secure and write down honestly where the platform runs out.",
+                "skill_key": "payments_and_limits",
+                "projects": [
+                    {
+                        "title": "Build a Paid Booking App in Bubble with Privacy Rules and Stripe Test Mode",
+                        "teaches": "user accounts, privacy rules, workflows and payment handling in a visual app builder, plus how to test and document its limits",
+                        "prerequisites": ["A free Bubble account", "A free Stripe account with test mode turned on", "A data model sketched for a simple booking app, such as tutoring sessions or a hired meeting room"],
+                        "expected_output": "A working Bubble app where hosts create listings and customers sign up, book and pay with a Stripe test card, with privacy rules that stop users seeing each other's bookings, and a one page limits document.",
+                        "steps": [
+                            "Create data types in Bubble: Listing (title, price, host, description), Booking (listing, customer, date, status) and extend User with a role field.",
+                            "Build pages for sign up, log in, a list of listings, a booking form and a My Bookings page, using a repeating group that searches only the current user's bookings.",
+                            "Open the Data tab, go to Privacy, and add rules so a Booking can be seen only by its customer and the host of its listing, and a User's email can be seen only by that user.",
+                            "Install the Stripe plugin, add your test mode API keys, and add a workflow on the booking button that opens a Stripe test checkout.",
+                            "Pay with the Stripe test card number 4242 4242 4242 4242, any future expiry date and any three digit security code, then confirm the booking status changes from Pending to Paid in a workflow that runs after success.",
+                            "Log in as two different test users in separate browser profiles and try to see, edit and delete each other's bookings, including by changing a URL parameter.",
+                            "Preview on a phone-width screen and fix layouts that break, then use the step by step debugger to trace one failed workflow and fix it.",
+                            "Write a limits document: what happens when listings reach thousands, how the Bubble plan and Stripe fees would affect cost, what would be hard to move off Bubble, and what you would hand to a developer.",
+                        ],
+                        "hints": [
+                            "Privacy rules are your real security. Hiding a button or an element on a page does not stop a user from reaching the data.",
+                            "Search on the server side with constraints instead of loading everything and filtering on the page, or the page will slow as data grows.",
+                            "Use a backend workflow, not the page, for anything that must change data even if the user closes the tab.",
+                            "Use Stripe's other test cards (for a declined payment) to prove your app handles failure too.",
+                        ],
+                        "common_mistakes": [
+                            "Leaving the default privacy setting that lets anyone read all data.",
+                            "Marking a booking as paid when the button is clicked instead of when Stripe confirms payment.",
+                            "Using live Stripe keys while building.",
+                            "Testing only as the owner of the app, so privacy mistakes are never seen.",
+                        ],
+                        "difficulty": 5,
+                    }
+                ],
+            },
+        ],
+    },
+    "solutions-consulting": {
+        "skills": [
+            {"key": "discovery_questioning", "label": "Discovery and Needs Mapping", "category": "foundation"},
+            {"key": "demo_craft", "label": "Demonstrating a Product Around a Customer Story", "category": "core"},
+            {"key": "poc_integration", "label": "Proof of Concept and API Integration", "category": "core"},
+            {"key": "security_rfp_answers", "label": "Security Questions and RFP Responses", "category": "advanced"},
+            {"key": "scoping_estimation", "label": "Scoping, Estimation and Handoff", "category": "advanced"},
+        ],
+        "skill_edges": [
+            ("discovery_questioning", "demo_craft"),
+            ("demo_craft", "poc_integration"),
+            ("poc_integration", "security_rfp_answers"),
+            ("security_rfp_answers", "scoping_estimation"),
+        ],
+        "phases": [
+            {
+                "title": "Foundations",
+                "summary": "Practise the part of the job that decides everything else: asking questions that reveal the real problem, and recording what you learned in a CRM.",
+                "skill_key": "discovery_questioning",
+                "projects": [
+                    {
+                        "title": "Run a Mock Discovery Call and Log It in HubSpot CRM",
+                        "teaches": "how to prepare discovery questions, listen for pain, impact and decision process, and turn a call into a clear CRM record",
+                        "prerequisites": ["A free HubSpot CRM account", "A friend or study partner willing to play the customer for 30 minutes", "A public product with a free tier chosen to sell, such as Trello"],
+                        "expected_output": "A discovery question guide, a recording of a 30 minute mock call, a one page discovery summary that maps needs to product features, and a HubSpot record with company, contact, deal and next steps.",
+                        "steps": [
+                            "Choose the public product (for example Trello) and spend an hour using its free tier so you can say what it does and does not do.",
+                            "Write a fictional customer brief for your partner: a 12 person events company that tracks tasks in email and spreadsheets and misses deadlines, with a hidden second problem you do not know about.",
+                            "Write a discovery guide with questions on current process, what it costs them when it fails, who else is involved, what they have tried, how they would decide and by when.",
+                            "Run the 30 minute call over Zoom or Google Meet and record it with your partner's permission, asking at least five open questions and no pitch.",
+                            "Watch the recording and count how long you talked compared with the customer, and note any moment where you answered a question you had not yet understood.",
+                            "Write a one page discovery summary with sections: situation, problems, impact, stakeholders, timeline, and a table mapping each need to a product feature, or to 'not covered'.",
+                            "Create the company, contact and deal in HubSpot CRM, set a deal stage, add your summary as a note and schedule the next step as a task with a date.",
+                            "Ask your partner what they would have wanted you to ask, and add those questions to your guide.",
+                        ],
+                        "hints": [
+                            "Aim for the customer to speak for most of the call. If you are talking more than half the time, you are pitching.",
+                            "Ask 'what happens when that goes wrong' to get the impact in the customer's own words.",
+                            "Write 'not covered' in the mapping table when it is true. It builds trust and tells delivery or product something useful.",
+                            "Frameworks such as MEDDICC or BANT are useful checklists, but do not read them out like a form.",
+                        ],
+                        "common_mistakes": [
+                            "Starting the demo or pitch before you understand the problem.",
+                            "Asking closed questions that get one word answers.",
+                            "Leaving the CRM note vague, such as 'good call, follow up soon'.",
+                            "Mapping every need to a feature, even where the product does not fit.",
+                        ],
+                        "difficulty": 1,
+                    }
+                ],
+            },
+            {
+                "title": "Building Real Skills",
+                "summary": "Turn what you learned in discovery into a short demo and a working API proof of concept, the two assets that most often move a technical buyer forward.",
+                "skill_key": "poc_integration",
+                "projects": [
+                    {
+                        "title": "Build a Story-Led Demo and Postman Proof of Concept Against the Trello API",
+                        "teaches": "how to demo around a customer problem and prove an integration idea quickly with an API collection",
+                        "prerequisites": ["A completed discovery summary", "A free Trello account and API key and token from Trello's developer pages", "A free Postman account and a free Loom account"],
+                        "expected_output": "A Loom recording of a demo of ten minutes or less, a Postman collection with environment variables that creates a board, lists and cards through the Trello REST API, and a one page demo script with an objection handling list.",
+                        "steps": [
+                            "Reread your discovery summary and choose the one problem to demo, for example 'no one can see which event tasks are late'.",
+                            "Write a demo script on one page: the problem in the customer's words, the three product moments that solve it, and a closing line that asks for a next step.",
+                            "In Postman create a collection called 'Trello POC', store your key, token and board ID as environment variables, and send a GET request to list your boards.",
+                            "Add requests to create a board, create three lists named To Do, Doing and Done, and create five cards in the To Do list, using the response from each request as input to the next.",
+                            "Add a test script in each request that checks the status code is 200 and the returned name matches what you sent, and run the whole collection with the Collection Runner.",
+                            "Record the demo in Loom: start with the customer's problem, show the product, then show the Postman run as proof that tasks can be created automatically from another system.",
+                            "Write down eight objections a customer might raise (for example price, security, 'we already use spreadsheets') with an honest one or two sentence answer each.",
+                            "Watch your recording at 1.5 speed and cut anything that is a feature tour rather than the customer's story.",
+                        ],
+                        "hints": [
+                            "Show the result before the explanation. People remember the card appearing on the board, not the settings screen.",
+                            "Keep your API key out of any shared collection or recording by using environment variables and hiding your screen when you paste it.",
+                            "Prepare a backup, such as a short recording or screenshots, in case a live demo fails.",
+                            "Know your proof of concept's limits and say them aloud, for example 'this is a prototype, not production code'.",
+                        ],
+                        "common_mistakes": [
+                            "Walking through every menu instead of telling one story.",
+                            "Showing real API keys or tokens in a recording or shared collection.",
+                            "Letting a proof of concept imply the integration is finished and supported.",
+                            "Having no answer prepared for a pricing or security question.",
+                        ],
+                        "difficulty": 3,
+                    }
+                ],
+            },
+            {
+                "title": "Advanced Practice",
+                "summary": "Answer a request for proposal as a pre-sales consultant would, including security questions, an hours estimate and a handoff that a delivery team can use.",
+                "skill_key": "scoping_estimation",
+                "projects": [
+                    {
+                        "title": "Answer a Mock RFP, Estimate the Effort in Hours and Write a Delivery Handoff",
+                        "teaches": "how to answer a structured buyer questionnaire honestly, estimate work with assumptions and risks, and hand a won deal to delivery",
+                        "prerequisites": ["A completed demo and proof of concept project", "Familiarity with the public product you are using, including its public security and documentation pages", "A Google Sheet for the estimate"],
+                        "expected_output": "A fictional RFP of about 20 questions with honest answers marked yes, no, roadmap or custom work, a security answer sheet, an hours estimate with assumptions and risks, and a two page delivery handoff.",
+                        "steps": [
+                            "Write a fictional RFP from a 200 person company wanting a task management tool connected to its CRM and its single sign-on, with 20 questions across functionality, integration, security, support and implementation.",
+                            "Answer each question using only what the product's public documentation and trust or security page say. Mark every answer yes, no, roadmap or custom work, and write 'to confirm with our security team' when you do not know.",
+                            "Add a security answer sheet covering single sign-on, data encryption, data location, audit reports and the product's own public statements, quoting where each answer comes from.",
+                            "List the delivery work as tasks (kick-off, configuration, CRM integration, single sign-on setup, data import, training, testing, go-live support) and estimate each in hours in a Google Sheet.",
+                            "Add a column for assumptions (for example 'customer provides test accounts within a week') and a separate list of risks with what each would add to the hours if it happened.",
+                            "Produce a low, expected and high total, and write two sentences explaining why the range exists rather than one fixed number.",
+                            "Write a two page delivery handoff: customer goals in their words, what was promised, what was explicitly not promised, contacts and their roles, the proof of concept link and open questions.",
+                            "Ask someone with delivery or project experience to review the estimate and the handoff and note the items they would change.",
+                        ],
+                        "hints": [
+                            "A 'no' that is honest and followed by a workaround is more credible than a vague 'yes'.",
+                            "Never invent security claims, certifications or roadmap commitments. Mark them for confirmation.",
+                            "Estimate in hours, not prices, and give a range, because price is a commercial decision for the account team.",
+                            "Write 'not included' lines in the handoff as carefully as the included ones, because scope disputes start there.",
+                        ],
+                        "common_mistakes": [
+                            "Answering yes to anything that is nearly true.",
+                            "Giving a single precise estimate with no assumptions.",
+                            "Forgetting testing, training and data migration in the estimate.",
+                            "Handing off with only a deal value and a contact name.",
+                        ],
+                        "difficulty": 5,
+                    }
+                ],
+            },
+        ],
+    },
+    "technical-support-engineering": {
+        "skills": [
+            {"key": "http_api_debugging", "label": "HTTP and API Debugging", "category": "foundation"},
+            {"key": "browser_log_analysis", "label": "Browser, HAR and Log Analysis", "category": "core"},
+            {"key": "sql_data_inspection", "label": "Inspecting Data with SQL", "category": "core"},
+            {"key": "bug_reports_escalation", "label": "Bug Reports and Escalation", "category": "advanced"},
+            {"key": "kb_and_customer_comms", "label": "Knowledge Base Writing and Customer Communication", "category": "advanced"},
+        ],
+        "skill_edges": [
+            ("http_api_debugging", "browser_log_analysis"),
+            ("browser_log_analysis", "sql_data_inspection"),
+            ("sql_data_inspection", "bug_reports_escalation"),
+            ("bug_reports_escalation", "kb_and_customer_comms"),
+        ],
+        "phases": [
+            {
+                "title": "Foundations",
+                "summary": "Learn to read what an API is telling you by sending requests with curl and Postman against public test services and explaining each failure in plain terms.",
+                "skill_key": "http_api_debugging",
+                "projects": [
+                    {
+                        "title": "Diagnose Six Failing API Calls with curl and Postman",
+                        "teaches": "how HTTP methods, status codes, headers and request bodies identify the cause of an API failure",
+                        "prerequisites": ["curl installed (included on macOS, Linux and current Windows) and a free Postman account", "Basic understanding of what an API is and what JSON looks like"],
+                        "expected_output": "A diagnosis table covering six failing requests, each with the command used, the observed response, the cause, the fix and a customer-ready reply of two or three sentences.",
+                        "steps": [
+                            "Use the public Swagger Petstore API and the httpbin.org test service as your products; no account or customer data is needed.",
+                            "Send a GET to a pet ID that does not exist with `curl -i`, and record the status code and body that come back.",
+                            "Send a POST to create a pet with the Content-Type header missing or set wrongly, using `curl -i -X POST`, and record the status and what the server says about the media type.",
+                            "Send a DELETE without the required api_key header and then with it, and note how the response differs.",
+                            "Request https://httpbin.org/status/500 and https://httpbin.org/status/429, and write what each status code means for a customer and who is likely responsible for fixing it.",
+                            "Request https://httpbin.org/delay/5 with `curl --max-time 2` to produce a timeout and explain the difference between a timeout and an error response.",
+                            "Repeat two of the failing calls in Postman and use the Console (View, then Show Postman Console) to compare what Postman sent against what curl sent.",
+                            "Fill in your table with all six cases and write each customer reply, with a first line that tells them what you found.",
+                        ],
+                        "hints": [
+                            "Use `curl -v` when you need to see the request headers you sent, not only the response.",
+                            "A 4xx code usually means the request was wrong, while a 5xx usually means the server failed, but confirm this against what the body says.",
+                            "Record what you actually see rather than what you expect, because test services sometimes behave differently from the docs.",
+                            "Write the customer reply last, once you can say the cause in one sentence.",
+                        ],
+                        "common_mistakes": [
+                            "Reading only the status code and ignoring the response body, which often names the exact field at fault.",
+                            "Assuming every 500 is the product's bug, when some are caused by bad input the server did not validate.",
+                            "Pasting an API key into a ticket or shared collection.",
+                            "Replying with a status code and no explanation.",
+                        ],
+                        "difficulty": 1,
+                    }
+                ],
+            },
+            {
+                "title": "Building Real Skills",
+                "summary": "Reproduce a problem in a real open source web application, collect evidence from the browser and the server, and confirm it with a database query.",
+                "skill_key": "browser_log_analysis",
+                "projects": [
+                    {
+                        "title": "Investigate a Broken Page in Gitea Using a HAR File, Logs and SQL",
+                        "teaches": "how to combine browser network evidence, server logs and a database query to find where a request goes wrong",
+                        "prerequisites": ["Completed the API debugging project", "Docker Desktop or Docker Engine installed", "The sqlite3 command line tool and basic SQL SELECT and WHERE"],
+                        "expected_output": "A write-up of one reproduced fault in a local Gitea instance, with a sanitised HAR file, the relevant lines from the server log, the SQL query and result that confirm the data state, and a short customer reply.",
+                        "steps": [
+                            "Start Gitea with `docker run -d --name gitea -p 3000:3000 gitea/gitea` (Gitea is an open source Git service) and complete the install page, choosing SQLite as the database.",
+                            "Register a test user, create a repository, then trigger an error you can repeat, such as creating a second repository with the same name or opening the URL of a repository that does not exist.",
+                            "Open Chrome DevTools, go to the Network tab, tick Preserve log and repeat the failing action, then find the request with the failing status code and read its request headers, response headers and body.",
+                            "Right-click in the Network tab and choose 'Save all as HAR with content', then open the file in a text editor and find the same failing request in the JSON.",
+                            "Sanitise the HAR file by removing cookie, authorization and set-cookie values, and any real names, before saving a shareable copy.",
+                            "Run `docker logs gitea` and find the log lines from the time of the failure, noting the request path, status and any error text.",
+                            "Open a shell with `docker exec -it gitea sh`, run `sqlite3 /data/gitea/gitea.db` and query the repository table, for example `SELECT id, owner_id, name FROM repository;`, to confirm what data exists.",
+                            "Write up the investigation as: symptom, environment and version, steps to reproduce, evidence (HAR line, log line, query result), cause and a customer-ready reply.",
+                        ],
+                        "hints": [
+                            "Check the Gitea version on the page footer and record it, because 'it fails' is not enough without a version.",
+                            "Preserve log keeps requests when the page reloads or redirects, which is when the interesting failure often disappears.",
+                            "Use a read-only query only, and run it against your own test data, never against anything real.",
+                            "If the database path differs, search inside the container with `find /data -name '*.db'`.",
+                        ],
+                        "common_mistakes": [
+                            "Sharing an unsanitised HAR file that contains session cookies or tokens.",
+                            "Looking only at the browser and never at the server log, or the other way round.",
+                            "Changing several things at once while reproducing, so the cause is unclear.",
+                            "Running write or delete SQL statements to 'test' something.",
+                        ],
+                        "difficulty": 3,
+                    }
+                ],
+            },
+            {
+                "title": "Advanced Practice",
+                "summary": "Take a real open source bug from first report to a finished escalation package, including a customer reply and the help articles that stop the next customer from needing you.",
+                "skill_key": "bug_reports_escalation",
+                "projects": [
+                    {
+                        "title": "Write a Bug Report, Escalation, Customer Reply and Runbook for an Open Source Issue",
+                        "teaches": "how to turn a reproduced fault into an engineering quality bug report, an escalation, a calm customer reply and reusable support documents",
+                        "prerequisites": ["Completed the browser, HAR and SQL project", "A free Jira account", "A free Zendesk trial or another free help desk for macros and a sample ticket"],
+                        "expected_output": "A complete package for one real, reproducible bug: a Jira bug ticket, a short escalation message, a reply to an upset customer, a knowledge base article with a workaround, and a runbook for triaging that class of fault.",
+                        "steps": [
+                            "Browse the public issue tracker of an open source product you can run locally (for example Gitea) and choose a confirmed bug with clear steps and a version where it still happens.",
+                            "Reproduce it on that exact version in Docker and record the environment (version, browser, operating system), the exact steps and what you saw each time you tried.",
+                            "Write the bug in a free Jira project with sections for summary, environment, steps to reproduce, expected result, actual result, frequency, impact, workaround, and attached evidence such as a log excerpt or screenshot.",
+                            "Set severity and priority separately and write one sentence explaining each choice.",
+                            "Write a short escalation message to the imagined engineering team stating what is broken, who is affected, what you already ruled out, the ticket link and what decision or help you need.",
+                            "In a free Zendesk trial, create a sample ticket from an invented upset customer who has waited two weeks and write your reply: acknowledge, state what is known, state what happens next and when you will update them.",
+                            "Write a knowledge base article with symptom, cause, workaround, the version that fixes it and when to contact support, and add a saved reply or macro based on it.",
+                            "Write a runbook for the first 15 minutes of triaging any 5xx error in the product, listing what to ask for, what to check and when to escalate.",
+                            "Do not add comments to the real tracker unless you have a genuinely new, accurate piece of information such as a more precise reproduction.",
+                        ],
+                        "hints": [
+                            "Engineers read the summary line and steps first. Make both short and exact enough to follow without asking you anything.",
+                            "Say what you do not know in the report, and what you already tried, so no one repeats your work.",
+                            "In the customer reply, apologise once for the experience, then spend the rest of the reply on facts and next steps.",
+                            "Test the knowledge base article by following it yourself from a clean install.",
+                        ],
+                        "common_mistakes": [
+                            "Writing a bug report that says 'it does not work' without steps or version.",
+                            "Escalating without evidence, so engineering sends the ticket back.",
+                            "Promising the customer a fix date you do not control.",
+                            "Using real customer data, or copying the public issue's wording instead of reproducing it yourself.",
+                        ],
+                        "difficulty": 5,
+                    }
+                ],
+            },
+        ],
+    },
+}

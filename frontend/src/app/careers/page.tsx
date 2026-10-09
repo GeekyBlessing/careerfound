@@ -26,7 +26,7 @@ const DIFFICULTY_FILTERS: { key: DifficultyFilter; label: string; test: (d: numb
 
 const chipClass = (active: boolean) =>
   cn(
-    "focus-ring whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-medium transition-all duration-150 ease-smooth active:translate-y-px",
+    "focus-ring max-w-full rounded-full text-left border px-3 py-1.5 text-xs font-medium transition-all duration-150 ease-smooth active:translate-y-px",
     active
       ? "border-accent/40 bg-accent/15 text-accent-light shadow-xs"
       : "border-[rgb(var(--fg-tint)/0.1)] text-ink-400 hover:border-[rgb(var(--fg-tint)/0.2)] hover:bg-[rgb(var(--fg-tint)/0.04)]"
@@ -93,7 +93,7 @@ export default function CareersListPage() {
               ? `${paths.length} careers across ${CAREER_CATEGORIES.length} fields, one honest assessment to find yours`
               : "Tech careers, one honest assessment to find yours"
           }
-          description="Every career is a path of its own, with its own skills, tools, projects and roadmap. Use the field filters to narrow the list, or take the assessment for a recommendation."
+          description="Every career is a path of its own, with its own skills, tools, projects and roadmap. A career sits in one field, and its page links to the neighbouring careers in other fields. Use the filters to narrow the list, or take the assessment for a recommendation."
         />
 
         {paths && (
@@ -103,7 +103,7 @@ export default function CareersListPage() {
               <Input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search careers, skills, tools or roles (try AWS, Python or Figma)"
+                placeholder="Search careers, tools or job titles"
                 aria-label="Search careers"
                 className="pl-8"
               />
@@ -126,6 +126,12 @@ export default function CareersListPage() {
               ))}
             </div>
           </div>
+        )}
+
+        {paths && (
+          <p className="mx-auto mt-4 max-w-4xl text-xs text-ink-500" aria-live="polite">
+            Showing {visible.length} of {paths.length} careers
+          </p>
         )}
 
         {error && <Alert className="mx-auto mt-10 max-w-lg">{error}</Alert>}
@@ -172,7 +178,9 @@ export default function CareersListPage() {
                     <span className="min-w-0">
                       <span className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
                         <span className="font-display text-xl font-semibold tracking-tight text-ink-100 group-hover:text-accent-light">{path.name}</span>
-                        <span className="font-mono text-[10px] uppercase tracking-wide text-ink-500">{path.category_label}</span>
+                        {path.category_label.toLowerCase() !== path.name.toLowerCase() && (
+                          <span className="font-mono text-[10px] uppercase tracking-wide text-ink-500">{path.category_label}</span>
+                        )}
                       </span>
                       <span className="mt-1.5 block text-sm leading-relaxed text-ink-400">{path.summary}</span>
                       {matchedOn && <span className="mt-1 block text-xs text-accent-light">Matches: {matchedOn}</span>}
@@ -185,6 +193,9 @@ export default function CareersListPage() {
                     <span className="flex flex-col items-end gap-2 pt-1.5">
                       <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-wide text-ink-500">
                         <DifficultyMeter level={path.difficulty} /> {path.difficulty}/5
+                      </span>
+                      <span className="font-mono text-[10px] uppercase tracking-wide text-ink-500">
+                        {path.depth === "full" ? "Full curriculum" : "Guided path"}
                       </span>
                       <ArrowRight className="h-3.5 w-3.5 text-ink-500 transition-transform group-hover:translate-x-0.5 group-hover:text-accent-light" />
                     </span>

@@ -147,9 +147,13 @@ const CATALOGUE: {
 
 // Non-null: CATALOGUE is a fixed, non-empty literal defined immediately
 // above, so the first entry is always present.
-// Listed in the catalogue's own order, so the numbered rows read 01, 02, 03
-// and the spotlight is the career the Project Lab is built around.
-CATALOGUE.sort((a, b) => CAREER_ORDER.indexOf(a.slug) - CAREER_ORDER.indexOf(b.slug));
+// The spotlight is the career the Project Lab is built around; the rest follow
+// the catalogue's own order. Rows are numbered by their place in this sample.
+const SPOTLIGHT_SLUG = "cybersecurity";
+CATALOGUE.sort((a, b) => {
+  const rank = (slug: string) => (slug === SPOTLIGHT_SLUG ? -1 : CAREER_ORDER.indexOf(slug));
+  return rank(a.slug) - rank(b.slug);
+});
 const FEATURED_CAREER = CATALOGUE[0]!;
 const SECONDARY_CAREERS = CATALOGUE.slice(1, 4);
 
@@ -378,7 +382,7 @@ export default function LandingPage() {
                 className="card-interactive group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-accent/25 bg-accent/10 p-8 sm:p-10"
               >
                 <span aria-hidden="true" className="scene-figure pointer-events-none absolute -bottom-6 -right-2 text-[9rem] text-accent-light">
-                  {String(CAREER_ORDER.indexOf(FEATURED_CAREER.slug) + 1).padStart(2, "0")}
+                  01
                 </span>
                 <div className="relative">
                   <FEATURED_CAREER.icon className="h-9 w-9 text-accent-light" />
@@ -438,7 +442,7 @@ export default function LandingPage() {
                     aria-hidden="true"
                     className="pointer-events-none absolute -right-4 top-1/2 hidden h-32 w-32 -translate-y-1/2 rotate-6 text-accent-light opacity-0 transition-all duration-300 ease-smooth group-hover:opacity-[0.07] group-hover:rotate-0 lg:block"
                   />
-                  <span className="font-display text-2xl text-ink-500 sm:text-3xl">{String(CAREER_ORDER.indexOf(c.slug) + 1).padStart(2, "0")}</span>
+                  <span className="font-display text-2xl text-ink-500 sm:text-3xl">{String(CATALOGUE.indexOf(c) + 1).padStart(2, "0")}</span>
                   <div className="relative min-w-0">
                     <div className="flex items-center gap-2.5">
                       <c.icon className="h-4 w-4 flex-shrink-0 text-accent-light" />

@@ -21,7 +21,7 @@ INTERESTS: dict[str, tuple[str, dict[str, int]]] = {
     "puzzles": (
         "Solving puzzles and debugging",
         {"cybersecurity": 4, "security-operations": 4, "penetration-testing": 4, "backend-engineering": 4,
-         "software-engineering": 4, "qa-engineering": 4},
+         "software-engineering": 4, "qa-engineering": 6},
     ),
     "interfaces": (
         "Designing how things look and feel",
@@ -48,7 +48,7 @@ INTERESTS: dict[str, tuple[str, dict[str, int]]] = {
     ),
     "ai": (
         "Teaching machines to do useful things",
-        {"ai-engineering": 8, "data-science": 6, "data-engineering": 3},
+        {"ai-engineering": 7, "data-science": 6, "data-engineering": 3},
     ),
     "writing": (
         "Explaining complicated ideas clearly",
@@ -60,7 +60,7 @@ INTERESTS: dict[str, tuple[str, dict[str, int]]] = {
     ),
     "automation": (
         "Automating repetitive work",
-        {"no-code-automation": 8, "devops-engineering": 5, "qa-engineering": 4, "it-support": 2},
+        {"workflow-automation": 10, "devops-engineering": 4, "qa-engineering": 4, "it-support": 2},
     ),
 }
 
@@ -81,7 +81,7 @@ STRENGTHS: dict[str, tuple[str, dict[str, int]]] = {
     ),
     "detail": (
         "Attention to detail",
-        {"qa-engineering": 5, "data-analysis": 3, "cybersecurity": 3, "security-operations": 3,
+        {"qa-engineering": 7, "data-analysis": 3, "cybersecurity": 3, "security-operations": 3,
          "technical-writing": 2},
     ),
     "numbers": (
@@ -114,9 +114,66 @@ TECH_INTERESTS: dict[str, tuple[str, dict[str, int]]] = {
                               "cloud-security": 4}),
     "data": ("Data and analytics", {"data-analysis": 6, "data-science": 4, "data-engineering": 5}),
     "design": ("Design tools", {"ui-ux-design": 6, "product-design": 5, "graphic-design": 5}),
-    "automation": ("Automation and no-code", {"no-code-automation": 7, "devops-engineering": 3,
-                                                "it-support": 2}),
+    "automation": ("Automation and no-code", {"workflow-automation": 9, "no-code-development": 6,
+                                                "devops-engineering": 3, "it-support": 2}),
 }
+
+# The careers added in the catalogue restructure. Kept as additions to the
+# tables above so each answer id still reads as one idea with one list of
+# careers it points toward.
+_MORE: dict[str, dict[str, dict[str, int]]] = {
+    "puzzles": {"application-security": 4, "detection-engineering": 4, "digital-forensics-incident-response": 4,
+                "site-reliability-engineering": 4, "technical-support-engineering": 3, "game-development": 3,
+                "embedded-systems-engineering": 3, "machine-learning-engineering": 3},
+    "interfaces": {"motion-design": 6, "ux-research": 3, "no-code-development": 4, "game-development": 3},
+    "data": {"business-intelligence-engineering": 7, "analytics-engineering": 7, "machine-learning-engineering": 6,
+             "mlops-engineering": 3, "database-administration": 3, "business-analysis": 3},
+    "apps": {"game-development": 5, "no-code-development": 5, "embedded-systems-engineering": 3},
+    "security": {"application-security": 6, "digital-forensics-incident-response": 6, "security-engineering": 6,
+                 "identity-access-management": 5, "governance-risk-compliance": 5, "detection-engineering": 6},
+    "infrastructure": {"site-reliability-engineering": 6, "platform-engineering": 6, "systems-administration": 7,
+                       "network-engineering": 7, "database-administration": 6, "mlops-engineering": 3,
+                       "embedded-systems-engineering": 3},
+    "ai": {"machine-learning-engineering": 8, "mlops-engineering": 6, "analytics-engineering": 2},
+    "writing": {"business-analysis": 3, "ux-research": 3, "solutions-consulting": 3, "governance-risk-compliance": 2},
+    "people": {"it-service-management": 6, "technical-support-engineering": 6, "solutions-consulting": 6,
+               "business-analysis": 6, "ux-research": 6, "identity-access-management": 2},
+    "automation": {"workflow-automation": 2, "no-code-development": 4, "mlops-engineering": 3,
+                   "platform-engineering": 3, "site-reliability-engineering": 3, "systems-administration": 3},
+    "logic": {"application-security": 3, "detection-engineering": 3, "machine-learning-engineering": 3,
+              "analytics-engineering": 2, "embedded-systems-engineering": 3, "game-development": 2},
+    "creativity": {"motion-design": 4, "game-development": 3, "ux-research": 2, "no-code-development": 2},
+    "communication": {"business-analysis": 4, "solutions-consulting": 4, "ux-research": 4, "it-service-management": 3,
+                      "technical-support-engineering": 3, "governance-risk-compliance": 3},
+    "detail": {"governance-risk-compliance": 4, "database-administration": 4, "digital-forensics-incident-response": 4,
+               "identity-access-management": 3, "business-intelligence-engineering": 3, "analytics-engineering": 3},
+    "numbers": {"business-intelligence-engineering": 4, "analytics-engineering": 4, "machine-learning-engineering": 4,
+                "database-administration": 2},
+    "patience": {"digital-forensics-incident-response": 3, "detection-engineering": 3, "systems-administration": 3,
+                 "site-reliability-engineering": 3, "embedded-systems-engineering": 3, "network-engineering": 2},
+    "organising": {"business-analysis": 4, "it-service-management": 4, "governance-risk-compliance": 4,
+                   "solutions-consulting": 3, "ux-research": 2},
+    "teaching": {"solutions-consulting": 3, "technical-support-engineering": 3, "ux-research": 2},
+}
+_MORE_TECH: dict[str, dict[str, int]] = {
+    "web": {"no-code-development": 3},
+    "mobile": {"game-development": 3},
+    "cloud": {"site-reliability-engineering": 5, "platform-engineering": 5, "systems-administration": 3,
+              "network-engineering": 4, "database-administration": 3, "mlops-engineering": 3},
+    "ai": {"machine-learning-engineering": 7, "mlops-engineering": 5},
+    "security": {"application-security": 5, "security-engineering": 5, "detection-engineering": 5,
+                 "digital-forensics-incident-response": 5, "identity-access-management": 4,
+                 "governance-risk-compliance": 3},
+    "data": {"business-intelligence-engineering": 5, "analytics-engineering": 5, "database-administration": 4,
+             "machine-learning-engineering": 3},
+    "design": {"motion-design": 5, "ux-research": 3, "no-code-development": 2},
+}
+for _tag, _more in _MORE.items():
+    for _table in (INTERESTS, STRENGTHS):
+        if _tag in _table:
+            _table[_tag][1].update(_more)
+for _tag, _more in _MORE_TECH.items():
+    TECH_INTERESTS[_tag][1].update(_more)
 
 # Cap so a long list of ticked boxes can nudge, never decide, the ranking.
 MAX_SIGNAL_BONUS = 20

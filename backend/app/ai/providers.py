@@ -82,7 +82,7 @@ _BEGINNER_EXPLAINERS = {
     "devops-engineering": "making sure software gets built, tested, and delivered smoothly and reliably",
     "data-analysis": "turning raw numbers into insights that help people make decisions",
     "data-engineering": "building the pipelines that move and organize data so others can use it",
-    "ai-engineering": "building AI-powered products, from machine learning models to applications built on large language models",
+    "ai-engineering": "building applications on top of large language models, with your own data, tools and tests that show they work",
     "data-science": "using statistics and experiments to answer open questions and guide decisions with evidence",
     "graphic-design": "communicating ideas visually through branding, typography and layout",
     "mobile-development": "building the apps people carry in their pocket for iOS and Android",
@@ -91,9 +91,33 @@ _BEGINNER_EXPLAINERS = {
     "product-management": "deciding what a product should do next and why",
     "technical-writing": "explaining complex technical things in a way anyone can understand",
     "qa-engineering": "testing software methodically to catch bugs before users do",
-    "no-code-automation": "building working software tools without writing much or any code",
     "it-support": "helping people solve everyday computer and technology problems",
     "solutions-architecture": "designing the overall blueprint for how a company's systems fit together",
+    "game-development": "building games, from the rules and controls to the graphics and sound",
+    "embedded-systems-engineering": "writing the software that runs inside devices such as sensors, wearables and appliances",
+    "site-reliability-engineering": "keeping large online services fast and available, and learning from the times they break",
+    "platform-engineering": "building the internal tools and paths that let other engineers ship software without fuss",
+    "systems-administration": "looking after the servers, accounts and updates that keep a company's computers working",
+    "network-engineering": "designing and running the networks that connect offices, servers and the internet",
+    "database-administration": "keeping databases fast, safe, backed up and ready to recover",
+    "application-security": "finding and fixing security flaws in software before attackers do",
+    "digital-forensics-incident-response": "working out what happened after a security incident and helping the business recover",
+    "security-engineering": "building the security controls and automation that protect a company's systems",
+    "identity-access-management": "deciding who can sign in to what, and making that safe and simple",
+    "governance-risk-compliance": "helping a company prove it manages risk and follows security rules and standards",
+    "detection-engineering": "writing and tuning the rules that spot attacks in a company's security logs",
+    "business-intelligence-engineering": "building the dashboards and reporting models a company runs its decisions on",
+    "machine-learning-engineering": "training, testing and serving machine learning models that make predictions",
+    "mlops-engineering": "building the pipelines that train, ship and monitor machine learning models reliably",
+    "analytics-engineering": "turning raw warehouse data into clean, tested tables that analysts can trust",
+    "motion-design": "making graphics move to explain ideas, tell stories and polish products",
+    "business-analysis": "working out what a business really needs and writing it down so teams can build it",
+    "ux-research": "learning from real users through interviews and tests so teams build the right thing",
+    "it-service-management": "running the processes that keep an IT team's tickets, changes and outages under control",
+    "no-code-development": "building working websites and apps on visual platforms without writing much code",
+    "workflow-automation": "connecting apps so repetitive work happens automatically and reliably",
+    "solutions-consulting": "helping customers choose and set up the right technical solution for their problem",
+    "technical-support-engineering": "solving the hard technical problems customers hit with a software product",
 }
 
 
@@ -326,37 +350,64 @@ def _follow_up_questions(topic: str) -> list[str]:
     return ["Want me to suggest what to learn next?", "Should we do a quick practice question on this?"]
 
 
+_TRAIT_WEIGHTS: dict[str, dict[str, int]] = {
+    "cybersecurity": {"enjoys_problem_solving": 3, "prefers_systems": 3, "enjoys_math": 1},
+    "security-operations": {"enjoys_problem_solving": 2, "prefers_systems": 2, "enjoys_people": 1},
+    "penetration-testing": {"enjoys_problem_solving": 3, "prefers_systems": 2, "risk_tolerant": 2},
+    "cloud-security": {"prefers_systems": 3, "enjoys_problem_solving": 2},
+    "software-engineering": {"enjoys_problem_solving": 3, "enjoys_math": 2, "prefers_systems": 2},
+    "backend-engineering": {"enjoys_problem_solving": 3, "prefers_systems": 3},
+    "frontend-development": {"enjoys_creativity": 3, "enjoys_problem_solving": 2},
+    "full-stack-development": {"enjoys_problem_solving": 2, "enjoys_creativity": 2, "prefers_systems": 2},
+    "devops-engineering": {"prefers_systems": 3, "enjoys_problem_solving": 2},
+    "cloud-engineering": {"prefers_systems": 3, "enjoys_math": 1},
+    "data-analysis": {"enjoys_math": 3, "enjoys_problem_solving": 2},
+    "data-engineering": {"enjoys_math": 2, "prefers_systems": 3},
+    "ai-engineering": {"enjoys_problem_solving": 3, "enjoys_math": 2, "prefers_systems": 1},
+    "data-science": {"enjoys_math": 3, "enjoys_problem_solving": 2, "enjoys_creativity": 1},
+    "mobile-development": {"enjoys_creativity": 2, "enjoys_problem_solving": 2, "enjoys_people": 1},
+    "graphic-design": {"enjoys_creativity": 3, "enjoys_people": 1},
+    "product-design": {"enjoys_creativity": 2, "enjoys_people": 2, "enjoys_problem_solving": 2},
+    "ui-ux-design": {"enjoys_creativity": 3, "enjoys_people": 2},
+    "product-management": {"enjoys_people": 3, "enjoys_problem_solving": 1},
+    "technical-writing": {"enjoys_people": 2, "enjoys_creativity": 1},
+    "qa-engineering": {"enjoys_problem_solving": 2, "prefers_systems": 1},
+    "it-support": {"enjoys_people": 3, "prefers_systems": 1},
+    "solutions-architecture": {"prefers_systems": 3, "enjoys_people": 2, "enjoys_problem_solving": 1},
+    "game-development": {"enjoys_creativity": 3, "enjoys_problem_solving": 2, "enjoys_math": 1},
+    "embedded-systems-engineering": {"prefers_systems": 3, "enjoys_problem_solving": 2, "enjoys_math": 2},
+    "site-reliability-engineering": {"prefers_systems": 3, "enjoys_problem_solving": 3, "risk_tolerant": 1},
+    "platform-engineering": {"prefers_systems": 3, "enjoys_problem_solving": 2, "enjoys_people": 1},
+    "systems-administration": {"prefers_systems": 3, "enjoys_problem_solving": 2, "enjoys_people": 1},
+    "network-engineering": {"prefers_systems": 3, "enjoys_problem_solving": 2, "enjoys_math": 1},
+    "database-administration": {"prefers_systems": 3, "enjoys_math": 1, "enjoys_problem_solving": 1},
+    "application-security": {"enjoys_problem_solving": 3, "prefers_systems": 2, "enjoys_creativity": 1},
+    "digital-forensics-incident-response": {"enjoys_problem_solving": 3, "risk_tolerant": 1, "enjoys_people": 1},
+    "security-engineering": {"prefers_systems": 3, "enjoys_problem_solving": 2, "enjoys_math": 1},
+    "identity-access-management": {"prefers_systems": 2, "enjoys_people": 2, "enjoys_problem_solving": 1},
+    "governance-risk-compliance": {"enjoys_people": 3, "enjoys_problem_solving": 1},
+    "detection-engineering": {"enjoys_problem_solving": 3, "prefers_systems": 2, "enjoys_math": 1},
+    "business-intelligence-engineering": {"enjoys_math": 2, "prefers_systems": 2, "enjoys_people": 1},
+    "machine-learning-engineering": {"enjoys_math": 3, "enjoys_problem_solving": 3, "prefers_systems": 1},
+    "mlops-engineering": {"prefers_systems": 3, "enjoys_problem_solving": 2, "enjoys_math": 1},
+    "analytics-engineering": {"enjoys_math": 2, "prefers_systems": 2, "enjoys_problem_solving": 2},
+    "motion-design": {"enjoys_creativity": 3, "enjoys_people": 1},
+    "business-analysis": {"enjoys_people": 3, "enjoys_problem_solving": 2},
+    "ux-research": {"enjoys_people": 3, "enjoys_creativity": 1, "enjoys_problem_solving": 1},
+    "it-service-management": {"enjoys_people": 2, "prefers_systems": 2},
+    "no-code-development": {"enjoys_creativity": 2, "enjoys_problem_solving": 2, "enjoys_people": 1},
+    "workflow-automation": {"enjoys_problem_solving": 3, "prefers_systems": 1, "enjoys_creativity": 1},
+    "solutions-consulting": {"enjoys_people": 3, "enjoys_problem_solving": 2, "prefers_systems": 1},
+    "technical-support-engineering": {"enjoys_problem_solving": 3, "enjoys_people": 2, "prefers_systems": 1},
+}
+
+
 def _score_paths(profile: dict[str, Any], career_catalog: list[dict[str, Any]]) -> list[tuple[dict, int]]:
     """Deterministic heuristic scorer over the profile vector. Mirrors the
     declarative `path_fit_rules` table in spirit, this mock keeps the logic
     inline so the assessment is demoable without seed data being present.
     """
-    weights = {
-        "cybersecurity": {"enjoys_problem_solving": 3, "prefers_systems": 3, "enjoys_math": 1},
-        "security-operations": {"enjoys_problem_solving": 2, "prefers_systems": 2, "enjoys_people": 1},
-        "penetration-testing": {"enjoys_problem_solving": 3, "prefers_systems": 2, "risk_tolerant": 2},
-        "cloud-security": {"prefers_systems": 3, "enjoys_problem_solving": 2},
-        "software-engineering": {"enjoys_problem_solving": 3, "enjoys_math": 2, "prefers_systems": 2},
-        "backend-engineering": {"enjoys_problem_solving": 3, "prefers_systems": 3},
-        "frontend-development": {"enjoys_creativity": 3, "enjoys_problem_solving": 2},
-        "full-stack-development": {"enjoys_problem_solving": 2, "enjoys_creativity": 2, "prefers_systems": 2},
-        "devops-engineering": {"prefers_systems": 3, "enjoys_problem_solving": 2},
-        "cloud-engineering": {"prefers_systems": 3, "enjoys_math": 1},
-        "data-analysis": {"enjoys_math": 3, "enjoys_problem_solving": 2},
-        "data-engineering": {"enjoys_math": 2, "prefers_systems": 3},
-        "ai-engineering": {"enjoys_math": 3, "enjoys_problem_solving": 3},
-        "data-science": {"enjoys_math": 3, "enjoys_problem_solving": 2, "enjoys_creativity": 1},
-        "mobile-development": {"enjoys_creativity": 2, "enjoys_problem_solving": 2, "enjoys_people": 1},
-        "graphic-design": {"enjoys_creativity": 3, "enjoys_people": 1},
-        "product-design": {"enjoys_creativity": 2, "enjoys_people": 2, "enjoys_problem_solving": 2},
-        "ui-ux-design": {"enjoys_creativity": 3, "enjoys_people": 2},
-        "product-management": {"enjoys_people": 3, "enjoys_problem_solving": 1},
-        "technical-writing": {"enjoys_people": 2, "enjoys_creativity": 1},
-        "qa-engineering": {"enjoys_problem_solving": 2, "prefers_systems": 1},
-        "no-code-automation": {"enjoys_problem_solving": 1, "enjoys_creativity": 1},
-        "it-support": {"enjoys_people": 3, "prefers_systems": 1},
-        "solutions-architecture": {"prefers_systems": 3, "enjoys_people": 2, "enjoys_problem_solving": 1},
-    }
+    weights = _TRAIT_WEIGHTS
 
     scored = []
     for path in career_catalog:
@@ -369,10 +420,19 @@ def _score_paths(profile: dict[str, Any], career_catalog: list[dict[str, Any]]) 
         # light variety so repeated identical answers don't always rank identically
         score += signal_bonus(profile, slug, path.get("category"))
         score += random.Random(slug + json.dumps(profile, sort_keys=True, default=str)).randint(-3, 3)
-        scored.append((path, max(0, min(100, score))))
+        scored.append((path, score))
 
+    # Rank on the raw score so strong specialist matches are not flattened into
+    # a tie at 100 by a long list of ticked answers, then show a 0 to 100 fit
+    # that keeps the order (equal displayed scores would read as a coin toss).
     scored.sort(key=lambda t: t[1], reverse=True)
-    return scored
+    shown: list[tuple[dict, int]] = []
+    for path, raw in scored:
+        value = max(0, min(100, raw))
+        if shown and value >= shown[-1][1]:
+            value = max(0, shown[-1][1] - 1)
+        shown.append((path, value))
+    return shown
 
 
 def _pick_top_three(scored: list[tuple[dict, int]]) -> list[tuple[dict, int]]:

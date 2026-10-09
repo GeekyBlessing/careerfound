@@ -27,7 +27,7 @@ CAREER_PATHS = [
         entry_roles=["Junior Security Analyst", "IT Security Support", "Security Associate"],
         tools=["Wireshark", "Linux", "Python", "Nmap", "Splunk"],
         remote_potential=75,
-        earning_notes="Entry-level SOC roles commonly start in the $45k-$70k range in the US (lower in many regions, higher with certifications); pay grows quickly with 1-2 years of experience.",
+        earning_notes="Entry-level monitoring and analyst roles are among the most common ways into security. Pay varies a great deal by country and employer, and it tends to rise quickly once you have a year or two of real incident experience and a recognised certification.",
         icon="shield",
         skills_required=["Networking fundamentals (TCP/IP, DNS, HTTP)", "Linux command line", "Recognizing common attack patterns", "Log analysis and pattern recognition", "Basic scripting for automation"],
         certifications=["CompTIA Security+", "CompTIA Network+", "Google Cybersecurity Professional Certificate"],
@@ -48,7 +48,7 @@ CAREER_PATHS = [
         entry_roles=["Junior Software Engineer", "Associate Developer", "Software Engineer I"],
         tools=["Python", "JavaScript", "Git/GitHub", "SQL", "REST APIs", "VS Code"],
         remote_potential=85,
-        earning_notes="Entry-level roles vary hugely by market, commonly $55k-$95k in the US, with strong remote demand globally for developers who can demonstrate real projects.",
+        earning_notes="Entry-level pay varies hugely by country and employer. Remote demand is strong globally for developers who can show real, finished projects rather than only course certificates.",
         icon="code",
         skills_required=["Programming fundamentals (variables, loops, functions)", "Data structures and algorithms basics", "Version control with Git", "Reading and debugging error messages", "Working with APIs and databases"],
         certifications=[],
@@ -80,7 +80,7 @@ CAREER_PATHS = [
         },
     ),
     dict(
-        slug="backend-engineering", name="Backend Engineering",
+        slug="backend-engineering", name="Backend Development",
         summary="Build the servers, databases, and APIs that power an app behind the scenes.",
         beginner_summary="You'll learn how apps store data and respond to requests: the engine room most users never see.",
         difficulty=3, avg_timeline_weeks=30,
@@ -137,7 +137,7 @@ CAREER_PATHS = [
         },
     ),
     dict(
-        slug="cloud-security", name="Cloud Security",
+        slug="cloud-security", name="Cloud Security Engineering",
         summary="Protect internet-based (cloud) systems from misconfigurations and attackers.",
         beginner_summary="You'll learn how cloud systems get set up, then how to spot the mistakes that let attackers in.",
         difficulty=4, avg_timeline_weeks=34,
@@ -156,7 +156,7 @@ CAREER_PATHS = [
         },
     ),
     dict(
-        slug="security-operations", name="Security Operations (SOC)",
+        slug="security-operations", name="Security Operations (SOC Analyst)",
         summary="Monitor an organisation's systems in real time, triage alerts, investigate incidents and escalate real attacks.",
         beginner_summary="You'll learn to read alerts from security tools and decide which ones are real threats.",
         difficulty=2, avg_timeline_weeks=20,
@@ -170,7 +170,7 @@ CAREER_PATHS = [
         learning_resources=[{"label": "TryHackMe", "note": "Free SOC-analyst-focused learning paths and labs."}, {"label": "Splunk Free", "note": "Splunk's free tier, enough to practice real SIEM queries."}, {"label": "Professor Messer", "note": "Free video courses covering Security+ exam material."}],
         roadmap_outline={
             "beginner": ["Learn networking fundamentals (TCP/IP, DNS, common ports)", "Get familiar with a SIEM tool using its free tier", "Learn to recognize common attack signatures in logs", "Study foundational security concepts"],
-            "intermediate": ["Practice triaging realistic alert scenarios end to end", "Learn to write clear incident notes and handoffs", "Study for and take CompTIA Security+", "Shadow or study real SOC playbooks and escalation paths"],
+            "intermediate": ["Practice triaging realistic alert scenarios end to end", "Learn to write clear incident notes and handoffs", "Prepare for CompTIA Security+ and give extra time to its logging and monitoring domains", "Shadow or study real SOC playbooks and escalation paths"],
             "advanced": ["Practice faster, more confident triage under time pressure", "Learn basic threat intelligence concepts", "Start building toward Tier 2 responsibilities (deeper investigation)", "Document a few investigations for your portfolio"],
         },
     ),
@@ -251,23 +251,22 @@ CAREER_PATHS = [
         },
     ),
     dict(
-        slug="ai-engineering", name="AI Engineering",
-        summary="Build and ship AI-powered products: train and evaluate machine learning models, and build applications on top of large language models.",
-        beginner_summary="You'll learn how machine learning models are trained and tested, then how to turn them into real applications people can use.",
-        difficulty=5, avg_timeline_weeks=44,
-        entry_roles=["Junior AI Engineer", "Junior ML Engineer", "AI Application Developer"],
-        tools=["Python", "NumPy/pandas", "scikit-learn", "PyTorch", "LLM APIs", "Vector databases"], remote_potential=75,
-        earning_notes="Highly competitive entry-level field; strong math/stats foundation pays off significantly.",
-        icon="cpu",
-        skills_required=["Python for data science", "Linear algebra and statistics fundamentals", "Classical machine learning (regression, classification)", "Model evaluation and avoiding overfitting", "Basic neural networks and deep learning concepts", "Building applications on LLM APIs, including retrieval and evaluation"],
-        certifications=["DeepLearning.AI Machine Learning Specialization", "Google TensorFlow Developer Certificate"],
-        interview_prep=["Explain overfitting and how you'd detect it", "Walk through how you'd approach a new classification problem", "What's the difference between supervised and unsupervised learning", "How would you explain a model's prediction to a non-technical stakeholder", "Describe a project where your first model didn't work and what you changed"],
-        learning_resources=[{"label": "Google Machine Learning Crash Course", "note": "Free, official introductory ML course from Google."}, {"label": "Kaggle Learn", "note": "Free short courses in Python, pandas, and machine learning."}, {"label": "scikit-learn official docs", "note": "Free, official documentation with extensive real examples."}],
-        roadmap_outline={
-            "beginner": ["Build strong Python and pandas fundamentals first", "Learn core statistics and linear algebra concepts as you need them", "Learn classical ML models (regression, decision trees) with scikit-learn", "Complete a full, simple prediction project on a public dataset"],
-            "intermediate": ["Learn model evaluation properly (train/test splits, cross-validation, metrics)", "Study overfitting, underfitting, and regularization", "Get an introduction to neural networks", "Enter a beginner-friendly Kaggle competition"],
-            "advanced": ["Learn a deep learning framework (PyTorch) for a specific problem type", "Practice deploying a trained model behind a simple API", "Study how to explain model limitations honestly to stakeholders", "Build an LLM application with retrieval and measure its answer quality", "Build 2-3 portfolio projects that show a full ML workflow"],
-        },
+        slug='ai-engineering',
+        name='AI Engineering',
+        summary='Build products on top of foundation models: design prompts and tool calls, ground answers in your own documents with retrieval, and measure whether the application works before it ships.',
+        beginner_summary="You'll learn to build apps that use large language models: calling an AI service, getting reliable structured answers, connecting it to your own data and testing that it behaves.",
+        difficulty=4,
+        avg_timeline_weeks=36,
+        entry_roles=['Junior AI Engineer', 'AI Application Developer', 'Software Engineer (AI features)', 'Prompt and Evaluation Engineer'],
+        tools=['Python', 'Anthropic API', 'OpenAI API', 'Pydantic', 'FastAPI', 'LangChain', 'LlamaIndex', 'pgvector'],
+        remote_potential=80,
+        earning_notes='Most people get in as software engineers who add AI features, so solid programming matters more than a research background. A deployed app with a written evaluation stands out because most applicants only show demos. Pay tends to follow general software engineering pay for the same seniority and location.',
+        icon='cpu',
+        skills_required=['Python and calling web APIs reliably, including timeouts, retries and rate limits', 'Prompt design and getting validated structured output from a model', 'Tool calling and multi-step workflows where the model chooses actions', 'Retrieval: chunking, embeddings, vector search and grounding answers in sources', 'Evaluation: building test sets, grading answers and comparing prompt or model changes', 'Cost, latency, safety and prompt injection awareness in a deployed application'],
+        certifications=[],
+        interview_prep=['How would you decide whether a prompt change made your application better rather than just different', 'Your retrieval app answers confidently with something that is not in the documents. How do you find the cause and stop it', 'Explain what happens in a tool-calling loop and what you must validate before running a tool the model asked for', 'A feature costs ten times more per request than planned. What do you check first and what could you change', 'When would you use retrieval, fine-tuning or just a longer prompt, and what would push you toward each', 'A user pastes text that tells the model to ignore its instructions. How does your application defend against it'],
+        learning_resources=[{'label': 'Anthropic documentation and prompt engineering guide', 'note': 'Free, official guidance on prompting, tool use and evaluating model outputs.'}, {'label': 'DeepLearning.AI short courses on building with LLMs', 'note': 'Free, hands-on short courses on retrieval, agents and evaluation from practitioners.'}, {'label': 'Hugging Face LLM Course', 'note': 'Free course covering how language models work and how to use them in code.'}],
+        roadmap_outline={'beginner': ['Get comfortable with Python functions, JSON, HTTP requests and virtual environments', 'Call a hosted model from Python, keep the API key in an environment variable and read the token usage', 'Learn prompt basics: system instructions, examples in the prompt and how temperature changes repeatability', 'Build a small classifier or extractor and score it against a list of examples you labelled yourself'], 'intermediate': ['Force structured output with a Pydantic schema and retry when validation fails', 'Add tool calling so the model can look something up, and validate every argument before running the tool', 'Learn embeddings and similarity search, then store vectors in pgvector or Chroma', 'Build a basic question-answering app over your own documents that cites its sources'], 'advanced': ['Write an evaluation set of at least 30 questions and measure retrieval and answer quality separately', 'Improve one thing at a time (chunking, hybrid search, reranking) and report the numbers before and after', 'Add guardrails: input limits, refusal when the sources do not answer, and defences against prompt injection', 'Track cost and latency per request, add caching, and containerise and deploy the app', 'Write up your failure cases and design decisions as a short case study for each project']},
     ),
     dict(
         slug="product-design", name="Product Design",
@@ -365,23 +364,22 @@ CAREER_PATHS = [
         },
     ),
     dict(
-        slug="no-code-automation", name="No-Code / Automation",
-        summary="Build working software tools without writing much or any code.",
-        beginner_summary="You'll learn to connect apps and automate work using visual tools instead of code.",
-        difficulty=1, avg_timeline_weeks=12,
-        entry_roles=["Automation Specialist", "No-Code Developer"],
-        tools=["Zapier/Make", "Airtable", "Webflow/Bubble"], remote_potential=85,
-        earning_notes="Fast to learn, often freelance-friendly; strong option for very limited time budgets.",
-        icon="zap",
-        skills_required=["Workflow and process thinking", "Connecting apps via APIs without writing code", "Database/spreadsheet structuring (Airtable)", "Basic logic (conditionals, triggers)", "Client or stakeholder communication for freelance work"],
-        certifications=[],
-        interview_prep=["Walk through how you'd automate a repetitive manual task", "What's a trigger versus an action in an automation tool", "Describe a no-code project you built and a problem you hit", "How would you decide when a task actually needs custom code instead", "How do you handle an automation that fails silently"],
-        learning_resources=[{"label": "Zapier's own free guides", "note": "Free, official tutorials for the most widely used automation tool."}, {"label": "Airtable's own free tutorials", "note": "Free, official tutorials for structuring data without code."}, {"label": "Makerpad (community resources)", "note": "A well-known no-code learning community with free content."}],
-        roadmap_outline={
-            "beginner": ["Learn one automation tool deeply (Zapier or Make) rather than several shallowly", "Learn Airtable for structuring data without a traditional database", "Automate one real repetitive task in your own life or work", "Learn basic conditional logic within these tools"],
-            "intermediate": ["Build a small internal tool for a real (even personal) use case", "Learn to connect three or more apps in one working automation", "Practice explaining a workflow to someone non-technical", "Learn a simple no-code app builder (Webflow or Bubble)"],
-            "advanced": ["Build a small end-to-end no-code product, not just a workflow", "Practice scoping and pricing freelance automation work", "Learn to debug automations that fail partway through", "Document 2-3 case studies for your portfolio"],
-        },
+        slug='workflow-automation',
+        name='Workflow Automation',
+        summary='Find repetitive business processes and replace them with reliable automations that connect apps, move data and alert people when something goes wrong.',
+        beginner_summary="You'll learn to connect everyday apps so work happens on its own: triggers, filters, branching, spreadsheets as databases and fixing automations that fail.",
+        difficulty=2,
+        avg_timeline_weeks=14,
+        entry_roles=['Automation Specialist', 'Business Process Automation Analyst', 'Marketing or Revenue Operations Associate', 'Junior Integration Specialist'],
+        tools=['Zapier', 'Make', 'n8n', 'Airtable', 'Google Sheets', 'Slack', 'Power Automate', 'Webhooks'],
+        remote_potential=85,
+        earning_notes='Quick to learn and often freelance-friendly. Pay depends on whether you save a business measurable time or money and can show it, so before and after numbers from real processes matter more than certificates. Many people reach it from operations, marketing or support roles.',
+        icon='zap',
+        skills_required=['Process mapping: breaking a manual task into triggers, steps and decisions', 'Connecting apps with automation platforms, webhooks and simple API calls', 'Structuring data in spreadsheets and Airtable so automations can rely on it', 'Conditional logic, branching, filters and looping over lists of records', 'Error handling, retries and alerting so failures never pass unnoticed', 'Documenting a workflow and handing it over to a non-technical owner'],
+        certifications=['Microsoft Certified: Power Platform Fundamentals (PL-900)'],
+        interview_prep=['Walk through how you would automate a repetitive manual task from the first conversation to a working workflow', 'What is the difference between a trigger and an action, and what is a webhook', 'An automation has been silently skipping some records for a week. How do you find out which ones and why', 'A client wants an automation that sends invoices. What do you ask before building it and what do you test', 'How do you decide whether a task is worth automating or needs custom code instead', 'How do you make sure an automation does not create duplicate records when it runs twice'],
+        learning_resources=[{'label': 'Zapier University', 'note': 'Free, official lessons on triggers, actions, filters and multi-step workflows.'}, {'label': 'Make Academy', 'note': 'Free, official courses on building and debugging scenarios in Make.'}, {'label': 'n8n documentation and workflow templates', 'note': 'Free docs for the open source automation tool, with example workflows to study.'}],
+        roadmap_outline={'beginner': ['Pick one automation platform (Zapier or Make) and learn triggers, actions and field mapping on it', 'Map one repetitive task you do yourself as a diagram before you automate it', 'Use Google Sheets and Airtable as the data store behind your first automations', 'Add filters and simple conditions so a workflow only runs when it should'], 'intermediate': ['Build a branching workflow that routes records different ways depending on their values', 'Connect three or more apps in one workflow and handle a record that is missing a required field', 'Learn what a webhook and a JSON payload are by sending test requests to your own workflow', 'Prevent duplicates by checking for an existing record before creating a new one'], 'advanced': ['Add error handling, retries and an alert channel to every workflow you plan to hand over', 'Self-host or trial n8n and compare its approach with a hosted tool', 'Measure a workflow: run counts, failures and the hours it saves, recorded in a simple log', "Write an owner's guide and a diagram for each finished workflow so someone else can maintain it", 'Take on one small automation job for a real or friendly client, with an agreed scope and a handover']},
     ),
     dict(
         slug="it-support", name="IT Support",
@@ -460,7 +458,7 @@ CAREER_PATHS = [
         },
     ),
     dict(
-        slug="mobile-development", name="Mobile Development",
+        slug="mobile-development", name="Mobile Engineering",
         summary="Build the apps people carry in their pocket for iOS and Android, from first screen to app store release.",
         beginner_summary="You'll learn to build real phone apps: screens, navigation, saved data and connecting to the internet.",
         difficulty=3, avg_timeline_weeks=34,
@@ -486,8 +484,11 @@ CAREER_PATHS = [
 # file stays focused on the career content itself.
 from app.seed.career_catalogue_meta import CATALOGUE_ORDER, CATALOGUE_META  # noqa: E402
 
-_BY_SLUG = {path["slug"]: path for path in CAREER_PATHS}
-assert set(_BY_SLUG) == set(CATALOGUE_META), "career_paths and career_catalogue_meta are out of sync"
+from app.seed.new_careers import NEW_CAREERS  # noqa: E402
+
+_BY_SLUG = {path["slug"]: path for path in CAREER_PATHS + NEW_CAREERS}
+assert len(_BY_SLUG) == len(CAREER_PATHS) + len(NEW_CAREERS), "duplicate career slugs"
+assert set(_BY_SLUG) == set(CATALOGUE_META) == set(CATALOGUE_ORDER), "career_paths and career_catalogue_meta are out of sync"
 for _slug, _meta in CATALOGUE_META.items():
     _BY_SLUG[_slug].update(_meta)
 

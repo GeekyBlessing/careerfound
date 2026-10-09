@@ -105,22 +105,39 @@ export default function CareerDetailPage() {
               )}
             </p>
             <h1 className="mt-1 font-display text-2xl font-semibold tracking-tight text-ink-100 sm:text-3xl">{path.name}</h1>
+            <h2 className="mt-5 text-xs font-medium uppercase tracking-wide text-ink-500">What this career involves</h2>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-400">{path.summary}</p>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-500">{path.beginner_summary}</p>
             {path.who_its_for && (
-              <p className="mt-4 max-w-2xl text-sm leading-relaxed text-ink-400">
-                <span className="font-medium text-ink-200">Who it&apos;s for: </span>
-                {path.who_its_for}
-              </p>
+              <>
+                <h2 className="mt-5 text-xs font-medium uppercase tracking-wide text-ink-500">Who may enjoy it</h2>
+                <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-400">{path.who_its_for}</p>
+              </>
             )}
 
-            <div className="mt-5 flex flex-wrap gap-2">
+            <h2 className="mt-5 text-xs font-medium uppercase tracking-wide text-ink-500">Entry-level roles</h2>
+            <div className="mt-2 flex flex-wrap gap-2">
               {path.entry_roles.map((role) => (
                 <Badge key={role} tone="accent">
                   {role}
                 </Badge>
               ))}
             </div>
+
+            <p className="mt-4 max-w-2xl rounded-lg border border-[rgb(var(--fg-tint)/0.1)] px-3 py-2 text-xs leading-relaxed text-ink-400">
+              {path.depth === "full" ? (
+                <>
+                  <span className="font-medium text-ink-200">Full curriculum. </span>
+                  Lessons, quizzes and graded projects{path.project_lab ? ", plus job-ready work in the Project Lab" : ""}.
+                </>
+              ) : (
+                <>
+                  <span className="font-medium text-ink-200">Guided path. </span>
+                  A stage by stage roadmap, tools, interview questions and three graded projects. Full lessons for this
+                  career are not written yet.
+                </>
+              )}
+            </p>
 
             <div className="mt-6 grid gap-4 sm:grid-cols-3">
               <Card className="p-4">
@@ -394,6 +411,28 @@ export default function CareerDetailPage() {
               </div>
             </div>
           )}
+
+          <div>
+            <h2 className="mb-1 text-lg font-semibold tracking-tight text-ink-100">Put this career to work</h2>
+            <p className="mb-5 text-sm text-ink-500">The rest of CareerFound, ready for when you pick {path.name}.</p>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {[
+                { href: `/projects?career=${path.slug}`, title: path.project_lab ? "Project Lab" : "Build the projects", note: "Step-by-step projects for this career." },
+                { href: "/portfolio", title: "Portfolio", note: "Turn finished projects into proof you can share." },
+                { href: `/mentors?path=${path.slug}`, title: "Mentors", note: "People working in this career, for real guidance." },
+                { href: "/job-matcher", title: "Check a job description", note: "See how a real posting matches your skills." },
+              ].map((item) => (
+                <Link key={item.title} href={item.href} className="focus-ring block rounded-2xl">
+                  <Card interactive className="h-full p-4">
+                    <p className="flex items-center justify-between text-sm font-semibold text-ink-100">
+                      {item.title} <ArrowRight className="h-3.5 w-3.5 text-ink-500" />
+                    </p>
+                    <p className="mt-1.5 text-xs leading-relaxed text-ink-500">{item.note}</p>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          </div>
 
           <SmartMentorRecommendation pathSlug={path.slug} pathName={path.name} />
         </div>
