@@ -23,9 +23,11 @@ async def test_public_listing_contains_only_the_real_mentors(client):
     assert all(m["is_demo"] is False for m in listing)
 
     # Filtering by a career a demo persona used to cover returns no demo mentor.
-    assert (await client.get("/api/v1/mentors", params={"path": "devops-engineering"})).json() == []
-    cloud = (await client.get("/api/v1/mentors", params={"path": "cloud-security"})).json()
-    assert [m["display_name"] for m in cloud] == ["Toriola Opeyemi"]
+    # Toriola is the real mentor for cybersecurity, cloud security and DevOps.
+    for career in ("cybersecurity", "cloud-security", "devops-engineering"):
+        found = (await client.get("/api/v1/mentors", params={"path": career})).json()
+        assert [m["display_name"] for m in found] == ["Toriola Opeyemi"], career
+    assert (await client.get("/api/v1/mentors", params={"path": "data-science"})).json() == []
 
 
 async def test_a_demo_mentor_is_a_404_by_id_and_cannot_be_booked(client):
@@ -41,8 +43,9 @@ async def test_real_mentor_profiles_carry_the_verified_positioning(client):
     async with AsyncSessionLocal() as db:
         await seed_mentors(db)
     toriola = next(m for m in (await client.get("/api/v1/mentors")).json() if m["display_name"] == "Toriola Opeyemi")
-    assert toriola["headline"] == "Cloud Security Mentor | Cloud Engineer"
-    assert toriola["paths"] == ["cloud-security", "cloud-engineering", "aws-security", "security-automation", "devsecops"]
+    assert toriola["headline"] == "Cybersecurity, Cloud Security & DevOps Mentor"
+    assert toriola["paths"] == ["cybersecurity", "cloud-security", "devops-engineering", "aws-security", "security-automation", "devsecops"]
+    assert toriola["is_founding_mentor"] is True
     assert toriola["mentorship_price_label"] == "₦250,000 ($200)"
     assert toriola["mentorship_duration_label"] == "2 months"
 
@@ -57,9 +60,9 @@ async def test_existing_founder_row_is_repositioned_once_and_edits_are_kept():
         await seed_mentors(db)
         founder = (await db.execute(select(Mentor).where(Mentor.contact_email == FOUNDING_MENTOR["contact_email"]))).scalar_one()
         # Simulate the previously deployed profile.
-        founder.headline = "Software Engineer | Cybersecurity Expert"
-        founder.bio = "I mentor people who are figuring out how to break into tech, older copy."
-        founder.paths = ["software-engineering", "cybersecurity"]
+        founder.headline = "Cloud Security Mentor | Cloud Engineer"
+        founder.bio = "I mentor people breaking into cloud security and cloud engineering, older copy."
+        founder.paths = ["cloud-security", "cloud-engineering", "aws-security", "security-automation", "devsecops"]
         await db.commit()
 
         await seed_mentors(db)

@@ -765,14 +765,14 @@ export default function LandingPage() {
                       </div>
                     </div>
                     <div className="absolute -bottom-14 right-5 hidden w-[24%] rotate-[3deg] md:block">
-                      <Phone label="CareerFound on a phone: requesting mentorship from Toriola Opeyemi, Cloud Security Mentor and Cloud Engineer.">
+                      <Phone label="CareerFound on a phone: requesting mentorship from Toriola Opeyemi, Cybersecurity, Cloud Security and DevOps Mentor.">
                         <MentorshipScreen />
                       </Phone>
                     </div>
                   </div>
                   <div className="mt-6 grid gap-5 sm:grid-cols-[1fr_auto] sm:items-end md:pr-[28%]">
                     <div>
-                      <p className="text-sm font-medium text-ink-200">Cloud Security Mentor | Cloud Engineer</p>
+                      <p className="text-sm font-medium text-ink-200">Cybersecurity, Cloud Security & DevOps Mentor</p>
                       <div className="mt-3 flex flex-wrap gap-1.5">
                         {["Cloud Security", "Cloud Engineering", "AWS Security", "DevSecOps"].map((t) => (
                           <Badge key={t} tone="warm">{t}</Badge>
