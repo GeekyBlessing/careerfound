@@ -252,6 +252,9 @@ export interface PortfolioItem {
   skills_demonstrated: string[];
   is_published: boolean;
   repo_url?: string;
+  live_url?: string;
+  badge?: { title: string; tier: "verified" | "evidence_checked" } | null;
+  verified_by?: string;
 }
 
 export interface Mentor {

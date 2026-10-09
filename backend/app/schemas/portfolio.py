@@ -20,6 +20,10 @@ class PortfolioItemOut(BaseModel):
     skills_demonstrated: list[str]
     is_published: bool
     repo_url: str = ""
+    live_url: str = ""
+    case_study: dict = {}
+    badge: dict | None = None
+    verified_by: str = ""
 
     model_config = {"from_attributes": True}
 

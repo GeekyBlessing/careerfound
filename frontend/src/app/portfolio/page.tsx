@@ -14,6 +14,10 @@ import { SkeletonCard } from "@/components/ui/skeleton";
 import { IconTile } from "@/components/ui/icon-tile";
 import { cn } from "@/lib/utils";
 import { api, ApiError } from "@/lib/api";
+import { ProfilePanel } from "@/components/career/profile-panel";
+import { CaseStudyEditor } from "@/components/career/case-study-editor";
+import { VerifiedBadge } from "@/components/career/verified-badge";
+import { Switch } from "@/components/ui/switch";
 import type { PortfolioItem } from "@/types";
 
 export default function PortfolioPage() {
@@ -41,6 +45,8 @@ export default function PortfolioPage() {
         <p className="eyebrow">Portfolio Builder</p>
         <h1 className="mt-1 font-display text-h1 font-semibold tracking-tight text-ink-100">Your projects, written up like proof</h1>
       </div>
+
+      <ProfilePanel />
 
       {loading && <SkeletonCard />}
       {error && <Alert>{error}</Alert>}
@@ -82,7 +88,10 @@ export default function PortfolioPage() {
                 />
                 <span className="flex-1">
                   <p className="font-display font-medium">{item.title}</p>
-                  {item.is_published && <Badge tone="success" className="mt-1.5">Published</Badge>}
+                  <span className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                    {item.is_published && <Badge tone="success">Published</Badge>}
+                    <VerifiedBadge badge={item.badge ?? null} reviewer={item.verified_by} size="sm" />
+                  </span>
                 </span>
               </button>
             ))}
@@ -145,11 +154,10 @@ function PortfolioEditor({ item, onSaved }: { item: PortfolioItem; onSaved: (ite
               <IconTile icon={FolderGit2} />
               <div>
                 <p className="font-display text-h3 font-semibold tracking-tight text-ink-100">{item.title}</p>
-                {item.is_published ? (
-                  <Badge tone="success" className="mt-1">Published</Badge>
-                ) : (
-                  <Badge tone="neutral" className="mt-1">Draft, not published</Badge>
-                )}
+                <div className="mt-1 flex flex-wrap items-center gap-2">
+                  {item.is_published ? <Badge tone="success">Published</Badge> : <Badge tone="neutral">Draft, not published</Badge>}
+                  <VerifiedBadge badge={item.badge ?? null} reviewer={item.verified_by} size="sm" />
+                </div>
                 {item.repo_url && (
                   <a href={item.repo_url} target="_blank" rel="noopener noreferrer" className="focus-ring mt-2 block break-all rounded text-xs text-accent-light hover:underline">
                     {item.repo_url.replace("https://", "")}
@@ -218,6 +226,25 @@ function PortfolioEditor({ item, onSaved }: { item: PortfolioItem; onSaved: (ite
           </div>
         </CardContent>
       </Card>
+
+      <Card>
+        <CardContent className="flex flex-wrap items-center justify-between gap-4 p-6">
+          <div>
+            <p className="text-sm font-medium text-ink-100">Show on my public portfolio</p>
+            <p className="mt-1 text-xs text-ink-500">Only published projects appear on your public page. Your public page itself is switched on above.</p>
+          </div>
+          <Switch
+            checked={item.is_published}
+            label="Show this project on my public portfolio"
+            onChange={async (v) => {
+              const updated = await api.patch<PortfolioItem>(`/portfolio/${item.id}`, { is_published: v });
+              onSaved({ ...item, ...updated });
+            }}
+          />
+        </CardContent>
+      </Card>
+
+      <CaseStudyEditor itemId={item.id} repoUrl={item.repo_url} />
 
       {item.case_study_md && (
         <Card>

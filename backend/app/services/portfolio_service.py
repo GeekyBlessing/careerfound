@@ -73,3 +73,23 @@ async def update_portfolio_item(db: AsyncSession, user_id: uuid.UUID, item_id: u
     await db.commit()
     await db.refresh(item)
     return item
+
+
+async def badges_for(db: AsyncSession, user_id: uuid.UUID, items: list[PortfolioItem]) -> dict:
+    """item id -> {"badge", "verified_by"} for Project Lab pieces. The badge is
+    "Repository checked" or, only after a reviewer approved it, the Verified one."""
+    from app.services import lab_service
+    from app.services.public_profile_service import _public_badge
+
+    ids = [i.project_id for i in items]
+    if not ids:
+        return {}
+    projects = {p.id: p for p in (await db.execute(select(Project).where(Project.id.in_(ids)))).scalars().all() if p.lab}
+    states = await lab_service._states_for_user(db, user_id, list(projects.values())) if projects else {}
+    out = {}
+    for i in items:
+        st = states.get(i.project_id)
+        if st:
+            ver = st["verification"]
+            out[i.id] = {"badge": _public_badge(ver), "verified_by": ver["reviewer_name"] if ver["tier"] == "verified" else ""}
+    return out

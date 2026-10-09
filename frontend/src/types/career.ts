@@ -112,3 +112,83 @@ export interface JobAnalysis extends JobAnalysisSummary {
   description: string;
   result: JobAnalysisResult;
 }
+
+export interface CaseStudyFields {
+  title: string;
+  overview: string;
+  problem: string;
+  solution: string;
+  architecture: string;
+  challenges: string;
+  results: string;
+  technologies: string[];
+  screenshots: string[];
+}
+
+export interface CaseStudyView {
+  case_study: CaseStudyFields;
+  github: string;
+  live_demo: string;
+  status: "none" | "draft" | "edited";
+  generated_at: string | null;
+  needs_input: string[];
+  publishable: boolean;
+  sources?: Record<string, string>;
+}
+
+export interface Certification {
+  id: string;
+  name: string;
+  issuer: string;
+  status: "earned" | "in_progress";
+  year: number | null;
+  credential_url: string;
+  self_reported: true;
+}
+
+export interface MyProfile {
+  exists: boolean;
+  suggested_username?: string;
+  username?: string;
+  headline?: string;
+  bio?: string;
+  location?: string;
+  github_url?: string;
+  linkedin_url?: string;
+  website_url?: string;
+  is_public?: boolean;
+  show_readiness?: boolean;
+  show_skills?: boolean;
+  show_certifications?: boolean;
+  path?: string;
+  published_projects: number;
+}
+
+export interface PublicPortfolio {
+  username: string;
+  name: string;
+  headline: string;
+  bio: string;
+  location: string;
+  links: { label: string; url: string }[];
+  career: { slug: string; name: string } | null;
+  projects: {
+    id: string;
+    title: string;
+    summary: string;
+    skills: string[];
+    cv_bullet: string;
+    github: string;
+    live_demo: string;
+    level: string | null;
+    badge: { title: string; tier: "verified" | "evidence_checked" } | null;
+    verified_by: string;
+    verified_on: string | null;
+    case_study: CaseStudyFields | null;
+  }[];
+  achievements: { label: string; value: number }[];
+  skills: { with_evidence: { label: string; status: string }[]; self_reported: string[] } | null;
+  certifications: { name: string; issuer: string; status: string; year: number | null; credential_url: string }[] | null;
+  readiness: { score: number; band: string; signals: { label: string; pct: number }[] } | null;
+  labels: { verified: string; checked: string; note: string };
+}

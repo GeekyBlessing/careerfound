@@ -13,7 +13,7 @@ from app.core.config import settings
 from app.core.rate_limit import limiter
 from app.db.session import get_db
 from app.models.user import User
-from app.services import career_profile_service, career_readiness_service, job_analyzer_service, skill_gap_analyzer
+from app.services import career_profile_service, career_readiness_service, job_analyzer_service, public_profile_service, skill_gap_analyzer
 from app.services.career_profile_service import ProfileError
 from app.services.career_readiness_service import _active_path
 
@@ -145,3 +145,38 @@ async def delete_job_analysis(analysis_id: uuid.UUID, user: User = Depends(get_c
         await job_analyzer_service.delete(db, user, analysis_id)
     except ProfileError as exc:
         raise _fail(exc) from exc
+
+
+# ------------------------------------------------------------------------ public profile and CV
+
+
+class ProfileIn(BaseModel):
+    username: str | None = Field(default=None, max_length=30)
+    headline: str | None = Field(default=None, max_length=140)
+    bio: str | None = Field(default=None, max_length=1200)
+    location: str | None = Field(default=None, max_length=80)
+    github_url: str | None = Field(default=None, max_length=300)
+    linkedin_url: str | None = Field(default=None, max_length=300)
+    website_url: str | None = Field(default=None, max_length=300)
+    is_public: bool | None = None
+    show_readiness: bool | None = None
+    show_skills: bool | None = None
+    show_certifications: bool | None = None
+
+
+@router.get("/profile")
+async def my_profile(user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+    return await public_profile_service.get_mine(db, user)
+
+
+@router.put("/profile")
+async def save_profile(payload: ProfileIn, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+    try:
+        return await public_profile_service.save_mine(db, user, payload.model_dump(exclude_unset=True))
+    except ProfileError as exc:
+        raise _fail(exc) from exc
+
+
+@router.get("/cv")
+async def cv(user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+    return {"markdown": await public_profile_service.cv_markdown(db, user)}

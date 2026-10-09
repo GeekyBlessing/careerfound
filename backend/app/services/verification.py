@@ -73,6 +73,7 @@ def verification(progress: ProjectLabProgress | None, state: dict, kind: str | N
 
     return {
         "tier": tier,
+        "evidence_checked": bool(evidence_ok),
         "badge": badge,
         "copy": TIER_COPY[tier],
         "stale": stale,

@@ -38,7 +38,7 @@ from app.seed.lab.universal import (
     STAGES,
     UNIVERSAL_INTERVIEW,
 )
-from app.services import portfolio_service, repo_check, roadmap_service
+from app.services import case_study_service, portfolio_service, repo_check, roadmap_service
 from app.services.verification import verification as compute_verification
 
 STAGE_ORDER = [key for key, _, _ in STAGES]
@@ -611,6 +611,10 @@ async def add_to_portfolio(db: AsyncSession, user: User, project_id: uuid.UUID) 
     item.repo_url = state["repo_url"]
     item.is_published = True
     await db.commit()
+    # Start the case study as an editable draft. Results and screenshots stay
+    # empty for the person to fill in, because only they know them.
+    if not item.case_study:
+        await case_study_service.generate(db, user.id, item.id)
     return await project_detail(db, user, project_id)
 
 
