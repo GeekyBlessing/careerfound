@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { CheckCircle2, XCircle } from "lucide-react";
@@ -24,8 +24,13 @@ function VerifyEmailInner() {
   const { refreshUser, user } = useAuth();
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
   const [error, setError] = useState<string | null>(null);
+  // One link, one request. React can run this effect twice in development, and the
+  // second request would otherwise overwrite a success with an error.
+  const requested = useRef<string | null>(null);
 
   useEffect(() => {
+    if (token && requested.current === token) return;
+    requested.current = token;
     if (!token) {
       setStatus("error");
       setError("This verification link is missing its token. Try opening the link from your email again.");

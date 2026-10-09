@@ -21,6 +21,12 @@ class AuthError(Exception):
     pass
 
 
+class EmailDeliveryError(Exception):
+    """The email provider did not accept the message. Raised only where the
+    person is waiting on that exact email (a resend), so the app can say so
+    instead of claiming something was sent that was not."""
+
+
 async def register_user(db: AsyncSession, payload: RegisterRequest) -> User:
     existing = await db.execute(select(User).where(User.email == payload.email.lower()))
     if existing.scalar_one_or_none() is not None:
@@ -124,15 +130,16 @@ async def _consume_email_token(db: AsyncSession, raw_token: str, purpose: EmailT
     return token_row
 
 
-async def send_verification_email_for(db: AsyncSession, user: User) -> None:
+async def send_verification_email_for(db: AsyncSession, user: User) -> bool:
     raw_token = await _issue_email_token(db, user, EmailTokenPurpose.email_verification)
-    await email_service.send_verification_email(user, raw_token)
+    return await email_service.send_verification_email(user, raw_token)
 
 
 async def resend_verification_email(db: AsyncSession, user: User) -> None:
     if user.email_verified:
         raise AuthError("This email address is already verified.")
-    await send_verification_email_for(db, user)
+    if not await send_verification_email_for(db, user):
+        raise EmailDeliveryError("We could not send the verification email just now. Please try again in a few minutes.")
 
 
 async def verify_email(db: AsyncSession, raw_token: str) -> User:

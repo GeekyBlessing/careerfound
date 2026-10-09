@@ -381,3 +381,27 @@ async def test_resend_provider_without_api_key_fails_closed(monkeypatch):
     message = email_service.EmailMessage(to="x@example.com", subject="Test", html="<p>hi</p>", text="hi")
     ok = await email_service.send_email(message)
     assert ok is False
+
+
+async def test_resend_verification_says_so_when_the_email_could_not_be_sent(client, email_spy, monkeypatch):
+    resp = await client.post(
+        "/api/v1/auth/register",
+        json={"email": "nosend@example.com", "password": "SecurePass123!", "full_name": "N"},
+    )
+    access_token = resp.json()["access_token"]
+
+    async def failing_send(message):
+        return False
+
+    monkeypatch.setattr(email_service, "send_email", failing_send)
+    resend_resp = await client.post(
+        "/api/v1/auth/resend-verification", headers={"Authorization": f"Bearer {access_token}"}
+    )
+    assert resend_resp.status_code == 503
+    assert "could not send" in resend_resp.json()["error"]["message"].lower()
+    assert "sent. check your inbox" not in resend_resp.text.lower()
+
+
+async def test_a_made_up_verification_token_is_still_rejected(client):
+    resp = await client.post("/api/v1/auth/verify-email", json={"token": "not-a-real-token-" + "x" * 30})
+    assert resp.status_code == 400

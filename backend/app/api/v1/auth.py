@@ -107,6 +107,8 @@ async def resend_verification(request: Request, user: User = Depends(get_current
         await auth_service.resend_verification_email(db, user)
     except auth_service.AuthError as exc:
         raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from exc
+    except auth_service.EmailDeliveryError as exc:
+        raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, str(exc)) from exc
     return MessageResponse(message="Verification email sent. Check your inbox.")
 
 
