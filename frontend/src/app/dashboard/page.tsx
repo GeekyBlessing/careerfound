@@ -30,6 +30,7 @@ import { api, ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { formatMinutes, formatRelativeTime } from "@/lib/utils";
 import type { Dashboard, MissionTask, PhaseItem, Roadmap } from "@/types";
+import type { CareerReadiness } from "@/types/career";
 
 /** A completed project/quiz doesn't carry its own minute estimate in the
  * roadmap payload the way a lesson does, so this reuses the same fixed
@@ -92,6 +93,7 @@ export default function DashboardPage() {
   const { user } = useAuth();
   const [dashboard, setDashboard] = useState<Dashboard | null>(null);
   const [roadmap, setRoadmap] = useState<Roadmap | null>(null);
+  const [readiness, setReadiness] = useState<CareerReadiness | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -100,10 +102,12 @@ export default function DashboardPage() {
     Promise.all([
       api.get<Dashboard>("/dashboard"),
       api.get<Roadmap>("/roadmaps/active").catch(() => null), // no active roadmap yet is expected, not an error
+      api.get<CareerReadiness>("/career/readiness").catch(() => null), // the next move degrades to the roadmap CTA
     ])
-      .then(([d, r]) => {
+      .then(([d, r, c]) => {
         setDashboard(d);
         setRoadmap(r);
+        setReadiness(c);
       })
       .catch((err) => setError(err instanceof ApiError ? err.message : "Couldn't load your dashboard."))
       .finally(() => setLoading(false));
@@ -135,7 +139,7 @@ export default function DashboardPage() {
 
       {dashboard && dashboard.has_active_roadmap && (
         <div className="space-y-10 sm:space-y-12">
-          <HeroStatus firstName={firstName} dashboard={dashboard} roadmap={roadmap} stats={stats} />
+          <HeroStatus firstName={firstName} dashboard={dashboard} roadmap={roadmap} stats={stats} readiness={readiness} />
 
           {stats && <StatStrip dashboard={dashboard} stats={stats} />}
 
@@ -156,7 +160,7 @@ export default function DashboardPage() {
           <ProjectLabCard />
 
           <div className="grid gap-6 lg:grid-cols-2 lg:items-start lg:gap-8">
-            <CareerReadinessCard />
+            <CareerReadinessCard data={readiness} showAction={false} />
             <RecentActivity items={dashboard.recent_activity} />
           </div>
         </div>
@@ -175,12 +179,17 @@ function HeroStatus({
   dashboard,
   roadmap,
   stats,
+  readiness,
 }: {
   firstName: string;
   dashboard: Dashboard;
   roadmap: Roadmap | null;
   stats: ReturnType<typeof computeRoadmapStats> | null;
+  readiness: CareerReadiness | null;
 }) {
+  // One primary action. When the readiness model has a recommendation it wins,
+  // because it looks across the whole journey. Otherwise fall back to the roadmap.
+  const move = readiness?.has_path ? (readiness.biggest_opportunity?.action ?? readiness.next_action) : null;
   return (
     <div>
       <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-start">
@@ -224,11 +233,31 @@ function HeroStatus({
         </ol>
       )}
 
-      <Link href="/roadmap" className="mt-6 inline-block">
-        <Button className="gap-1.5">
-          Continue roadmap <ArrowRight className="h-3.5 w-3.5" />
-        </Button>
-      </Link>
+      {move ? (
+        <div className="mt-7 max-w-2xl rounded-2xl border border-accent/25 bg-accent/[0.04] p-5 sm:p-6">
+          <p className="font-mono text-[10px] uppercase tracking-wide text-accent-light">Your next move</p>
+          <p className="mt-2 font-display text-xl font-semibold leading-snug tracking-tight text-ink-100">{move.title}</p>
+          <p className="mt-1.5 text-sm leading-relaxed text-ink-400">{move.reason}</p>
+          <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
+            <Link href={move.href} className="focus-ring rounded-xl">
+              <Button className="gap-1.5" tabIndex={-1}>
+                {move.cta} <ArrowRight className="h-3.5 w-3.5" />
+              </Button>
+            </Link>
+            {move.href !== "/roadmap" && (
+              <Link href="/roadmap" className="focus-ring rounded text-sm font-medium text-ink-400 hover:text-accent-light">
+                Open my roadmap
+              </Link>
+            )}
+          </div>
+        </div>
+      ) : (
+        <Link href="/roadmap" className="mt-6 inline-block">
+          <Button className="gap-1.5">
+            Continue roadmap <ArrowRight className="h-3.5 w-3.5" />
+          </Button>
+        </Link>
+      )}
     </div>
   );
 }
@@ -393,7 +422,7 @@ function NextStep({ dashboard }: { dashboard: Dashboard }) {
 
   return (
     <Card className="p-6">
-      <p className="eyebrow">Your next step</p>
+      <p className="eyebrow">Today on your roadmap</p>
       <ol className="mt-4 space-y-3">
         {steps.map((step, i) => (
           <li key={i} className="flex flex-col gap-2">

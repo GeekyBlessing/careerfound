@@ -14,7 +14,7 @@ import { ReadinessRing } from "./readiness-ring";
  * The dashboard's readiness card. It shows the score, why it is what it is,
  * and exactly one thing to do next, with the full breakdown one click away.
  */
-export function CareerReadinessCard({ data: given }: { data?: CareerReadiness | null }) {
+export function CareerReadinessCard({ data: given, showAction = true }: { data?: CareerReadiness | null; showAction?: boolean }) {
   const [data, setData] = useState<CareerReadiness | null>(given ?? null);
   useEffect(() => {
     if (given) return;
@@ -55,6 +55,7 @@ export function CareerReadinessCard({ data: given }: { data?: CareerReadiness | 
         </ul>
       </div>
 
+      {showAction && (
       <div className="mt-6 border-t border-[rgb(var(--fg-tint)/0.1)] pt-5">
         <p className="font-mono text-[10px] uppercase tracking-wide text-accent-light">Do this next</p>
         <p className="mt-1.5 font-display text-base font-semibold text-ink-100">{action.title}</p>
@@ -65,6 +66,7 @@ export function CareerReadinessCard({ data: given }: { data?: CareerReadiness | 
           </Button>
         </Link>
       </div>
+      )}
     </Card>
   );
 }

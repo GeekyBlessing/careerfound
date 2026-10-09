@@ -101,7 +101,7 @@ export function DashboardScreen() {
         </div>
         <div className="flex flex-col items-center justify-center rounded-xl border border-[rgb(var(--fg-tint)/0.12)] p-4">
           <ReadinessDial size={104} overall={READINESS_OVERALL} segments={READINESS_SIGNALS.map((r) => ({ key: r.key, label: r.label, value: r.value }))} />
-          <p className="mt-2 text-[12px] font-medium text-ink-300">Tech Readiness</p>
+          <p className="mt-2 text-[12px] font-medium text-ink-300">Career Readiness</p>
         </div>
       </div>
 
@@ -574,7 +574,7 @@ export function InterviewScreen() {
 export function ReadinessScreen() {
   return (
     <div className="flex h-full w-full flex-col bg-base-950 text-ink-100">
-      <PhoneTop sub={`Job ready · ${EXAMPLE_TAG}`} title="Tech Readiness" />
+      <PhoneTop sub={`Job ready · ${EXAMPLE_TAG}`} title="Career Readiness" />
       <div className="flex justify-center py-2">
         <ReadinessDial size={170} overall={READINESS_OVERALL} segments={READINESS_SIGNALS.map((r) => ({ key: r.key, label: r.label, value: r.value }))} />
       </div>

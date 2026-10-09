@@ -31,7 +31,7 @@ export interface ReadinessSegment {
 }
 
 /**
- * CareerFound's Tech Readiness Score gauge: a ring made of one arc segment
+ * CareerFound's Career Readiness Score gauge: a ring made of one arc segment
  * per contributing factor (knowledge, projects, portfolio, interview
  * readiness, practical skills), each filled to its own percentage - not a
  * single generic "progress circle" with the breakdown listed separately
@@ -77,7 +77,7 @@ export function ReadinessDial({ segments, overall, size = 176 }: { segments: Rea
         className="absolute inset-0 rounded-full"
         style={maskStyle}
         role="img"
-        aria-label={`Tech Readiness Score: ${overall} out of 100`}
+        aria-label={`Career Readiness Score: ${overall} out of 100`}
       />
       <div className="relative flex flex-col items-center">
         <span className="font-mono text-3xl font-semibold leading-none text-ink-100">{overall}</span>

@@ -878,8 +878,10 @@ export default function LandingPage() {
               </h2>
               <p className="mt-5 max-w-md text-sm leading-relaxed text-ink-500">
                 Each project comes with the questions an interviewer will ask about it, and you write the answers
-                in your own words. Your Tech Readiness Score is built from five signals of your own activity:
-                what you have learned, built, published, rehearsed and proven. It tells you what would move it up next.
+                in your own words. Your Career Readiness Score is built from seven signals of your own activity:
+                what you have learned, built, documented, proven, published and rehearsed. Skills you only list yourself
+                and certifications you only claim never raise it. It shows exactly why the score is what it is, and the one
+                thing that would move it most.
               </p>
               <Link href="/pricing" className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline">
                 Start free <ArrowRight className="h-3.5 w-3.5" />
@@ -893,7 +895,7 @@ export default function LandingPage() {
                   </Phone>
                 </div>
                 <div className="w-[46%] -rotate-1 sm:w-[40%] lg:w-[40%]">
-                  <Phone label="CareerFound on a phone: a Tech Readiness Score of 57 built from five signals. Example data.">
+                  <Phone label="CareerFound on a phone: a Career Readiness Score built from seven signals. Example data.">
                     <ReadinessScreen />
                   </Phone>
                 </div>

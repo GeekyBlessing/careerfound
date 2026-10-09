@@ -25,12 +25,15 @@ export const ROADMAP_PHASES = [
 export const ROADMAP_ACTIVE = 7;
 export const ROADMAP_PCT = Math.round(((ROADMAP_ACTIVE + 0.5) / ROADMAP_PHASES.length) * 100);
 
+/** The seven signals and weights the product really uses (backend/app/services/career_readiness_service.py). Values are example data. */
 export const READINESS_SIGNALS = [
-  { key: "knowledge_pct", label: "Knowledge", weight: 25, value: 72 },
-  { key: "projects_pct", label: "Projects", weight: 30, value: 58 },
-  { key: "portfolio_pct", label: "Portfolio", weight: 15, value: 40 },
-  { key: "interview_pct", label: "Interview readiness", weight: 15, value: 35 },
-  { key: "practical_pct", label: "Practical skills", weight: 15, value: 66 },
+  { key: "learning", label: "Learning", weight: 20, value: 72 },
+  { key: "skills", label: "Skills", weight: 15, value: 64 },
+  { key: "projects", label: "Projects", weight: 20, value: 58 },
+  { key: "documentation", label: "Documentation", weight: 10, value: 50 },
+  { key: "proof", label: "Proof of work", weight: 15, value: 40 },
+  { key: "portfolio", label: "Portfolio", weight: 10, value: 33 },
+  { key: "interview", label: "Interview preparation", weight: 10, value: 35 },
 ];
 export const READINESS_OVERALL = Math.round(READINESS_SIGNALS.reduce((n, r) => n + (r.value * r.weight) / 100, 0));
 

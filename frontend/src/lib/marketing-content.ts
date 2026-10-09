@@ -27,7 +27,7 @@ export const steps = [
   },
   {
     title: "4. Get job-ready",
-    body: "Track your Tech Readiness Score, practice real-world simulations, and build a portfolio that gets you interviews.",
+    body: "Track your Career Readiness Score, practice real-world simulations, and build a portfolio that gets you interviews.",
     icon: MessageCircle,
   },
 ];
