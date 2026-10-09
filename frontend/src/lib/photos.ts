@@ -52,7 +52,7 @@ export const PHOTOS = {
     src: "/mentors/toriola.jpg",
     alt: "Toriola Opeyemi, CareerFound founder and mentor",
     available: true,
-    focal: "50% 18%",
+    focal: "50% 24%",
     ratio: "4 / 5",
   },
   dotun: {
