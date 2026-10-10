@@ -50,8 +50,8 @@ function MentorsPageInner() {
           <p className="eyebrow">Mentorship Marketplace</p>
           <h1 className="mt-1 text-2xl font-semibold tracking-tight text-ink-100">Real professionals, when you need a human</h1>
           <p className="mt-1 text-sm text-ink-500">
-            Booking requests are saved and sent to the mentor right away. Payment collection is coming soon, so
-            sessions are created as a request first, with no charge yet.
+            Every mentor here is a real, named professional. Sending a request does not charge you: payment is not
+            collected on this site yet, so the CareerFound team replies by email to arrange the next step.
           </p>
           {pathFilter && (
             <div className="mt-3 flex items-center gap-2">
@@ -110,7 +110,7 @@ function MentorsPageInner() {
         {mentors.map((mentor) => (
           <Link
             key={mentor.id}
-            href={`/mentors/${mentor.id}`}
+            href={`/mentors/${mentor.slug || mentor.id}`}
             className="focus-ring block rounded-2xl"
             aria-label={`View profile: ${mentor.display_name}`}
           >

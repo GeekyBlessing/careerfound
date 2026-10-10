@@ -99,6 +99,14 @@ class MentorSessionOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class MentorRequestOut(MentorSessionOut):
+    """Returned right after a request is saved. `team_notified` is false when
+    the notification email could not be sent, so the page can say so instead
+    of implying someone has been told."""
+
+    team_notified: bool = False
+
+
 class MentorSessionDetailOut(MentorSessionOut):
     """Mentor-dashboard view of a session — includes the mentee's identity,
     which the plain MentorSessionOut (used on the mentee's own booking

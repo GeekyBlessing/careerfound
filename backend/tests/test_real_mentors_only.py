@@ -23,8 +23,8 @@ async def test_public_listing_contains_only_the_real_mentors(client):
     assert all(m["is_demo"] is False for m in listing)
 
     # Filtering by a career a demo persona used to cover returns no demo mentor.
-    # Toriola is the real mentor for cybersecurity, cloud security and DevOps.
-    for career in ("cybersecurity", "cloud-security", "devops-engineering"):
+    # Toriola is the real mentor for cloud security, cloud engineering and cybersecurity.
+    for career in ("cybersecurity", "cloud-security", "cloud-engineering"):
         found = (await client.get("/api/v1/mentors", params={"path": career})).json()
         assert [m["display_name"] for m in found] == ["Toriola Opeyemi"], career
     # Yusuf Mustapha is the real mentor for the data analytics careers.
@@ -51,8 +51,9 @@ async def test_real_mentor_profiles_carry_the_verified_positioning(client):
     async with AsyncSessionLocal() as db:
         await seed_mentors(db)
     toriola = next(m for m in (await client.get("/api/v1/mentors")).json() if m["display_name"] == "Toriola Opeyemi")
-    assert toriola["headline"] == "Cybersecurity, Cloud Security & DevOps Mentor"
-    assert toriola["paths"] == ["cybersecurity", "cloud-security", "devops-engineering", "aws-security", "security-automation", "devsecops"]
+    assert toriola["headline"] == "Cloud Security Mentor | Cloud Engineer"
+    assert toriola["slug"] == "toriola-opeyemi"
+    assert toriola["paths"] == ["cloud-security", "cloud-engineering", "cybersecurity", "aws-security", "security-automation", "devsecops"]
     assert toriola["is_founding_mentor"] is True
     assert toriola["mentorship_price_label"] == "₦250,000 ($200)"
     assert toriola["mentorship_duration_label"] == "2 months"
@@ -72,9 +73,11 @@ async def test_existing_founder_row_is_repositioned_once_and_edits_are_kept():
         await seed_mentors(db)
         founder = (await db.execute(select(Mentor).where(Mentor.contact_email == FOUNDING_MENTOR["contact_email"]))).scalar_one()
         # Simulate the previously deployed profile.
-        founder.headline = "Cloud Security Mentor | Cloud Engineer"
-        founder.bio = "I mentor people breaking into cloud security and cloud engineering, older copy."
-        founder.paths = ["cloud-security", "cloud-engineering", "aws-security", "security-automation", "devsecops"]
+        founder.headline = "Cybersecurity, Cloud Security & DevOps Mentor"
+        founder.bio = "I mentor people breaking into cybersecurity, cloud security and DevOps, older copy."
+        founder.value_proposition = "Toriola mentors people entering cybersecurity, cloud security and DevOps, older copy."
+        founder.paths = ["cybersecurity", "cloud-security", "devops-engineering", "aws-security", "security-automation", "devsecops"]
+        founder.slug = None
         await db.commit()
 
         await seed_mentors(db)
@@ -82,6 +85,8 @@ async def test_existing_founder_row_is_repositioned_once_and_edits_are_kept():
         assert founder.headline == FOUNDING_MENTOR["headline"]
         assert founder.bio == FOUNDING_MENTOR["bio"]
         assert founder.paths == FOUNDING_MENTOR["paths"]
+        assert founder.value_proposition == FOUNDING_MENTOR["value_proposition"]
+        assert founder.slug == "toriola-opeyemi"
 
         # A later real edit from the mentor dashboard survives another seed run.
         founder.headline = "My own headline"

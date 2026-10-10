@@ -38,9 +38,13 @@ async def create_service_request(payload: ServiceRequestIn, http_request: Reques
     await db.commit()
     await db.refresh(request)
 
-    await email_service.send_service_request_confirmation(name=request.name, email=request.email, service=request.service.value)
-    await email_service.send_service_request_notification(
+    confirmation_sent = await email_service.send_service_request_confirmation(
+        name=request.name, email=request.email, service=request.service.value
+    )
+    team_notified = await email_service.send_service_request_notification(
         name=request.name, email=request.email, service=request.service.value, message=request.message
     )
 
-    return request
+    return ServiceRequestOut(
+        id=request.id, service=request.service, team_notified=team_notified, confirmation_sent=confirmation_sent
+    )

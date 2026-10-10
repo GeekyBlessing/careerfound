@@ -86,6 +86,18 @@ class Settings(BaseSettings):
     AUTH_RATE_LIMIT_PER_MINUTE: int = 10
     EMAIL_RATE_LIMIT_PER_MINUTE: int = 5
 
+    # Sample learner accounts (admin, demo, newuser @careerfound.dev) with
+    # passwords printed in the repo. They exist for local development and
+    # demos only. Unset means "on everywhere except production"; set
+    # SEED_DEMO_DATA=true to force them on, false to force them off.
+    SEED_DEMO_DATA: bool | None = None
+
+    @property
+    def seed_demo_data(self) -> bool:
+        if self.SEED_DEMO_DATA is not None:
+            return self.SEED_DEMO_DATA
+        return self.ENVIRONMENT != "production"
+
     @property
     def is_sqlite(self) -> bool:
         return self.DATABASE_URL.startswith("sqlite")

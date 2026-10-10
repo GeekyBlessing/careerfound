@@ -130,9 +130,10 @@ async def generate_mentee_summary(
     without an extra model call on every booking."""
     sentences: list[str] = []
 
-    persona_bit = _PERSONA_LABELS.get(user.persona.value if user.persona else "", "Someone")
+    persona_bit = _PERSONA_LABELS.get(user.persona.value if user.persona else "")
     goal_bit = _GOAL_LABELS.get(user.goal.value) if user.goal else None
-    sentences.append(f"{persona_bit}" + (f" wanting to {goal_bit}." if goal_bit else "."))
+    if persona_bit or goal_bit:
+        sentences.append(f"{persona_bit or 'Someone'}" + (f" wanting to {goal_bit}." if goal_bit else "."))
 
     path = await _active_path_for_user(db, user.id)
     if path is not None:
@@ -191,7 +192,8 @@ async def book_session(
         mentee_summary=summary,
     )
     db.add(session)
-    mentor.mentee_count = (mentor.mentee_count or 0) + 1
+    # mentee_count is not touched here: a request is not a mentee. It goes up when a mentor
+    # first confirms a session with this person (see update_session_status).
     await db.commit()
     await db.refresh(session)
     return session

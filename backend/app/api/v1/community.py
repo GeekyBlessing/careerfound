@@ -3,6 +3,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user
+from app.core.config import settings
 from app.db.session import get_db
 from app.models.progress import XPEvent
 from app.models.user import User
@@ -47,16 +48,25 @@ async def create_post(
 
 
 @router.get("/{path_slug}/leaderboard", response_model=list[LeaderboardEntryOut])
-async def leaderboard(path_slug: str, db: AsyncSession = Depends(get_db)):
-    """Simple all-time XP leaderboard across all users (community-scoped
+async def leaderboard(path_slug: str, _user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+    """All-time XP leaderboard across members who have earned XP (community-scoped
     leaderboards activate once per-path XP attribution is added in Phase 2).
+    Signed-in members only, and names are shortened to a first name and last
+    initial: this is a list of real people who never agreed to be published.
     """
-    result = await db.execute(
-        select(User.full_name, func.coalesce(func.sum(XPEvent.amount), 0).label("xp"))
-        .outerjoin(XPEvent, XPEvent.user_id == User.id)
+    xp = func.coalesce(func.sum(XPEvent.amount), 0)
+    query = (
+        select(User.full_name, xp.label("xp"))
+        .join(XPEvent, XPEvent.user_id == User.id)
         .group_by(User.id)
-        .order_by(func.coalesce(func.sum(XPEvent.amount), 0).desc())
+        .having(xp > 0)
+        .order_by(xp.desc())
         .limit(20)
     )
-    rows = result.all()
-    return [LeaderboardEntryOut(rank=i + 1, user_name=name, xp=xp) for i, (name, xp) in enumerate(rows)]
+    if settings.ENVIRONMENT == "production":
+        query = query.where(~User.email.like(f"%{community_service.SAMPLE_ACCOUNT_SUFFIX}"))
+    rows = (await db.execute(query)).all()
+    return [
+        LeaderboardEntryOut(rank=i + 1, user_name=community_service.public_name(name), xp=total)
+        for i, (name, total) in enumerate(rows)
+    ]

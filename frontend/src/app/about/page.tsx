@@ -32,10 +32,11 @@ export default function AboutPage() {
             and no sense of progress.
           </p>
           <p>
-            The platform is early. Some parts, like the mentor marketplace, mix a small number of real,
-            clearly-labeled mentors with sample profiles used for testing the experience. Payment and some
-            advanced features aren&apos;t live yet. Where something isn&apos;t finished, we&apos;d rather say so
-            than fake it, so what you see working is actually working.
+            The platform is early. The mentor marketplace lists a small number of real, named mentors. Payment
+            isn&apos;t live yet, so mentorship and consultation start as a request and the team arranges the rest
+            by email. Only Cybersecurity and Software Engineering have full lessons so far; the other careers have
+            a roadmap and projects. Where something isn&apos;t finished, we&apos;d rather say so than fake it, so
+            what you see working is actually working.
           </p>
           <p>
             CareerFound is for people just starting out, especially people who feel behind or unsure where to

@@ -14,7 +14,7 @@ import { api, ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { initials } from "@/lib/utils";
 import { track } from "@/lib/analytics";
-import type { Dashboard, MentorChatMessage, MentorChatResponse } from "@/types";
+import type { Dashboard, MentorChatMessage, MentorChatResponse, PublicConfig } from "@/types";
 
 /** The real CareerFound mark, standing in for a generic robot-head icon so
  * the mentor visibly reads as "CareerFound, talking to you" rather than a
@@ -39,6 +39,7 @@ export default function MentorPage() {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pathName, setPathName] = useState<string | null>(null);
+  const [limitedMode, setLimitedMode] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -52,6 +53,15 @@ export default function MentorPage() {
     api
       .get<Dashboard>("/dashboard")
       .then((d) => setPathName(d.has_active_roadmap ? d.path_name ?? null : null))
+      .catch(() => undefined);
+  }, []);
+
+  // When the server has no live AI model switched on, the replies come from a
+  // rule-based stand-in. Say so, so nobody mistakes prepared answers for a live model.
+  useEffect(() => {
+    api
+      .get<PublicConfig>("/config", { auth: false })
+      .then((c) => setLimitedMode(c.ai_provider === "mock"))
       .catch(() => undefined);
   }, []);
 
@@ -88,6 +98,12 @@ export default function MentorPage() {
           person&apos;s perspective, <Link href="/mentorship" className="underline hover:text-ink-300">1:1 mentorship</Link> or a{" "}
           <Link href="/consultation" className="underline hover:text-ink-300">career consultation</Link> is one click away.
         </p>
+        {limitedMode && (
+          <p className="mt-2 text-xs leading-relaxed text-ink-400" data-testid="ai-limited-mode">
+            Limited mode: a live AI model is not switched on yet, so replies come from prepared guidance for common
+            questions and may feel generic.
+          </p>
+        )}
       </div>
 
       <Card className="flex h-[65vh] flex-col overflow-hidden shadow-raised">

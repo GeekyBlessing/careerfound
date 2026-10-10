@@ -274,6 +274,7 @@ export interface PortfolioItem {
 
 export interface Mentor {
   id: string;
+  slug?: string | null;
   display_name: string;
   headline: string;
   bio: string;
@@ -331,6 +332,8 @@ export interface MentorSession {
   mentee_message: string;
   mentee_summary: string;
   payment_integration_note: string;
+  /** Only present right after a request is saved: false when the notification email could not be sent. */
+  team_notified?: boolean;
 }
 
 export interface MentorSessionDetail extends MentorSession {

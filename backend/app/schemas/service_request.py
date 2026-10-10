@@ -15,5 +15,8 @@ class ServiceRequestIn(BaseModel):
 class ServiceRequestOut(BaseModel):
     id: uuid.UUID
     service: ServiceRequestType
+    # False when the notification or confirmation email could not be sent.
+    team_notified: bool = False
+    confirmation_sent: bool = False
 
     model_config = {"from_attributes": True}

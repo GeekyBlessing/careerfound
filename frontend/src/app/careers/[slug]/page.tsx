@@ -22,7 +22,7 @@ import { DifficultyMeter } from "@/components/ui/difficulty-meter";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { SkeletonCard } from "@/components/ui/skeleton";
-import { SmartMentorRecommendation } from "@/components/mentors/smart-mentor-recommendation";
+import { CareerMentors } from "@/components/mentors/career-mentors";
 import { api, ApiError } from "@/lib/api";
 import { careerBySlug } from "@/lib/career-categories";
 import type { CareerPath, CareerProjectItem, RoadmapOutline } from "@/types";
@@ -434,7 +434,7 @@ export default function CareerDetailPage() {
             </div>
           </div>
 
-          <SmartMentorRecommendation pathSlug={path.slug} pathName={path.name} />
+          <CareerMentors pathSlug={path.slug} pathName={path.name} />
         </div>
       )}
     </PublicShell>

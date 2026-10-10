@@ -34,6 +34,12 @@ export default function MentorProfilePage() {
   );
 }
 
+/** Starts a request with the mentor's listed program already named, so the team knows what was asked for. */
+function programRequestContext(mentor: Mentor): { message: string } | undefined {
+  if (!mentor.mentorship_price_label) return undefined;
+  return { message: `I would like to request the mentorship program with ${mentor.display_name} (${mentor.mentorship_duration_label}).` };
+}
+
 function MentorProfilePageInner() {
   const params = useParams<{ id: string }>();
   const mentorId = params.id;
@@ -75,7 +81,7 @@ function MentorProfilePageInner() {
   useEffect(() => {
     if (mentor && requestedAction === "request" && !autoOpenedRequest.current) {
       autoOpenedRequest.current = true;
-      openSessionBooking();
+      openSessionBooking(programRequestContext(mentor));
     }
   }, [mentor, requestedAction]);
 
@@ -117,9 +123,13 @@ function MentorProfilePageInner() {
                         )}
                       </>
                     )}
-                    <span className="mx-1">·</span>
-                    <Users className="h-3.5 w-3.5" />
-                    <span>{mentor.mentee_count} mentee{mentor.mentee_count === 1 ? "" : "s"}</span>
+                    {mentor.mentee_count > 0 && (
+                      <>
+                        <span className="mx-1">·</span>
+                        <Users className="h-3.5 w-3.5" />
+                        <span>{mentor.mentee_count} mentee{mentor.mentee_count === 1 ? "" : "s"}</span>
+                      </>
+                    )}
                   </div>
                   <div className="mt-3 flex flex-wrap gap-1.5">
                     {mentor.paths.map((p) => (
@@ -190,9 +200,9 @@ function MentorProfilePageInner() {
                     <p className="text-xs text-ink-500">{mentor.mentorship_duration_label}, long-term mentorship</p>
                     <p className="mt-3 text-xs leading-relaxed text-ink-400">
                       A premium, structured mentorship program: consistent guidance over {mentor.mentorship_duration_label.toLowerCase()} to help you go from confused beginner to job-ready with a clear plan.{" "}
-                      {mentor.is_founding_mentor && mentor.display_name === "Toriola Opeyemi"
+                      {mentor.display_name === "Toriola Opeyemi"
                         ? "This is Toriola's personal offering, the same one on the Mentorship page."
-                        : "This is this mentor's own mentorship offering, booked directly through this profile."}
+                        : "Send a request and the CareerFound team will contact you to confirm it and arrange payment and a start date. Nothing is charged on this site yet."}
                     </p>
                     {mentor.display_name === "Toriola Opeyemi" ? (
                       <Link href="/mentorship" className="mt-4 block">
@@ -201,7 +211,10 @@ function MentorProfilePageInner() {
                         </Button>
                       </Link>
                     ) : (
-                      <Button className="mt-4 w-full gap-1.5" onClick={() => openSessionBooking()}>
+                      <Button
+                        className="mt-4 w-full gap-1.5"
+                        onClick={() => openSessionBooking(programRequestContext(mentor))}
+                      >
                         <Calendar className="h-3.5 w-3.5" /> Request mentorship
                       </Button>
                     )}
@@ -229,7 +242,7 @@ function MentorProfilePageInner() {
                   </Card>
                 )}
 
-                <Button variant="ghost" className="w-full gap-1.5" onClick={() => openSessionBooking()}>
+                <Button variant="ghost" className="w-full gap-1.5" onClick={() => setMode("question")}>
                   <MessageCircle className="h-3.5 w-3.5" /> Ask a question first
                 </Button>
               </>
@@ -273,7 +286,12 @@ function MentorProfilePageInner() {
                 <p className="text-sm font-semibold text-ink-100">
                   {confirmedSession.duration_minutes === 0 ? "Question sent" : "Session requested"}
                 </p>
-                <p className="mt-1 text-xs text-ink-500">Here&apos;s what we&apos;ll share with your mentor:</p>
+                <p className="mt-1 text-xs text-ink-500">
+                  {confirmedSession.team_notified === false
+                    ? "Your request is saved, but we could not send the notification email just now. Write to hello@mycareerfound.com if you do not hear back within two days."
+                    : "The CareerFound team has been told and will reply by email. Nothing has been charged."}
+                </p>
+                <p className="mt-3 text-xs text-ink-500">Here&apos;s what we&apos;ll share with your mentor:</p>
                 <p className="mt-3 rounded-xl bg-[rgb(var(--fg-tint)/0.03)] px-4 py-3 text-xs leading-relaxed text-ink-400">
                   {confirmedSession.mentee_summary}
                 </p>

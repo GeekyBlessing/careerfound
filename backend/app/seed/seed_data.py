@@ -19,6 +19,7 @@ from datetime import date, datetime, timedelta, timezone
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import settings
 from app.core.security import hash_password
 from app.db.base import Base
 from app.db.session import AsyncSessionLocal, engine
@@ -225,6 +226,10 @@ async def seed_mentors(db: AsyncSession) -> None:
         # edit made from the mentor dashboard is never overwritten by a
         # later redeploy re-running this seed script.
         changed = False
+        # Stable public URL for the profile (/mentors/toriola-opeyemi), set once.
+        if not existing_founder.slug:
+            existing_founder.slug = FOUNDING_MENTOR["slug"]
+            changed = True
         for field in (
             "mentorship_duration_label",
             "mentorship_price_label",
@@ -247,25 +252,34 @@ async def seed_mentors(db: AsyncSession) -> None:
         # One-time positioning updates. Toriola's headline, bio, value
         # proposition and mentorship areas have been repositioned twice
         # (cybersecurity only, then software engineering plus cybersecurity,
-        # now cloud security plus cloud engineering). Each field is replaced
+        # cloud security plus cloud engineering, a cybersecurity, cloud security and
+        # DevOps version, and finally the owner's preferred cloud security plus cloud engineering). Each field is replaced
         # only while it still holds one of the exact earlier seeded values,
         # so a real dashboard edit is never overwritten.
         previous_headlines = (
             "Cybersecurity & Cloud Security Engineer | Cybersecurity Mentor",
             "Software Engineer | Cybersecurity Expert",
-            "Cloud Security Mentor | Cloud Engineer",
+            "Cybersecurity, Cloud Security & DevOps Mentor",
         )
         if existing_founder.headline in previous_headlines:
             existing_founder.headline = FOUNDING_MENTOR["headline"]
             existing_founder.paths = FOUNDING_MENTOR["paths"]
             changed = True
         if (existing_founder.bio or "").startswith(
-            ("I mentor people who are figuring out how to break into tech", "I mentor people breaking into cloud security")
+            (
+                "I mentor people who are figuring out how to break into tech",
+                "I mentor people breaking into cloud security",
+                "I mentor people breaking into cybersecurity, cloud security and DevOps",
+            )
         ):
             existing_founder.bio = FOUNDING_MENTOR["bio"]
             changed = True
         if (existing_founder.value_proposition or "").startswith(
-            ("Toriola mentors beginners entering cybersecurity", "Toriola mentors people entering cloud security")
+            (
+                "Toriola mentors beginners entering cybersecurity",
+                "Toriola mentors people entering cloud security",
+                "Toriola mentors people entering cybersecurity, cloud security and DevOps",
+            )
         ):
             existing_founder.value_proposition = FOUNDING_MENTOR["value_proposition"]
             changed = True
@@ -356,7 +370,9 @@ async def seed_mentors(db: AsyncSession) -> None:
         await db.commit()
 
 
-async def seed_communities(db: AsyncSession, paths: dict[str, CareerPath], demo_user: User) -> None:
+async def seed_communities(db: AsyncSession, paths: dict[str, CareerPath], demo_user: User | None = None) -> None:
+    """Creates one community per featured career. The sample posts are only
+    added when a sample user is passed in, which production never does."""
     existing = (await db.execute(select(Community))).scalars().first()
     if existing:
         return
@@ -374,6 +390,10 @@ async def seed_communities(db: AsyncSession, paths: dict[str, CareerPath], demo_
         db.add(community)
         await db.flush()
         communities[slug] = community
+
+    if demo_user is None:
+        await db.commit()
+        return
 
     seed_posts = [
         ("cybersecurity", "showcase", "Just finished my port scanner project!", "Took me a weekend but it's fully working with threading now. Huge thanks to the AI mentor for pushing me to add a timeout, my first version hung forever on filtered ports."),
@@ -460,6 +480,31 @@ async def seed_demo_progress(db: AsyncSession, users: dict[str, User], paths: di
     await db.commit()
 
 
+_PUBLISHED_SAMPLE_PASSWORDS = {
+    "admin@careerfound.dev": "AdminPass123!",
+    "demo@careerfound.dev": "DemoPass123!",
+    "newuser@careerfound.dev": "NewUser123!",
+}
+
+
+async def warn_if_sample_accounts_use_published_passwords(db: AsyncSession) -> list[str]:
+    """Production never creates the sample accounts, but a database seeded
+    before that rule may still hold them. If one still accepts the password
+    printed in this repository, anyone can sign in as it, so say so loudly in
+    the deploy log. Nothing is deleted or locked here: the owner may rely on
+    the admin account and has to decide."""
+    from app.core.security import verify_password
+
+    exposed: list[str] = []
+    rows = (await db.execute(select(User).where(User.email.in_(list(_PUBLISHED_SAMPLE_PASSWORDS))))).scalars().all()
+    for user in rows:
+        if verify_password(_PUBLISHED_SAMPLE_PASSWORDS[user.email], user.password_hash):
+            exposed.append(user.email)
+    for email in exposed:
+        print(f"WARNING: {email} exists and still uses the password published in the repository. Change its password or delete the account.")
+    return exposed
+
+
 async def main() -> None:
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
@@ -471,15 +516,22 @@ async def main() -> None:
         await seed_simulations(db, paths)
         await seed_mentors(db)
         await normalize_mentor_tags(db)
-        users = await seed_users(db)
-        await seed_communities(db, paths, users["demo@careerfound.dev"])
-        await seed_demo_progress(db, users, paths)
+        if settings.seed_demo_data:
+            users = await seed_users(db)
+            await seed_communities(db, paths, users["demo@careerfound.dev"])
+            await seed_demo_progress(db, users, paths)
+        else:
+            await seed_communities(db, paths)
+            await warn_if_sample_accounts_use_published_passwords(db)
 
     print("Seed complete.")
-    print("Demo accounts:")
-    print("  admin@careerfound.dev / AdminPass123!  (admin)")
-    print("  demo@careerfound.dev  / DemoPass123!   (mid-progress user, Cybersecurity path)")
-    print("  newuser@careerfound.dev / NewUser123!  (brand-new user, no roadmap yet)")
+    if settings.seed_demo_data:
+        print("Demo accounts (local development only, never create these in production):")
+        print("  admin@careerfound.dev / AdminPass123!  (admin)")
+        print("  demo@careerfound.dev  / DemoPass123!   (mid-progress user, Cybersecurity path)")
+        print("  newuser@careerfound.dev / NewUser123!  (brand-new user, no roadmap yet)")
+    else:
+        print("Sample accounts and sample community posts were not created (production, or SEED_DEMO_DATA=false).")
 
 
 if __name__ == "__main__":

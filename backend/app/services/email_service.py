@@ -26,6 +26,7 @@ that explicit check.
 """
 from __future__ import annotations
 
+import html as _html
 import logging
 from dataclasses import dataclass
 from typing import Literal
@@ -330,7 +331,7 @@ async def send_service_request_confirmation(*, name: str, email: str, service: s
     consultation) to the person who submitted it. This is a request, not a
     payment confirmation, no payment has been taken, that's made explicit
     in the copy since there is no live payment processor connected yet."""
-    first_name = name.split(" ")[0] if name else "there"
+    first_name = _html.escape(name.split(" ")[0]) if name else "there"
     service_label = _SERVICE_LABELS.get(service, service)
     html, text = render_email(
         preheader=f"We received your {service_label} request.",
@@ -352,12 +353,15 @@ async def send_service_request_notification(*, name: str, email: str, service: s
     sent to settings.EMAIL_REPLY_TO (the team inbox), not to the requester.
     """
     service_label = _SERVICE_LABELS.get(service, service)
-    safe_message = message.strip() or "(no message provided)"
+    # Everything the visitor typed is untrusted: escape it so a request cannot
+    # put links or markup into an email that lands in the team inbox.
+    safe_message = _html.escape(message.strip()) or "(no message provided)"
+    safe_name, safe_email = _html.escape(name), _html.escape(email)
     html, text = render_email(
-        preheader=f"New {service_label} request from {name}.",
+        preheader=f"New {service_label} request from {safe_name}.",
         heading="New service request",
         body_html=f"""
-            <p style="margin: 0 0 12px;"><strong>{service_label}</strong> requested by {name} ({email}).</p>
+            <p style="margin: 0 0 12px;"><strong>{service_label}</strong> requested by {safe_name} ({safe_email}).</p>
             <p style="margin: 0 0 6px; color: {_MUTED}; font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em;">Message</p>
             <p style="margin: 0; white-space: pre-wrap;">{safe_message}</p>
         """,
@@ -366,3 +370,49 @@ async def send_service_request_notification(*, name: str, email: str, service: s
     return await send_email(
         EmailMessage(to=settings.EMAIL_REPLY_TO, subject=f"New {service_label} request: {name}", html=html, text=text)
     )
+
+
+async def send_mentor_request_notification(
+    *, mentor_name: str, mentor_email: str | None, mentee_name: str, mentee_email: str, kind: str, topic: str, summary: str
+) -> bool:
+    """Tells the team inbox (and the mentor, when we hold a verified address
+    for them) that someone asked a mentor for a session or sent a question.
+    Without this a request is only a database row that nobody looks at.
+    Returns True when the team copy was accepted by the email provider."""
+    what = "question" if kind == "question" else "session request"
+    safe = {k: _html.escape(v or "") for k, v in dict(mentor=mentor_name, name=mentee_name, email=mentee_email, topic=topic, summary=summary).items()}
+    html, text = render_email(
+        preheader=f"New {what} for {safe['mentor']} from {safe['name']}.",
+        heading=f"New {what} for {safe['mentor']}",
+        body_html=f"""
+            <p style="margin: 0 0 12px;">{safe['name']} ({safe['email']}) sent {safe['mentor']} a {what}. Reply to the person directly to arrange the next step. Nothing has been charged.</p>
+            <p style="margin: 0 0 6px; color: {_MUTED}; font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em;">Topic</p>
+            <p style="margin: 0 0 12px;">{safe['topic'] or "Not given"}</p>
+            <p style="margin: 0 0 6px; color: {_MUTED}; font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em;">What they shared</p>
+            <p style="margin: 0; white-space: pre-wrap;">{safe['summary']}</p>
+        """,
+        footer_note="Internal notification from the CareerFound mentor marketplace.",
+    )
+    subject = f"New {what} for {mentor_name} from {mentee_name}"
+    team_ok = await send_email(EmailMessage(to=settings.EMAIL_REPLY_TO, subject=subject, html=html, text=text))
+    if mentor_email and mentor_email.lower() != settings.EMAIL_REPLY_TO.lower():
+        await send_email(EmailMessage(to=mentor_email, subject=subject, html=html, text=text))
+    return team_ok
+
+
+async def send_mentor_request_confirmation(*, mentee_name: str, mentee_email: str, mentor_name: str, kind: str) -> bool:
+    """Confirms to the person that their request was received. It is a receipt,
+    not a booking: a mentor has not accepted anything and nothing is charged."""
+    what = "question" if kind == "question" else "session request"
+    first = _html.escape(mentee_name.split(" ")[0]) if mentee_name else "there"
+    html, text = render_email(
+        preheader=f"We received your {what} for {_html.escape(mentor_name)}.",
+        heading="Got your request",
+        body_html=f"""
+            <p style="margin: 0 0 12px;">Hi {first},</p>
+            <p style="margin: 0 0 12px;">We received your {what} for <strong>{_html.escape(mentor_name)}</strong>. This is not a confirmed booking and nothing has been charged. The CareerFound team will reply to this address to arrange the next step.</p>
+            <p style="margin: 0;">If you need to add anything, just reply to this email.</p>
+        """,
+        footer_note="You're receiving this because you sent a request through the CareerFound mentor marketplace.",
+    )
+    return await send_email(EmailMessage(to=mentee_email, subject=f"We received your {what} for {mentor_name}", html=html, text=text))

@@ -23,11 +23,12 @@ export default function TermsPage() {
           <section>
             <h2 className="text-sm font-semibold text-ink-100">The product, honestly</h2>
             <p className="mt-2">
-              CareerFound is an early-stage product. The career assessment, roadmap, and free-tier lessons and
-              projects are functional today. Some things aren&apos;t finished yet: Pro isn&apos;t billable, and
-              mentor session payment is a placeholder, sessions are free during this founding period. We&apos;ll
-              tell you clearly, in the product, when something is a demo or not yet live rather than presenting it
-              as finished.
+              CareerFound is an early-stage product. The career assessment, the roadmaps and projects, and the
+              lessons for Cybersecurity and Software Engineering are functional today. Some things aren&apos;t
+              finished yet: Pro isn&apos;t billable, and no payment is collected on the site. Mentor requests and
+              the paid mentorship and consultation services all start as a request that the team follows up by
+              email. We&apos;ll tell you clearly, in the product, when something is an example or not yet live
+              rather than presenting it as finished.
             </p>
           </section>
           <section>
@@ -49,11 +50,12 @@ export default function TermsPage() {
           <section>
             <h2 className="text-sm font-semibold text-ink-100">Mentor marketplace sessions</h2>
             <p className="mt-2">
-              Booking a session in the mentor marketplace (the &ldquo;Real professionals&rdquo; directory) reserves
-              a request with a mentor, it doesn&apos;t guarantee the mentor accepts or attends. Demo mentor
-              profiles are for testing the experience and aren&apos;t bookable with a real person, they&apos;re
-              clearly labeled as demo in the product. This is separate from the paid 1:1 Career Mentorship program
-              and the Career Consultation service described on their own pages, which are real, priced offerings.
+              Sending a request or question to a mentor in the mentor marketplace (the &ldquo;Real professionals&rdquo;
+              directory) saves a request and tells the CareerFound team, who reply by email. It doesn&apos;t
+              guarantee the mentor accepts or attends, and nothing is charged when you send it. Some mentors list
+              their own 2-month mentorship program with a price; that price applies only once you and the team have
+              agreed it by email. Toriola&apos;s own Career Mentorship and Career Consultation are described on their
+              own pages.
             </p>
           </section>
           <section>

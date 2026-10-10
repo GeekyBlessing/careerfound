@@ -7,9 +7,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user, require_admin, require_mentor
 from app.db.session import get_db
-from app.models.marketplace import ApplicationStatus, Mentor, MentorNote, SessionStatus
+from app.models.marketplace import ApplicationStatus, Mentor, MentorNote, MentorSession, SessionStatus
 from app.models.user import User
 from app.schemas.marketplace import (
+    MentorRequestOut,
     AskQuestionRequest,
     BookSessionRequest,
     MentorApplicationIn,
@@ -30,7 +31,7 @@ from app.schemas.marketplace import (
     ReviewRequest,
     SessionStatusUpdate,
 )
-from app.services import marketplace_service, mentor_matching_service
+from app.services import email_service, marketplace_service, mentor_matching_service
 
 router = APIRouter(tags=["marketplace"])
 
@@ -109,7 +110,29 @@ async def list_mentor_reviews(mentor_id: str, db: AsyncSession = Depends(get_db)
     return await marketplace_service.list_reviews(db, mentor.id)
 
 
-@router.post("/mentors/{mentor_id}/sessions", response_model=MentorSessionOut, status_code=status.HTTP_201_CREATED)
+async def _announce_request(mentor: Mentor, user: User, session, kind: str) -> bool:
+    """Email the team (and the mentor when we hold their address) plus the
+    requester. Never raises: a broken email provider must not lose a request
+    that is already saved."""
+    try:
+        notified = await email_service.send_mentor_request_notification(
+            mentor_name=mentor.display_name,
+            mentor_email=mentor.contact_email,
+            mentee_name=user.full_name,
+            mentee_email=user.email,
+            kind=kind,
+            topic=session.help_topic or "",
+            summary=session.mentee_summary or session.mentee_message or "",
+        )
+        await email_service.send_mentor_request_confirmation(
+            mentee_name=user.full_name, mentee_email=user.email, mentor_name=mentor.display_name, kind=kind
+        )
+        return notified
+    except Exception:  # pragma: no cover - defensive, the request is already stored
+        return False
+
+
+@router.post("/mentors/{mentor_id}/sessions", response_model=MentorRequestOut, status_code=status.HTTP_201_CREATED)
 async def book_session(
     mentor_id: uuid.UUID,
     payload: BookSessionRequest,
@@ -123,10 +146,11 @@ async def book_session(
     session = await marketplace_service.book_session(
         db, mentor, user, payload.scheduled_at, payload.duration_minutes, payload.help_topic, message
     )
-    return session
+    notified = await _announce_request(mentor, user, session, "session")
+    return MentorRequestOut.model_validate(session).model_copy(update={"team_notified": notified})
 
 
-@router.post("/mentors/{mentor_id}/questions", response_model=MentorSessionOut, status_code=status.HTTP_201_CREATED)
+@router.post("/mentors/{mentor_id}/questions", response_model=MentorRequestOut, status_code=status.HTTP_201_CREATED)
 async def ask_question(
     mentor_id: uuid.UUID,
     payload: AskQuestionRequest,
@@ -142,7 +166,8 @@ async def ask_question(
     session = await marketplace_service.book_session(
         db, mentor, user, datetime.now(timezone.utc), 0, "other", payload.message
     )
-    return session
+    notified = await _announce_request(mentor, user, session, "question")
+    return MentorRequestOut.model_validate(session).model_copy(update={"team_notified": notified})
 
 
 @router.post("/mentors/{mentor_id}/sessions/{session_id}/review", response_model=MentorReviewOut, status_code=status.HTTP_201_CREATED)
@@ -190,7 +215,21 @@ async def update_session_status(
     session = await marketplace_service.get_session(db, session_id)
     if session is None or session.mentor_id != mentor.id:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Session not found")
-    session.status = SessionStatus(payload.status)
+    new_status = SessionStatus(payload.status)
+    if session.status == SessionStatus.requested and new_status in (SessionStatus.confirmed, SessionStatus.completed) and session.duration_minutes > 0:
+        already_mentored = (
+            await db.execute(
+                select(MentorSession.id).where(
+                    MentorSession.mentor_id == mentor.id,
+                    MentorSession.mentee_id == session.mentee_id,
+                    MentorSession.id != session.id,
+                    MentorSession.status.in_([SessionStatus.confirmed, SessionStatus.completed]),
+                )
+            )
+        ).first()
+        if already_mentored is None:
+            mentor.mentee_count = (mentor.mentee_count or 0) + 1
+    session.status = new_status
     await db.commit()
     await db.refresh(session)
     return session

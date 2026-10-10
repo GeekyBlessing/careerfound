@@ -25,13 +25,19 @@ export function ServiceRequestForm({ service, serviceLabel }: { service: Service
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const [emailed, setEmailed] = useState(true);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     setSubmitting(true);
     try {
-      await api.post("/service-requests", { name, email, service, message }, { auth: false });
+      const res = await api.post<{ team_notified: boolean; confirmation_sent: boolean }>(
+        "/service-requests",
+        { name, email, service, message },
+        { auth: false },
+      );
+      setEmailed(Boolean(res?.confirmation_sent));
       setSubmitted(true);
       track("service_request_submitted", { service });
     } catch (err) {
@@ -49,8 +55,12 @@ export function ServiceRequestForm({ service, serviceLabel }: { service: Service
         </div>
         <h3 className="mt-4 text-base font-semibold text-ink-100">Request received</h3>
         <p className="mt-2 text-sm leading-relaxed text-ink-500">
-          We&apos;ve emailed you a confirmation. This isn&apos;t a payment, nothing has been charged. We&apos;ll
-          reply personally by email to arrange payment and scheduling for your {serviceLabel.toLowerCase()}.
+          {emailed
+            ? "We've emailed you a confirmation. "
+            : "Your request is saved, but we could not send the confirmation email just now. "}
+          This isn&apos;t a payment, nothing has been charged. We&apos;ll reply personally by email to arrange
+          payment and scheduling for your {serviceLabel.toLowerCase()}.
+          {!emailed && " If you don't hear from us within two days, write to hello@mycareerfound.com."}
         </p>
       </Card>
     );

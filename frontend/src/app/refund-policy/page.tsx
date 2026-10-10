@@ -33,8 +33,8 @@ export default function RefundPolicyPage() {
             <h2 className="text-sm font-semibold text-ink-100">No payment is taken yet</h2>
             <p className="mt-2">
               CareerFound doesn&apos;t have a live payment processor connected today. Submitting a Mentorship or
-              Consultation request through the pricing, mentorship, or consultation pages sends a real request
-              (and a real confirmation email) to reserve your spot at the listed price, but no charge is made at
+              Consultation request through the pricing, mentorship, or consultation pages sends a real request to
+              the team and, when email delivery is working, a confirmation to you, but no charge is made at
               submission time. You&apos;ll be told clearly, before any real charge is introduced, exactly how and
               when you&apos;d be billed.
             </p>
@@ -73,9 +73,9 @@ export default function RefundPolicyPage() {
           <section>
             <h2 className="text-sm font-semibold text-ink-100">Mentor marketplace sessions</h2>
             <p className="mt-2">
-              Sessions booked through the mentor marketplace directory are a separate, currently free feature (see
-              the Terms of use), not the paid Mentorship or Consultation services this policy is about, so there&apos;s
-              nothing to refund there today either.
+              Requests and questions sent to mentors through the marketplace directory also charge nothing today (see
+              the Terms of use). Some mentors list a 2-month program at ₦250,000 ($200). If you agree to one by email,
+              the cancellation and refund rules above apply to it in the same way as Toriola&apos;s own mentorship.
             </p>
           </section>
         </div>

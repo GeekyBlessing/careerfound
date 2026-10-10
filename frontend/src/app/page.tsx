@@ -476,7 +476,7 @@ export default function LandingPage() {
                   The full library: {CAREER_PATH_COUNT} careers.
                 </h3>
                 <p className="max-w-sm text-sm text-ink-500">
-                  Every one has its own roadmap, projects, tools and entry roles. None repeats another.
+                  Every one has its own roadmap, three projects, tools, entry roles and interview preparation. Where careers overlap, each page says how it differs.
                 </p>
               </div>
               <div className="mt-8 grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
@@ -766,14 +766,14 @@ export default function LandingPage() {
                       </div>
                     </div>
                     <div className="absolute -bottom-14 right-5 hidden w-[28%] rotate-[3deg] md:block">
-                      <Phone label="CareerFound on a phone: requesting mentorship from Toriola Opeyemi, Cybersecurity, Cloud Security and DevOps Mentor.">
+                      <Phone label="CareerFound on a phone: requesting mentorship from Toriola Opeyemi, Cloud Security Mentor and Cloud Engineer.">
                         <MentorshipScreen />
                       </Phone>
                     </div>
                   </div>
                 </Reveal>
                 <Reveal delayMs={120} className="lg:col-span-7">
-                  <p className="text-lg font-medium text-ink-100">Cybersecurity, Cloud Security & DevOps Mentor</p>
+                  <p className="text-lg font-medium text-ink-100">Cloud Security Mentor | Cloud Engineer</p>
                   <div className="mt-4 flex flex-wrap gap-1.5">
                     {["Cloud Security", "Cloud Engineering", "AWS Security", "DevSecOps"].map((t) => (
                       <Badge key={t} tone="warm">{t}</Badge>
@@ -788,6 +788,9 @@ export default function LandingPage() {
                       <span className="text-3xl font-semibold text-ink-100">$200</span>{" "}
                       <span className="text-xs text-ink-500">or &#8358;250,000, 2 months</span>
                     </span>
+                    <Link href="/mentors/toriola-opeyemi" className="whitespace-nowrap text-sm font-medium text-ink-400 hover:underline">
+                      View profile
+                    </Link>
                     <Link href="/mentorship" className="inline-flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline">
                       Request mentorship <ArrowRight className="h-3.5 w-3.5" />
                     </Link>

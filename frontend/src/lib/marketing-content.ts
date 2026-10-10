@@ -17,17 +17,17 @@ export const steps = [
   },
   {
     title: "2. Get a personalized roadmap",
-    body: "Phased lessons, exercises, and projects generated for your chosen path, not a static PDF everyone gets.",
+    body: "A staged roadmap for the one career you choose, with its tools, entry roles and three graded projects. Cybersecurity and Software Engineering also include lessons, exercises and quizzes.",
     icon: Map,
   },
   {
     title: "3. Build real projects",
-    body: "Learn by shipping real projects (a password checker, a port scanner, a full-stack app) with AI feedback on every submission.",
+    body: "Learn by building projects at three levels of difficulty and ask the AI Mentor for feedback on what you wrote. In the Cybersecurity Project Lab, each project ends in a public GitHub repository and a README.",
     icon: FolderGit2,
   },
   {
     title: "4. Get job-ready",
-    body: "Track your Career Readiness Score, practice real-world simulations, and build a portfolio that gets you interviews.",
+    body: "Track a Career Readiness Score built from your own activity, practise with simulations, and build a portfolio of finished projects to show employers. The score tracks your progress and does not predict hiring.",
     icon: MessageCircle,
   },
 ];
@@ -39,7 +39,7 @@ export const pricingTiers = [
     priceAlt: "",
     period: "forever",
     description: "Everything you need to discover your path and start learning.",
-    features: ["Career discovery assessment", "Basic personalized roadmap", "Selected lessons per path", "Community access"],
+    features: ["Career discovery assessment", "A staged roadmap and three projects for every career", "Full lessons and quizzes for Cybersecurity and Software Engineering", "Community access"],
     cta: "Start free",
     href: "/onboarding",
     highlighted: false,
@@ -105,11 +105,11 @@ export const faqs = [
   },
   {
     q: "What career paths are available?",
-    a: `${CAREER_PATH_COUNT} tech career paths today, grouped into ${CAREER_CATEGORIES.length} categories for browsing: software engineering; cloud, infrastructure and DevOps; cybersecurity; data and artificial intelligence; design and product; and IT, automation and technical communication. Each career has its own page, roadmap and projects, and related careers link across categories. Browse the full directory on the Career Paths page.`,
+    a: `${CAREER_PATH_COUNT} tech career paths today, grouped into ${CAREER_CATEGORIES.length} categories for browsing: software engineering; cloud, infrastructure and DevOps; cybersecurity; data and artificial intelligence; design and product; and IT, automation and technical communication. Each career has its own page with entry roles, tools, a staged roadmap, three projects and interview preparation, and related careers link across categories. Some careers overlap on purpose, such as Cloud Engineering and DevOps, so each page says where it differs. Cybersecurity and Software Engineering have full lessons, exercises and quizzes today. The others have the roadmap and projects, and more depth is being added. Browse the full directory on the Career Paths page.`,
   },
   {
     q: "How do the projects work?",
-    a: "Each career path has real, hands-on projects at Beginner, Intermediate, and Expert difficulty, each with clear steps, hints, common mistakes to avoid, and what you'll actually produce. They're built to end up in your portfolio, not just checked off a list.",
+    a: "Every career has three projects at Beginner, Intermediate and Expert difficulty, each with clear steps, hints, common mistakes to avoid, and what you'll actually produce. Cybersecurity also has the Project Lab: twelve projects across four levels that end in a public GitHub repository, a README and a portfolio entry. CareerFound checks that your evidence exists. It does not run or grade your code, and outside the Project Lab a project is marked complete on your word.",
   },
   {
     q: "Is CareerFound suitable for complete beginners?",
@@ -117,7 +117,7 @@ export const faqs = [
   },
   {
     q: "What does the AI Mentor do?",
-    a: "It answers your questions in plain language, gives hints before answers instead of solving things for you, reviews your project submissions, and helps you figure out what to learn next when you're stuck.",
+    a: "It answers your questions in plain language, gives hints before answers instead of solving things for you, gives feedback on a project write-up when you ask for it, and helps you figure out what to learn next when you're stuck. It is software, so check anything important against a second source.",
   },
   {
     q: "Is the AI Mentor a real person?",
@@ -125,11 +125,11 @@ export const faqs = [
   },
   {
     q: "How does human mentorship work?",
-    a: "There are two ways to get a real person: the Mentorship Marketplace, where you can browse and book independent mentors (some profiles are clearly labeled as demo profiles for testing, real bookable mentors are marked separately), and 1:1 Career Mentorship or a Career Consultation directly with Toriola, CareerFound's founder.",
+    a: "There are two ways to get a real person. The Mentorship Marketplace lists named mentors you can read about before you send a request, each with their own areas and program. And you can request 1:1 Career Mentorship or a Career Consultation directly with Toriola, CareerFound's founder. Either way you send a request first. Nothing is charged on the site yet: the team replies by email to confirm and arrange payment.",
   },
   {
     q: "How much does the 1:1 mentorship cost?",
-    a: "₦250,000 or $200 for a 2-month program. It's a paid service: personalized direction, one-on-one mentorship, a career roadmap, project guidance, portfolio review, CV and LinkedIn guidance, interview preparation, and accountability tracking throughout.",
+    a: "₦250,000 or $200 for a 2-month program. It's a paid service: personalized direction, one-on-one mentorship, a career roadmap, project guidance, portfolio review, CV and LinkedIn guidance, interview preparation, and accountability tracking throughout. You request a place first and are not charged until you and the team have arranged payment by email.",
   },
   {
     q: "What is included in the 30-minute consultation?",
@@ -141,11 +141,11 @@ export const faqs = [
   },
   {
     q: "Do I receive emails after joining?",
-    a: "You'll get a welcome email right after you sign up, plus account emails like verification and password resets when needed. Anything beyond that, like tips or nudges, is opt-in only in your settings, never on by default.",
+    a: "You'll get a welcome email when you sign up, plus account emails like verification and password resets when needed, and a confirmation when you send a mentorship or consultation request. Anything beyond that, like tips or nudges, is opt-in only in your settings, never on by default.",
   },
   {
     q: "Is CareerFound free?",
-    a: "The assessment, a personalized roadmap, and a real set of lessons and projects per path are free with no time limit. 1:1 mentorship and the career consultation are paid services with the pricing above; a broader paid Pro tier (planned at $10/month) is still being built and isn't billable yet.",
+    a: "The assessment, a roadmap and three projects for every career, and the full lessons for Cybersecurity and Software Engineering are free with no time limit. 1:1 mentorship and the career consultation are paid services with the pricing above; a broader paid Pro tier (planned at $10/month) is still being built and isn't billable yet.",
   },
   {
     q: "How can I contact CareerFound?",

@@ -607,7 +607,7 @@ export function MentorshipScreen() {
       <img src="/mentors/toriola.jpg" alt="" className="h-[330px] w-full object-cover object-top" />
       <div className="flex flex-1 flex-col px-5 pb-6 pt-4">
         <p className="font-display text-[22px] font-semibold tracking-tight">Toriola Opeyemi</p>
-        <p className="mt-0.5 text-[13px] text-ink-400">Cybersecurity, Cloud Security & DevOps Mentor</p>
+        <p className="mt-0.5 text-[13px] text-ink-400">Cloud Security Mentor | Cloud Engineer</p>
         <div className="mt-3 flex flex-wrap gap-1.5">
           {["Cloud Security", "AWS Security", "DevSecOps"].map((t) => <Pill key={t} tone="warm">{t}</Pill>)}
         </div>
