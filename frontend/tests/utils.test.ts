@@ -48,3 +48,25 @@ describe("cn", () => {
     expect(cn("text-sm", false && "hidden", undefined, "font-medium")).toBe("text-sm font-medium");
   });
 });
+
+
+describe("mentorPriceLabel", () => {
+  const base = { hourly_rate_cents: 0, currency: "USD", is_founding_mentor: false, consultation_price_label: "", mentorship_price_label: "" };
+
+  it("shows the program price for a regular mentor who has one, never Free", async () => {
+    const { mentorPriceLabel } = await import("@/lib/utils");
+    expect(mentorPriceLabel({ ...base, mentorship_price_label: "₦250,000 ($200)" })).toBe("₦250,000 ($200)");
+  });
+
+  it("keeps the founding mentor's From-price and the See pricing fallback", async () => {
+    const { mentorPriceLabel } = await import("@/lib/utils");
+    expect(mentorPriceLabel({ ...base, is_founding_mentor: true, consultation_price_label: "₦10,000 ($7)", mentorship_price_label: "x" })).toBe("From ₦10,000 ($7)");
+    expect(mentorPriceLabel({ ...base, is_founding_mentor: true })).toBe("See pricing");
+  });
+
+  it("is Free only when there is no price of any kind", async () => {
+    const { mentorPriceLabel } = await import("@/lib/utils");
+    expect(mentorPriceLabel(base)).toBe("Free");
+    expect(mentorPriceLabel({ ...base, hourly_rate_cents: 2500 })).toBe("$25.00/hr");
+  });
+});

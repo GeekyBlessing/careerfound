@@ -746,7 +746,7 @@ export default function LandingPage() {
             </Reveal>
 
             <div className="mt-14 grid gap-12 lg:grid-cols-12 lg:items-end lg:gap-10">
-              <Reveal className="lg:col-span-7">
+              <Reveal className="lg:col-span-6">
                 <article>
                   <div className="relative">
                     <div className="relative overflow-hidden rounded-3xl bg-[rgb(var(--color-accent-mist))]">
@@ -794,41 +794,64 @@ export default function LandingPage() {
                 </article>
               </Reveal>
 
-              <Reveal delayMs={140} className="lg:col-span-5 lg:mb-24">
-                <article>
-                  <div className="relative overflow-hidden rounded-3xl bg-[rgb(var(--color-accent-mist))]">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src="/mentors/mobile-engineering-mentor.jpg"
-                      alt="David Oladotun Egundeyi, a real CareerFound full-stack engineering mentor"
-                      className="aspect-[4/5] w-full object-cover object-[50%_20%]"
-                    />
-                    <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/45 to-transparent" />
-                    <div className="absolute bottom-5 left-5 right-5 text-white">
-                      <p className="font-mono text-[11px] uppercase tracking-wide text-white/75">Full-Stack Engineering Mentor</p>
-                      <p className="mt-1 font-display text-2xl font-semibold tracking-tight sm:text-3xl">David Oladotun Egundeyi</p>
-                    </div>
-                  </div>
-                  <p className="mt-5 text-sm font-medium text-ink-200">Full-Stack Engineer &middot; 4 years of experience</p>
-                  <div className="mt-3 flex flex-wrap gap-1.5">
-                    {["Full-Stack Development", "JavaScript", "React", "Node", "SQL"].map((t) => (
-                      <Badge key={t} tone="warm">{t}</Badge>
-                    ))}
-                  </div>
-                  <p className="mt-4 text-sm leading-relaxed text-ink-500">
-                    Practical guidance on building real web applications from the interface to the database,
-                    structuring projects, debugging, and preparing for a career as a full-stack engineer.
-                  </p>
-                  <div className="mt-4 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
-                    <span><span className="text-2xl font-semibold text-ink-100">$200</span> <span className="text-xs text-ink-500">or &#8358;250,000, 2 months</span></span>
-                    <span className="flex items-center gap-4">
-                      <Link href="/mentors/mobile-engineering-mentor" className="text-sm font-medium text-ink-400 hover:underline">View profile</Link>
-                      <Link href="/mentors/mobile-engineering-mentor?action=request" className="inline-flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline">
-                        Request mentorship <ArrowRight className="h-3.5 w-3.5" />
-                      </Link>
-                    </span>
-                  </div>
-                </article>
+              <Reveal delayMs={140} className="lg:col-span-6 lg:mb-24">
+                <div className="grid gap-12 sm:grid-cols-2 sm:gap-8">
+                  {[
+                    {
+                      key: "dotun",
+                      src: "/mentors/mobile-engineering-mentor.jpg",
+                      alt: "David Oladotun Egundeyi, a real CareerFound full-stack engineering mentor",
+                      focal: "object-[50%_20%]",
+                      role: "Full-Stack Engineering Mentor",
+                      name: "David Oladotun Egundeyi",
+                      line: "Full-Stack Engineer · 4 years of experience",
+                      tags: ["Full-Stack Development", "JavaScript", "React", "Node", "SQL"],
+                      blurb:
+                        "Practical guidance on building real web applications from the interface to the database, structuring projects, debugging, and preparing for a career as a full-stack engineer.",
+                      slug: "mobile-engineering-mentor",
+                    },
+                    {
+                      key: "yusuf",
+                      src: "/mentors/yusuf-mustapha.jpg",
+                      alt: "Yusuf Mustapha, a real CareerFound data analytics mentor",
+                      focal: "object-[50%_20%]",
+                      role: "Data Analytics Mentor",
+                      name: "Yusuf Mustapha",
+                      line: "Data Analytics · 7 years of experience",
+                      tags: ["Data Analysis", "SQL", "Excel", "Python", "Power BI"],
+                      blurb:
+                        "Practical guidance on cleaning and analysing real data, writing SQL, building dashboards, and explaining findings clearly to the people who act on them.",
+                      slug: "yusuf-mustapha",
+                    },
+                  ].map((m) => (
+                    <article key={m.key} className="flex flex-col">
+                      <div className="relative overflow-hidden rounded-3xl bg-[rgb(var(--color-accent-mist))]">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={m.src} alt={m.alt} loading="lazy" className={`aspect-[4/5] w-full object-cover ${m.focal}`} />
+                      </div>
+                      <div className="mt-5 flex min-w-0 flex-1 flex-col">
+                        <p className="font-mono text-[11px] uppercase tracking-wide text-ink-500">{m.role}</p>
+                        <p className="mt-1 font-display text-2xl font-semibold tracking-tight text-ink-100">{m.name}</p>
+                        <p className="mt-2 text-sm font-medium text-ink-200">{m.line}</p>
+                        <div className="mt-3 flex flex-wrap gap-1.5">
+                          {m.tags.map((t) => (
+                            <Badge key={t} tone="warm">{t}</Badge>
+                          ))}
+                        </div>
+                        <p className="mt-3 text-sm leading-relaxed text-ink-500">{m.blurb}</p>
+                        <div className="mt-auto flex flex-col gap-2 pt-4">
+                          <span><span className="text-xl font-semibold text-ink-100">$200</span> <span className="text-xs text-ink-500">or &#8358;250,000, 2 months</span></span>
+                          <span className="flex flex-wrap items-center gap-x-4 gap-y-1">
+                            <Link href={`/mentors/${m.slug}`} className="whitespace-nowrap text-sm font-medium text-ink-400 hover:underline">View profile</Link>
+                            <Link href={`/mentors/${m.slug}?action=request`} className="inline-flex items-center whitespace-nowrap gap-1.5 text-sm font-medium text-accent-light hover:underline">
+                              Request mentorship <ArrowRight className="h-3.5 w-3.5" />
+                            </Link>
+                          </span>
+                        </div>
+                      </div>
+                    </article>
+                  ))}
+                </div>
               </Reveal>
             </div>
 

@@ -62,10 +62,10 @@ export function mentorPriceLabel(mentor: {
   consultation_price_label: string;
   mentorship_price_label: string;
 }): string {
-  if (mentor.is_founding_mentor) {
-    if (mentor.consultation_price_label) return `From ${mentor.consultation_price_label}`;
-    if (mentor.mentorship_price_label) return mentor.mentorship_price_label;
-    return "See pricing";
-  }
+  // Any real mentor with a published program or consultation price shows it,
+  // founding or not; "Free" is only for a mentor with no price of any kind.
+  if (mentor.consultation_price_label) return `From ${mentor.consultation_price_label}`;
+  if (mentor.mentorship_price_label) return mentor.mentorship_price_label;
+  if (mentor.is_founding_mentor) return "See pricing";
   return mentor.hourly_rate_cents > 0 ? `${formatCents(mentor.hourly_rate_cents, mentor.currency)}/hr` : "Free";
 }

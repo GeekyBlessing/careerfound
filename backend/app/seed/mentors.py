@@ -289,3 +289,48 @@ FULLSTACK_MENTOR = dict(
     consultation_duration_label="",
     consultation_price_label="",
 )
+
+
+# --- Third real mentor: data analytics ---------------------------------------
+#
+# Real, non-demo profile with only what was provided: name, role and 7 years of
+# experience. No employer, certifications, testimonials or ratings are claimed.
+# The skills under the name are the standard toolkit of the discipline he
+# mentors. The program and price match the other regular mentors; consultation_*
+# stays blank (no short-session rate), as for the full-stack mentor. contact_email
+# stays unset until a verified email exists.
+DATA_ANALYTICS_MENTOR = dict(
+    slug="yusuf-mustapha",
+    display_name="Yusuf Mustapha",
+    headline="Data Analytics Mentor",
+    bio=(
+        "Get practical guidance on data analytics: cleaning and shaping real data, writing SQL, "
+        "analysing in Excel and Python, building dashboards, and explaining findings clearly to "
+        "people who have to make decisions from them."
+    ),
+    avatar_seed="yusuf-mustapha",
+    avatar_url="/mentors/yusuf-mustapha.jpg",
+    paths=[
+        "data-analysis", "business-intelligence-engineering", "analytics-engineering",
+        "sql", "excel", "python", "power-bi", "tableau", "data-visualization", "data-cleaning",
+    ],
+    years_experience=7,
+    hourly_rate_cents=0,
+    currency="USD",
+    rating_avg=0.0,
+    rating_count=0,
+    languages=["English"],
+    mentorship_formats=["video_call"],
+    session_durations_minutes=[30, 60],
+    value_proposition=(
+        "Structured guidance for anyone building toward a data analytics career: what to learn first, "
+        "how to practise on real datasets, how to build dashboards and a portfolio, and how to get job-ready."
+    ),
+    focus_beginner_friendly=True,
+    contact_email=None,
+    mentee_count=0,
+    mentorship_duration_label="2 months",
+    mentorship_price_label="₦250,000 ($200)",
+    consultation_duration_label="",
+    consultation_price_label="",
+)

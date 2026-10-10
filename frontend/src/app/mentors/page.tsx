@@ -1,5 +1,6 @@
 "use client";
 
+import { mentorTagLabel } from "@/lib/mentor-tags";
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -139,7 +140,7 @@ function MentorsPageInner() {
                 <p className="mt-3 line-clamp-3 text-xs leading-relaxed text-ink-500">{mentor.bio}</p>
                 <div className="mt-3 flex flex-wrap gap-1.5">
                   {mentor.paths.map((p) => (
-                    <Badge key={p}>{p.replace(/-/g, " ")}</Badge>
+                    <Badge key={p} className="normal-case">{mentorTagLabel(p)}</Badge>
                   ))}
                 </div>
                 <div className="mt-4 flex flex-1 items-end justify-between text-xs text-ink-500">

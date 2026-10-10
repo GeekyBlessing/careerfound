@@ -44,7 +44,7 @@ from app.seed.catalogue_sync import (
     sync_career_fields,
     sync_light_roadmap_content,
 )
-from app.seed.mentors import FOUNDING_MENTOR, MENTORS, FULLSTACK_MENTOR
+from app.seed.mentors import DATA_ANALYTICS_MENTOR, FOUNDING_MENTOR, MENTORS, FULLSTACK_MENTOR
 from app.seed.lab_sync import sync_all_lab_curricula
 from app.seed.roadmap_content import CYBERSECURITY, SOFTWARE_ENGINEERING
 from app.seed.roadmap_content_extra import PATH_PROJECTS
@@ -320,6 +320,24 @@ async def seed_mentors(db: AsyncSession) -> None:
             changed = True
         if changed:
             await db.commit()
+
+    # A third real mentor (data analytics). Keyed on avatar_seed. Created once;
+    # an existing row is never touched, so edits made from the mentor
+    # dashboard survive every redeploy.
+    existing_data_mentor = (
+        await db.execute(select(Mentor).where(Mentor.avatar_seed == DATA_ANALYTICS_MENTOR["avatar_seed"]))
+    ).scalars().first()
+    if not existing_data_mentor:
+        db.add(
+            Mentor(
+                **DATA_ANALYTICS_MENTOR,
+                is_verified=False,
+                is_active=True,
+                is_demo=False,
+                is_founding_mentor=False,
+            )
+        )
+        await db.commit()
 
 
 async def seed_communities(db: AsyncSession, paths: dict[str, CareerPath], demo_user: User) -> None:

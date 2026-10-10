@@ -6,7 +6,7 @@ from sqlalchemy import select
 
 from app.db.session import AsyncSessionLocal
 from app.models.marketplace import Mentor
-from app.seed.mentors import FOUNDING_MENTOR, FULLSTACK_MENTOR
+from app.seed.mentors import DATA_ANALYTICS_MENTOR, FOUNDING_MENTOR, FULLSTACK_MENTOR
 from app.seed.seed_data import seed_mentors
 
 pytestmark = pytest.mark.asyncio
@@ -19,7 +19,7 @@ async def test_public_listing_contains_only_the_real_mentors(client):
     assert demo_count > 0, "demo personas stay in the database, just hidden"
 
     listing = (await client.get("/api/v1/mentors")).json()
-    assert {m["display_name"] for m in listing} == {"Toriola Opeyemi", "David Oladotun Egundeyi"}
+    assert {m["display_name"] for m in listing} == {"Toriola Opeyemi", "David Oladotun Egundeyi", "Yusuf Mustapha"}
     assert all(m["is_demo"] is False for m in listing)
 
     # Filtering by a career a demo persona used to cover returns no demo mentor.
@@ -27,6 +27,10 @@ async def test_public_listing_contains_only_the_real_mentors(client):
     for career in ("cybersecurity", "cloud-security", "devops-engineering"):
         found = (await client.get("/api/v1/mentors", params={"path": career})).json()
         assert [m["display_name"] for m in found] == ["Toriola Opeyemi"], career
+    # Yusuf Mustapha is the real mentor for the data analytics careers.
+    for career in ("data-analysis", "business-intelligence-engineering", "analytics-engineering"):
+        found = (await client.get("/api/v1/mentors", params={"path": career})).json()
+        assert [m["display_name"] for m in found] == ["Yusuf Mustapha"], career
     assert (await client.get("/api/v1/mentors", params={"path": "data-science"})).json() == []
 
 
@@ -105,3 +109,27 @@ async def test_the_earlier_mobile_profile_becomes_full_stack_and_loses_the_found
         await seed_mentors(db)
         await db.refresh(row)
         assert row.headline == "Senior Full-Stack Engineer" and row.is_founding_mentor is True
+
+
+async def test_data_analytics_mentor_profile_is_real_and_not_founding(client):
+    async with AsyncSessionLocal() as db:
+        await seed_mentors(db)
+    yusuf = (await client.get("/api/v1/mentors/yusuf-mustapha")).json()
+    assert yusuf["display_name"] == "Yusuf Mustapha"
+    assert yusuf["headline"] == "Data Analytics Mentor"
+    assert yusuf["years_experience"] == 7
+    assert yusuf["is_founding_mentor"] is False and yusuf["is_demo"] is False
+    assert yusuf["avatar_url"] == "/mentors/yusuf-mustapha.jpg"
+    assert yusuf["paths"][:3] == ["data-analysis", "business-intelligence-engineering", "analytics-engineering"]
+    assert {"sql", "excel", "python", "power-bi", "tableau"} <= set(yusuf["paths"])
+    assert yusuf["mentorship_price_label"] == "₦250,000 ($200)"
+    assert yusuf["consultation_price_label"] == ""
+
+    # Seeding again neither duplicates him nor overwrites a dashboard edit.
+    async with AsyncSessionLocal() as db:
+        row = (await db.execute(select(Mentor).where(Mentor.avatar_seed == DATA_ANALYTICS_MENTOR["avatar_seed"]))).scalar_one()
+        row.headline = "Senior Data Analytics Mentor"
+        await db.commit()
+        await seed_mentors(db)
+        rows = (await db.execute(select(Mentor).where(Mentor.avatar_seed == DATA_ANALYTICS_MENTOR["avatar_seed"]))).scalars().all()
+        assert len(rows) == 1 and rows[0].headline == "Senior Data Analytics Mentor"

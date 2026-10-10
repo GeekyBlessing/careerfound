@@ -1,5 +1,6 @@
 "use client";
 
+import { mentorTagLabel } from "@/lib/mentor-tags";
 import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
@@ -122,8 +123,8 @@ function MentorProfilePageInner() {
                   </div>
                   <div className="mt-3 flex flex-wrap gap-1.5">
                     {mentor.paths.map((p) => (
-                      <Badge key={p} tone="accent" className="capitalize">
-                        {p.replace(/-/g, " ")}
+                      <Badge key={p} tone="accent" className="normal-case">
+                        {mentorTagLabel(p)}
                       </Badge>
                     ))}
                   </div>
@@ -178,7 +179,7 @@ function MentorProfilePageInner() {
           </div>
 
           <div className="space-y-4 lg:sticky lg:top-8 lg:self-start">
-            {mentor.is_founding_mentor && (mentor.mentorship_price_label || mentor.consultation_price_label) ? (
+            {mentor.mentorship_price_label || mentor.consultation_price_label ? (
               <>
                 {mentor.mentorship_price_label && (
                   <Card className="border-accent/30 bg-gradient-to-br from-accent/10 to-transparent p-5">

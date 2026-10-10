@@ -62,6 +62,13 @@ export const PHOTOS = {
     focal: "50% 20%",
     ratio: "4 / 5",
   },
+  yusuf: {
+    src: "/mentors/yusuf-mustapha.jpg",
+    alt: "Yusuf Mustapha, a real CareerFound data analytics mentor",
+    available: true,
+    focal: "50% 20%",
+    ratio: "4 / 5",
+  },
 } satisfies Record<string, PhotoSlot>;
 
 export type PhotoKey = keyof typeof PHOTOS;
