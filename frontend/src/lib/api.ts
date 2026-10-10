@@ -36,10 +36,13 @@ export function clearTokens() {
 export class ApiError extends Error {
   status: number;
   code: string;
-  constructor(message: string, status: number, code: string) {
+  /** Extra fields the API attaches to an error (e.g. retry_after for a resend cooldown). */
+  details: Record<string, unknown>;
+  constructor(message: string, status: number, code: string, details: Record<string, unknown> = {}) {
     super(message);
     this.status = status;
     this.code = code;
+    this.details = details;
   }
 }
 
@@ -109,7 +112,8 @@ async function request<T>(path: string, options: RequestOptions = {}, isRetryAft
     }
     const message = body?.error?.message || body?.detail || `Request failed (${res.status})`;
     const code = body?.error?.code || "unknown_error";
-    throw new ApiError(message, res.status, code);
+    const details = body?.error && typeof body.error === "object" ? (body.error as Record<string, unknown>) : {};
+    throw new ApiError(message, res.status, code, details);
   }
 
   // Envelope-wrapped error responses vs. raw FastAPI response_model bodies:

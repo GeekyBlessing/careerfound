@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Flame, MailWarning, X } from "lucide-react";
 import { useAuth } from "@/lib/auth";
-import { api, ApiError } from "@/lib/api";
+import Link from "next/link";
+import { maskEmail } from "@/lib/verification";
 import { GlobalNav } from "@/components/layout/global-nav";
 import { Footer } from "@/components/layout/footer";
 
@@ -48,48 +49,31 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
 /**
  * A slim, dismissible notice rather than a page-dominating banner (see
- * section 17 of the redesign brief): one line, a real action that actually
- * calls the resend endpoint in place (the same POST /auth/resend-verification
- * the settings page uses), inline feedback, and a close control. Dismissing
- * it only affects this render — email_verified flipping true is what
- * actually makes it go away for good.
+ * section 17 of the redesign brief). It does not try to send anything
+ * itself: it names the address (masked) and leads to the verification page,
+ * which has the resend control, the cooldown, honest failure messages and
+ * the way to fix a mistyped address. Dismissing it only affects this render;
+ * email_verified flipping true is what makes it go away for good.
  */
 function VerificationNotice() {
+  const { user } = useAuth();
   const [dismissed, setDismissed] = useState(false);
-  const [sending, setSending] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
 
-  if (dismissed) return null;
-
-  async function resend() {
-    setSending(true);
-    setMessage(null);
-    try {
-      const res = await api.post<{ message: string }>("/auth/resend-verification");
-      setMessage(res.message);
-    } catch (err) {
-      setMessage(err instanceof ApiError ? err.message : "Couldn't resend the verification email.");
-    } finally {
-      setSending(false);
-    }
-  }
+  if (dismissed || !user) return null;
 
   return (
     <div className="mb-6 flex animate-fade-in items-center gap-3 rounded-lg border border-warning/25 bg-warning/[0.06] px-3.5 py-2 text-xs text-ink-300">
       <MailWarning className="h-3.5 w-3.5 flex-shrink-0 text-warning" />
       <span className="flex-1">
         <span className="font-medium text-ink-100">Email not verified.</span>{" "}
-        {message ?? "Verify to secure your account and unlock every feature."}
+        Confirm {maskEmail(user.email)} to secure your account.
       </span>
-      {!message && (
-        <button
-          onClick={resend}
-          disabled={sending}
-          className="focus-ring flex-shrink-0 rounded-md border border-warning/30 px-2.5 py-1 font-medium text-warning transition-colors hover:bg-warning/10 disabled:opacity-50"
-        >
-          {sending ? "Sending…" : "Resend verification"}
-        </button>
-      )}
+      <Link
+        href="/verify-pending"
+        className="focus-ring flex-shrink-0 rounded-md border border-warning/30 px-2.5 py-1 font-medium text-warning transition-colors hover:bg-warning/10"
+      >
+        Verify email
+      </Link>
       <button
         onClick={() => setDismissed(true)}
         aria-label="Dismiss"

@@ -11,26 +11,15 @@ import { Badge } from "@/components/ui/badge";
 import { IconTile } from "@/components/ui/icon-tile";
 import { useAuth } from "@/lib/auth";
 import { initials } from "@/lib/utils";
-import { api, ApiError } from "@/lib/api";
+import Link from "next/link";
+import { api } from "@/lib/api";
+import { useVerificationResend } from "@/lib/verification";
 
 export default function SettingsPage() {
   const { user, refreshUser } = useAuth();
-  const [resending, setResending] = useState(false);
-  const [resendMessage, setResendMessage] = useState<string | null>(null);
+  const { sending: resending, notice: resendNotice, remaining: resendWait, resend: handleResendVerification } =
+    useVerificationResend();
   const [prefsSaving, setPrefsSaving] = useState(false);
-
-  async function handleResendVerification() {
-    setResending(true);
-    setResendMessage(null);
-    try {
-      const res = await api.post<{ message: string }>("/auth/resend-verification");
-      setResendMessage(res.message);
-    } catch (err) {
-      setResendMessage(err instanceof ApiError ? err.message : "Couldn't resend the verification email.");
-    } finally {
-      setResending(false);
-    }
-  }
 
   async function handleMarketingToggle(next: boolean) {
     setPrefsSaving(true);
@@ -94,10 +83,25 @@ export default function SettingsPage() {
             </div>
             {!user?.email_verified && (
               <div>
-                <Button variant="secondary" size="sm" onClick={handleResendVerification} loading={resending}>
-                  Resend verification email
-                </Button>
-                {resendMessage && <p className="mt-2 text-xs text-ink-500">{resendMessage}</p>}
+                <div className="flex flex-wrap items-center gap-3">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={handleResendVerification}
+                    loading={resending}
+                    disabled={resendWait > 0}
+                  >
+                    {resendWait > 0 ? `Resend in ${resendWait}s` : "Resend verification email"}
+                  </Button>
+                  <Link href="/verify-pending" className="focus-ring rounded-sm text-xs font-medium text-accent-light hover:underline">
+                    Change email or get help
+                  </Link>
+                </div>
+                {resendNotice && (
+                  <p className="mt-2 text-xs text-ink-500" role="status">
+                    {resendNotice.text}
+                  </p>
+                )}
               </div>
             )}
 

@@ -53,6 +53,44 @@ class EmailMessage:
     category: EmailCategory = "transactional"
 
 
+# What happened to one send attempt. `ok` means the provider ACCEPTED the
+# message for delivery (or, in console mode outside production, that it was
+# logged). It never means "reached an inbox": delivery after acceptance is
+# the provider's and the recipient's mail server's business, so callers must
+# word user-facing copy as "requested", not "delivered".
+#
+# `status` is a stable machine-readable reason a send failed, so the app
+# can tell the person something true and the operator can see the real
+# cause in the logs instead of one generic "could not send".
+SetupProblem = ("not_configured", "invalid_api_key", "sender_domain_unverified", "recipient_restricted")
+
+
+@dataclass(frozen=True)
+class EmailResult:
+    ok: bool
+    status: str  # accepted | not_configured | invalid_api_key | sender_domain_unverified | recipient_restricted | address_rejected | rate_limited | provider_unavailable | network_error | rejected
+    provider_id: str | None = None
+    detail: str = ""
+
+    def __bool__(self) -> bool:
+        return self.ok
+
+    @property
+    def is_setup_problem(self) -> bool:
+        """True when the failure is on our side of the fence (credentials,
+        sender domain), not a passing outage. Retrying will not help until
+        the operator fixes configuration."""
+        return self.status in SetupProblem
+
+
+def as_result(value: "EmailResult | bool") -> EmailResult:
+    """Callers and tests may still hand back a plain bool from a replaced
+    send_email(); normalise so the rest of the code deals in one type."""
+    if isinstance(value, EmailResult):
+        return value
+    return EmailResult(ok=bool(value), status="accepted" if value else "rejected")
+
+
 # --------------------------------------------------------------------------
 # Branded template
 # --------------------------------------------------------------------------
@@ -183,41 +221,75 @@ def _strip_tags(html_fragment: str) -> str:
 # --------------------------------------------------------------------------
 
 
-async def send_email(message: EmailMessage) -> bool:
+async def send_email(message: EmailMessage) -> EmailResult:
     """The one place every outbound email in the app goes through. Returns
-    True if the send was accepted by the provider (or logged, in console
-    mode), False if it failed. Never raises: a broken email provider must
-    never break registration, login, or a password-reset request."""
+    an EmailResult (truthy when the provider accepted the message, or when it
+    was logged in non-production console mode). Never raises: a broken email
+    provider must never break registration, login, or a password-reset
+    request."""
     if settings.EMAIL_PROVIDER == "resend":
         return await _send_via_resend(message)
     return _send_via_console(message)
 
 
-def _send_via_console(message: EmailMessage) -> bool:
+def _send_via_console(message: EmailMessage) -> EmailResult:
     if settings.ENVIRONMENT == "production":
         # A production deployment with EMAIL_PROVIDER left at "console"
         # would otherwise silently never send real email. Surface that
         # loudly instead of pretending it's configured.
-        logger.warning(
+        logger.error(
             "EMAIL NOT SENT: ENVIRONMENT=production but EMAIL_PROVIDER=console. "
             "Set EMAIL_PROVIDER=resend and RESEND_API_KEY to send real email. "
-            "(subject=%r to=%r)",
+            "(subject=%r to=%s)",
             message.subject,
-            message.to,
+            mask_email(message.to),
         )
-        return False
+        return EmailResult(False, "not_configured", detail="EMAIL_PROVIDER is console in production")
     logger.info("[console email] to=%s subject=%r\n%s", message.to, message.subject, message.text)
-    return True
+    return EmailResult(True, "accepted", detail="logged to console")
 
 
-async def _send_via_resend(message: EmailMessage) -> bool:
+def mask_email(address: str) -> str:
+    """j***@gmail.com. Used for logs and for anything shown on screen that
+    only needs to help a person recognise their own address."""
+    local, sep, domain = (address or "").partition("@")
+    if not sep or not local:
+        return "***"
+    return f"{local[0]}{'*' * min(max(len(local) - 1, 2), 6)}@{domain}"
+
+
+def classify_resend_error(status_code: int, body: str) -> tuple[str, str]:
+    """Maps a Resend error response to (status, short operator hint). Matching
+    on the message text is deliberate: Resend uses 403 for several different
+    problems (bad key, unverified domain, sandbox recipient limits), and the
+    only thing that tells them apart is the message."""
+    text = (body or "").lower()
+    if status_code == 429:
+        return "rate_limited", "Resend rate limit hit; slow down or raise the plan limit."
+    if status_code in (401, 403) and ("api key" in text or "api_key" in text or status_code == 401):
+        return "invalid_api_key", "RESEND_API_KEY is missing, wrong or restricted. Create a Sending access key in Resend and update it."
+    if "domain" in text and ("not verified" in text or "verify" in text):
+        return "sender_domain_unverified", (
+            "The sender domain is not verified in Resend. Add the domain in Resend > Domains, "
+            "publish the SPF/DKIM DNS records it shows, wait for 'Verified', or change EMAIL_FROM_ADDRESS."
+        )
+    if "testing emails" in text or "own email address" in text:
+        return "recipient_restricted", "Resend is still in testing mode and only delivers to the account owner's address. Verify a domain."
+    if status_code in (400, 422):
+        return "address_rejected", "Resend rejected the request (invalid recipient or payload)."
+    if status_code >= 500:
+        return "provider_unavailable", "Resend returned a server error."
+    return "rejected", f"Resend returned HTTP {status_code}."
+
+
+async def _send_via_resend(message: EmailMessage) -> EmailResult:
     if not settings.RESEND_API_KEY:
         logger.error(
-            "EMAIL NOT SENT: EMAIL_PROVIDER=resend but RESEND_API_KEY is not set. (subject=%r to=%r)",
+            "EMAIL NOT SENT [not_configured]: EMAIL_PROVIDER=resend but RESEND_API_KEY is not set. (subject=%r to=%s)",
             message.subject,
-            message.to,
+            mask_email(message.to),
         )
-        return False
+        return EmailResult(False, "not_configured", detail="RESEND_API_KEY is not set")
     payload = {
         "from": f"{settings.EMAIL_FROM_NAME} <{settings.EMAIL_FROM_ADDRESS}>",
         "to": [message.to],
@@ -233,13 +305,33 @@ async def _send_via_resend(message: EmailMessage) -> bool:
                 json=payload,
                 headers={"Authorization": f"Bearer {settings.RESEND_API_KEY}"},
             )
-        if resp.status_code >= 400:
-            logger.error("Resend API error %s sending to %s: %s", resp.status_code, message.to, resp.text[:500])
-            return False
-        return True
-    except httpx.HTTPError:
-        logger.exception("Network error sending email to %s", message.to)
-        return False
+    except httpx.HTTPError as exc:
+        logger.error("EMAIL NOT SENT [network_error]: %s sending to %s", type(exc).__name__, mask_email(message.to))
+        return EmailResult(False, "network_error", detail=type(exc).__name__)
+    if resp.status_code >= 400:
+        status_name, hint = classify_resend_error(resp.status_code, resp.text)
+        logger.error(
+            "EMAIL NOT SENT [%s]: Resend HTTP %s sending to %s. %s Provider said: %s",
+            status_name,
+            resp.status_code,
+            mask_email(message.to),
+            hint,
+            resp.text[:300],
+        )
+        return EmailResult(False, status_name, detail=hint)
+    provider_id = None
+    try:
+        provider_id = resp.json().get("id")
+    except Exception:  # an odd 2xx body must never turn an accepted send into a failure
+        pass
+    logger.info("Email accepted by Resend (id=%s) for %s subject=%r", provider_id, mask_email(message.to), message.subject)
+    return EmailResult(True, "accepted", provider_id=provider_id)
+
+
+async def _deliver(message: EmailMessage) -> EmailResult:
+    """Goes through the module-level send_email so tests (and any future
+    wrapper) can replace it, then normalises the answer."""
+    return as_result(await send_email(message))
 
 
 # --------------------------------------------------------------------------
@@ -265,10 +357,10 @@ async def send_welcome_email(user: User) -> bool:
         cta_url=settings.PUBLIC_APP_URL,
         footer_note="You're receiving this because you just created a CareerFound account.",
     )
-    return await send_email(EmailMessage(to=user.email, subject="Welcome to CareerFound \U0001f680", html=html, text=text))
+    return (await _deliver(EmailMessage(to=user.email, subject="Welcome to CareerFound \U0001f680", html=html, text=text))).ok
 
 
-async def send_verification_email(user: User, raw_token: str) -> bool:
+async def send_verification_email(user: User, raw_token: str) -> EmailResult:
     verify_url = f"{settings.PUBLIC_APP_URL}/verify-email?token={quote(raw_token)}"
     html, text = render_email(
         preheader="Confirm your email address to finish setting up your account.",
@@ -283,7 +375,7 @@ async def send_verification_email(user: User, raw_token: str) -> bool:
         cta_url=verify_url,
         footer_note="If you didn't create a CareerFound account, you can safely ignore this email.",
     )
-    return await send_email(EmailMessage(to=user.email, subject="Verify your email for CareerFound", html=html, text=text))
+    return await _deliver(EmailMessage(to=user.email, subject="Verify your email for CareerFound", html=html, text=text))
 
 
 async def send_password_reset_email(user: User, raw_token: str) -> bool:
@@ -301,7 +393,7 @@ async def send_password_reset_email(user: User, raw_token: str) -> bool:
         cta_url=reset_url,
         footer_note="For your security, we never send passwords by email.",
     )
-    return await send_email(EmailMessage(to=user.email, subject="Reset your CareerFound password", html=html, text=text))
+    return (await _deliver(EmailMessage(to=user.email, subject="Reset your CareerFound password", html=html, text=text))).ok
 
 
 async def send_product_email(user: User, *, subject: str, heading: str, body_html: str, cta_text: str | None = None, cta_url: str | None = None) -> bool:
@@ -320,7 +412,7 @@ async def send_product_email(user: User, *, subject: str, heading: str, body_htm
         footer_note="You're receiving this because you opted in to product updates in your CareerFound email preferences.",
         show_preferences_link=True,
     )
-    return await send_email(EmailMessage(to=user.email, subject=subject, html=html, text=text, category="product"))
+    return (await _deliver(EmailMessage(to=user.email, subject=subject, html=html, text=text, category="product"))).ok
 
 
 _SERVICE_LABELS = {"mentorship": "1:1 Career Mentorship", "consultation": "Career Consultation"}
@@ -343,9 +435,9 @@ async def send_service_request_confirmation(*, name: str, email: str, service: s
         """,
         footer_note="You're receiving this because you requested a paid CareerFound service.",
     )
-    return await send_email(
+    return (await _deliver(
         EmailMessage(to=email, subject=f"We received your {service_label} request", html=html, text=text)
-    )
+    )).ok
 
 
 async def send_service_request_notification(*, name: str, email: str, service: str, message: str) -> bool:
@@ -367,9 +459,9 @@ async def send_service_request_notification(*, name: str, email: str, service: s
         """,
         footer_note="Internal notification, sent to the CareerFound team inbox.",
     )
-    return await send_email(
+    return (await _deliver(
         EmailMessage(to=settings.EMAIL_REPLY_TO, subject=f"New {service_label} request: {name}", html=html, text=text)
-    )
+    )).ok
 
 
 async def send_mentor_request_notification(
@@ -415,4 +507,4 @@ async def send_mentor_request_confirmation(*, mentee_name: str, mentee_email: st
         """,
         footer_note="You're receiving this because you sent a request through the CareerFound mentor marketplace.",
     )
-    return await send_email(EmailMessage(to=mentee_email, subject=f"We received your {what} for {mentor_name}", html=html, text=text))
+    return (await _deliver(EmailMessage(to=mentee_email, subject=f"We received your {what} for {mentor_name}", html=html, text=text))).ok

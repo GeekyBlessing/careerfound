@@ -129,6 +129,50 @@ class Settings(BaseSettings):
             )
         return self
 
+    @model_validator(mode="after")
+    def _public_app_url_must_not_point_at_localhost_in_production(self) -> "Settings":
+        """Verification and password-reset links are built from PUBLIC_APP_URL.
+        Left at the localhost default in production, every emailed link
+        would send people to a page that only exists on the developer's own
+        machine. Rather than crash a live deploy, fall back to the first real
+        FRONTEND_ORIGIN (which production must already set for CORS) and say
+        so in the logs; set PUBLIC_APP_URL explicitly to make it permanent."""
+        self.PUBLIC_APP_URL = self.PUBLIC_APP_URL.strip().rstrip("/")
+        if self.ENVIRONMENT == "production" and _is_local_url(self.PUBLIC_APP_URL):
+            for origin in self.frontend_origins:
+                if not _is_local_url(origin):
+                    self.PUBLIC_APP_URL = origin.rstrip("/")
+                    break
+        return self
+
+    def readiness_problems(self) -> list[str]:
+        """Plain-language configuration problems that make production email
+        links or delivery wrong. Logged at startup; empty when fine."""
+        problems: list[str] = []
+        if self.ENVIRONMENT != "production":
+            return problems
+        if not self.email_live:
+            problems.append(
+                "Transactional email is not live (EMAIL_PROVIDER must be 'resend' with RESEND_API_KEY set). "
+                "Verification and password-reset emails cannot be sent."
+            )
+        if _is_local_url(self.PUBLIC_APP_URL):
+            problems.append(
+                f"PUBLIC_APP_URL is {self.PUBLIC_APP_URL!r}. Emailed links would point at localhost. "
+                "Set it to the public site, e.g. https://www.mycareerfound.com."
+            )
+        if self.PUBLIC_APP_URL.startswith("http://") and not _is_local_url(self.PUBLIC_APP_URL):
+            problems.append("PUBLIC_APP_URL is not https. Use https:// for emailed links.")
+        if self.EMAIL_FROM_ADDRESS.lower().endswith(("@gmail.com", "@yahoo.com", "@outlook.com", "@hotmail.com")):
+            problems.append(
+                "EMAIL_FROM_ADDRESS is a free-mail address. Providers cannot send as it; use an address on a verified domain."
+            )
+        return problems
+
+
+def _is_local_url(url: str) -> bool:
+    return any(host in url for host in ("localhost", "127.0.0.1", "[::1]", "0.0.0.0"))
+
 
 @lru_cache
 def get_settings() -> Settings:

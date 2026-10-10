@@ -49,6 +49,30 @@ class MessageResponse(BaseModel):
     message: str
 
 
+class VerificationStatusOut(BaseModel):
+    """What the verification screen needs to render truthfully on load."""
+
+    email_verified: bool
+    masked_email: str
+    resend_available_in: int
+    email_configured: bool
+
+
+class VerificationSentOut(BaseModel):
+    """Result of asking for a verification email. `accepted` means the
+    email provider took the message, not that it reached an inbox."""
+
+    message: str
+    masked_email: str
+    accepted: bool
+    resend_available_in: int
+
+
+class ChangeEmailRequest(BaseModel):
+    new_email: EmailStr
+    password: str = Field(min_length=1, max_length=128)
+
+
 class UserOut(BaseModel):
     id: uuid.UUID
     email: str

@@ -108,7 +108,10 @@ async def test_verify_email_rejects_reused_token(client, email_spy):
     first = await client.post("/api/v1/auth/verify-email", json={"token": raw_token})
     assert first.status_code == 200
     second = await client.post("/api/v1/auth/verify-email", json={"token": raw_token})
-    assert second.status_code == 400
+    # Opening the same link twice (or a mail scanner opening it first) is
+    # reported as "already verified", not as a failure.
+    assert second.status_code == 409
+    assert second.json()["error"]["code"] == "already_verified"
 
 
 async def test_verify_email_rejects_expired_token(client, email_spy):
@@ -136,6 +139,18 @@ async def test_resend_verification_requires_auth(client):
     assert resp.status_code == 401
 
 
+async def _age_verification_tokens(minutes: int = 10) -> None:
+    """The resend cooldown is measured from the newest verification token, so
+    tests that resend straight after registering move that token into the past."""
+    from sqlalchemy import update as _update
+
+    from app.models.email import EmailToken
+
+    async with AsyncSessionLocal() as db:
+        await db.execute(_update(EmailToken).values(created_at=datetime.now(timezone.utc) - timedelta(minutes=minutes)))
+        await db.commit()
+
+
 async def test_resend_verification_sends_new_token(client, email_spy):
     resp = await client.post(
         "/api/v1/auth/register",
@@ -143,6 +158,7 @@ async def test_resend_verification_sends_new_token(client, email_spy):
     )
     access_token = resp.json()["access_token"]
     email_spy.clear()
+    await _age_verification_tokens()
 
     resend_resp = await client.post(
         "/api/v1/auth/resend-verification", headers={"Authorization": f"Bearer {access_token}"}
@@ -366,7 +382,7 @@ async def test_resend_provider_uses_configured_sender_address(monkeypatch):
     )
     ok = await email_service.send_email(message)
 
-    assert ok is True
+    assert ok.ok is True and ok.status == "accepted"
     assert captured["json"]["from"] == "CareerFound <no-reply@mycareerfound.com>"
     assert captured["json"]["to"] == ["someone@example.com"]
     assert captured["headers"]["Authorization"] == "Bearer test-key-123"
@@ -380,7 +396,7 @@ async def test_resend_provider_without_api_key_fails_closed(monkeypatch):
 
     message = email_service.EmailMessage(to="x@example.com", subject="Test", html="<p>hi</p>", text="hi")
     ok = await email_service.send_email(message)
-    assert ok is False
+    assert ok.ok is False and ok.status == "not_configured"
 
 
 async def test_resend_verification_says_so_when_the_email_could_not_be_sent(client, email_spy, monkeypatch):
@@ -394,11 +410,12 @@ async def test_resend_verification_says_so_when_the_email_could_not_be_sent(clie
         return False
 
     monkeypatch.setattr(email_service, "send_email", failing_send)
+    await _age_verification_tokens()
     resend_resp = await client.post(
         "/api/v1/auth/resend-verification", headers={"Authorization": f"Bearer {access_token}"}
     )
     assert resend_resp.status_code == 503
-    assert "could not send" in resend_resp.json()["error"]["message"].lower()
+    assert "unavailable" in resend_resp.json()["error"]["message"].lower()
     assert "sent. check your inbox" not in resend_resp.text.lower()
 
 

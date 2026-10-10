@@ -5,6 +5,7 @@ from sqlalchemy import select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import settings
 from app.core.security import create_token, generate_secure_token, hash_password, hash_token, verify_password
 from app.models.email import EmailToken, EmailTokenPurpose
 from app.models.user import User
@@ -17,14 +18,63 @@ VERIFICATION_TOKEN_TTL = timedelta(hours=48)
 PASSWORD_RESET_TOKEN_TTL = timedelta(hours=1)
 
 
+VERIFICATION_RESEND_COOLDOWN = timedelta(seconds=60)
+
+LINK_INVALID_MESSAGE = "This verification link is not valid. Open the newest email from CareerFound, or request a new link."
+LINK_EXPIRED_MESSAGE = "This verification link has expired. Request a new one and we will email it to you."
+LINK_REPLACED_MESSAGE = "A newer verification email replaced this link. Open the most recent email from CareerFound, or request a new link."
+
+
 class AuthError(Exception):
-    pass
+    def __init__(self, message: str, code: str = "auth_error"):
+        super().__init__(message)
+        self.code = code
 
 
 class EmailDeliveryError(Exception):
     """The email provider did not accept the message. Raised only where the
     person is waiting on that exact email (a resend), so the app can say so
-    instead of claiming something was sent that was not."""
+    instead of claiming something was sent that was not. `code` is a stable
+    reason the UI can react to; `setup_problem` marks failures that retrying
+    cannot fix until the operator fixes configuration."""
+
+    def __init__(self, message: str, code: str, setup_problem: bool = False):
+        super().__init__(message)
+        self.code = code
+        self.setup_problem = setup_problem
+
+
+class ResendCooldownError(Exception):
+    def __init__(self, retry_after: int):
+        super().__init__(f"Please wait {retry_after} seconds before requesting another email.")
+        self.retry_after = retry_after
+
+
+def mask_email(address: str) -> str:
+    return email_service.mask_email(address)
+
+
+def delivery_error_for(result: "email_service.EmailResult") -> EmailDeliveryError:
+    """Turns a failed send into wording that is true. Setup problems are
+    ours (credentials, sender domain), so the person is told it is not
+    their address and not to keep hammering the button; passing outages
+    say to try again soon."""
+    if result.status == "address_rejected":
+        return EmailDeliveryError(
+            "The email service rejected this address. Check it for typos, or change it below.",
+            "email_address_rejected",
+        )
+    if result.is_setup_problem:
+        return EmailDeliveryError(
+            "Verification emails are not working on our side right now. Your account is saved and your address is fine. "
+            f"Please try again later, or write to {settings.EMAIL_REPLY_TO} and we will help.",
+            "email_not_configured",
+            setup_problem=True,
+        )
+    return EmailDeliveryError(
+        "Our email service is temporarily unavailable. Nothing is wrong with your account. Please try again in a few minutes.",
+        "email_temporarily_unavailable",
+    )
 
 
 async def register_user(db: AsyncSession, payload: RegisterRequest) -> User:
@@ -54,11 +104,16 @@ async def register_user(db: AsyncSession, payload: RegisterRequest) -> User:
     # Email delivery is best-effort and must never fail registration itself,
     # a flaky provider (or a not-yet-configured one in dev) still has to
     # leave the account fully created and usable.
+    # Verification goes first and on its own: the welcome email is a nicety,
+    # the verification link is what the account actually needs.
     try:
-        await email_service.send_welcome_email(user)
         await send_verification_email_for(db, user)
     except Exception:
-        logger.exception("Failed to send registration email(s) for user %s", user.id)
+        logger.exception("Failed to send verification email for user %s", user.id)
+    try:
+        await email_service.send_welcome_email(user)
+    except Exception:
+        logger.exception("Failed to send welcome email for user %s", user.id)
 
     return user
 
@@ -130,31 +185,150 @@ async def _consume_email_token(db: AsyncSession, raw_token: str, purpose: EmailT
     return token_row
 
 
-async def send_verification_email_for(db: AsyncSession, user: User) -> bool:
-    raw_token = await _issue_email_token(db, user, EmailTokenPurpose.email_verification)
-    return await email_service.send_verification_email(user, raw_token)
+def _as_utc(value: datetime) -> datetime:
+    """sqlite hands back naive datetimes, Postgres aware ones; both mean UTC here."""
+    return value if value.tzinfo else value.replace(tzinfo=timezone.utc)
 
 
-async def resend_verification_email(db: AsyncSession, user: User) -> None:
+async def verification_cooldown_remaining(db: AsyncSession, user: User) -> int:
+    """Seconds until another verification email may be requested. Derived
+    from the newest verification token the user holds, so it survives
+    restarts and works across several server instances. A send that
+    failed deletes its token (see send_verification_email_for), so a
+    failure never starts a cooldown the person did nothing to earn."""
+    result = await db.execute(
+        select(EmailToken.created_at)
+        .where(EmailToken.user_id == user.id, EmailToken.purpose == EmailTokenPurpose.email_verification)
+        .order_by(EmailToken.created_at.desc())
+        .limit(1)
+    )
+    newest = result.scalar_one_or_none()
+    if newest is None:
+        return 0
+    remaining = VERIFICATION_RESEND_COOLDOWN - (datetime.now(timezone.utc) - _as_utc(newest))
+    return max(0, int(remaining.total_seconds()) + (1 if remaining.total_seconds() % 1 else 0))
+
+
+async def send_verification_email_for(db: AsyncSession, user: User) -> "email_service.EmailResult":
+    """Issues a fresh link, asks the provider to send it, and only then
+    retires the older links. If the provider refuses, the new token is
+    discarded and any earlier link that did reach the person keeps
+    working, so a failed resend can never strand them."""
+    now = datetime.now(timezone.utc)
+    raw_token = generate_secure_token()
+    row = EmailToken(
+        user_id=user.id,
+        purpose=EmailTokenPurpose.email_verification,
+        token_hash=hash_token(raw_token),
+        expires_at=now + VERIFICATION_TOKEN_TTL,
+    )
+    db.add(row)
+    await db.commit()
+    try:
+        result = email_service.as_result(await email_service.send_verification_email(user, raw_token))
+    except Exception:
+        logger.exception("Verification email raised for user %s", user.id)
+        result = email_service.EmailResult(False, "provider_unavailable", detail="exception while sending")
+    if not result.ok:
+        await db.delete(row)
+        await db.commit()
+        return result
+    await db.execute(
+        update(EmailToken)
+        .where(
+            EmailToken.user_id == user.id,
+            EmailToken.purpose == EmailTokenPurpose.email_verification,
+            EmailToken.used_at.is_(None),
+            EmailToken.id != row.id,
+        )
+        .values(used_at=now)
+    )
+    await db.commit()
+    return result
+
+
+async def resend_verification_email(db: AsyncSession, user: User) -> "email_service.EmailResult":
     if user.email_verified:
-        raise AuthError("This email address is already verified.")
-    if not await send_verification_email_for(db, user):
-        raise EmailDeliveryError("We could not send the verification email just now. Please try again in a few minutes.")
+        raise AuthError("This email address is already verified.", "already_verified")
+    wait = await verification_cooldown_remaining(db, user)
+    if wait > 0:
+        raise ResendCooldownError(wait)
+    result = await send_verification_email_for(db, user)
+    if not result.ok:
+        raise delivery_error_for(result)
+    return result
+
+
+async def change_unverified_email(db: AsyncSession, user: User, new_email: str, password: str) -> "email_service.EmailResult":
+    """Lets someone who mistyped their address at signup fix it themselves.
+    Only for unverified accounts (a verified address is proof of identity
+    and changing it is a different, stronger flow), and only with the
+    current password, so a stolen session cannot redirect the account's
+    mail. The old address stops being able to verify: its links are
+    retired as soon as the new email is accepted."""
+    if user.email_verified:
+        raise AuthError("This address is already verified, so it can't be changed here.", "already_verified")
+    if user.password_hash is None or not verify_password(password, user.password_hash):
+        raise AuthError("That password is not correct.", "wrong_password")
+    new_email = new_email.strip().lower()
+    if new_email == user.email:
+        raise AuthError("That is already the address on your account.", "same_email")
+    taken = await db.execute(select(User.id).where(User.email == new_email))
+    if taken.scalar_one_or_none() is not None:
+        raise AuthError("An account with this email already exists.", "email_taken")
+    previous = user.email
+    user.email = new_email
+    try:
+        await db.commit()
+    except IntegrityError:
+        await db.rollback()
+        raise AuthError("An account with this email already exists.", "email_taken")
+    await db.refresh(user)
+    # Links sent to the old address must not be able to verify the new one.
+    await db.execute(
+        update(EmailToken)
+        .where(
+            EmailToken.user_id == user.id,
+            EmailToken.purpose == EmailTokenPurpose.email_verification,
+            EmailToken.used_at.is_(None),
+        )
+        .values(used_at=datetime.now(timezone.utc))
+    )
+    await db.commit()
+    logger.info("Unverified account %s changed email %s -> %s", user.id, mask_email(previous), mask_email(new_email))
+    return await send_verification_email_for(db, user)
 
 
 async def verify_email(db: AsyncSession, raw_token: str) -> User:
-    token_row = await _consume_email_token(db, raw_token, EmailTokenPurpose.email_verification)
+    """Looks the link up first, then explains exactly why it can't be used:
+    each outcome (never existed, expired, replaced by a newer email, already
+    used on an account that is verified) needs a different next step, so
+    they get different codes instead of one vague 'invalid or expired'."""
+    now = datetime.now(timezone.utc)
+    result = await db.execute(
+        select(EmailToken).where(
+            EmailToken.token_hash == hash_token(raw_token),
+            EmailToken.purpose == EmailTokenPurpose.email_verification,
+        )
+    )
+    token_row = result.scalar_one_or_none()
     if token_row is None:
-        raise AuthError("This verification link is invalid or has expired. Request a new one from Settings.")
-    result = await db.execute(select(User).where(User.id == token_row.user_id))
-    user = result.scalar_one_or_none()
+        raise AuthError(LINK_INVALID_MESSAGE, "link_invalid")
+    user = (await db.execute(select(User).where(User.id == token_row.user_id))).scalar_one_or_none()
     if user is None:
-        raise AuthError("This verification link is invalid or has expired. Request a new one from Settings.")
-    if not user.email_verified:
-        user.email_verified = True
-        user.email_verified_at = datetime.now(timezone.utc)
-        await db.commit()
-        await db.refresh(user)
+        raise AuthError(LINK_INVALID_MESSAGE, "link_invalid")
+    if user.email_verified:
+        # Also what a mail scanner that opened the link first leaves behind.
+        raise AuthError("This email address is already verified. You can sign in.", "already_verified")
+    if token_row.used_at is not None:
+        raise AuthError(LINK_REPLACED_MESSAGE, "link_replaced")
+    if _as_utc(token_row.expires_at) < now:
+        raise AuthError(LINK_EXPIRED_MESSAGE, "link_expired")
+    token_row.used_at = now
+    user.email_verified = True
+    user.email_verified_at = now
+    await db.commit()
+    await db.refresh(user)
     return user
 
 

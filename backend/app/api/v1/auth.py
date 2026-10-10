@@ -8,6 +8,7 @@ from app.core.security import decode_token, create_token
 from app.db.session import get_db
 from app.models.user import User
 from app.schemas.auth import (
+    ChangeEmailRequest,
     EmailPreferencesUpdate,
     ForgotPasswordRequest,
     GoogleAuthRequest,
@@ -18,6 +19,8 @@ from app.schemas.auth import (
     ResetPasswordRequest,
     TokenResponse,
     UserOut,
+    VerificationSentOut,
+    VerificationStatusOut,
     VerifyEmailRequest,
 )
 from app.services import auth_service
@@ -92,24 +95,92 @@ async def me(user: User = Depends(get_current_user)):
 
 
 @router.post("/verify-email", response_model=UserOut)
-async def verify_email(payload: VerifyEmailRequest, db: AsyncSession = Depends(get_db)):
+async def verify_email(payload: VerifyEmailRequest, request: Request, db: AsyncSession = Depends(get_db)):
+    limiter.check(f"verify-email:{_client_ip(request)}", settings.AUTH_RATE_LIMIT_PER_MINUTE * 3)
     try:
         user = await auth_service.verify_email(db, payload.token)
     except auth_service.AuthError as exc:
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, str(exc)) from exc
+        # An already-verified account is not a failure of the person's
+        # request, so it gets its own status the UI can treat as a soft success.
+        code = status.HTTP_409_CONFLICT if exc.code == "already_verified" else status.HTTP_400_BAD_REQUEST
+        raise HTTPException(code, {"message": str(exc), "code": exc.code}) from exc
+    await log_action(db, user_id=user.id, action="verify_email", resource_type="user", resource_id=str(user.id), ip=_client_ip(request))
     return user
 
 
-@router.post("/resend-verification", response_model=MessageResponse)
+@router.get("/verification-status", response_model=VerificationStatusOut)
+async def verification_status(user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+    return VerificationStatusOut(
+        email_verified=user.email_verified,
+        masked_email=auth_service.mask_email(user.email),
+        resend_available_in=0 if user.email_verified else await auth_service.verification_cooldown_remaining(db, user),
+        email_configured=settings.email_live or settings.ENVIRONMENT != "production",
+    )
+
+
+@router.post("/resend-verification", response_model=VerificationSentOut)
 async def resend_verification(request: Request, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
     limiter.check(f"resend-verification:{user.id}", settings.EMAIL_RATE_LIMIT_PER_MINUTE)
+    limiter.check(f"resend-verification-ip:{_client_ip(request)}", settings.EMAIL_RATE_LIMIT_PER_MINUTE * 4)
+    masked = auth_service.mask_email(user.email)
     try:
         await auth_service.resend_verification_email(db, user)
     except auth_service.AuthError as exc:
-        raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from exc
+        raise HTTPException(status.HTTP_409_CONFLICT, {"message": str(exc), "code": exc.code}) from exc
+    except auth_service.ResendCooldownError as exc:
+        raise HTTPException(
+            status.HTTP_429_TOO_MANY_REQUESTS,
+            {"message": str(exc), "code": "resend_cooldown", "retry_after": exc.retry_after, "masked_email": masked},
+            headers={"Retry-After": str(exc.retry_after)},
+        ) from exc
     except auth_service.EmailDeliveryError as exc:
-        raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, str(exc)) from exc
-    return MessageResponse(message="Verification email sent. Check your inbox.")
+        raise HTTPException(
+            status.HTTP_503_SERVICE_UNAVAILABLE,
+            {"message": str(exc), "code": exc.code, "masked_email": masked, "setup_problem": exc.setup_problem},
+        ) from exc
+    return VerificationSentOut(
+        message=f"We asked our email service to send a new link to {masked}. It usually arrives within a minute. Check spam if you don't see it.",
+        masked_email=masked,
+        accepted=True,
+        resend_available_in=int(auth_service.VERIFICATION_RESEND_COOLDOWN.total_seconds()),
+    )
+
+
+@router.post("/change-email", response_model=VerificationSentOut)
+async def change_email(
+    payload: ChangeEmailRequest,
+    request: Request,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    limiter.check(f"change-email:{user.id}", settings.EMAIL_RATE_LIMIT_PER_MINUTE)
+    try:
+        result = await auth_service.change_unverified_email(db, user, payload.new_email, payload.password)
+    except auth_service.AuthError as exc:
+        code = {
+            "wrong_password": status.HTTP_403_FORBIDDEN,  # not 401: the client treats 401 as an expired session
+            "already_verified": status.HTTP_409_CONFLICT,
+            "same_email": status.HTTP_400_BAD_REQUEST,
+            "email_taken": status.HTTP_409_CONFLICT,
+        }.get(exc.code, status.HTTP_400_BAD_REQUEST)
+        raise HTTPException(code, {"message": str(exc), "code": exc.code}) from exc
+    await log_action(db, user_id=user.id, action="change_unverified_email", resource_type="user", resource_id=str(user.id), ip=_client_ip(request))
+    masked = auth_service.mask_email(user.email)
+    if result.ok:
+        return VerificationSentOut(
+            message=f"Address updated. We asked our email service to send a verification link to {masked}.",
+            masked_email=masked,
+            accepted=True,
+            resend_available_in=int(auth_service.VERIFICATION_RESEND_COOLDOWN.total_seconds()),
+        )
+    # The address WAS changed; only the email failed. Say both, and let the
+    # screen offer a retry rather than pretending nothing happened.
+    return VerificationSentOut(
+        message=f"Address updated to {masked}, but we could not send the verification email yet. Use Resend to try again.",
+        masked_email=masked,
+        accepted=False,
+        resend_available_in=0,
+    )
 
 
 @router.post("/forgot-password", response_model=MessageResponse)
