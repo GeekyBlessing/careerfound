@@ -337,35 +337,50 @@ async def verify_email(db: AsyncSession, raw_token: str) -> User:
 # --------------------------------------------------------------------------
 
 
-async def request_password_reset(db: AsyncSession, email: str) -> None:
-    """Always completes with no return value regardless of whether the
-    email matches an account, callers must show the same generic message
-    either way so this endpoint can't be used to enumerate registered
-    emails. Accounts with no password set (Google-only sign-in) are
-    skipped, there's no password on them to reset."""
+async def request_password_reset(db: AsyncSession, email: str) -> "email_service.EmailResult | None":
+    """Returns None when there is no account to reset (callers must answer
+    exactly as they would for a real one, so this can't be used to enumerate
+    registered emails), otherwise the outcome of the send. Accounts with no
+    password set (Google-only sign-in) are skipped, there's no password on
+    them to reset."""
     result = await db.execute(select(User).where(User.email == email.lower()))
     user = result.scalar_one_or_none()
     if user is None or user.password_hash is None:
-        return
+        return None
     raw_token = await _issue_email_token(db, user, EmailTokenPurpose.password_reset)
     try:
-        await email_service.send_password_reset_email(user, raw_token)
+        outcome = email_service.as_result(await email_service.send_password_reset_email(user, raw_token))
     except Exception:
         logger.exception("Failed to send password reset email for user %s", user.id)
+        outcome = email_service.EmailResult(False, "provider_unavailable", detail="exception while sending")
+    if not outcome.ok:
+        logger.error("Password reset email not sent for user %s: %s", user.id, outcome.status)
+    return outcome
 
 
 async def reset_password(db: AsyncSession, raw_token: str, new_password: str) -> User:
-    token_row = await _consume_email_token(db, raw_token, EmailTokenPurpose.password_reset)
-    if token_row is None:
-        raise AuthError("This password reset link is invalid or has expired. Request a new one.")
-    result = await db.execute(select(User).where(User.id == token_row.user_id))
-    user = result.scalar_one_or_none()
-    if user is None:
-        raise AuthError("This password reset link is invalid or has expired. Request a new one.")
-    user.password_hash = hash_password(new_password)
-    # Invalidate any other outstanding reset tokens for this account too,
-    # defense in depth in case more than one reset was requested.
+    """Looks the link up first so the person is told exactly what is wrong
+    with it (never valid, expired, or already used) and what to do next."""
     now = datetime.now(timezone.utc)
+    token_row = (
+        await db.execute(
+            select(EmailToken).where(
+                EmailToken.token_hash == hash_token(raw_token),
+                EmailToken.purpose == EmailTokenPurpose.password_reset,
+            )
+        )
+    ).scalar_one_or_none()
+    if token_row is None:
+        raise AuthError("This password reset link is not valid. Request a new one.", "link_invalid")
+    if token_row.used_at is not None:
+        raise AuthError("This password reset link has already been used or was replaced by a newer one. Request a new one if you still need to reset.", "link_used")
+    if _as_utc(token_row.expires_at) < now:
+        raise AuthError("This password reset link has expired. Request a new one.", "link_expired")
+    user = (await db.execute(select(User).where(User.id == token_row.user_id))).scalar_one_or_none()
+    if user is None:
+        raise AuthError("This password reset link is not valid. Request a new one.", "link_invalid")
+    user.password_hash = hash_password(new_password)
+    # Retire this and any other outstanding reset links for the account.
     await db.execute(
         update(EmailToken)
         .where(

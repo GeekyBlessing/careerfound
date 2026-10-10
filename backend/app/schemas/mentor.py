@@ -13,12 +13,16 @@ class MentorChatMessageOut(BaseModel):
     role: str
     content: str
     created_at: datetime
+    # "live" or "limited" on assistant messages, so the page can say when a
+    # reply is prepared guidance and not a live AI answer.
+    mode: str | None = None
 
 
 class MentorChatResponse(BaseModel):
     conversation_id: uuid.UUID
     reply: str
     follow_up_questions: list[str]
+    mode: str = "live"
     history: list[MentorChatMessageOut]
 
 

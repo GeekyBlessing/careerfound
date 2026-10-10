@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { MailCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,21 +15,41 @@ export default function ForgotPasswordPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
+  // Seconds until another request is allowed, so the button can't be hammered.
+  const [wait, setWait] = useState(0);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  useEffect(() => {
+    if (wait <= 0) return;
+    const id = window.setTimeout(() => setWait((w) => w - 1), 1000);
+    return () => window.clearTimeout(id);
+  }, [wait]);
+
+  async function request() {
     setError(null);
     setLoading(true);
     try {
-      await api.post("/auth/forgot-password", { email }, { auth: false });
-      // Always show the same success state, whether or not this email has
-      // an account, the backend intentionally never reveals which.
+      const res = await api.post<{ message: string }>("/auth/forgot-password", { email }, { auth: false });
+      // The same state is shown whether or not this email has an account (the
+      // API never reveals which). The wording only says a request was made.
+      setNotice(res.message);
       setSubmitted(true);
+      setWait(60);
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Something went wrong. Please try again.");
+      if (err instanceof ApiError && err.status === 429) {
+        setError("Too many requests for this address. Please wait a minute and try again.");
+        setWait(60);
+      } else {
+        setError(err instanceof ApiError ? err.message : "We could not reach CareerFound. Check your connection and try again.");
+      }
     } finally {
       setLoading(false);
     }
+  }
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    void request();
   }
 
   return (
@@ -43,11 +63,30 @@ export default function ForgotPasswordPage() {
             <div className="text-center">
               <MailCheck className="mx-auto mb-4 h-10 w-10 text-accent-light" aria-hidden="true" />
               <h1 className="text-lg font-semibold tracking-tight text-ink-100">Check your email</h1>
-              <p className="mt-2 text-sm text-ink-500">
-                If an account exists for <span className="text-ink-300">{email}</span>, a password reset link is on
-                its way. It expires in 1 hour.
+              <p className="mt-2 text-sm text-ink-500" aria-live="polite">
+                {notice ?? "If an account exists for that email, we have asked our email service to send a reset link."}
               </p>
-              <Link href="/login" className="focus-ring mt-6 block rounded-sm text-sm font-medium text-accent-light hover:underline">
+              <ul className="mt-4 space-y-1.5 text-left text-xs text-ink-500">
+                <li>Look in your inbox for an email from CareerFound.</li>
+                <li>Not there after a few minutes? Check spam, junk and Promotions.</li>
+                <li>The link works once and expires in 1 hour.</li>
+                <li>Check that you typed <span className="text-ink-300">{email}</span> correctly.</li>
+              </ul>
+              {error && <Alert className="mt-4 text-left">{error}</Alert>}
+              <Button variant="secondary" className="mt-5 w-full" onClick={() => void request()} loading={loading} disabled={wait > 0}>
+                {wait > 0 ? `Send again in ${wait}s` : "Send the link again"}
+              </Button>
+              <button
+                type="button"
+                onClick={() => {
+                  setSubmitted(false);
+                  setError(null);
+                }}
+                className="focus-ring mt-3 rounded-sm text-xs text-ink-500 hover:text-ink-100 hover:underline"
+              >
+                Use a different email
+              </button>
+              <Link href="/login" className="focus-ring mt-4 block rounded-sm text-sm font-medium text-accent-light hover:underline">
                 Back to log in
               </Link>
             </div>

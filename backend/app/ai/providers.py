@@ -15,6 +15,7 @@ never know or care which one is active.
 from __future__ import annotations
 
 import abc
+import logging
 import json
 import random
 from typing import Any
@@ -47,6 +48,9 @@ from app.ai.assessment_signals import (
 )
 from app.services.career_taxonomy import CATEGORY_LABELS
 from app.core.config import settings
+from app.ai.limited_mentor import compose_limited_reply
+
+logger = logging.getLogger("careerfound.ai")
 
 
 class LLMClient(abc.ABC):
@@ -147,56 +151,14 @@ class MockLLMProvider(LLMClient):
 
     async def mentor_reply(
         self,
-        history: list[dict[str, str]],
+        history: list[dict[str, Any]],
         user_message: str,
         user_context: dict[str, Any],
     ) -> MentorReply:
+        """Limited mode: prepared guidance, chosen by what was actually asked.
+        See app/ai/limited_mentor.py. Marked mode="limited" so the app can say so."""
         wrap_user_input(user_message)  # injection heuristic runs for logging/telemetry
-        msg_lower = user_message.lower()
-        beginner = user_context.get("beginner_mode", True)
-        name = user_context.get("full_name", "there").split(" ")[0]
-
-        struggle_markers = ["i don't understand", "i dont understand", "confused", "stuck", "don't get it"]
-        is_struggling = any(m in msg_lower for m in struggle_markers)
-
-        topic = _extract_topic(user_message)
-
-        if is_struggling:
-            analogy = _ANALOGIES.get(topic, _ANALOGIES["default"])
-            message = (
-                f"That's okay, {name}, this trips up almost everyone at first. "
-                f"Let's set the technical definition aside for a second. {analogy} "
-                f"Once that clicks, the formal version will feel obvious. "
-                f"Want me to connect that back to {topic or 'the actual concept'} now, "
-                f"or give you a tiny exercise to test it first?"
-            )
-            struggle = topic or "general concept"
-            adjustment = f"Consider inserting a short refresher lesson on '{topic}' before the next phase unlocks."
-        elif "?" in user_message:
-            depth = "in plain language, minimal jargon" if beginner else "with technical precision"
-            message = (
-                f"Good question. Here's the short answer {depth}: "
-                f"{_short_answer(topic)} "
-                f"Try applying that in your current project. If it doesn't click, paste what "
-                f"you tried and I'll help you debug it rather than just giving you the fix."
-            )
-            struggle = None
-            adjustment = None
-        else:
-            message = (
-                f"Got it. Based on where you are in your roadmap, here's how I'd think about that: "
-                f"{_short_answer(topic)} What have you tried so far?"
-            )
-            struggle = None
-            adjustment = None
-
-        follow_ups = _follow_up_questions(topic)
-        return MentorReply(
-            message=message,
-            detected_struggle=struggle,
-            suggested_roadmap_adjustment=adjustment,
-            follow_up_questions=follow_ups,
-        )
+        return compose_limited_reply(history, user_message, user_context)
 
     async def review_project(
         self, project_title: str, project_context: dict[str, Any], submission_text: str
@@ -308,55 +270,6 @@ class MockLLMProvider(LLMClient):
 
 def _cv_verb(title: str) -> str:
     return random.Random(title).choice(["Developed", "Built", "Engineered", "Designed and implemented", "Created"])
-
-
-_ANALOGIES = {
-    "dns": (
-        "Imagine you want to visit a friend's house but you only know their name, not their "
-        "address. DNS is the phonebook of the internet, it takes a name you understand, like "
-        "google.com, and looks up the actual numeric address computers use to find each other."
-    ),
-    "ip address": (
-        "Think of an IP address like a street address for a computer, it's how data knows "
-        "exactly where to be delivered on a network with millions of other computers."
-    ),
-    "tcp/ip": (
-        "Think of TCP/IP like the postal service's rules: IP is the address on the envelope, and "
-        "TCP is the promise that every page of your letter arrives, in order, and nothing's missing."
-    ),
-    "api": (
-        "An API is like a restaurant menu: you don't need to know how the kitchen works, you just "
-        "order from the menu (the API) and the kitchen (the server) hands back what you asked for."
-    ),
-    "default": (
-        "Let's strip away the jargon and start from what you already know, then build up to the "
-        "technical term one small piece at a time."
-    ),
-}
-
-
-def _extract_topic(text: str) -> str:
-    text_lower = text.lower()
-    for key in _ANALOGIES:
-        if key != "default" and key in text_lower:
-            return key
-    return ""
-
-
-def _short_answer(topic: str) -> str:
-    answers = {
-        "dns": "DNS translates human-friendly names into the numeric addresses computers use.",
-        "ip address": "Every device on a network gets a unique address so data knows where to go.",
-        "tcp/ip": "TCP/IP is the pair of rules that address and reliably deliver data across networks.",
-        "api": "An API is a defined way for two pieces of software to talk to each other.",
-    }
-    return answers.get(topic, "Let's break that down together, starting from first principles.")
-
-
-def _follow_up_questions(topic: str) -> list[str]:
-    if topic:
-        return [f"Want a 2-minute exercise on {topic}?", "Should I quiz you on this before moving on?"]
-    return ["Want me to suggest what to learn next?", "Should we do a quick practice question on this?"]
 
 
 _TRAIT_WEIGHTS: dict[str, dict[str, int]] = {
@@ -663,6 +576,112 @@ def _build_career_dna(profile: dict[str, Any]) -> CareerDNA:
 # --------------------------------------------------------------------------
 
 
+
+class MentorUnavailable(Exception):
+    """The live AI model could not answer. Carries a stable `code` for the
+    client, whether retrying can help, and whether the cause is our
+    configuration (key, model name) rather than a passing outage."""
+
+    def __init__(self, message: str, code: str, retryable: bool = True, setup_problem: bool = False):
+        super().__init__(message)
+        self.code = code
+        self.retryable = retryable
+        self.setup_problem = setup_problem
+
+
+def classify_anthropic_error(exc: Exception) -> MentorUnavailable:
+    import anthropic
+
+    if isinstance(exc, anthropic.AuthenticationError | anthropic.PermissionDeniedError):
+        logger.error("AI mentor: Anthropic rejected the API key (%s). Check ANTHROPIC_API_KEY.", type(exc).__name__)
+        return MentorUnavailable("The AI service is not set up correctly.", "ai_not_configured", retryable=False, setup_problem=True)
+    if isinstance(exc, anthropic.NotFoundError):
+        logger.error("AI mentor: model %r was not found. Check ANTHROPIC_MODEL.", settings.ANTHROPIC_MODEL)
+        return MentorUnavailable("The AI model is not available.", "ai_not_configured", retryable=False, setup_problem=True)
+    if isinstance(exc, anthropic.RateLimitError):
+        logger.warning("AI mentor: rate limited by Anthropic")
+        return MentorUnavailable("The AI service is busy.", "ai_busy")
+    if isinstance(exc, anthropic.APITimeoutError):
+        logger.warning("AI mentor: request to Anthropic timed out")
+        return MentorUnavailable("The AI service took too long to answer.", "ai_timeout")
+    if isinstance(exc, anthropic.APIConnectionError):
+        logger.warning("AI mentor: could not reach Anthropic (%s)", type(exc).__name__)
+        return MentorUnavailable("The AI service could not be reached.", "ai_unreachable")
+    if isinstance(exc, anthropic.APIStatusError):
+        logger.error("AI mentor: Anthropic returned HTTP %s", getattr(exc, "status_code", "?"))
+        return MentorUnavailable("The AI service is having trouble.", "ai_unavailable")
+    logger.exception("AI mentor: unexpected error calling the model")
+    return MentorUnavailable("The AI service is having trouble.", "ai_unavailable")
+
+
+def build_chat_messages(history: list[dict[str, Any]], user_message: str, max_turns: int = 20) -> list[dict[str, str]]:
+    """Real alternating chat turns, newest message last. Consecutive turns of
+    the same role are merged (the API requires alternation) and a leading
+    assistant turn is dropped (it must start with the user)."""
+    turns: list[dict[str, str]] = []
+    for m in history[-max_turns:]:
+        role = "assistant" if m.get("role") == "assistant" else "user"
+        content = wrap_user_input(m["content"]) if role == "user" else m["content"]
+        if turns and turns[-1]["role"] == role:
+            turns[-1]["content"] += "\n\n" + content
+        else:
+            turns.append({"role": role, "content": content})
+    while turns and turns[0]["role"] != "user":
+        turns.pop(0)
+    new = wrap_user_input(user_message)
+    if turns and turns[-1]["role"] == "user":
+        turns[-1]["content"] += "\n\n" + new
+    else:
+        turns.append({"role": "user", "content": new})
+    return turns
+
+
+def build_mentor_context_block(ctx: dict[str, Any]) -> str:
+    """The learner's real CareerFound facts, for the model. Only facts that
+    exist are listed; the model is told not to assume anything else."""
+    lines = ["Learner context from their CareerFound account (these are the only facts you have about them):"]
+    lines.append(f"- First name: {(ctx.get('full_name') or 'unknown').split(' ')[0]}")
+    lines.append(f"- Experience level: {ctx.get('experience', 'beginner')}")
+    for label, key in (("Situation", "persona"), ("Goal", "goal")):
+        if ctx.get(key):
+            lines.append(f"- {label}: {ctx[key]}")
+    if ctx.get("path_name"):
+        lines.append(f"- Active career path: {ctx['path_name']}" + (f" ({ctx['path_summary']})" if ctx.get("path_summary") else ""))
+        if ctx.get("lessons_total"):
+            lines.append(f"- Lessons completed: {ctx.get('lessons_done', 0)} of {ctx['lessons_total']}")
+        if ctx.get("current_phase"):
+            lines.append(f"- Current roadmap phase: {ctx['current_phase']}")
+        proj = ctx.get("current_project")
+        if proj:
+            lines.append(f"- Active project: {proj['title']} (teaches: {proj.get('teaches', '')})")
+        if ctx.get("next_tasks"):
+            lines.append("- Next unfinished items: " + "; ".join(ctx["next_tasks"][:3]))
+    else:
+        lines.append("- No active roadmap yet (they have not chosen a path).")
+    if ctx.get("declared_skills"):
+        lines.append("- Skills they listed themselves: " + ", ".join(ctx["declared_skills"][:10]))
+    if ctx.get("certifications"):
+        lines.append("- Certifications they listed: " + ", ".join(ctx["certifications"][:5]))
+    if ctx.get("recent_activity"):
+        lines.append("- Recent completed activity: " + "; ".join(ctx["recent_activity"][:3]))
+    lines.append(
+        "Use this only when it helps answer the question. If something is not listed here, you do not know it: "
+        "do not invent progress, projects, skills, certifications or personal details."
+    )
+    return "\n".join(lines)
+
+
+def split_follow_ups(text: str) -> tuple[str, list[str]]:
+    """The model may end with a line `FOLLOW_UPS: question | question`. Split it
+    off so the reply text stays clean. Absent or malformed means no chips."""
+    lines = text.rstrip().splitlines()
+    if lines and lines[-1].strip().upper().startswith("FOLLOW_UPS:"):
+        raw = lines[-1].split(":", 1)[1]
+        follow_ups = [q.strip(" -*\"") for q in raw.split("|") if q.strip(" -*\"")]
+        return "\n".join(lines[:-1]).rstrip(), [q for q in follow_ups if len(q) <= 120][:3]
+    return text.strip(), []
+
+
 class AnthropicProvider(LLMClient):
     """Live provider using the Anthropic Messages API with structured
     (JSON-schema constrained) outputs. This class is fully wired, the only
@@ -673,7 +692,7 @@ class AnthropicProvider(LLMClient):
     def __init__(self) -> None:
         import anthropic  # imported lazily so `mock` mode has zero dependency risk
 
-        self._client = anthropic.AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY)
+        self._client = anthropic.AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY, timeout=45.0, max_retries=1)
         self._model = settings.ANTHROPIC_MODEL
 
     async def _structured_call(self, system: str, user_content: str, schema_model: type) -> Any:
@@ -695,13 +714,27 @@ class AnthropicProvider(LLMClient):
         return await self._structured_call(ASSESSMENT_SYSTEM_PROMPT, user_content, AssessmentResult)
 
     async def mentor_reply(self, history, user_message, user_context) -> MentorReply:
-        transcript = "\n".join(f"{m['role']}: {m['content']}" for m in history[-10:])
-        user_content = (
-            f"Conversation so far:\n{transcript}\n\n"
-            f"Learner context: {json.dumps(user_context, default=str)}\n\n"
-            f"New message:\n{wrap_user_input(user_message)}"
-        )
-        return await self._structured_call(MENTOR_SYSTEM_PROMPT, user_content, MentorReply)
+        """One real chat turn: the system prompt carries the learner's real
+        CareerFound context, the conversation goes in as proper alternating
+        turns, and any failure is raised as MentorUnavailable so the app can
+        show an honest error and a retry instead of a stand-in answer."""
+        system = MENTOR_SYSTEM_PROMPT + "\n\n" + build_mentor_context_block(user_context)
+        messages = build_chat_messages(history, user_message)
+        try:
+            response = await self._client.messages.create(
+                model=self._model,
+                max_tokens=1200,
+                system=system,
+                messages=messages,
+            )
+        except Exception as exc:  # classified below, never swallowed
+            raise classify_anthropic_error(exc) from exc
+        text = "".join(getattr(b, "text", "") for b in response.content if getattr(b, "type", "") == "text").strip()
+        if not text:
+            logger.error("AI mentor: model returned an empty reply (stop_reason=%s)", getattr(response, "stop_reason", None))
+            raise MentorUnavailable("The AI Mentor returned an empty answer.", "ai_empty_reply", retryable=True)
+        message, follow_ups = split_follow_ups(text)
+        return MentorReply(message=message, follow_up_questions=follow_ups, mode="live")
 
     async def review_project(self, project_title, project_context, submission_text) -> ProjectReview:
         user_content = (

@@ -29,6 +29,9 @@ function ResetPasswordInner() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
+  // Set when the link itself is the problem, so the page offers a new link
+  // instead of leaving the person at a form that can never succeed.
+  const [linkProblem, setLinkProblem] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -51,7 +54,8 @@ function ResetPasswordInner() {
       setDone(true);
       setTimeout(() => router.push("/login"), 2500);
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Something went wrong. Please try again.");
+      if (err instanceof ApiError && ["link_invalid", "link_expired", "link_used"].includes(err.code)) setLinkProblem(true);
+      setError(err instanceof ApiError ? err.message : "We could not reach CareerFound. Check your connection and try again.");
     } finally {
       setLoading(false);
     }
@@ -77,6 +81,13 @@ function ResetPasswordInner() {
 
               <form onSubmit={handleSubmit} className="mt-6 space-y-4">
                 {error && <Alert>{error}</Alert>}
+                {linkProblem && (
+                  <Link href="/forgot-password">
+                    <Button type="button" variant="secondary" className="w-full">
+                      Request a new reset link
+                    </Button>
+                  </Link>
+                )}
                 <div>
                   <Label htmlFor="password">New password</Label>
                   <Input

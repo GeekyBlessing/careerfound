@@ -378,7 +378,7 @@ async def send_verification_email(user: User, raw_token: str) -> EmailResult:
     return await _deliver(EmailMessage(to=user.email, subject="Verify your email for CareerFound", html=html, text=text))
 
 
-async def send_password_reset_email(user: User, raw_token: str) -> bool:
+async def send_password_reset_email(user: User, raw_token: str) -> EmailResult:
     reset_url = f"{settings.PUBLIC_APP_URL}/reset-password?token={quote(raw_token)}"
     html, text = render_email(
         preheader="Reset your CareerFound password.",
@@ -393,7 +393,7 @@ async def send_password_reset_email(user: User, raw_token: str) -> bool:
         cta_url=reset_url,
         footer_note="For your security, we never send passwords by email.",
     )
-    return (await _deliver(EmailMessage(to=user.email, subject="Reset your CareerFound password", html=html, text=text))).ok
+    return await _deliver(EmailMessage(to=user.email, subject="Reset your CareerFound password", html=html, text=text))
 
 
 async def send_product_email(user: User, *, subject: str, heading: str, body_html: str, cta_text: str | None = None, cta_url: str | None = None) -> bool:

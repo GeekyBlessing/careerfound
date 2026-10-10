@@ -334,10 +334,11 @@ async def test_production_does_not_send_localhost_links():
 async def test_readiness_problems_name_what_to_fix():
     broken = Settings(ENVIRONMENT="production", JWT_SECRET_KEY="x" * 40, EMAIL_PROVIDER="console")
     text = " ".join(broken.readiness_problems())
-    assert "RESEND_API_KEY" in text and "PUBLIC_APP_URL" in text
+    assert "RESEND_API_KEY" in text and "PUBLIC_APP_URL" in text and "ANTHROPIC_API_KEY" in text
     healthy = Settings(
         ENVIRONMENT="production", JWT_SECRET_KEY="x" * 40, EMAIL_PROVIDER="resend", RESEND_API_KEY="re_x",
         PUBLIC_APP_URL="https://www.mycareerfound.com", EMAIL_FROM_ADDRESS="no-reply@mycareerfound.com",
+        LLM_PROVIDER="anthropic", ANTHROPIC_API_KEY="sk-x",
     )
     assert healthy.readiness_problems() == []
     assert Settings(ENVIRONMENT="development").readiness_problems() == []

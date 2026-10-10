@@ -156,6 +156,11 @@ class Settings(BaseSettings):
                 "Transactional email is not live (EMAIL_PROVIDER must be 'resend' with RESEND_API_KEY set). "
                 "Verification and password-reset emails cannot be sent."
             )
+        if self.LLM_PROVIDER != "anthropic" or not self.ANTHROPIC_API_KEY:
+            problems.append(
+                "The AI model is not live (LLM_PROVIDER must be 'anthropic' with ANTHROPIC_API_KEY set). "
+                "The AI Mentor answers from prepared guidance and says so on screen."
+            )
         if _is_local_url(self.PUBLIC_APP_URL):
             problems.append(
                 f"PUBLIC_APP_URL is {self.PUBLIC_APP_URL!r}. Emailed links would point at localhost. "

@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user
+from app.ai.providers import MentorUnavailable
 from app.core.config import settings
 from app.core.rate_limit import limiter
 from app.db.session import get_db
@@ -28,12 +29,31 @@ async def mentor_chat(
     db: AsyncSession = Depends(get_db),
 ):
     limiter.check(f"mentor_chat:{user.id}", settings.AI_RATE_LIMIT_PER_MINUTE)
-    convo, reply, follow_ups, history = await mentor_service.send_message(db, user, payload.conversation_id, payload.message)
+    try:
+        convo, result, history = await mentor_service.send_message(db, user, payload.conversation_id, payload.message)
+    except MentorUnavailable as exc:
+        # An honest failure: the page shows this and offers a retry. Nothing
+        # was saved, so retrying sends the same message again cleanly.
+        setup = exc.setup_problem
+        message = (
+            "The AI Mentor is not available right now because the AI service is not set up correctly on our side. "
+            "Your message was not saved. Please try again later."
+            if setup
+            else "The AI Mentor could not answer just now. Your message was not saved, so you can try again."
+        )
+        raise HTTPException(
+            status.HTTP_503_SERVICE_UNAVAILABLE,
+            {"message": message, "code": exc.code, "retryable": exc.retryable, "setup_problem": setup},
+        ) from exc
     return MentorChatResponse(
         conversation_id=convo.id,
-        reply=reply,
-        follow_up_questions=follow_ups,
-        history=[MentorChatMessageOut(role=m.role, content=m.content, created_at=m.created_at) for m in history],
+        reply=result.message,
+        follow_up_questions=result.follow_up_questions,
+        mode=result.mode,
+        history=[
+            MentorChatMessageOut(role=m.role, content=m.content, created_at=m.created_at, mode=(m.meta or {}).get("mode") if m.role == "assistant" else None)
+            for m in history
+        ],
     )
 
 

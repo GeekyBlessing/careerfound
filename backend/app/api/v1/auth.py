@@ -186,10 +186,33 @@ async def change_email(
 @router.post("/forgot-password", response_model=MessageResponse)
 async def forgot_password(payload: ForgotPasswordRequest, request: Request, db: AsyncSession = Depends(get_db)):
     limiter.check(f"forgot-password:{_client_ip(request)}", settings.EMAIL_RATE_LIMIT_PER_MINUTE)
-    await auth_service.request_password_reset(db, payload.email)
-    # Same response whether or not the email is registered, this endpoint
-    # must never reveal which emails have accounts.
-    return MessageResponse(message="If an account exists for that email, a password reset link is on its way.")
+    # Per address, whether or not it has an account, so this can't be used to
+    # flood one person's inbox and doesn't reveal anything.
+    limiter.check(f"forgot-password-email:{payload.email.lower()}", 3)
+    unavailable = {
+        "message": (
+            "Password reset emails are not working on our side right now. Your account and password are unchanged. "
+            f"Please try again later, or write to {settings.EMAIL_REPLY_TO} and we will help."
+        ),
+        "code": "email_not_configured",
+    }
+    # Account independent: if email isn't set up at all, say so up front
+    # instead of claiming a link is on its way.
+    if settings.ENVIRONMENT == "production" and not settings.email_live:
+        raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, unavailable)
+    outcome = await auth_service.request_password_reset(db, payload.email)
+    # A configuration failure (bad key, unverified sender domain) is true for
+    # every address, so reporting it does not reveal whether this one exists.
+    # Passing outages get the same neutral answer as a success, which words
+    # delivery as a request, never a certainty.
+    if outcome is not None and not outcome.ok and outcome.is_setup_problem:
+        raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, unavailable)
+    return MessageResponse(
+        message=(
+            "If an account exists for that email, we have asked our email service to send a reset link. "
+            "It usually arrives within a few minutes. Check your spam folder if you don't see it."
+        )
+    )
 
 
 @router.post("/reset-password", response_model=MessageResponse)
@@ -198,5 +221,5 @@ async def reset_password(payload: ResetPasswordRequest, request: Request, db: As
     try:
         await auth_service.reset_password(db, payload.token, payload.new_password)
     except auth_service.AuthError as exc:
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, str(exc)) from exc
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, {"message": str(exc), "code": exc.code}) from exc
     return MessageResponse(message="Your password has been reset. You can log in now.")

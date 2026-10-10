@@ -30,6 +30,32 @@ const STARTER_PROMPTS = [
   "Give me a mock interview question",
 ];
 
+/** Plain text with ``` code fences shown as code blocks. Rendered as text
+ * nodes only, so nothing in a reply can inject markup. */
+function MessageBody({ text }: { text: string }) {
+  const parts = text.split(/```(?:[a-zA-Z]*)\n?/);
+  return (
+    <>
+      {parts.map((part, i) =>
+        i % 2 === 1 ? (
+          <pre
+            key={i}
+            className="my-2 overflow-x-auto rounded-md bg-[rgb(var(--fg-tint)/0.06)] px-3 py-2 text-xs leading-relaxed text-ink-100"
+          >
+            <code>{part.replace(/\n$/, "")}</code>
+          </pre>
+        ) : (
+          part.trim() && (
+            <p key={i} className="whitespace-pre-wrap break-words">
+              {part.trim()}
+            </p>
+          )
+        )
+      )}
+    </>
+  );
+}
+
 export default function MentorPage() {
   const { user } = useAuth();
   const [conversationId, setConversationId] = useState<string | undefined>();
@@ -38,6 +64,10 @@ export default function MentorPage() {
   const [followUps, setFollowUps] = useState<string[]>([]);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // The message that did not get an answer, kept so Retry can send exactly it.
+  const [failedText, setFailedText] = useState<string | null>(null);
+  // False for a setup problem on our side: resending cannot fix that.
+  const [canRetry, setCanRetry] = useState(true);
   const [pathName, setPathName] = useState<string | null>(null);
   const [limitedMode, setLimitedMode] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -65,12 +95,17 @@ export default function MentorPage() {
       .catch(() => undefined);
   }, []);
 
-  async function sendMessage(text: string) {
-    if (!text.trim()) return;
+  async function sendMessage(text: string, isRetry = false) {
+    if (!text.trim() || sending) return;
     setError(null);
+    setFailedText(null);
+    setCanRetry(true);
     setSending(true);
-    setMessages((m) => [...m, { role: "user", content: text, created_at: new Date().toISOString() }]);
-    setInput("");
+    // A retry re-sends a message that is already on screen, so it is not added twice.
+    if (!isRetry) {
+      setMessages((m) => [...m, { role: "user", content: text, created_at: new Date().toISOString() }]);
+      setInput("");
+    }
     try {
       const res = await api.post<MentorChatResponse>("/mentor/chat", { conversation_id: conversationId, message: text });
       setConversationId(res.conversation_id);
@@ -78,7 +113,16 @@ export default function MentorPage() {
       setFollowUps(res.follow_up_questions);
       track("ai_mentor_message_sent");
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Couldn't reach the AI Mentor right now.");
+      // Say what happened. The server saved nothing for a failed turn, so the
+      // message is not lost and Retry sends it again as is.
+      setFailedText(text);
+      setCanRetry(!(err instanceof ApiError && err.details.retryable === false));
+      setFollowUps([]);
+      setError(
+        err instanceof ApiError
+          ? err.message
+          : "We could not reach CareerFound. Check your connection, then try again."
+      );
     } finally {
       setSending(false);
     }
@@ -100,14 +144,15 @@ export default function MentorPage() {
         </p>
         {limitedMode && (
           <p className="mt-2 text-xs leading-relaxed text-ink-400" data-testid="ai-limited-mode">
-            Limited mode: a live AI model is not switched on yet, so replies come from prepared guidance for common
-            questions and may feel generic.
+            Limited mode: a live AI model is not switched on yet, so replies are prepared guidance. It covers common
+            concepts, errors, interview practice, projects and careers using your real CareerFound progress, and it
+            will tell you when it has nothing prepared for a question.
           </p>
         )}
       </div>
 
       <Card className="flex h-[65vh] flex-col overflow-hidden shadow-raised">
-        <div ref={scrollRef} role="log" aria-live="polite" className="flex-1 space-y-4 overflow-y-auto p-6">
+        <div ref={scrollRef} role="log" aria-live="polite" className="flex-1 space-y-4 overflow-y-auto p-4 sm:p-6">
           {messages.length === 0 && (
             <div className="flex h-full flex-col items-center justify-center text-center">
               <MentorMark size="mb-4 h-12 w-12" />
@@ -136,11 +181,16 @@ export default function MentorPage() {
                   own words reflected back, not the part that needs to feel
                   distinct from a generic chat product. */}
               {m.role === "assistant" ? (
-                <div className="max-w-[75%] rounded-lg border-l-2 border-accent/40 bg-[rgb(var(--fg-tint)/0.03)] px-4 py-2.5 text-sm leading-relaxed text-ink-200">
-                  {m.content}
+                <div className="min-w-0 max-w-[85%] rounded-lg border-l-2 border-accent/40 bg-[rgb(var(--fg-tint)/0.03)] px-4 py-2.5 text-sm leading-relaxed text-ink-200 sm:max-w-[75%]">
+                  <MessageBody text={m.content} />
+                  {m.mode === "limited" && (
+                    <p className="mt-2 text-[11px] text-ink-500" data-testid="prepared-guidance-tag">
+                      Prepared guidance, not a live AI answer
+                    </p>
+                  )}
                 </div>
               ) : (
-                <div className="max-w-[75%] rounded-2xl bg-accent px-4 py-2.5 text-sm leading-relaxed text-white">{m.content}</div>
+                <div className="max-w-[85%] whitespace-pre-wrap break-words rounded-2xl bg-accent px-4 py-2.5 text-sm leading-relaxed text-white sm:max-w-[75%]">{m.content}</div>
               )}
               {m.role === "user" && (
                 <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-[rgb(var(--fg-tint)/0.08)] text-xs text-ink-300">
@@ -177,8 +227,20 @@ export default function MentorPage() {
         )}
 
         {error && (
-          <div className="px-6 pt-3">
-            <Alert>{error}</Alert>
+          <div className="px-4 pt-3 sm:px-6" data-testid="mentor-error">
+            <Alert>
+              <span className="block">{error}</span>
+              {failedText && canRetry && (
+                <button
+                  type="button"
+                  onClick={() => sendMessage(failedText, true)}
+                  disabled={sending}
+                  className="focus-ring mt-2 rounded-md border border-danger/40 px-3 py-1 text-xs font-medium text-danger hover:bg-danger/10 disabled:opacity-50"
+                >
+                  Try again
+                </button>
+              )}
+            </Alert>
           </div>
         )}
 

@@ -67,6 +67,12 @@ class MentorReply(BaseModel):
     detected_struggle: str | None = None
     suggested_roadmap_adjustment: str | None = None
     follow_up_questions: list[str] = Field(default_factory=list)
+    # Which prepared topic or kind of message this reply answered. Stored with
+    # the reply so the next turn can tell what "an example?" refers to.
+    topic: str | None = None
+    intent: str | None = None
+    # "live" when a real model wrote the reply, "limited" when it is prepared guidance.
+    mode: str = "live"
 
 
 class ProjectReviewFinding(BaseModel):

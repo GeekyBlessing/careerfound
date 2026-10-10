@@ -246,12 +246,15 @@ export interface MentorChatMessage {
   role: "user" | "assistant" | "system";
   content: string;
   created_at: string;
+  /** "live" for a real AI answer, "limited" for prepared guidance. Only set on assistant messages. */
+  mode?: "live" | "limited" | null;
 }
 
 export interface MentorChatResponse {
   conversation_id: string;
   reply: string;
   follow_up_questions: string[];
+  mode: "live" | "limited";
   history: MentorChatMessage[];
 }
 
