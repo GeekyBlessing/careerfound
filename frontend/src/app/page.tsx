@@ -745,57 +745,59 @@ export default function LandingPage() {
               </p>
             </Reveal>
 
-            <div className="mt-14 grid gap-12 lg:grid-cols-12 lg:items-end lg:gap-10">
-              <Reveal className="lg:col-span-6">
-                <article>
-                  <div className="relative">
+            <div className="mt-14 space-y-20">
+              {/* The founder, as a feature: portrait beside the offer. */}
+              <div className="grid gap-10 lg:grid-cols-12 lg:items-center lg:gap-14">
+                <Reveal className="lg:col-span-5">
+                  <div className="relative md:mb-14">
                     <div className="relative overflow-hidden rounded-3xl bg-[rgb(var(--color-accent-mist))]">
                       <Parallax range={-12}>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src="/mentors/toriola.jpg"
                           alt="Toriola Opeyemi, CareerFound founder and mentor"
-                          className="aspect-[4/5] w-full scale-[1.06] object-cover object-[50%_18%] sm:aspect-[4/4.2]"
+                          className="aspect-[4/5] w-full scale-[1.06] object-cover object-[50%_18%]"
                         />
                       </Parallax>
                       <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/45 to-transparent" />
-                      <div className="absolute bottom-5 left-5 right-5 text-white">
+                      <div className="absolute bottom-5 left-5 right-5 text-white md:right-[34%]">
                         <p className="font-mono text-[11px] uppercase tracking-wide text-white/75">Founder and mentor</p>
                         <p className="mt-1 font-display text-3xl font-semibold tracking-tight sm:text-4xl">Toriola Opeyemi</p>
                       </div>
                     </div>
-                    <div className="absolute -bottom-14 right-5 hidden w-[24%] rotate-[3deg] md:block">
+                    <div className="absolute -bottom-14 right-5 hidden w-[28%] rotate-[3deg] md:block">
                       <Phone label="CareerFound on a phone: requesting mentorship from Toriola Opeyemi, Cybersecurity, Cloud Security and DevOps Mentor.">
                         <MentorshipScreen />
                       </Phone>
                     </div>
                   </div>
-                  <div className="mt-6 grid gap-5 sm:grid-cols-[1fr_auto] sm:items-end md:pr-[28%]">
-                    <div>
-                      <p className="text-sm font-medium text-ink-200">Cybersecurity, Cloud Security & DevOps Mentor</p>
-                      <div className="mt-3 flex flex-wrap gap-1.5">
-                        {["Cloud Security", "Cloud Engineering", "AWS Security", "DevSecOps"].map((t) => (
-                          <Badge key={t} tone="warm">{t}</Badge>
-                        ))}
-                      </div>
-                      <p className="mt-4 max-w-md text-sm leading-relaxed text-ink-500">
-                        One-on-one mentorship for cloud and security careers: your roadmap, hands-on cloud security
-                        projects, portfolio review and interview preparation.
-                      </p>
-                    </div>
-                    <div className="sm:text-right">
-                      <p className="text-2xl font-semibold text-ink-100">$200</p>
-                      <p className="text-xs text-ink-500">or &#8358;250,000, 2 months</p>
-                      <Link href="/mentorship" className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline">
-                        Request mentorship <ArrowRight className="h-3.5 w-3.5" />
-                      </Link>
-                    </div>
+                </Reveal>
+                <Reveal delayMs={120} className="lg:col-span-7">
+                  <p className="text-lg font-medium text-ink-100">Cybersecurity, Cloud Security & DevOps Mentor</p>
+                  <div className="mt-4 flex flex-wrap gap-1.5">
+                    {["Cloud Security", "Cloud Engineering", "AWS Security", "DevSecOps"].map((t) => (
+                      <Badge key={t} tone="warm">{t}</Badge>
+                    ))}
                   </div>
-                </article>
-              </Reveal>
+                  <p className="mt-5 max-w-lg text-sm leading-relaxed text-ink-500">
+                    One-on-one mentorship for cloud and security careers: your roadmap, hands-on cloud security
+                    projects, portfolio review and interview preparation.
+                  </p>
+                  <div className="mt-6 flex flex-wrap items-baseline gap-x-6 gap-y-2">
+                    <span>
+                      <span className="text-3xl font-semibold text-ink-100">$200</span>{" "}
+                      <span className="text-xs text-ink-500">or &#8358;250,000, 2 months</span>
+                    </span>
+                    <Link href="/mentorship" className="inline-flex items-center gap-1.5 text-sm font-medium text-accent-light hover:underline">
+                      Request mentorship <ArrowRight className="h-3.5 w-3.5" />
+                    </Link>
+                  </div>
+                </Reveal>
+              </div>
 
-              <Reveal delayMs={140} className="lg:col-span-6 lg:mb-24">
-                <div className="grid gap-12 sm:grid-cols-2 sm:gap-8">
+              {/* The other mentors, as equal cards. */}
+              <Reveal>
+                <div className="grid gap-12 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3">
                   {[
                     {
                       key: "dotun",
@@ -822,6 +824,19 @@ export default function LandingPage() {
                       blurb:
                         "Practical guidance on cleaning and analysing real data, writing SQL, building dashboards, and explaining findings clearly to the people who act on them.",
                       slug: "yusuf-mustapha",
+                    },
+                    {
+                      key: "olusegun",
+                      src: "/mentors/olusegun-adesanya.jpg",
+                      alt: "Olusegun Adesanya, a real CareerFound UI/UX design mentor",
+                      focal: "object-[50%_30%]",
+                      role: "UI/UX Design Mentor",
+                      name: "Olusegun Adesanya",
+                      line: "UI/UX Design and Product Design",
+                      tags: ["UI/UX Design", "Figma", "Prototyping", "Design Systems"],
+                      blurb:
+                        "Practical guidance on understanding users, wireframing and prototyping, building clear interfaces, and putting together a portfolio that shows how you think.",
+                      slug: "olusegun-adesanya",
                     },
                   ].map((m) => (
                     <article key={m.key} className="flex flex-col">

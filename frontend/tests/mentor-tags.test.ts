@@ -7,6 +7,8 @@ describe("mentorTagLabel", () => {
     expect(mentorTagLabel("power-bi")).toBe("Power BI");
     expect(mentorTagLabel("rest-apis")).toBe("REST APIs");
     expect(mentorTagLabel("javascript")).toBe("JavaScript");
+    expect(mentorTagLabel("ui-ux-design")).toBe("UI/UX Design");
+    expect(mentorTagLabel("ux-research")).toBe("UX Research");
   });
   it("title-cases everything else", () => {
     expect(mentorTagLabel("data-analysis")).toBe("Data Analysis");

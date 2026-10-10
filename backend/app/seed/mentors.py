@@ -334,3 +334,48 @@ DATA_ANALYTICS_MENTOR = dict(
     consultation_duration_label="",
     consultation_price_label="",
 )
+
+
+# --- Fourth real mentor: UI/UX design -----------------------------------------
+#
+# Real, non-demo profile with only what was provided: name and role. No years
+# of experience, employer, certifications, ratings or reviews are claimed, so
+# years_experience stays unset until he supplies it. The skills under his name
+# are the standard toolkit of the discipline he mentors. Program and price match
+# the other regular mentors; consultation_* stays blank. contact_email stays
+# unset until a verified email exists.
+UIUX_MENTOR = dict(
+    slug="olusegun-adesanya",
+    display_name="Olusegun Adesanya",
+    headline="UI/UX Design Mentor",
+    bio=(
+        "Get practical guidance on UI/UX design: understanding users, wireframing and prototyping in "
+        "Figma, building clear interfaces and design systems, testing designs with real people, and "
+        "putting together a portfolio that shows how you think."
+    ),
+    avatar_seed="olusegun-adesanya",
+    avatar_url="/mentors/olusegun-adesanya.jpg",
+    paths=[
+        "ui-ux-design", "product-design", "ux-research",
+        "figma", "wireframing", "prototyping", "design-systems", "usability-testing",
+    ],
+    years_experience=None,
+    hourly_rate_cents=0,
+    currency="USD",
+    rating_avg=0.0,
+    rating_count=0,
+    languages=["English"],
+    mentorship_formats=["video_call"],
+    session_durations_minutes=[30, 60],
+    value_proposition=(
+        "Structured guidance for anyone building toward a UI/UX design career: what to learn first, how to "
+        "design real projects end to end, how to build a portfolio, and how to get job-ready."
+    ),
+    focus_beginner_friendly=True,
+    contact_email=None,
+    mentee_count=0,
+    mentorship_duration_label="2 months",
+    mentorship_price_label="₦250,000 ($200)",
+    consultation_duration_label="",
+    consultation_price_label="",
+)

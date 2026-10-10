@@ -44,7 +44,7 @@ from app.seed.catalogue_sync import (
     sync_career_fields,
     sync_light_roadmap_content,
 )
-from app.seed.mentors import DATA_ANALYTICS_MENTOR, FOUNDING_MENTOR, MENTORS, FULLSTACK_MENTOR
+from app.seed.mentors import DATA_ANALYTICS_MENTOR, FOUNDING_MENTOR, MENTORS, FULLSTACK_MENTOR, UIUX_MENTOR
 from app.seed.lab_sync import sync_all_lab_curricula
 from app.seed.roadmap_content import CYBERSECURITY, SOFTWARE_ENGINEERING
 from app.seed.roadmap_content_extra import PATH_PROJECTS
@@ -331,6 +331,22 @@ async def seed_mentors(db: AsyncSession) -> None:
         db.add(
             Mentor(
                 **DATA_ANALYTICS_MENTOR,
+                is_verified=False,
+                is_active=True,
+                is_demo=False,
+                is_founding_mentor=False,
+            )
+        )
+        await db.commit()
+
+    # A fourth real mentor (UI/UX design), created once and never overwritten.
+    existing_uiux_mentor = (
+        await db.execute(select(Mentor).where(Mentor.avatar_seed == UIUX_MENTOR["avatar_seed"]))
+    ).scalars().first()
+    if not existing_uiux_mentor:
+        db.add(
+            Mentor(
+                **UIUX_MENTOR,
                 is_verified=False,
                 is_active=True,
                 is_demo=False,

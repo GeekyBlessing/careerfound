@@ -6,7 +6,7 @@ from sqlalchemy import select
 
 from app.db.session import AsyncSessionLocal
 from app.models.marketplace import Mentor
-from app.seed.mentors import DATA_ANALYTICS_MENTOR, FOUNDING_MENTOR, FULLSTACK_MENTOR
+from app.seed.mentors import DATA_ANALYTICS_MENTOR, FOUNDING_MENTOR, FULLSTACK_MENTOR, UIUX_MENTOR
 from app.seed.seed_data import seed_mentors
 
 pytestmark = pytest.mark.asyncio
@@ -19,7 +19,7 @@ async def test_public_listing_contains_only_the_real_mentors(client):
     assert demo_count > 0, "demo personas stay in the database, just hidden"
 
     listing = (await client.get("/api/v1/mentors")).json()
-    assert {m["display_name"] for m in listing} == {"Toriola Opeyemi", "David Oladotun Egundeyi", "Yusuf Mustapha"}
+    assert {m["display_name"] for m in listing} == {"Toriola Opeyemi", "David Oladotun Egundeyi", "Yusuf Mustapha", "Olusegun Adesanya"}
     assert all(m["is_demo"] is False for m in listing)
 
     # Filtering by a career a demo persona used to cover returns no demo mentor.
@@ -31,6 +31,10 @@ async def test_public_listing_contains_only_the_real_mentors(client):
     for career in ("data-analysis", "business-intelligence-engineering", "analytics-engineering"):
         found = (await client.get("/api/v1/mentors", params={"path": career})).json()
         assert [m["display_name"] for m in found] == ["Yusuf Mustapha"], career
+    # Olusegun Adesanya is the real mentor for the UI/UX and product design careers.
+    for career in ("ui-ux-design", "product-design", "ux-research"):
+        found = (await client.get("/api/v1/mentors", params={"path": career})).json()
+        assert [m["display_name"] for m in found] == ["Olusegun Adesanya"], career
     assert (await client.get("/api/v1/mentors", params={"path": "data-science"})).json() == []
 
 
@@ -133,3 +137,25 @@ async def test_data_analytics_mentor_profile_is_real_and_not_founding(client):
         await seed_mentors(db)
         rows = (await db.execute(select(Mentor).where(Mentor.avatar_seed == DATA_ANALYTICS_MENTOR["avatar_seed"]))).scalars().all()
         assert len(rows) == 1 and rows[0].headline == "Senior Data Analytics Mentor"
+
+
+async def test_uiux_mentor_profile_is_real_not_founding_and_claims_no_experience(client):
+    async with AsyncSessionLocal() as db:
+        await seed_mentors(db)
+    olu = (await client.get("/api/v1/mentors/olusegun-adesanya")).json()
+    assert olu["display_name"] == "Olusegun Adesanya"
+    assert olu["headline"] == "UI/UX Design Mentor"
+    assert olu["years_experience"] is None  # none was provided, so none is claimed
+    assert olu["is_founding_mentor"] is False and olu["is_demo"] is False
+    assert olu["avatar_url"] == "/mentors/olusegun-adesanya.jpg"
+    assert olu["paths"][:3] == ["ui-ux-design", "product-design", "ux-research"]
+    assert {"figma", "wireframing", "prototyping"} <= set(olu["paths"])
+    assert olu["mentorship_price_label"] == "₦250,000 ($200)"
+
+    async with AsyncSessionLocal() as db:
+        row = (await db.execute(select(Mentor).where(Mentor.avatar_seed == UIUX_MENTOR["avatar_seed"]))).scalar_one()
+        row.headline = "Senior UI/UX Design Mentor"
+        await db.commit()
+        await seed_mentors(db)
+        rows = (await db.execute(select(Mentor).where(Mentor.avatar_seed == UIUX_MENTOR["avatar_seed"]))).scalars().all()
+        assert len(rows) == 1 and rows[0].headline == "Senior UI/UX Design Mentor"
