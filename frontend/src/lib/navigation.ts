@@ -63,7 +63,7 @@ export const NAV_GROUPS: NavGroup[] = [
       {
         href: "/onboarding",
         label: "Career Assessment",
-        description: "Seven short chapters that point you to your best-fit path.",
+        description: "Sixteen questions that point you to careers worth trying.",
         icon: Sparkles,
         match: ["/onboarding", "/assessment"],
       },

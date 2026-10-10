@@ -29,6 +29,20 @@ class CareerRecommendation(BaseModel):
     earning_notes: str
     remote_potential_label: str
     recommended_next_step: str
+    # Added with the explainable results. All optional so assessments saved
+    # before they existed still load. The service fills the first three from
+    # the catalogue (real project, real roadmap phase), never the provider.
+    summary: str = ""
+    category_label: str = ""
+    matched_interests: list[str] = Field(default_factory=list)
+    matched_strengths: list[str] = Field(default_factory=list)
+    matched_technology: list[str] = Field(default_factory=list)
+    matched_preferences: list[str] = Field(default_factory=list)
+    things_to_consider: list[str] = Field(default_factory=list)
+    how_it_differs: str = ""
+    learning_note: str = ""
+    first_project: dict | None = None
+    first_phase: dict | None = None
 
 
 class CareerDNA(BaseModel):

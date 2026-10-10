@@ -544,22 +544,27 @@ async def test_seeding_twice_changes_nothing_and_every_career_has_a_roadmap():
 
 
 def test_the_assessment_can_recommend_every_career_and_never_an_unknown_one():
-    from app.ai.assessment_signals import INTERESTS, STRENGTHS, TECH_INTERESTS
+    from app.ai.assessment_signals import INTERESTS, PROBLEM_STYLES, STRENGTHS, TECH_INTERESTS
 
     catalogue = [{"slug": p["slug"], "category": p["category"], "name": p["name"]} for p in CAREER_PATHS]
-    for table in (INTERESTS, STRENGTHS, TECH_INTERESTS):
+    for table in (INTERESTS, STRENGTHS, TECH_INTERESTS, PROBLEM_STYLES):
         for tag, (_label, boosts) in table.items():
             assert set(boosts) <= set(BY_SLUG), (tag, set(boosts) - set(BY_SLUG))
 
     # Every career must be reachable: some honest set of answers (its own tags
     # and traits, optionally the matching category) lands it in the top three.
-    tables = (("things_enjoyed", INTERESTS), ("existing_skills", STRENGTHS), ("tech_interests", TECH_INTERESTS))
+    tables = (
+        ("things_enjoyed", INTERESTS),
+        ("existing_skills", STRENGTHS),
+        ("tech_interests", TECH_INTERESTS),
+        ("problem_styles", PROBLEM_STYLES),
+    )
     unreachable = []
     for slug, career in BY_SLUG.items():
         ranked = {key: [t for _, t in sorted(((v[1].get(slug, 0), t) for t, v in table.items() if v[1].get(slug, 0) >= 3), reverse=True)]
                   for key, table in tables}
         found = False
-        for counts in itertools.product((1, 3), repeat=3):
+        for counts in itertools.product((1, 3), repeat=4):
             for traits in (list(_TRAIT_WEIGHTS[slug]), []):
                 for with_category in (True, False):
                     profile = {t: True for t in traits}

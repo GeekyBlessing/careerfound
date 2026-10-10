@@ -3,10 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Award, Sparkles, Shuffle, Users } from "lucide-react";
+import { ArrowRight, Award } from "lucide-react";
 import { AppShell } from "@/components/layout/app-shell";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { SkeletonCard } from "@/components/ui/skeleton";
@@ -14,13 +12,18 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { CareerDnaRadar } from "@/components/charts/career-dna-radar";
 import { api, ApiError } from "@/lib/api";
 import { careerBySlug } from "@/lib/career-categories";
+import { cn } from "@/lib/utils";
 import type { AssessmentResult, CareerRecommendation } from "@/types";
 
-const TIER_META = {
-  best_match: { label: "Best Match", icon: Award, tone: "accent" as const },
-  strong_alternative: { label: "Strong Alternative", icon: Sparkles, tone: "success" as const },
-  wild_card: { label: "Wild Card", icon: Shuffle, tone: "warning" as const },
-};
+const TIER_LABEL = {
+  best_match: "Closest match",
+  strong_alternative: "Strong alternative",
+  wild_card: "A different angle",
+} as const;
+
+function nameOf(rec: CareerRecommendation): string {
+  return careerBySlug(rec.path_slug)?.name ?? rec.path_slug.replace(/-/g, " ");
+}
 
 export default function AssessmentResultsPage() {
   const router = useRouter();
@@ -33,32 +36,37 @@ export default function AssessmentResultsPage() {
     api
       .get<AssessmentResult>("/assessment/latest")
       .then(setResult)
-      .catch((err) => setError(err instanceof ApiError ? err.message : "Couldn't load your results."))
+      .catch((err) => setError(err instanceof ApiError ? err.message : "We could not load your results. Please refresh the page."))
       .finally(() => setLoading(false));
   }, []);
 
-  const bestMatch = result?.recommendations.find((r) => r.tier === "best_match");
-  const otherRecs = result?.recommendations.filter((r) => r.tier !== "best_match") ?? [];
+  const recs = result?.recommendations ?? [];
+  // Results saved before the reasons and project links existed have no summary.
+  const older = recs.length > 0 && recs.every((r) => !r.summary);
 
   async function startRoadmap(slug: string) {
     setStartingPath(slug);
+    setError(null);
     try {
       await api.post("/roadmaps", { path_slug: slug });
       router.push("/roadmap");
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Couldn't start that roadmap.");
+      setError(err instanceof ApiError ? err.message : "We could not start that roadmap. Please try again.");
       setStartingPath(null);
     }
   }
 
   return (
     <AppShell>
-      <div className="mb-8">
+      <div className="mb-10 max-w-3xl">
         <p className="eyebrow">Your results</p>
-        <h1 className="mt-1 font-display text-2xl font-semibold tracking-tight text-ink-100 sm:text-3xl">
-          We found your strongest paths
+        <h1 className="mt-2 font-display text-2xl font-semibold tracking-tight text-ink-100 sm:text-3xl">
+          Three careers to look at first
         </h1>
-        <p className="mt-1 text-sm text-ink-500">Based on your answers, not a generic list, your specific fit.</p>
+        <p className="mt-3 text-sm leading-relaxed text-ink-400">
+          These came from your answers and from what each career involves. &quot;Fit&quot; here means potential: how closely your answers match the
+          work. It does not measure ability, and it does not promise a job. Treat it as a good place to start looking.
+        </p>
       </div>
 
       {loading && (
@@ -69,36 +77,66 @@ export default function AssessmentResultsPage() {
         </div>
       )}
 
-      {error && <Alert>{error}</Alert>}
+      {error && <Alert className="mb-6">{error}</Alert>}
 
       {result && (
-        <div className="animate-fade-in-up space-y-8">
-          <Card className="grid gap-8 p-8 shadow-raised lg:grid-cols-[280px_1fr] lg:items-center">
+        <div className="space-y-14">
+          {older && (
+            <Alert variant="info">
+              These results were saved before we added the reasons and project links. Retake the assessment to see the fuller version.
+            </Alert>
+          )}
+
+          <section aria-labelledby="lean-heading" className="grid gap-8 lg:grid-cols-[300px_1fr] lg:items-center">
             <CareerDnaRadar dna={result.career_dna} />
-            <div>
-              <Badge tone="accent">Your Career DNA</Badge>
+            <div className="max-w-xl">
+              <h2 id="lean-heading" className="font-display text-xl font-semibold tracking-tight text-ink-100">
+                Where your answers lean
+              </h2>
               <p className="mt-3 text-sm leading-relaxed text-ink-300">{result.career_dna.summary}</p>
             </div>
-          </Card>
+          </section>
 
-          {result.recommendations.length > 0 ? (
-            <div className="space-y-6">
-              {bestMatch && <BestMatchReveal rec={bestMatch} onStart={startRoadmap} starting={startingPath === bestMatch.path_slug} />}
-              {otherRecs.length > 0 && (
-                <div className="grid gap-5 sm:grid-cols-2">
-                  {otherRecs.map((rec) => (
-                    <RecommendationCard key={rec.path_slug} rec={rec} onStart={startRoadmap} starting={startingPath === rec.path_slug} />
-                  ))}
+          {recs.length > 0 ? (
+            <>
+              {!older && <CompareSection recs={recs} />}
+              <div className="space-y-14">
+                {recs.map((rec) => (
+                  <CareerResult
+                    key={rec.path_slug}
+                    rec={rec}
+                    older={older}
+                    onStart={startRoadmap}
+                    starting={startingPath === rec.path_slug}
+                  />
+                ))}
+              </div>
+              <section aria-labelledby="limits-heading" className="max-w-2xl border-t border-[rgb(var(--fg-tint)/0.12)] pt-8">
+                <h2 id="limits-heading" className="font-display text-lg font-semibold text-ink-100">
+                  What this result can and cannot tell you
+                </h2>
+                <p className="mt-3 text-sm leading-relaxed text-ink-400">
+                  It ranks careers by how well they match what you told us you enjoy, what you bring and how you like to work. It cannot know how
+                  you will take to the work, so the first project in each result is the real test. If a career turns out not to suit you, nothing
+                  is lost: the foundations overlap, and you can retake the assessment or start a different roadmap at any time.
+                </p>
+                <div className="mt-5 flex flex-wrap gap-3">
+                  <Link href="/onboarding">
+                    <Button variant="secondary" size="sm">Retake the assessment</Button>
+                  </Link>
+                  <Link href="/careers">
+                    <Button variant="ghost" size="sm">Browse all careers</Button>
+                  </Link>
                 </div>
-              )}
-            </div>
+              </section>
+            </>
           ) : (
             <EmptyState
               icon={Award}
               title="No recommendations yet"
-              description="We couldn't match you to a path from these answers. Retake the assessment to try again."
+              description="We could not match you to a career from these answers. Retake the assessment to try again."
               action={
-                <Link href="/assessment">
+                <Link href="/onboarding">
                   <Button>Retake the assessment</Button>
                 </Link>
               }
@@ -110,169 +148,189 @@ export default function AssessmentResultsPage() {
   );
 }
 
-function RecommendationCard({
-  rec,
-  onStart,
-  starting,
-}: {
-  rec: CareerRecommendation;
-  onStart: (slug: string) => void;
-  starting: boolean;
-}) {
-  const meta = TIER_META[rec.tier];
-  const Icon = meta.icon;
+/** The three careers side by side, one row per question a person would ask. */
+function CompareSection({ recs }: { recs: CareerRecommendation[] }) {
+  const rows: { label: string; value: (r: CareerRecommendation) => string }[] = [
+    { label: "Area", value: (r) => r.category_label || "Not listed" },
+    { label: "The work", value: (r) => r.summary ?? "" },
+    { label: "Where people start", value: (r) => r.entry_roles.slice(0, 3).join(", ") },
+    { label: "First project", value: (r) => r.first_project?.title ?? "See the career page" },
+    { label: "Time to learn", value: (r) => r.timeline_label },
+    { label: "How hard to start", value: (r) => r.difficulty_label },
+  ];
   return (
-    <Card className="relative">
-      <CardContent className="flex h-full flex-col p-6">
-        <Badge tone={meta.tone} className="w-fit gap-1">
-          <Icon className="h-3 w-3" /> {meta.label}
-        </Badge>
-        <h2 className="mt-3 text-lg font-semibold tracking-tight text-ink-100">{careerBySlug(rec.path_slug)?.name ?? rec.path_slug.replace(/-/g, " ")}</h2>
-        <div className="mt-1 flex items-center gap-2 text-xs text-ink-500">
-          <span>Fit score</span>
-          <span className="font-semibold text-ink-300">{rec.fit_score}/100</span>
-        </div>
-        <p className="mt-3 text-sm leading-relaxed text-ink-400">{rec.why_it_fits}</p>
-
-        <div className="mt-4 space-y-2 text-xs text-ink-500">
-          <p><span className="text-ink-300">Difficulty:</span> {rec.difficulty_label}</p>
-          <p><span className="text-ink-300">Timeline:</span> {rec.timeline_label}</p>
-          <p><span className="text-ink-300">Remote potential:</span> {rec.remote_potential_label}</p>
-        </div>
-
-        {rec.transferable_skills.length > 0 && (
-          <div className="mt-4">
-            <p className="mb-1.5 text-xs font-medium text-ink-300">Skills you already have that transfer</p>
-            <ul className="space-y-1 text-xs text-ink-500">
-              {rec.transferable_skills.map((s) => (
-                <li key={s.skill}>
-                  <span className="text-ink-300">{s.skill}:</span> {s.why_it_transfers}
-                </li>
+    <section aria-labelledby="compare-heading">
+      <h2 id="compare-heading" className="font-display text-xl font-semibold tracking-tight text-ink-100">
+        How the three differ
+      </h2>
+      <div className="mt-6 grid gap-8 lg:grid-cols-3 lg:gap-10">
+        {recs.map((rec) => (
+          <div key={rec.path_slug} className="min-w-0 border-t border-[rgb(var(--fg-tint)/0.2)] pt-4">
+            <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-ink-500">{TIER_LABEL[rec.tier]}</p>
+            <h3 className="mt-1 text-lg font-semibold tracking-tight text-ink-100">{nameOf(rec)}</h3>
+            <dl className="mt-4 space-y-3 text-sm">
+              {rows.map((row) => (
+                <div key={row.label}>
+                  <dt className="text-xs font-medium text-ink-500">{row.label}</dt>
+                  <dd className="mt-0.5 leading-snug text-ink-300">{row.value(rec)}</dd>
+                </div>
               ))}
-            </ul>
+            </dl>
           </div>
-        )}
-
-        <div className="mt-4">
-          <p className="mb-1.5 text-xs font-medium text-ink-300">Entry-level roles</p>
-          <div className="flex flex-wrap gap-1.5">
-            {rec.entry_roles.map((r) => (
-              <Badge key={r}>{r}</Badge>
-            ))}
-          </div>
-        </div>
-
-        <p className="mt-4 text-xs text-ink-500">{rec.earning_notes}</p>
-
-        {rec.example_projects.length > 0 && (
-          <div className="mt-4">
-            <p className="mb-1.5 text-xs font-medium text-ink-300">Recommended first project</p>
-            <p className="text-xs leading-relaxed text-ink-500">{rec.example_projects[0]}</p>
-          </div>
-        )}
-
-        <div className="mt-6 flex-1" />
-        <Button onClick={() => onStart(rec.path_slug)} loading={starting} className="mt-2 w-full gap-1.5">
-          {rec.recommended_next_step} <ArrowRight className="h-3.5 w-3.5" />
-        </Button>
-        <Link href={`/careers/${rec.path_slug}`} className="mt-2 block">
-          <Button variant="secondary" className="w-full gap-1.5">
-            <Users className="h-3.5 w-3.5" /> See projects &amp; mentors
-          </Button>
-        </Link>
-      </CardContent>
-    </Card>
+        ))}
+      </div>
+    </section>
   );
 }
 
-/**
- * The one screen the brief specifically asks to make memorable: the Best
- * Match shouldn't look like "one of three similar cards", it should feel
- * like the answer the whole assessment was building toward. Full-width,
- * pops in on arrival (animate-pop-in, otherwise unused in the codebase),
- * leads with the fit score as a large mono readout rather than a small
- * "72/100" line, and uses the warm secondary accent (reserved for exactly
- * this kind of signature moment) instead of the standard green Badge tone.
- */
-function BestMatchReveal({
+function Fact({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <h4 className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-500">{label}</h4>
+      <div className="mt-2 text-sm leading-relaxed text-ink-300">{children}</div>
+    </div>
+  );
+}
+
+function CareerResult({
   rec,
+  older,
   onStart,
   starting,
 }: {
   rec: CareerRecommendation;
+  older: boolean;
   onStart: (slug: string) => void;
   starting: boolean;
 }) {
+  const featured = rec.tier === "best_match";
+  const name = nameOf(rec);
+  const answersBy: { label: string; items: string[] }[] = [
+    { label: "Interests", items: rec.matched_interests ?? [] },
+    { label: "Technology", items: rec.matched_technology ?? [] },
+    { label: "Working style", items: rec.matched_preferences ?? [] },
+  ].filter((g) => g.items.length > 0);
+  const hasAnswers = answersBy.length > 0 || rec.transferable_skills.length > 0;
+
   return (
-    <Card className="relative animate-pop-in overflow-hidden border-warm/35 shadow-raised">
-      <div className="bg-contour pointer-events-none absolute inset-0 -z-10 opacity-60" />
-      <CardContent className="grid gap-8 p-8 lg:grid-cols-[1fr_auto] lg:items-center">
-        <div>
-          <Badge tone="warm" className="w-fit gap-1.5">
-            <Award className="h-3 w-3" /> Best Match
-          </Badge>
-          <h2 className="mt-4 font-display text-3xl font-semibold tracking-tight text-ink-100 sm:text-4xl">
-            {careerBySlug(rec.path_slug)?.name ?? rec.path_slug.replace(/-/g, " ")}
-          </h2>
-          <p className="mt-4 max-w-xl text-sm leading-relaxed text-ink-300">{rec.why_it_fits}</p>
+    <article aria-labelledby={`result-${rec.path_slug}`} className={cn("border-t pt-8", featured ? "border-accent-light" : "border-[rgb(var(--fg-tint)/0.2)]")}>
+      <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-accent-light">
+        {TIER_LABEL[rec.tier]}
+        {rec.category_label ? <span className="text-ink-500"> · {rec.category_label}</span> : null}
+      </p>
+      <h2
+        id={`result-${rec.path_slug}`}
+        className={cn("mt-2 font-display font-semibold tracking-tight text-ink-100", featured ? "text-3xl sm:text-4xl" : "text-2xl sm:text-3xl")}
+      >
+        {name}
+      </h2>
+      <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-ink-300">{rec.why_it_fits}</p>
 
-          <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2 font-mono text-[11px] uppercase tracking-wide text-ink-500">
-            <span><span className="text-ink-300">Difficulty</span> {rec.difficulty_label}</span>
-            <span><span className="text-ink-300">Timeline</span> {rec.timeline_label}</span>
-            <span><span className="text-ink-300">Remote</span> {rec.remote_potential_label}</span>
-          </div>
+      {!featured && rec.how_it_differs && (
+        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink-400">
+          <span className="font-medium text-ink-200">How it differs from your closest match. </span>
+          {rec.how_it_differs}
+        </p>
+      )}
 
-          {rec.transferable_skills.length > 0 && (
-            <div className="mt-5">
-              <p className="mb-1.5 text-xs font-medium text-ink-300">Why this fits you specifically</p>
-              <ul className="space-y-1 text-xs text-ink-500">
-                {rec.transferable_skills.map((s) => (
-                  <li key={s.skill}>
-                    <span className="text-ink-300">{s.skill}:</span> {s.why_it_transfers}
-                  </li>
-                ))}
-              </ul>
+      <div className="mt-8 grid gap-8 md:grid-cols-2">
+        <Fact label="What in your answers points here">
+          {hasAnswers ? (
+            <div className="space-y-3">
+              {answersBy.map((g) => (
+                <p key={g.label}>
+                  <span className="text-ink-100">{g.label}: </span>
+                  {g.items.join("; ")}
+                </p>
+              ))}
+              {rec.transferable_skills.length > 0 && (
+                <div>
+                  <p className="text-ink-100">Strengths you named that this career uses</p>
+                  <ul className="mt-1 space-y-1.5">
+                    {rec.transferable_skills.map((s) => (
+                      <li key={s.skill}>
+                        <span className="text-ink-200">{s.skill}.</span> {s.why_it_transfers}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
+          ) : (
+            <p>Nothing you chose points strongly at this career. It ranks here on your working style and direction, so the roadmap starts from the basics.</p>
           )}
+        </Fact>
 
-          <div className="mt-5 flex flex-wrap gap-1.5">
+        <Fact label="Skills to build first">
+          <ul className="list-disc space-y-1.5 pl-4 marker:text-ink-500">
+            {rec.skills_to_develop.map((s) => (
+              <li key={s}>{s}</li>
+            ))}
+          </ul>
+        </Fact>
+
+        <Fact label="Your first project">
+          {rec.first_project ? (
+            <>
+              <p className="font-medium text-ink-100">{rec.first_project.title}</p>
+              {rec.first_project.teaches && <p className="mt-1">{rec.first_project.teaches}</p>}
+              <p className="mt-1 text-xs text-ink-500">{rec.first_project.difficulty_label}</p>
+              <Link
+                href={`/projects/${rec.first_project.id}`}
+                className="focus-ring mt-2 inline-flex items-center gap-1 rounded text-sm font-medium text-accent-light hover:underline"
+              >
+                Open this project <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </>
+          ) : (
+            <>
+              <p>{older ? "The projects for this career are on its page." : "This career has no starter project listed yet."}</p>
+              <Link
+                href={`/careers/${rec.path_slug}`}
+                className="focus-ring mt-2 inline-flex items-center gap-1 rounded text-sm font-medium text-accent-light hover:underline"
+              >
+                See the career page <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </>
+          )}
+        </Fact>
+
+        <Fact label="Your next step">
+          <p>{rec.first_phase ? rec.recommended_next_step : "Start the roadmap and work through its first phase."}</p>
+          {rec.learning_note && <p className="mt-2 text-ink-400">{rec.learning_note}</p>}
+        </Fact>
+
+        <Fact label="Where people start">
+          <div className="flex flex-wrap gap-x-3 gap-y-1">
             {rec.entry_roles.map((r) => (
-              <Badge key={r}>{r}</Badge>
+              <span key={r}>{r}</span>
             ))}
           </div>
-          <p className="mt-4 text-xs text-ink-500">{rec.earning_notes}</p>
+          <p className="mt-2 text-xs text-ink-500">{rec.earning_notes}</p>
+        </Fact>
 
-          {rec.example_projects.length > 0 && (
-            <div className="mt-5">
-              <p className="mb-1.5 text-xs font-medium text-ink-300">Recommended first project</p>
-              <p className="text-xs leading-relaxed text-ink-500">{rec.example_projects[0]}</p>
-            </div>
-          )}
+        <Fact label="Worth knowing">
+          <ul className="space-y-1.5">
+            <li>{rec.difficulty_label} to start. {rec.timeline_label}.</li>
+            <li>Remote work: {rec.remote_potential_label}</li>
+            {(rec.things_to_consider ?? []).map((t) => (
+              <li key={t}>{t}</li>
+            ))}
+          </ul>
+        </Fact>
+      </div>
 
-          <div className="mt-6 flex flex-col gap-2.5 sm:flex-row">
-            <Button onClick={() => onStart(rec.path_slug)} loading={starting} className="gap-1.5">
-              {rec.recommended_next_step} <ArrowRight className="h-3.5 w-3.5" />
-            </Button>
-            <Link href={`/careers/${rec.path_slug}`}>
-              <Button variant="secondary" className="gap-1.5">
-                <Users className="h-3.5 w-3.5" /> See projects &amp; mentors
-              </Button>
-            </Link>
-          </div>
-        </div>
-
-        {/* The fit score as the visual anchor of the reveal: a big mono
-            numeral rather than a small inline "72/100" line, in a diamond
-            frame matching the PathTrack waypoint language used elsewhere. */}
-        <div className="flex flex-col items-center justify-self-center">
-          <div className="path-node h-28 w-28 border-warm/40 bg-warm/10 text-warm">
-            <div className="flex flex-col items-center">
-              <span className="font-mono text-3xl font-semibold leading-none">{rec.fit_score}</span>
-              <span className="mt-1 text-[9px] uppercase tracking-wide text-ink-500">/ 100 fit</span>
-            </div>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+      <div className="mt-8 flex flex-wrap gap-3">
+        <Button onClick={() => onStart(rec.path_slug)} loading={starting} className="gap-1.5">
+          Start the {name} roadmap <ArrowRight className="h-3.5 w-3.5" />
+        </Button>
+        <Link href={`/careers/${rec.path_slug}`}>
+          <Button variant="secondary">Read about this career</Button>
+        </Link>
+        <Link href={`/mentors?path=${rec.path_slug}`}>
+          <Button variant="ghost">Find a mentor</Button>
+        </Link>
+      </div>
+    </article>
   );
 }

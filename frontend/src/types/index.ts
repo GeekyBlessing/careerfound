@@ -77,6 +77,18 @@ export interface CareerRecommendation {
   earning_notes: string;
   remote_potential_label: string;
   recommended_next_step: string;
+  // Added with the explainable results. Absent on assessments saved earlier.
+  summary?: string;
+  category_label?: string;
+  matched_interests?: string[];
+  matched_strengths?: string[];
+  matched_technology?: string[];
+  matched_preferences?: string[];
+  things_to_consider?: string[];
+  how_it_differs?: string;
+  learning_note?: string;
+  first_project?: { id: string; title: string; teaches: string; difficulty: number; difficulty_label: string } | null;
+  first_phase?: { title: string; summary: string } | null;
 }
 
 export interface CareerDNA {

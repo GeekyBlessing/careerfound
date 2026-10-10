@@ -36,6 +36,14 @@ class AssessmentAnswers(BaseModel):
     tech_interests: list[str] = []
     career_direction: str | None = None
     preferred_category: str | None = None
+    # How the person likes to work things out and to learn (ids in
+    # app/ai/assessment_signals.py). Stored with the answers; the first helps
+    # describe the profile, the second shapes how a result suggests starting.
+    problem_styles: list[str] = []
+    people_preference: str | None = None
+    learning_style: str | None = None
+    persona: str | None = None
+    goal: str | None = None
 
 
 class AssessmentSubmitRequest(BaseModel):
@@ -57,6 +65,17 @@ class CareerRecommendationOut(BaseModel):
     earning_notes: str
     remote_potential_label: str
     recommended_next_step: str
+    summary: str = ""
+    category_label: str = ""
+    matched_interests: list[str] = []
+    matched_strengths: list[str] = []
+    matched_technology: list[str] = []
+    matched_preferences: list[str] = []
+    things_to_consider: list[str] = []
+    how_it_differs: str = ""
+    learning_note: str = ""
+    first_project: dict | None = None
+    first_phase: dict | None = None
 
 
 class AssessmentOut(BaseModel):

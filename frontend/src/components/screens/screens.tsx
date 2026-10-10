@@ -193,7 +193,7 @@ export function AssessmentScreen() {
           ))}
         </ul>
         <div className="mt-auto flex items-center justify-between pt-5">
-          <span className="text-[12px] text-ink-500">Takes about 5 minutes</span>
+          <span className="text-[12px] text-ink-500">16 questions, saved as you go</span>
           <span className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2 text-[13px] font-medium text-white">Continue <ArrowRight className="h-3.5 w-3.5" /></span>
         </div>
       </div>

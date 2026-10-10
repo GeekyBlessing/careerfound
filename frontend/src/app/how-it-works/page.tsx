@@ -31,7 +31,7 @@ export default function HowItWorksPage() {
               Find My Tech Path <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
-          <p className="mt-3 text-xs text-ink-500">No credit card required · Takes about 5 minutes</p>
+          <p className="mt-3 text-xs text-ink-500">No credit card required · 16 questions, saved as you go</p>
         </div>
       </div>
     </PublicShell>

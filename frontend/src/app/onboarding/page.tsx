@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,160 +11,170 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
 import { api, ApiError } from "@/lib/api";
 import { track } from "@/lib/analytics";
-import { CAREER_CATEGORIES } from "@/lib/career-categories";
 import {
-  DEVICE_CHOICES,
-  DIRECTION_CHOICES,
+  CHAPTERS,
   EMPTY_JOURNEY,
-  GOAL_CHOICES,
-  INTEREST_CHOICES,
-  KNOWLEDGE_CHOICES,
-  MAX_PICKS,
-  PERSONA_CHOICES,
-  STRENGTH_CHOICES,
-  TECH_CHOICES,
-  TIMELINE_CHOICES,
-  TIME_CHOICES,
+  QUESTION_COUNT,
+  STORAGE_KEY,
+  activeQuestions,
   buildAnswers,
+  chapterComplete,
+  missingQuestions,
+  parseProgress,
+  progressOf,
+  serializeProgress,
   signalLabels,
-  toggle,
   type Choice,
   type JourneyState,
+  type Question,
+  type SavedProgress,
 } from "@/lib/discovery";
 
 /**
- * "Discover Your Direction": the first chapter of the CareerFound journey,
- * not a questionnaire. Seven short chapters (interests, strengths, working
- * style, goals, technology, direction, starting point), each its own full
- * screen, with a live record of what you have told us so far beside it, and
- * a result that is built from those answers. The final step still posts the
+ * The onboarding assessment. Seven chapters, each with one job (see
+ * src/lib/discovery.ts), then an account step if you are not signed in.
+ * Answers are kept in memory and mirrored to this browser's localStorage so a
+ * refresh or a return visit can pick up where you stopped. Nothing else is
+ * stored there: never the name, email or password. The final step posts the
  * same payload to /assessment and the same profile fields to /users/me.
  */
 
-const CHAPTERS = [
-  { name: "Interests", prompt: "What could you lose a whole afternoon to?", sub: "Pick up to five. Go with your gut, not with what sounds impressive." },
-  { name: "Strengths", prompt: "What are you already good at?", sub: "Pick up to five. Strengths you use outside tech count too." },
-  { name: "Working style", prompt: "How do you like to work?", sub: "Four quick choices. None of them is the right answer." },
-  { name: "Goals", prompt: "What are you hoping tech will do for you?", sub: "This changes which careers we put first, and how we pace your roadmap." },
-  { name: "Technology", prompt: "Which parts of technology pull you in?", sub: "Pick up to five. You do not need to know much about them yet." },
-  { name: "Direction", prompt: "How clear is your direction right now?", sub: "Any answer is fine. We use it to decide how much to narrow down for you." },
-  { name: "Starting point", prompt: "Last thing: where are you starting from?", sub: "So the roadmap fits your real week, not an imaginary one." },
-] as const;
-
-function Tile({
-  selected,
-  onClick,
-  label,
-  hint,
-  multi,
-  disabled,
+function ChoicePanel({
+  option,
+  type,
+  name,
+  checked,
+  blocked,
+  onSelect,
 }: {
-  selected: boolean;
-  onClick: () => void;
-  label: string;
-  hint?: string;
-  multi?: boolean;
-  disabled?: boolean;
+  option: Choice;
+  type: "radio" | "checkbox";
+  name: string;
+  checked: boolean;
+  /** A multi question that is full: unchosen panels look inactive. */
+  blocked: boolean;
+  onSelect: () => void;
 }) {
   return (
-    <button
-      type="button"
-      aria-pressed={selected}
-      disabled={disabled}
-      onClick={onClick}
+    <label
       className={cn(
-        "focus-ring group flex min-h-[3.5rem] w-full items-center gap-4 border-b px-1 py-3.5 text-left transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-40",
-        selected ? "border-accent-light" : "border-[rgb(var(--fg-tint)/0.12)] hover:border-[rgb(var(--fg-tint)/0.35)]"
+        "relative flex cursor-pointer items-start gap-3.5 rounded-lg border p-4 transition-colors duration-150 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-base-950",
+        checked
+          ? "border-accent-light bg-accent/10"
+          : "border-[rgb(var(--fg-tint)/0.16)] hover:border-[rgb(var(--fg-tint)/0.4)]",
+        blocked && !checked && "cursor-not-allowed opacity-60 hover:border-[rgb(var(--fg-tint)/0.16)]"
       )}
     >
+      <input
+        type={type}
+        name={name}
+        value={option.id}
+        checked={checked}
+        onChange={onSelect}
+        className="peer sr-only"
+      />
       <span
         aria-hidden="true"
         className={cn(
-          "flex h-5 w-5 flex-shrink-0 items-center justify-center border transition-colors",
-          multi ? "rounded-[3px]" : "rounded-full",
-          selected ? "border-accent-light bg-accent-light text-[#0b0d0a]" : "border-[rgb(var(--fg-tint)/0.3)] text-transparent"
+          "mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center border transition-colors",
+          type === "checkbox" ? "rounded-[4px]" : "rounded-full",
+          checked ? "border-accent-light bg-accent-light text-base-950" : "border-[rgb(var(--fg-tint)/0.4)] text-transparent"
         )}
       >
-        <Check className="h-3 w-3" />
+        <Check className="h-3 w-3" strokeWidth={3} />
       </span>
       <span className="min-w-0">
-        <span className={cn("block text-base font-medium leading-snug", selected ? "text-ink-100" : "text-ink-200")}>{label}</span>
-        {hint && <span className="mt-0.5 block text-xs text-ink-500">{hint}</span>}
+        <span className={cn("block text-[15px] font-medium leading-snug", checked ? "text-ink-100" : "text-ink-200")}>
+          {option.label}
+        </span>
+        {option.hint && <span className="mt-1 block text-[13px] leading-snug text-ink-500">{option.hint}</span>}
       </span>
-    </button>
+    </label>
   );
 }
 
-function ChoiceList({
-  choices,
-  selected,
-  onToggle,
-  max = MAX_PICKS,
-  columns = true,
+function QuestionBlock({
+  question,
+  journey,
+  error,
+  onChange,
 }: {
-  choices: Choice[];
-  selected: string[];
-  onToggle: (id: string) => void;
-  max?: number;
-  columns?: boolean;
+  question: Question;
+  journey: JourneyState;
+  error?: string;
+  onChange: (key: Question["key"], value: string[] | string) => void;
 }) {
-  const full = selected.length >= max;
+  const { key, kind, options, max = 4 } = question;
+  const current = journey[key];
+  const selected: string[] = Array.isArray(current) ? current : current === undefined ? [] : [current];
+  const full = kind === "multi" && selected.length >= max;
+  const [capNote, setCapNote] = useState(false);
+  const errorId = `q-${key}-error`;
+  const cols = question.compact ? (options.length === 3 ? "sm:grid-cols-3" : "sm:grid-cols-2") : options.length >= 6 ? "sm:grid-cols-2" : "";
+
+  function select(id: string) {
+    if (kind === "single") {
+      onChange(key, id);
+      return;
+    }
+    if (selected.includes(id)) {
+      setCapNote(false);
+      onChange(key, selected.filter((x) => x !== id));
+    } else if (full) {
+      setCapNote(true);
+    } else {
+      setCapNote(false);
+      onChange(key, [...selected, id]);
+    }
+  }
+
   return (
-    <div>
-      <div className={cn("grid gap-x-10", columns && "sm:grid-cols-2")}>
-        {choices.map((c) => (
-          <Tile
-            key={c.id}
-            multi
-            label={c.label}
-            hint={c.hint}
-            selected={selected.includes(c.id)}
-            disabled={full && !selected.includes(c.id)}
-            onClick={() => onToggle(c.id)}
+    <fieldset
+      id={`q-${key}`}
+      tabIndex={-1}
+      aria-describedby={error ? errorId : undefined}
+      aria-invalid={error ? true : undefined}
+      className="min-w-0 border-0 p-0 outline-none"
+    >
+      <legend className="text-sm font-semibold text-ink-100">{question.legend}</legend>
+      {question.help && <p className="mt-1 text-[13px] leading-relaxed text-ink-500">{question.help}</p>}
+      <div className={cn("mt-3 grid gap-2.5", cols)}>
+        {options.map((o) => (
+          <ChoicePanel
+            key={o.id}
+            option={o}
+            type={kind === "multi" ? "checkbox" : "radio"}
+            name={`q-${key}`}
+            checked={selected.includes(o.id)}
+            blocked={full}
+            onSelect={() => select(o.id)}
           />
         ))}
       </div>
-      <p className="mt-4 font-mono text-[11px] uppercase tracking-wide text-ink-500" aria-live="polite">
-        {selected.length} of {max} chosen
-      </p>
-    </div>
+      {kind === "multi" && (
+        <p className="mt-3 text-[13px] text-ink-500" aria-live="polite">
+          {capNote
+            ? `You can choose up to ${max}. Untick one to choose a different answer.`
+            : `${selected.length} of ${max} chosen`}
+        </p>
+      )}
+      {error && (
+        <p id={errorId} role="alert" className="mt-3 text-[13px] font-medium text-danger">
+          {error}
+        </p>
+      )}
+    </fieldset>
   );
 }
 
-function Segmented<T extends string | number | boolean>({
-  legend,
-  options,
-  value,
-  onChange,
-}: {
-  legend: string;
-  options: { value: T; label: string }[];
-  value: T | undefined;
-  onChange: (v: T) => void;
-}) {
-  return (
-    <fieldset>
-      <legend className="text-sm font-medium text-ink-200">{legend}</legend>
-      <div className="mt-3 flex flex-wrap gap-2">
-        {options.map((o) => (
-          <button
-            key={String(o.value)}
-            type="button"
-            aria-pressed={value === o.value}
-            onClick={() => onChange(o.value)}
-            className={cn(
-              "focus-ring min-h-[2.75rem] rounded-lg border px-4 text-sm font-medium transition-colors",
-              value === o.value
-                ? "border-accent-light bg-accent/15 text-accent-light"
-                : "border-[rgb(var(--fg-tint)/0.14)] text-ink-300 hover:border-[rgb(var(--fg-tint)/0.35)] hover:text-ink-100"
-            )}
-          >
-            {o.label}
-          </button>
-        ))}
-      </div>
-    </fieldset>
-  );
+function ago(ms: number): string {
+  const mins = Math.max(0, Math.round((Date.now() - ms) / 60000));
+  if (mins < 2) return "just now";
+  if (mins < 60) return `${mins} minutes ago`;
+  const hours = Math.round(mins / 60);
+  if (hours < 24) return `${hours} ${hours === 1 ? "hour" : "hours"} ago`;
+  const days = Math.round(hours / 24);
+  return `${days} ${days === 1 ? "day" : "days"} ago`;
 }
 
 export default function OnboardingPage() {
@@ -172,7 +182,11 @@ export default function OnboardingPage() {
   const { user, register, login } = useAuth();
   // 0 = the opening screen; 1..7 = the seven chapters.
   const [step, setStep] = useState(0);
+  const [maxStep, setMaxStep] = useState(0);
   const [journey, setJourney] = useState<JourneyState>(EMPTY_JOURNEY);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [resumeOffer, setResumeOffer] = useState<SavedProgress | null>(null);
+  const [hydrated, setHydrated] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -180,26 +194,149 @@ export default function OnboardingPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [mode, setMode] = useState<"signup" | "login">("signup");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
-  function set<K extends keyof JourneyState>(key: K, value: JourneyState[K]) {
-    setJourney((j) => ({ ...j, [key]: value }));
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const movedRef = useRef(false);
+
+  // Offer to resume. Read once, after mount, so server and client render the same.
+  useEffect(() => {
+    try {
+      const saved = parseProgress(window.localStorage.getItem(STORAGE_KEY));
+      if (saved) setResumeOffer(saved);
+    } catch {
+      /* storage blocked: the assessment simply does not resume */
+    }
+    setHydrated(true);
+  }, []);
+
+  // Keep the saved copy current, but never overwrite it while the resume offer is still open.
+  useEffect(() => {
+    if (!hydrated || resumeOffer) return;
+    try {
+      if (progressOf(journey).answered > 0) window.localStorage.setItem(STORAGE_KEY, serializeProgress(step, journey));
+    } catch {
+      /* ignore */
+    }
+  }, [hydrated, resumeOffer, step, journey]);
+
+  // Move focus to the new heading when the chapter changes, so screen readers announce it.
+  useEffect(() => {
+    if (!movedRef.current) return;
+    headingRef.current?.focus();
+    window.scrollTo({ top: 0 });
+  }, [step]);
+
+  function go(next: number) {
+    movedRef.current = true;
+    setErrors({});
+    setError(null);
+    setStep(next);
+    setMaxStep((m) => Math.max(m, next));
   }
 
-  async function handleFinalSubmit() {
+  function clearSaved() {
+    try {
+      window.localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      /* ignore */
+    }
+  }
+
+  function resume() {
+    if (!resumeOffer) return;
+    setJourney(resumeOffer.journey);
+    const target = Math.max(1, resumeOffer.step);
+    setResumeOffer(null);
+    setMaxStep(target);
+    go(target);
+  }
+
+  function startOver() {
+    clearSaved();
+    setResumeOffer(null);
+    setJourney(EMPTY_JOURNEY);
+    setMaxStep(0);
+  }
+
+  function setAnswer(key: Question["key"], value: string[] | string) {
+    setJourney((j) => {
+      const next = { ...j, [key]: value } as JourneyState;
+      if (key === "direction" && value === "open") next.category = undefined;
+      return next;
+    });
+    setErrors((e) => {
+      if (!e[key]) return e;
+      const { [key]: _drop, ...rest } = e;
+      return rest;
+    });
+  }
+
+  const chapterIndex = step - 1;
+  const chapter = step > 0 ? CHAPTERS[chapterIndex]! : null;
+  const isLast = step === CHAPTERS.length;
+  const progress = progressOf(journey);
+  const heard = signalLabels(journey);
+
+  function focusQuestion(key: string) {
+    const el = document.getElementById(`q-${key}`);
+    if (el) {
+      el.scrollIntoView({ block: "center" });
+      el.focus({ preventScroll: true });
+    }
+  }
+
+  async function onContinue(e: React.FormEvent) {
+    e.preventDefault();
     if (submitting) return;
+    if (step === 0) {
+      go(1);
+      return;
+    }
+    const missing = missingQuestions(chapter!, journey);
+    if (missing.length > 0) {
+      const next: Record<string, string> = {};
+      for (const q of missing) next[q.key] = q.kind === "multi" ? "Choose at least one answer." : "Choose one answer.";
+      setErrors(next);
+      focusQuestion(missing[0]!.key);
+      return;
+    }
+    if (!isLast) {
+      go(step + 1);
+      return;
+    }
+    await finish();
+  }
+
+  async function finish() {
+    // A resumed or edited journey may be incomplete somewhere earlier: send them back to it.
+    const firstIncomplete = CHAPTERS.findIndex((c) => !chapterComplete(c, journey));
+    if (firstIncomplete !== -1) {
+      go(firstIncomplete + 1);
+      setError("A few answers are missing in an earlier part. Please complete them, then continue.");
+      return;
+    }
     setError(null);
+    if (!user) {
+      const fe: Record<string, string> = {};
+      if (mode === "signup" && !fullName.trim()) fe.fullName = "Enter your name.";
+      if (!/^\S+@\S+\.\S+$/.test(email.trim())) fe.email = "Enter a valid email address.";
+      if (mode === "signup" ? password.length < 8 : password.length === 0) {
+        fe.password = mode === "signup" ? "Use at least 8 characters." : "Enter your password.";
+      }
+      setFieldErrors(fe);
+      if (Object.keys(fe).length > 0) {
+        document.getElementById(Object.keys(fe)[0]!)?.focus();
+        return;
+      }
+    }
     setSubmitting(true);
+    let accountReady = !!user;
     try {
       if (!user) {
-        if (mode === "signup") {
-          if (!fullName || !email || password.length < 8) {
-            throw new Error("Please fill in your name, email, and an 8+ character password.");
-          }
-          await register(email, password, fullName);
-        } else {
-          if (!email || !password) throw new Error("Please enter your email and password.");
-          await login(email, password);
-        }
+        if (mode === "signup") await register(email.trim(), password, fullName.trim());
+        else await login(email.trim(), password);
+        accountReady = true;
       }
       const answers = buildAnswers(journey);
       await api.patch("/users/me", {
@@ -210,314 +347,285 @@ export default function OnboardingPage() {
       });
       await api.post("/assessment", { answers });
       track("assessment_completed");
+      clearSaved();
       router.push("/assessment/results");
     } catch (err) {
-      if (err instanceof ApiError) setError(err.message);
-      else if (err instanceof Error) setError(err.message);
-      else setError("Something went wrong. Please try again.");
+      const message = err instanceof ApiError || err instanceof Error ? err.message : "Something went wrong. Please try again.";
+      setError(
+        accountReady
+          ? `Your account is ready, but we could not save your answers: ${message} Your answers are still here, so you can try again.`
+          : message
+      );
     } finally {
       setSubmitting(false);
     }
   }
 
-  const chapterIndex = step - 1;
-  const chapter = step > 0 ? CHAPTERS[chapterIndex]! : null;
-  const isLast = step === CHAPTERS.length;
-
-  const canContinue = (() => {
-    switch (step) {
-      case 1: return journey.interests.length > 0;
-      case 2: return journey.strengths.length > 0;
-      case 3:
-        return (
-          journey.peoplePreference !== undefined &&
-          journey.workStyle !== undefined &&
-          journey.pace !== undefined &&
-          journey.wantsRemote !== undefined
-        );
-      case 4: return !!journey.goal && !!journey.timeline;
-      case 5: return journey.techInterests.length > 0;
-      case 6: return !!journey.direction;
-      case 7: return !!journey.persona && !!journey.device && !!journey.minutesPerDay;
-      default: return true;
-    }
-  })();
-
-  const heard = signalLabels(journey);
-
-  function renderChapter() {
-    switch (step) {
-      case 1:
-        return <ChoiceList choices={INTEREST_CHOICES} selected={journey.interests} onToggle={(id) => set("interests", toggle(journey.interests, id))} />;
-      case 2:
-        return <ChoiceList choices={STRENGTH_CHOICES} selected={journey.strengths} onToggle={(id) => set("strengths", toggle(journey.strengths, id))} />;
-      case 3:
-        return (
-          <div className="space-y-8">
-            <Segmented
-              legend="My best days involve mostly..."
-              value={journey.peoplePreference}
-              onChange={(v) => set("peoplePreference", v)}
-              options={[
-                { value: "people", label: "People" },
-                { value: "systems", label: "Systems and tools" },
-                { value: "both", label: "A real mix" },
-              ]}
-            />
-            <Segmented
-              legend="I do my best thinking..."
-              value={journey.workStyle}
-              onChange={(v) => set("workStyle", v)}
-              options={[
-                { value: "independent", label: "On my own" },
-                { value: "collaborative", label: "With a team" },
-                { value: "mixed", label: "Depends on the day" },
-              ]}
-            />
-            <Segmented
-              legend="The pace I like..."
-              value={journey.pace}
-              onChange={(v) => set("pace", v)}
-              options={[
-                { value: "steady", label: "Calm and steady" },
-                { value: "fast", label: "Fast, high stakes" },
-              ]}
-            />
-            <Segmented
-              legend="Working remotely is..."
-              value={journey.wantsRemote}
-              onChange={(v) => set("wantsRemote", v)}
-              options={[
-                { value: true, label: "Something I want" },
-                { value: false, label: "Not a priority" },
-              ]}
-            />
-          </div>
-        );
-      case 4:
-        return (
-          <div className="space-y-8">
-            <div>
-              {GOAL_CHOICES.map((c) => (
-                <Tile key={c.id} label={c.label} hint={c.hint} selected={journey.goal === c.id} onClick={() => set("goal", c.id)} />
-              ))}
-            </div>
-            <Segmented
-              legend="I would like to be working in tech..."
-              value={journey.timeline}
-              onChange={(v) => set("timeline", v)}
-              options={TIMELINE_CHOICES.map((c) => ({ value: c.id, label: c.label }))}
-            />
-          </div>
-        );
-      case 5:
-        return <ChoiceList choices={TECH_CHOICES} selected={journey.techInterests} onToggle={(id) => set("techInterests", toggle(journey.techInterests, id))} />;
-      case 6:
-        return (
-          <div className="space-y-8">
-            <div>
-              {DIRECTION_CHOICES.map((c) => (
-                <Tile
-                  key={c.id}
-                  label={c.label}
-                  hint={c.hint}
-                  selected={journey.direction === c.id}
-                  onClick={() => setJourney((j) => ({ ...j, direction: c.id, category: c.id === "open" ? undefined : j.category }))}
-                />
-              ))}
-            </div>
-            {(journey.direction === "know" || journey.direction === "narrowed") && (
-              <div className="animate-fade-in-up">
-                <p className="text-sm font-medium text-ink-200">
-                  {journey.direction === "know" ? "Which area is it in?" : "Which area is closest?"}{" "}
-                  <span className="font-normal text-ink-500">(optional)</span>
-                </p>
-                <div className="mt-2 grid gap-x-10 sm:grid-cols-2">
-                  {CAREER_CATEGORIES.map((c) => (
-                    <Tile
-                      key={c.slug}
-                      label={c.name}
-                      hint={c.blurb}
-                      selected={journey.category === c.slug}
-                      onClick={() => set("category", journey.category === c.slug ? undefined : c.slug)}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        );
-      case 7:
-        return (
-          <div className="space-y-8">
-            <Segmented legend="Right now I am a..." value={journey.persona} onChange={(v) => set("persona", v)} options={PERSONA_CHOICES.map((c) => ({ value: c.id, label: c.label }))} />
-            <Segmented legend="I can realistically give it..." value={journey.minutesPerDay} onChange={(v) => set("minutesPerDay", v)} options={TIME_CHOICES} />
-            <Segmented legend="I learn on a..." value={journey.device} onChange={(v) => set("device", v)} options={DEVICE_CHOICES.map((c) => ({ value: c.id, label: c.label }))} />
-            <Segmented legend="My experience with tech so far..." value={journey.knowledge} onChange={(v) => set("knowledge", v)} options={KNOWLEDGE_CHOICES.map((c) => ({ value: c.id, label: c.label }))} />
-          </div>
-        );
-      default:
-        return null;
-    }
-  }
+  const questions = chapter ? activeQuestions(chapter, journey) : [];
+  const errorCount = Object.keys(errors).length;
 
   return (
     <>
-    <GlobalNav />
-    <div className="lg:grid lg:min-h-[calc(100vh-4rem)] lg:grid-cols-[minmax(0,26rem)_1fr]">
-      {/* The journey so far: a fixed dark panel on desktop, a slim header
-          on mobile. It shows where you are in the chapters and, as you
-          answer, what we have heard from you, so the next screen reads as
-          a conversation rather than a form. */}
-      <aside className="surface-ink relative flex flex-col overflow-hidden px-6 py-5 lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] lg:px-10 lg:py-10">
-        <div className="lg:hidden">
-          <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[#9fd6a8]">
-            {chapter ? `Chapter ${String(step).padStart(2, "0")} of 07 · ${chapter.name}` : "Discover your direction"}
-          </p>
-          <div className="mt-3 flex gap-1" aria-hidden="true">
-            {CHAPTERS.map((_, i) => (
-              <span key={i} className={cn("h-1 flex-1 rounded-full", i < chapterIndex ? "bg-[#9fd6a8]/60" : i === chapterIndex ? "bg-[#9fd6a8]" : "bg-white/10")} />
-            ))}
+      <GlobalNav />
+      <div className="lg:grid lg:min-h-[calc(100vh-4rem)] lg:grid-cols-[minmax(0,26rem)_1fr]">
+        {/* The journey so far: where you are in the seven chapters, how many
+            questions are answered, and what you have told us. A fixed dark
+            panel on desktop, a slim header on mobile. */}
+        <aside className="surface-ink relative flex flex-col overflow-hidden px-6 py-5 lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] lg:px-10 lg:py-10" aria-label="Your progress">
+          <div className="lg:hidden">
+            <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[#9fd6a8]">
+              {chapter ? `Part ${step} of ${CHAPTERS.length}: ${chapter.name}` : "Career assessment"}
+            </p>
+            <div
+              className="mt-3 h-1 overflow-hidden rounded-full bg-white/10"
+              role="progressbar"
+              aria-label="Questions answered"
+              aria-valuemin={0}
+              aria-valuemax={progress.total}
+              aria-valuenow={progress.answered}
+            >
+              <div className="h-full bg-[#9fd6a8] transition-[width] duration-200" style={{ width: `${progress.pct}%` }} />
+            </div>
+            <p className="mt-2 text-xs surface-ink-muted">
+              {progress.answered} of {progress.total} questions answered
+            </p>
           </div>
-        </div>
 
-        <div className="hidden flex-1 flex-col lg:flex">
-          <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[#9fd6a8]">Discover your direction</p>
-          <ol className="mt-6 space-y-1">
-            {CHAPTERS.map((c, i) => {
-              const state = i < chapterIndex ? "done" : i === chapterIndex ? "active" : "upcoming";
-              return (
-                <li key={c.name} className="flex items-baseline gap-4 py-1.5">
-                  <span className={cn("w-6 font-mono text-xs", state === "upcoming" ? "text-white/30" : "text-[#9fd6a8]")}>
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <span
-                    className={cn(
-                      "font-display text-xl tracking-tight transition-colors",
-                      state === "active" ? "text-white" : state === "done" ? "text-white/60" : "text-white/30"
-                    )}
-                  >
-                    {c.name}
-                  </span>
-                  {state === "done" && <Check className="h-3.5 w-3.5 self-center text-[#9fd6a8]" aria-label="Done" />}
-                </li>
-              );
-            })}
-          </ol>
-
-          <div className="surface-ink-line mt-auto border-t pt-6">
-            <p className="font-mono text-[11px] uppercase tracking-[0.14em] surface-ink-muted">What we have heard so far</p>
-            {heard.length === 0 ? (
-              <p className="mt-3 text-sm leading-relaxed surface-ink-muted">Your answers collect here, and shape the careers we show you at the end.</p>
-            ) : (
-              <ul className="mt-3 max-h-44 space-y-1.5 overflow-hidden text-sm text-white/85" aria-live="polite">
-                {heard.slice(0, 7).map((l) => (
-                  <li key={l} className="flex items-baseline gap-2.5">
-                    <span className="h-1 w-1 flex-shrink-0 -translate-y-0.5 rounded-full bg-[#9fd6a8]" aria-hidden="true" />
-                    {l}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </div>
-      </aside>
-
-      <main className="relative flex flex-col justify-center px-6 py-10 sm:px-12 lg:min-h-[calc(100vh-4rem)] lg:px-20">
-        <div className="bg-contour pointer-events-none absolute inset-x-0 top-0 -z-10 h-[420px]" />
-        <div className="mx-auto w-full max-w-2xl">
-          <div key={step} className="animate-fade-in-up">
-            {step === 0 ? (
-              <>
-                <p className="eyebrow">The first chapter</p>
-                <h1 className="mt-4 font-display text-hero font-semibold tracking-tight text-ink-100">
-                  Discover your direction.
-                </h1>
-                <p className="mt-6 max-w-lg text-deck leading-relaxed text-ink-300">
-                  Seven short chapters about what interests you, what you are good at, how you like to work and
-                  where you want to end up. At the end you get a career match built from your own answers,
-                  not a quiz score.
-                </p>
-                <ul className="mt-8 grid max-w-md grid-cols-2 lg:hidden gap-x-6 gap-y-2 text-sm text-ink-400">
-                  {CHAPTERS.map((c, i) => (
-                    <li key={c.name} className="flex items-baseline gap-3">
-                      <span className="font-mono text-xs text-ink-500">{String(i + 1).padStart(2, "0")}</span>
+          <div className="hidden flex-1 flex-col lg:flex">
+            <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[#9fd6a8]">Career assessment</p>
+            <ol className="mt-6 space-y-0.5">
+              {CHAPTERS.map((c, i) => {
+                const done = chapterComplete(c, journey) && i + 1 < Math.max(step, maxStep + 1);
+                const active = i === chapterIndex;
+                const reachable = i + 1 <= maxStep && !active;
+                const inner = (
+                  <>
+                    <span className={cn("w-6 font-mono text-xs", !active && !done && !reachable ? "text-white/30" : "text-[#9fd6a8]")}>
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span
+                      className={cn(
+                        "font-display text-xl tracking-tight transition-colors",
+                        active ? "text-white" : done ? "text-white/70" : reachable ? "text-white/60" : "text-white/30"
+                      )}
+                    >
                       {c.name}
+                    </span>
+                    {done && !active && <Check className="h-3.5 w-3.5 self-center text-[#9fd6a8]" aria-label="Complete" />}
+                  </>
+                );
+                return (
+                  <li key={c.id}>
+                    {reachable ? (
+                      <button
+                        type="button"
+                        onClick={() => go(i + 1)}
+                        className="focus-ring flex w-full items-baseline gap-4 rounded py-1.5 text-left hover:opacity-90"
+                      >
+                        {inner}
+                      </button>
+                    ) : (
+                      <div className="flex items-baseline gap-4 py-1.5" aria-current={active ? "step" : undefined}>
+                        {inner}
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
+            </ol>
+
+            <div className="mt-6" role="progressbar" aria-label="Questions answered" aria-valuemin={0} aria-valuemax={progress.total} aria-valuenow={progress.answered}>
+              <div className="h-1 overflow-hidden rounded-full bg-white/10">
+                <div className="h-full bg-[#9fd6a8] transition-[width] duration-200" style={{ width: `${progress.pct}%` }} />
+              </div>
+              <p className="mt-2 text-xs surface-ink-muted">
+                {progress.answered} of {progress.total} questions answered
+              </p>
+            </div>
+
+            <div className="surface-ink-line mt-auto border-t pt-6">
+              <p className="font-mono text-[11px] uppercase tracking-[0.14em] surface-ink-muted">What you have told us</p>
+              {heard.length === 0 ? (
+                <p className="mt-3 text-sm leading-relaxed surface-ink-muted">
+                  Nothing yet. Your interests, strengths and working style will be listed here as you choose them, so you can see what your results are built from.
+                </p>
+              ) : (
+                <ul className="mt-3 max-h-44 space-y-1.5 overflow-y-auto pr-1 text-sm text-white/85" aria-live="polite">
+                  {heard.map((l) => (
+                    <li key={l} className="flex items-baseline gap-2.5">
+                      <span className="h-1 w-1 flex-shrink-0 -translate-y-0.5 rounded-full bg-[#9fd6a8]" aria-hidden="true" />
+                      {l}
                     </li>
                   ))}
                 </ul>
-                <p className="mt-8 text-xs text-ink-500">About 5 minutes. No wrong answers. Free.</p>
-              </>
-            ) : (
-              <>
-                <p className="eyebrow">
-                  {String(step).padStart(2, "0")} / 07 · {chapter!.name}
-                </p>
-                <h1 className="mt-4 font-display text-display font-semibold tracking-tight text-ink-100">{chapter!.prompt}</h1>
-                <p className="mt-3 text-sm leading-relaxed text-ink-500">{chapter!.sub}</p>
-                <div className="mt-8">{renderChapter()}</div>
-              </>
-            )}
-          </div>
-
-          {isLast && !user && (
-            <div className="mt-10 space-y-3 border-t border-[rgb(var(--fg-tint)/0.12)] pt-6">
-              <p className="text-sm font-medium text-ink-100">
-                {mode === "signup" ? "Create your free account to see your direction" : "Log in to see your direction"}
-              </p>
-              {error && <Alert>{error}</Alert>}
-              {mode === "signup" && (
-                <div>
-                  <Label htmlFor="fullName">Full name</Label>
-                  <Input id="fullName" autoComplete="name" required value={fullName} onChange={(e) => setFullName(e.target.value)} />
-                </div>
               )}
-              <div>
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
-              </div>
-              <div>
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  autoComplete={mode === "signup" ? "new-password" : "current-password"}
-                  required
-                  minLength={mode === "signup" ? 8 : undefined}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                {mode === "signup" && <p className="mt-1 text-xs text-ink-500">At least 8 characters.</p>}
-              </div>
-              <button
-                type="button"
-                className="text-xs text-ink-500 hover:text-ink-300"
-                onClick={() => setMode(mode === "signup" ? "login" : "signup")}
-              >
-                {mode === "signup" ? "Already have an account? Log in instead" : "New here? Create an account instead"}
-              </button>
             </div>
-          )}
-
-          {isLast && error && user && <Alert className="mt-4">{error}</Alert>}
-
-          <div className="mt-10 flex items-center justify-between">
-            <Button variant="ghost" size="sm" onClick={() => setStep((s) => Math.max(0, s - 1))} disabled={step === 0} className="gap-1.5">
-              <ArrowLeft className="h-3.5 w-3.5" /> Back
-            </Button>
-            {isLast ? (
-              <Button onClick={handleFinalSubmit} loading={submitting} disabled={!canContinue} className="gap-1.5">
-                Reveal my direction <ArrowRight className="h-3.5 w-3.5" />
-              </Button>
-            ) : (
-              <Button onClick={() => setStep((s) => s + 1)} disabled={!canContinue} className="gap-1.5">
-                {step === 0 ? "Begin" : "Continue"} <ArrowRight className="h-3.5 w-3.5" />
-              </Button>
-            )}
           </div>
-        </div>
-      </main>
-    </div>
+        </aside>
+
+        <main className="relative flex flex-col justify-center px-6 py-10 sm:px-12 lg:min-h-[calc(100vh-4rem)] lg:px-20">
+          <div className="bg-contour pointer-events-none absolute inset-x-0 top-0 -z-10 h-[420px]" />
+          <form className="mx-auto w-full max-w-2xl" onSubmit={onContinue} noValidate>
+            <div key={step} className="animate-fade-in-up motion-reduce:animate-none">
+              {step === 0 ? (
+                <>
+                  <p className="eyebrow">Career assessment</p>
+                  <h1 ref={headingRef} tabIndex={-1} className="mt-4 font-display text-hero font-semibold tracking-tight text-ink-100 outline-none">
+                    Find the tech career that fits how you work.
+                  </h1>
+                  <p className="mt-6 max-w-xl text-deck leading-relaxed text-ink-300">
+                    Tell us what you enjoy, what people already rely on you for, and how much time you really have.
+                    We will suggest three careers, explain why each one came up, and show you a first project to try.
+                    You do not need any experience with technology.
+                  </p>
+
+                  {resumeOffer && (
+                    <div className="mt-8 rounded-lg border border-accent-light/40 bg-accent/10 p-4" role="region" aria-label="Saved answers">
+                      <p className="text-sm font-medium text-ink-100">
+                        Welcome back. You answered {progressOf(resumeOffer.journey).answered} of {QUESTION_COUNT} questions {ago(resumeOffer.savedAt)}.
+                      </p>
+                      <p className="mt-1 text-[13px] text-ink-400">Your answers are saved in this browser only.</p>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        <Button type="button" size="sm" onClick={resume}>
+                          Continue where I left off
+                        </Button>
+                        <Button type="button" size="sm" variant="secondary" onClick={startOver}>
+                          Start again
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
+                  <ol className="mt-8 divide-y divide-[rgb(var(--fg-tint)/0.1)] border-y border-[rgb(var(--fg-tint)/0.1)]">
+                    {CHAPTERS.map((c, i) => (
+                      <li key={c.id} className="flex items-baseline gap-4 py-2.5 text-sm">
+                        <span className="w-6 flex-shrink-0 font-mono text-xs text-ink-500">{String(i + 1).padStart(2, "0")}</span>
+                        <span className="w-32 flex-shrink-0 font-medium text-ink-100">{c.name}</span>
+                        <span className="text-ink-400">{c.purpose}</span>
+                      </li>
+                    ))}
+                  </ol>
+
+                  <p className="mt-6 text-sm text-ink-400">
+                    {QUESTION_COUNT} questions in {CHAPTERS.length} parts. You can go back to change any answer, and your answers are saved in this
+                    browser as you go. There are no right answers, and it is free.
+                  </p>
+
+                  <details className="mt-4 text-sm text-ink-400">
+                    <summary className="focus-ring cursor-pointer rounded text-ink-300 hover:text-ink-100">How your answers are used</summary>
+                    <p className="mt-2 max-w-xl leading-relaxed">
+                      Your interests, strengths, working style, technology choices and direction are matched against our catalogue of 48
+                      careers, and the closest three are shown with the reasons. Your goals, timeline, time and way of learning do not change the
+                      ranking. They shape the notes on each result. The result shows potential fit. It cannot tell you how well you will do.
+                    </p>
+                  </details>
+                </>
+              ) : (
+                <>
+                  <p className="eyebrow">
+                    Part {step} of {CHAPTERS.length} · {chapter!.name}
+                  </p>
+                  <h1 ref={headingRef} tabIndex={-1} className="mt-4 font-display text-display font-semibold tracking-tight text-ink-100 outline-none">
+                    {chapter!.prompt}
+                  </h1>
+                  <p className="mt-3 max-w-xl text-sm leading-relaxed text-ink-400">{chapter!.sub}</p>
+
+                  {errorCount > 0 && (
+                    <Alert className="mt-6">
+                      {errorCount === 1 ? "One question still needs an answer." : `${errorCount} questions still need an answer.`} They are marked below.
+                    </Alert>
+                  )}
+
+                  <div className="mt-8 space-y-9">
+                    {questions.map((q) => (
+                      <QuestionBlock key={q.key} question={q} journey={journey} error={errors[q.key]} onChange={setAnswer} />
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+
+            {isLast && !user && (
+              <div className="mt-10 space-y-3 border-t border-[rgb(var(--fg-tint)/0.12)] pt-6">
+                <p className="text-sm font-medium text-ink-100">
+                  {mode === "signup" ? "Create a free account to see your results" : "Log in to see your results"}
+                </p>
+                <p className="text-[13px] text-ink-500">Your results are saved to your account so you can come back to them.</p>
+                {mode === "signup" && (
+                  <div>
+                    <Label htmlFor="fullName">Full name</Label>
+                    <Input
+                      id="fullName"
+                      autoComplete="name"
+                      value={fullName}
+                      aria-invalid={fieldErrors.fullName ? true : undefined}
+                      aria-describedby={fieldErrors.fullName ? "fullName-error" : undefined}
+                      onChange={(e) => setFullName(e.target.value)}
+                    />
+                    {fieldErrors.fullName && <p id="fullName-error" role="alert" className="mt-1 text-xs font-medium text-danger">{fieldErrors.fullName}</p>}
+                  </div>
+                )}
+                <div>
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    autoComplete="email"
+                    value={email}
+                    aria-invalid={fieldErrors.email ? true : undefined}
+                    aria-describedby={fieldErrors.email ? "email-error" : undefined}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                  {fieldErrors.email && <p id="email-error" role="alert" className="mt-1 text-xs font-medium text-danger">{fieldErrors.email}</p>}
+                </div>
+                <div>
+                  <Label htmlFor="password">Password</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    autoComplete={mode === "signup" ? "new-password" : "current-password"}
+                    value={password}
+                    aria-invalid={fieldErrors.password ? true : undefined}
+                    aria-describedby={fieldErrors.password ? "password-error" : mode === "signup" ? "password-hint" : undefined}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  {fieldErrors.password ? (
+                    <p id="password-error" role="alert" className="mt-1 text-xs font-medium text-danger">{fieldErrors.password}</p>
+                  ) : (
+                    mode === "signup" && <p id="password-hint" className="mt-1 text-xs text-ink-500">At least 8 characters.</p>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  className="focus-ring rounded text-xs text-ink-400 hover:text-ink-100"
+                  onClick={() => {
+                    setMode(mode === "signup" ? "login" : "signup");
+                    setFieldErrors({});
+                    setError(null);
+                  }}
+                >
+                  {mode === "signup" ? "Already have an account? Log in instead" : "New here? Create an account instead"}
+                </button>
+              </div>
+            )}
+
+            {error && (
+              <Alert className="mt-6">
+                {error}
+              </Alert>
+            )}
+
+            <div className="mt-10 flex items-center justify-between">
+              <Button type="button" variant="ghost" size="sm" onClick={() => go(Math.max(0, step - 1))} disabled={step === 0 || submitting} className="gap-1.5">
+                <ArrowLeft className="h-3.5 w-3.5" /> Back
+              </Button>
+              <Button type="submit" loading={submitting} className="gap-1.5">
+                {step === 0 ? "Start" : isLast ? "See my results" : "Continue"} <ArrowRight className="h-3.5 w-3.5" />
+              </Button>
+            </div>
+          </form>
+        </main>
+      </div>
     </>
   );
 }

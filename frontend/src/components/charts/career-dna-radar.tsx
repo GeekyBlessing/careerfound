@@ -3,9 +3,9 @@
 import type { CareerDNA } from "@/types";
 
 const AXES: { key: keyof Omit<CareerDNA, "summary">; label: string }[] = [
-  { key: "problem_solving", label: "Problem Solving" },
-  { key: "mathematics", label: "Mathematics" },
-  { key: "creativity", label: "Creativity" },
+  { key: "problem_solving", label: "Working things out" },
+  { key: "mathematics", label: "Numbers" },
+  { key: "creativity", label: "Creative work" },
   { key: "people_orientation", label: "People" },
   { key: "systems_thinking", label: "Systems" },
   { key: "communication", label: "Communication" },
@@ -16,9 +16,9 @@ function pointFor(index: number, total: number, radius: number, center: number) 
   return { x: center + radius * Math.cos(angle), y: center + radius * Math.sin(angle) };
 }
 
-export function CareerDnaRadar({ dna, size = 280 }: { dna: CareerDNA; size?: number }) {
+export function CareerDnaRadar({ dna, size = 300 }: { dna: CareerDNA; size?: number }) {
   const center = size / 2;
-  const maxRadius = size / 2 - 36;
+  const maxRadius = size / 2 - 62;
   const rings = [0.25, 0.5, 0.75, 1];
 
   const dataPoints = AXES.map((axis, i) => {
@@ -35,7 +35,7 @@ export function CareerDnaRadar({ dna, size = 280 }: { dna: CareerDNA; size?: num
         viewBox={`0 0 ${size} ${size}`}
         style={{ width: "100%", maxWidth: size, height: "auto" }}
         role="img"
-        aria-label="Career DNA radar chart"
+        aria-label="Chart of where your answers lean"
       >
         {rings.map((ring) => {
           const pts = AXES.map((_, i) => pointFor(i, AXES.length, maxRadius * ring, center));
@@ -62,7 +62,7 @@ export function CareerDnaRadar({ dna, size = 280 }: { dna: CareerDNA; size?: num
           <circle key={i} cx={p.x} cy={p.y} r={3} fill="rgb(var(--color-warm))" />
         ))}
         {AXES.map((axis, i) => {
-          const labelPoint = pointFor(i, AXES.length, maxRadius + 22, center);
+          const labelPoint = pointFor(i, AXES.length, maxRadius + 18, center);
           return (
             <text
               key={axis.key}
@@ -78,6 +78,13 @@ export function CareerDnaRadar({ dna, size = 280 }: { dna: CareerDNA; size?: num
           );
         })}
       </svg>
+      <ul className="sr-only">
+        {AXES.map((axis) => (
+          <li key={axis.key}>
+            {axis.label}: {dna[axis.key] as number} out of 100
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

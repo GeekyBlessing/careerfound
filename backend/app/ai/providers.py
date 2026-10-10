@@ -36,7 +36,16 @@ from app.ai.schemas import (
     ProjectReviewFinding,
     SkillTransfer,
 )
-from app.ai.assessment_signals import matched_labels, signal_bonus
+from app.ai.assessment_signals import (
+    DNA_AXES,
+    LEARNING_STYLES,
+    STRENGTHS,
+    STRENGTH_NOTES,
+    fit_reasons,
+    matched_labels,
+    signal_bonus,
+)
+from app.services.career_taxonomy import CATEGORY_LABELS
 from app.core.config import settings
 
 
@@ -131,7 +140,7 @@ class MockLLMProvider(LLMClient):
 
         recommendations: list[CareerRecommendation] = []
         for (path, score), tier in zip(top3, tiers, strict=False):
-            recommendations.append(_build_recommendation(path, score, tier, profile))
+            recommendations.append(_build_recommendation(path, score, tier, profile, best=top3[0][0]))
 
         dna = _build_career_dna(profile)
         return AssessmentResult(career_dna=dna, recommendations=recommendations)
@@ -417,15 +426,13 @@ def _score_paths(profile: dict[str, Any], career_catalog: list[dict[str, Any]]) 
         for trait, weight in rule.items():
             if profile.get(trait):
                 score += weight * 8
-        # light variety so repeated identical answers don't always rank identically
         score += signal_bonus(profile, slug, path.get("category"))
-        score += random.Random(slug + json.dumps(profile, sort_keys=True, default=str)).randint(-3, 3)
         scored.append((path, score))
 
     # Rank on the raw score so strong specialist matches are not flattened into
     # a tie at 100 by a long list of ticked answers, then show a 0 to 100 fit
     # that keeps the order (equal displayed scores would read as a coin toss).
-    scored.sort(key=lambda t: t[1], reverse=True)
+    scored.sort(key=lambda t: (-t[1], t[0]["slug"]))
     shown: list[tuple[dict, int]] = []
     for path, raw in scored:
         value = max(0, min(100, raw))
@@ -451,35 +458,85 @@ def _pick_top_three(scored: list[tuple[dict, int]]) -> list[tuple[dict, int]]:
     return scored[:3]
 
 
-def _build_recommendation(path: dict, score: int, tier: str, profile: dict) -> CareerRecommendation:
+def _build_recommendation(
+    path: dict, score: int, tier: str, profile: dict, best: dict | None = None
+) -> CareerRecommendation:
+    """One recommendation, built only from what the person answered and what
+    the catalogue says about the career. The service later attaches the real
+    first project and first roadmap phase; nothing here invents either."""
     slug = path["slug"]
-    beginner_desc = _BEGINNER_EXPLAINERS.get(slug, path.get("summary", ""))
-
-    transfers = []
-    if profile.get("enjoys_problem_solving"):
-        transfers.append(SkillTransfer(skill="Problem solving", why_it_transfers="Core to debugging and root-cause analysis in this field."))
-    if profile.get("enjoys_math"):
-        transfers.append(SkillTransfer(skill="Comfort with logic/math", why_it_transfers="Helps with the structured, rule-based thinking this path uses daily."))
-    if profile.get("enjoys_people"):
-        transfers.append(SkillTransfer(skill="Communication", why_it_transfers="Useful for explaining findings and working cross-functionally."))
+    name = path.get("name", slug)
+    summary = path.get("summary", "")
+    category_label = CATEGORY_LABELS.get(path.get("category") or "", "")
+    rule = _TRAIT_WEIGHTS.get(slug, {"enjoys_problem_solving": 1})
     matched = matched_labels(profile, slug)
-    for label in matched["strengths"][:2]:
-        transfers.append(SkillTransfer(skill=label, why_it_transfers="You told us this is a strength, and this path leans on it."))
-    if not transfers:
-        transfers.append(SkillTransfer(skill="Curiosity", why_it_transfers="The single best predictor of success for a total beginner in this field."))
 
-    why = {
-        "best_match": f"This is your strongest match: {beginner_desc}, and your answers line up closely with how people who thrive here describe themselves.",
-        "strong_alternative": f"A strong runner-up: {beginner_desc}. If your priorities shift (budget, time, or interests), this is a great backup direction.",
-        "wild_card": f"A less obvious pick worth exploring: {beginner_desc}. It's not the most predictable fit from your answers, but people with your mix of interests sometimes end up loving it.",
+    # Only strengths the person ticked, and only where that strength points at
+    # this career. Interests are not abilities, so they never appear here.
+    transfers = [
+        SkillTransfer(skill=label, why_it_transfers=STRENGTH_NOTES.get(tag, ""))
+        for tag, label in _matched_strength_tags(profile, slug)
+    ][:3]
+
+    reasons: list[str] = []
+    if matched["interests"]:
+        reasons.append("you are drawn to " + _join([a.lower() for a in matched["interests"][:2]]))
+    if matched["technology"]:
+        reasons.append("you want to work with " + _join([a.lower() for a in matched["technology"][:2]]))
+    if matched["styles"]:
+        reasons.append("you would rather " + _lower_first(matched["styles"][0]))
+    reasons.extend(fit_reasons(profile, slug, rule)[:2])
+    preferred = profile.get("preferred_category")
+    if preferred and preferred == path.get("category") and category_label:
+        reasons.append(f"you pointed to {category_label} as the area closest to where you are heading")
+
+    if reasons:
+        because = "It ranks here because " + _join(reasons) + "."
+    else:
+        because = "Your answers did not point strongly at one area, so this ranks on your working style alone."
+
+    lead = {
+        "best_match": f"{name} is the closest match to your answers.",
+        "strong_alternative": f"{name} is a strong alternative that fits many of the same answers.",
+        "wild_card": f"{name} is deliberately a different angle. It comes from {category_label or 'another area'}, outside your top two, to widen what you consider.",
     }[tier]
+    why = f"{lead} {because}"
+    if tier == "wild_card":
+        why += " It is not the strongest match on your answers, so treat it as a question worth asking."
 
-    # Name the person's own answers when they actually point at this career,
-    # so the result reads as built from what they said rather than generic.
-    own = (matched["interests"] + matched["technology"])[:2]
-    if own:
-        joined = " and ".join(a.lower() for a in own)
-        why += f" You told us you are drawn to {joined}."
+    considerations: list[str] = []
+    remote = path.get("remote_potential", 70)
+    if profile.get("wants_remote") is True and remote < 50:
+        considerations.append("You want to work remotely. Early roles here are often on site before remote options open up.")
+    weeks = path.get("avg_timeline_weeks", 24)
+    wanted_label, wanted_weeks = {
+        "3_months": ("3 months", 13),
+        "6_months": ("6 months", 26),
+        "12_months": ("a year", 52),
+    }.get(profile.get("career_timeline") or "", ("", 0))
+    if wanted_weeks and weeks > wanted_weeks:
+        considerations.append(
+            f"The catalogue estimates about {weeks} weeks for this path at a steady pace, longer than the "
+            f"{wanted_label} you hoped for. A bigger weekly commitment could close some of that gap."
+        )
+    if path.get("difficulty", 2) >= 4 and profile.get("current_technical_knowledge") in (None, "none"):
+        considerations.append("This is one of the harder paths to start from zero. It is possible, and the early phases are paced for that.")
+
+    best_name = (best or {}).get("name")
+    differs = ""
+    if best and best.get("slug") != slug and best_name:
+        best_cat = CATEGORY_LABELS.get(best.get("category") or "", "")
+        if category_label and category_label == best_cat:
+            differs = (
+                f"Both sit in {category_label}. {name}: {summary} {best_name}: {best.get('summary', '')}"
+            )
+        else:
+            differs = (
+                f"{name} is in {category_label or 'a different area'}, while {best_name} is in {best_cat or 'another'}. "
+                f"{name}: {summary}"
+            )
+
+    learn = LEARNING_STYLES.get(profile.get("learning_style") or "")
 
     return CareerRecommendation(
         path_slug=slug,
@@ -487,16 +544,45 @@ def _build_recommendation(path: dict, score: int, tier: str, profile: dict) -> C
         fit_score=score,
         why_it_fits=why,
         transferable_skills=transfers,
-        skills_to_develop=path.get("tools", [])[:4] or ["Fundamentals for this path"],
+        skills_to_develop=(path.get("skills_required") or path.get("tools", []))[:4] or ["Fundamentals for this path"],
         difficulty_label=["Very beginner-friendly", "Beginner-friendly", "Moderate", "Challenging", "Advanced"][min(path.get("difficulty", 2) - 1, 4)],
-        timeline_label=f"~{path.get('avg_timeline_weeks', 24)} weeks at a steady pace",
+        timeline_label=f"About {weeks} weeks at a steady pace",
         entry_roles=path.get("entry_roles", []) or ["Junior role in this field"],
-        example_projects=[f"Beginner project in {path.get('name', slug)}", "A guided mini-project", "A capstone project for your portfolio"],
+        example_projects=[],
         tools=path.get("tools", []),
         earning_notes=path.get("earning_notes", "Entry-level pay varies significantly by country and remote status."),
-        remote_potential_label=_remote_label(path.get("remote_potential", 70)),
-        recommended_next_step=f"Start Phase 1 of the {path.get('name', slug)} roadmap today, no prior experience required.",
+        remote_potential_label=_remote_label(remote),
+        recommended_next_step=f"Open the {name} roadmap and begin with its first phase.",
+        summary=summary,
+        category_label=category_label,
+        matched_interests=matched["interests"],
+        matched_strengths=matched["strengths"],
+        matched_technology=matched["technology"],
+        matched_preferences=[f"You would rather {_lower_first(label)}" for label in matched["styles"][:2]]
+        + [p[0].upper() + p[1:] for p in fit_reasons(profile, slug, rule)],
+        things_to_consider=considerations,
+        how_it_differs=differs,
+        learning_note=learn[1] if learn else "",
     )
+
+
+def _matched_strength_tags(profile: dict[str, Any], slug: str) -> list[tuple[str, str]]:
+    out = []
+    for tag in profile.get("existing_skills") or []:
+        entry = STRENGTHS.get(tag)
+        if entry and entry[1].get(slug, 0) >= 3:
+            out.append((tag, entry[0]))
+    return out
+
+
+def _lower_first(text: str) -> str:
+    return text[:1].lower() + text[1:]
+
+
+def _join(parts: list[str]) -> str:
+    if len(parts) <= 1:
+        return "".join(parts)
+    return ", ".join(parts[:-1]) + " and " + parts[-1]
 
 
 def _remote_label(pct: int) -> str:
@@ -507,37 +593,69 @@ def _remote_label(pct: int) -> str:
     return "Lower early on, often starts on-site before remote options open up."
 
 
+_DNA_LABELS = {
+    "problem_solving": "working problems out step by step",
+    "mathematics": "numbers and measurement",
+    "creativity": "creative, design-led work",
+    "people_orientation": "working with and for people",
+    "systems_thinking": "understanding how systems fit together",
+    "communication": "explaining and writing",
+}
+_LEGACY_FLAG = {
+    "problem_solving": "enjoys_problem_solving",
+    "mathematics": "enjoys_math",
+    "creativity": "enjoys_creativity",
+    "people_orientation": "enjoys_people",
+    "systems_thinking": "prefers_systems",
+    "communication": "enjoys_people",
+}
+
+
 def _build_career_dna(profile: dict[str, Any]) -> CareerDNA:
-    def pct(flag_key: str, base: int = 40) -> int:
-        return min(100, base + (35 if profile.get(flag_key) else 0) + random.Random(flag_key).randint(0, 10))
+    """Where the person's own answers lean. Each axis is the number of answers
+    that support it (see DNA_AXES), so two people who answer the same way get
+    the same shape and nothing is added at random. It is a summary of
+    preferences, not a measure of ability."""
+    interests = set(profile.get("things_enjoyed") or [])
+    strengths = set(profile.get("existing_skills") or [])
+    styles = set(profile.get("problem_styles") or [])
+    has_lists = bool(interests or strengths or styles or profile.get("people_preference"))
 
+    counts: dict[str, int] = {}
+    for axis, sources in DNA_AXES.items():
+        n = len(interests & set(sources["interests"])) + len(strengths & set(sources["strengths"])) + len(styles & set(sources["styles"]))
+        if axis == "people_orientation" and profile.get("people_preference") in ("people", "both"):
+            n += 1
+        if axis == "systems_thinking" and profile.get("people_preference") in ("systems", "both"):
+            n += 1
+        if not has_lists and profile.get(_LEGACY_FLAG[axis]):
+            n += 2
+        counts[axis] = n
+
+    def pct(axis: str) -> int:
+        return min(100, 15 + 25 * counts[axis])
+
+    ranked = sorted(counts.items(), key=lambda kv: (-kv[1], list(DNA_AXES).index(kv[0])))
+    leaning = [_DNA_LABELS[a] for a, n in ranked[:2] if n > 0]
+    if leaning:
+        summary = (
+            "Your answers lean most toward " + " and ".join(leaning) + ". "
+            "This shows what you chose, not how good you are at it. It is a starting point for the careers below, not a test result."
+        )
+    else:
+        summary = (
+            "Your answers did not lean strongly in one direction, which is normal at the start. "
+            "The careers below come from your working style and goals. This shows what you chose, not how good you are at anything."
+        )
     return CareerDNA(
-        problem_solving=pct("enjoys_problem_solving", 45),
-        mathematics=pct("enjoys_math", 35),
-        creativity=pct("enjoys_creativity", 40),
-        people_orientation=pct("enjoys_people", 35),
-        systems_thinking=pct("prefers_systems", 40),
-        communication=pct("enjoys_people", 45),
-        summary=(
-            "Your answers show a profile that leans toward "
-            + _dominant_trait(profile)
-            + ", that's a strong signal for the paths recommended below."
-        ),
+        problem_solving=pct("problem_solving"),
+        mathematics=pct("mathematics"),
+        creativity=pct("creativity"),
+        people_orientation=pct("people_orientation"),
+        systems_thinking=pct("systems_thinking"),
+        communication=pct("communication"),
+        summary=summary,
     )
-
-
-def _dominant_trait(profile: dict[str, Any]) -> str:
-    labels = {
-        "enjoys_problem_solving": "structured problem solving",
-        "enjoys_math": "analytical, math-driven thinking",
-        "enjoys_creativity": "creative, design-oriented thinking",
-        "enjoys_people": "people-facing, communication-driven work",
-        "prefers_systems": "systems-oriented thinking",
-    }
-    for key, label in labels.items():
-        if profile.get(key):
-            return label
-    return "broad, exploratory curiosity"
 
 
 # --------------------------------------------------------------------------

@@ -199,7 +199,7 @@ export default function LandingPage() {
                   </Button>
                 </Link>
               </div>
-              <p className="mt-5 text-xs text-ink-500">No credit card required, takes about 5 minutes</p>
+              <p className="mt-5 text-xs text-ink-500">No credit card required. 16 questions, saved as you go</p>
             </div>
 
             {/* Wide screens: laptop foreground, the AI Mentor on a phone
@@ -317,11 +317,11 @@ export default function LandingPage() {
                 Start with what fits you, not a list of jobs.
               </h2>
               <p className="mt-5 max-w-md text-sm leading-relaxed text-ink-500">
-                Seven short chapters on how you think, what you enjoy and where you are starting from. The
-                result is a ranked set of careers with a fit score for each, not a menu to browse and guess at.
+                Seven short chapters on how you think, what you enjoy and where you are starting from. You
+                get three careers, the reasons each one came up, and a first project to try, not a menu to browse and guess at.
               </p>
               <ul className="mt-6 max-w-md space-y-2 text-sm text-ink-300">
-                {["Interests, strengths and working style", "Goals, technology and starting point", "A Best Match, a Strong Alternative and a Wild Card"].map((t) => (
+                {["Interests, strengths and working style", "Goals, technology and starting point", "Your closest match, a strong alternative and a different angle"].map((t) => (
                   <li key={t} className="flex items-start gap-2.5"><Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-accent-light" />{t}</li>
                 ))}
               </ul>
