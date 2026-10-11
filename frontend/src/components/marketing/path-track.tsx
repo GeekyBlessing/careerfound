@@ -65,7 +65,7 @@ export function PathTrack({
             </div>
             <div className={cn("pb-8 pt-1.5", wp.state === "active" ? "text-ink-100" : "text-ink-400")}>
               <p className="text-sm font-medium">{wp.label}</p>
-              {wp.caption && <p className="mt-0.5 max-w-[220px] text-xs leading-snug text-ink-500">{wp.caption}</p>}
+              {wp.caption && <p className="mt-0.5 max-w-[220px] text-xs sm:max-w-[34ch] leading-snug text-ink-500">{wp.caption}</p>}
             </div>
           </li>
         ))}

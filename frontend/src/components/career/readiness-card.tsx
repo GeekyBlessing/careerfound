@@ -33,9 +33,9 @@ export function CareerReadinessCard({ data: given, showAction = true }: { data?:
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="eyebrow">Career readiness</p>
-          <h2 className="mt-1 font-display text-h3 font-semibold tracking-tight text-ink-100">{data.band}</h2>
+          <h2 className="mt-1 font-display text-h3 font-semibold tracking-tight text-ink-100">{data.has_activity ? data.band : "Your starting point"}</h2>
         </div>
-        <Link href="/readiness" className="focus-ring inline-flex items-center gap-1 rounded text-xs font-medium text-accent-light hover:underline">
+        <Link href="/readiness" className="focus-ring tap inline-flex items-center gap-1 rounded text-xs font-medium text-accent-light hover:underline">
           See how it is calculated <ArrowRight className="h-3 w-3" aria-hidden="true" />
         </Link>
       </div>

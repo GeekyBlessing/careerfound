@@ -58,7 +58,10 @@ export function ReadinessRing({
             <span className="mt-1 font-mono text-[10px] uppercase tracking-wide text-ink-500">out of 100</span>
           </>
         ) : (
-          <span className="font-display font-semibold leading-tight text-ink-300" style={{ fontSize: size * 0.13 }}>
+          <span
+            className="text-center font-display font-semibold leading-tight text-ink-300"
+            style={{ fontSize: Math.max(13, size * 0.11), maxWidth: size * 0.55 }}
+          >
             Not scored yet
           </span>
         )}

@@ -39,7 +39,7 @@ export function ProjectLabCard() {
           <p className="eyebrow">Project Lab</p>
           <h2 className="mt-1 font-display text-h3 font-semibold tracking-tight text-ink-100">{data.career.name} projects</h2>
         </div>
-        <Link href={`/projects?career=${data.career.slug}`} className="focus-ring inline-flex items-center gap-1 rounded text-xs font-medium text-accent-light hover:underline">
+        <Link href={`/projects?career=${data.career.slug}`} className="focus-ring tap inline-flex items-center gap-1 rounded text-xs font-medium text-accent-light hover:underline">
           See the full path <ArrowRight className="h-3 w-3" aria-hidden="true" />
         </Link>
       </div>
@@ -90,7 +90,7 @@ export function ProjectLabCard() {
           <ul className="mt-2 space-y-1.5">
             {upcoming.map((p) => (
               <li key={p.id}>
-                <Link href={`/projects/${p.id}`} className="focus-ring flex items-baseline justify-between gap-3 rounded text-sm text-ink-300 hover:text-accent-light">
+                <Link href={`/projects/${p.id}`} className="focus-ring flex min-h-[44px] items-center justify-between gap-3 rounded text-sm text-ink-300 hover:text-accent-light sm:min-h-0 sm:items-baseline">
                   <span>{p.title}</span>
                   <span className="font-mono text-[10px] uppercase text-ink-500">{p.level_label}</span>
                 </Link>

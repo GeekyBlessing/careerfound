@@ -120,7 +120,7 @@ export function GlobalNav() {
             <Link
               href="/"
               aria-label="CareerFound home"
-              className="focus-ring flex items-center gap-2 rounded-md font-display text-lg font-semibold tracking-tight text-ink-100"
+              className="focus-ring flex items-center gap-2 rounded-md font-display text-lg font-semibold tracking-tight text-ink-100 [@media(pointer:coarse)]:min-h-[44px]"
             >
               <BrandTile className="h-7 w-7" />
               CareerFound
@@ -345,7 +345,7 @@ export function GlobalNav() {
         )}
       >
         <div className="container-page flex h-16 flex-shrink-0 items-center justify-between border-b border-[rgb(var(--fg-tint)/0.08)]">
-          <Link href="/" className="focus-ring flex items-center gap-2 rounded-md font-display text-lg font-semibold tracking-tight text-ink-100">
+          <Link href="/" className="focus-ring flex items-center gap-2 rounded-md font-display text-lg font-semibold tracking-tight text-ink-100 [@media(pointer:coarse)]:min-h-[44px]">
             <BrandTile className="h-7 w-7" />
             CareerFound
           </Link>

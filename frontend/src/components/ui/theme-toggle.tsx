@@ -13,7 +13,7 @@ export function ThemeToggleButton({ className }: { className?: string }) {
       aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
       title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
       className={cn(
-        "focus-ring flex h-8 w-8 items-center justify-center rounded-lg text-ink-500 transition-colors hover:bg-[rgb(var(--fg-tint)/0.06)] hover:text-ink-100",
+        "focus-ring tap-icon flex h-8 w-8 items-center justify-center rounded-lg text-ink-500 transition-colors hover:bg-[rgb(var(--fg-tint)/0.06)] hover:text-ink-100",
         className
       )}
     >

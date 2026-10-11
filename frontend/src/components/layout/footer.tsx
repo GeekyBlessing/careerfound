@@ -18,27 +18,26 @@ export function Footer() {
           <div>
             <p className="mb-3 font-medium text-ink-100">Product</p>
             <ul className="space-y-2 text-ink-500">
-              <li><Link href="/how-it-works" className="focus-ring rounded-sm transition-colors hover:text-ink-300">How it works</Link></li>
-              <li><Link href="/careers" className="focus-ring rounded-sm transition-colors hover:text-ink-300">Career paths</Link></li>
-              <li><Link href="/pricing" className="focus-ring rounded-sm transition-colors hover:text-ink-300">Pricing</Link></li>
-              <li><Link href="/mentors" className="focus-ring rounded-sm transition-colors hover:text-ink-300">Mentors</Link></li>
+              <li><Link href="/how-it-works" className="focus-ring tap rounded-sm transition-colors hover:text-ink-300">How it works</Link></li>
+              <li><Link href="/careers" className="focus-ring tap rounded-sm transition-colors hover:text-ink-300">Career paths</Link></li>
+              <li><Link href="/pricing" className="focus-ring tap rounded-sm transition-colors hover:text-ink-300">Pricing</Link></li>
+              <li><Link href="/mentors" className="focus-ring tap rounded-sm transition-colors hover:text-ink-300">Mentors</Link></li>
             </ul>
           </div>
           <div>
             <p className="mb-3 font-medium text-ink-100">Company</p>
             <ul className="space-y-2 text-ink-500">
-              <li><Link href="/about" className="focus-ring rounded-sm transition-colors hover:text-ink-300">About</Link></li>
-              <li><Link href="/faq" className="focus-ring rounded-sm transition-colors hover:text-ink-300">FAQ</Link></li>
-              <li><Link href="/contact" className="focus-ring rounded-sm transition-colors hover:text-ink-300">Contact</Link></li>
-              <li><span className="cursor-default text-ink-500/60">Careers at CareerFound (coming soon)</span></li>
+              <li><Link href="/about" className="focus-ring tap rounded-sm transition-colors hover:text-ink-300">About</Link></li>
+              <li><Link href="/faq" className="focus-ring tap rounded-sm transition-colors hover:text-ink-300">FAQ</Link></li>
+              <li><Link href="/contact" className="focus-ring tap rounded-sm transition-colors hover:text-ink-300">Contact</Link></li>
             </ul>
           </div>
           <div>
             <p className="mb-3 font-medium text-ink-100">Legal</p>
             <ul className="space-y-2 text-ink-500">
-              <li><Link href="/privacy" className="focus-ring rounded-sm transition-colors hover:text-ink-300">Privacy</Link></li>
-              <li><Link href="/terms" className="focus-ring rounded-sm transition-colors hover:text-ink-300">Terms</Link></li>
-              <li><Link href="/refund-policy" className="focus-ring rounded-sm transition-colors hover:text-ink-300">Refunds</Link></li>
+              <li><Link href="/privacy" className="focus-ring tap rounded-sm transition-colors hover:text-ink-300">Privacy</Link></li>
+              <li><Link href="/terms" className="focus-ring tap rounded-sm transition-colors hover:text-ink-300">Terms</Link></li>
+              <li><Link href="/refund-policy" className="focus-ring tap rounded-sm transition-colors hover:text-ink-300">Refunds</Link></li>
             </ul>
           </div>
         </div>

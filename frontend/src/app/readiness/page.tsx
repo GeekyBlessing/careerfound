@@ -72,7 +72,7 @@ function Body({ data }: { data: CareerReadiness }) {
       <section className="grid gap-10 border-y border-[rgb(var(--fg-tint)/0.12)] py-10 lg:grid-cols-[auto_1fr] lg:gap-14">
         <div className="flex flex-col items-center gap-4 text-center lg:items-start lg:text-left">
           <ReadinessRing score={data.score} active={data.has_activity} size={196} />
-          <p className="font-display text-xl font-semibold text-ink-100">{data.band}</p>
+          {data.has_activity && <p className="font-display text-xl font-semibold text-ink-100">{data.band}</p>}
         </div>
         <div className="space-y-6">
           <div>
@@ -120,7 +120,7 @@ function Body({ data }: { data: CareerReadiness }) {
                   {s.action && !done && (
                     <p className="mt-3 text-sm">
                       <span className="text-ink-500">To raise it: </span>
-                      <Link href={s.action.href} className={cn("focus-ring rounded font-medium text-accent-light hover:underline")}>
+                      <Link href={s.action.href} className={cn("focus-ring tap rounded font-medium text-accent-light hover:underline")}>
                         {s.action.title}
                       </Link>
                     </p>

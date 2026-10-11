@@ -335,7 +335,7 @@ export default function LandingPage() {
                 <Parallax range={14}>
                   <PhotoBackdrop slot="discover" bare className="absolute inset-x-0 top-0 h-[88%]" fade="bottom" />
                 </Parallax>
-                <div className="relative w-[84%]">
+                <div className="relative w-[76%]">
                   <Tablet label="CareerFound on a tablet: the career assessment asking what you could lose a whole afternoon to. Example data.">
                     <AssessmentScreen />
                   </Tablet>
@@ -638,13 +638,13 @@ export default function LandingPage() {
         <section className="overflow-hidden py-20 sm:py-28">
           <div className="container-page grid items-center gap-14 lg:grid-cols-[1.2fr_0.8fr] lg:gap-12">
             <Reveal className="relative order-2 lg:order-1">
-              <div className="relative hidden pb-10 sm:block">
+              <div className="relative hidden pb-28 sm:block">
                 <div className="w-[92%] transition-transform duration-500 ease-smooth hover:-translate-y-1">
                   <Tablet label="CareerFound on a tablet: publishing a project, with a public GitHub repository, a README and three commits checked. Example data.">
                     <PublishScreen />
                   </Tablet>
                 </div>
-                <StageFragment className="absolute -bottom-2 right-0 z-10 w-[15rem]" />
+                <StageFragment className="absolute bottom-0 right-0 z-10 w-[15rem]" />
               </div>
               <div className="relative mx-auto w-full max-w-[21rem] pb-4 sm:hidden">
                 <StageFragment />
@@ -700,12 +700,12 @@ export default function LandingPage() {
                 <Parallax range={14}>
                   <PhotoBackdrop slot="portfolio" bare fade="left" className="absolute inset-y-0 right-0 w-[60%]" />
                 </Parallax>
-                <div className="relative w-[94%] transition-transform duration-500 ease-smooth hover:-translate-y-1">
+                <div className="relative w-[86%] transition-transform duration-500 ease-smooth hover:-translate-y-1">
                   <Laptop label="CareerFound on a laptop: a published portfolio for a Cybersecurity Engineer with three projects. Example data.">
                     <PortfolioScreen />
                   </Laptop>
                 </div>
-                <div className="absolute -bottom-6 right-[1%] z-10 hidden w-[17%] rotate-[4deg] lg:block">
+                <div className="absolute -bottom-6 right-0 z-10 hidden w-[15%] rotate-[4deg] lg:block">
                   <Phone label="CareerFound on a phone: the same published portfolio. Example data.">
                     <PhonePortfolioScreen />
                   </Phone>

@@ -93,7 +93,7 @@ export default function SettingsPage() {
                   >
                     {resendWait > 0 ? `Resend in ${resendWait}s` : "Resend verification email"}
                   </Button>
-                  <Link href="/verify-pending" className="focus-ring rounded-sm text-xs font-medium text-accent-light hover:underline">
+                  <Link href="/verify-pending" className="focus-ring tap rounded-sm text-xs font-medium text-accent-light hover:underline">
                     Change email or get help
                   </Link>
                 </div>

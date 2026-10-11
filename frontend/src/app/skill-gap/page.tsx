@@ -201,7 +201,7 @@ function SkillRow({ skill, open }: { skill: SkillGapSkill; open: boolean }) {
   return (
     <li>
       <details open={open} className="group py-5">
-        <summary className="focus-ring flex cursor-pointer list-none flex-wrap items-center gap-x-4 gap-y-2 rounded">
+        <summary className="focus-ring flex min-h-[44px] cursor-pointer list-none flex-wrap items-center gap-x-4 gap-y-2 rounded">
           <span className={cn("rounded-[0.25rem] border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wide", STATUS_STYLE[skill.status])}>{skill.status_label}</span>
           <span className="font-display text-lg font-semibold text-ink-100">{skill.label}</span>
           {skill.listed_by_you && <span className="font-mono text-[10px] uppercase tracking-wide text-ink-500">listed by you, not counted</span>}
@@ -219,7 +219,7 @@ function SkillRow({ skill, open }: { skill: SkillGapSkill; open: boolean }) {
                   {skill.lessons.map((l) => (
                     <li key={l.id} className="flex items-start gap-2 text-sm">
                       <Mark done={l.done} />
-                      <Link href={l.href} className="focus-ring rounded text-ink-200 hover:text-accent-light">
+                      <Link href={l.href} className="focus-ring tap rounded text-ink-200 hover:text-accent-light">
                         {l.title}
                       </Link>
                       <span className="ml-auto shrink-0 font-mono text-[11px] text-ink-500">{l.minutes} min</span>
@@ -236,7 +236,7 @@ function SkillRow({ skill, open }: { skill: SkillGapSkill; open: boolean }) {
                     <li key={p.id} className="flex flex-wrap items-center gap-2 text-sm">
                       <Mark done={p.state === "completed"} />
                       <span className="text-ink-200">{p.title}</span>
-                      <Link href={p.href} className="focus-ring ml-auto rounded-md border border-[rgb(var(--fg-tint)/0.16)] px-2.5 py-1 text-xs font-medium text-accent-light hover:border-accent/40">
+                      <Link href={p.href} className="focus-ring tap ml-auto rounded-md border border-[rgb(var(--fg-tint)/0.16)] px-2.5 py-1 text-xs font-medium text-accent-light hover:border-accent/40">
                         {p.state === "completed" ? "Open project" : p.state === "started" ? "Continue project" : "Start project"}
                       </Link>
                     </li>
@@ -268,7 +268,7 @@ function SkillRow({ skill, open }: { skill: SkillGapSkill; open: boolean }) {
             )}
             {skill.next_step && (
               <Link href={skill.next_step.href} className="focus-ring inline-flex rounded-xl">
-                <Button size="sm" className="gap-1.5" tabIndex={-1}>
+                <Button size="sm" variant="secondary" className="gap-1.5" tabIndex={-1}>
                   {skill.next_step.title} <ArrowRight className="h-3.5 w-3.5" />
                 </Button>
               </Link>
@@ -283,6 +283,7 @@ function SkillRow({ skill, open }: { skill: SkillGapSkill; open: boolean }) {
 function Mark({ done }: { done: boolean }) {
   return (
     <span
+      role="img"
       aria-label={done ? "Done" : "Not done"}
       className={cn("mt-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full border", done ? "border-success bg-success text-[rgb(var(--color-bg))]" : "border-[rgb(var(--fg-tint)/0.3)]")}
     >

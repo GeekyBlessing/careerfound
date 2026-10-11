@@ -41,7 +41,7 @@ export default function SignupPage() {
   return (
     <>
       <GlobalNav />
-    <div className="relative flex min-h-[calc(100vh-4rem)] items-center justify-center overflow-hidden px-4 py-10">
+    <div className="relative flex min-h-[calc(100vh-4rem)] items-start justify-center overflow-hidden px-4 py-8 sm:items-center sm:py-10">
       <div className="bg-contour pointer-events-none absolute inset-x-0 top-0 -z-10 h-[420px]" />
       <div className="w-full max-w-sm">
         <Card className="animate-fade-in-up p-8 shadow-raised">

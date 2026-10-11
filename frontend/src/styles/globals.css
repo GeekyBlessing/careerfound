@@ -246,3 +246,21 @@ body {
     transition-duration: 0.001ms !important;
   }
 }
+
+/* Touch targets: on a finger-first device a link or icon button should be at
+   least 44px tall, even when the text inside it is small. Applied to the
+   small text links and icon buttons that sit in dense rows. */
+@media (pointer: coarse) {
+  .tap {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .tap-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+  }
+}

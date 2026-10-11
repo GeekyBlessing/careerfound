@@ -141,20 +141,18 @@ export default function DashboardPage() {
         <div className="space-y-10 sm:space-y-12">
           <HeroStatus firstName={firstName} dashboard={dashboard} roadmap={roadmap} stats={stats} readiness={readiness} />
 
-          {stats && <StatStrip dashboard={dashboard} stats={stats} />}
+          {stats && <StatStrip stats={stats} />}
 
           <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-start lg:gap-8">
             {dashboard.today_mission && <TodayMission mission={dashboard.today_mission} />}
-            {roadmap && <RoadmapTimeline roadmap={roadmap} />}
-          </div>
-
-          <div className="grid gap-6 lg:grid-cols-2 lg:items-start lg:gap-8">
-            <NextStep dashboard={dashboard} />
-            {dashboard.path_slug && (
-              <Card className="border-warm/20 bg-warm/[0.03] p-6">
-                <SmartMentorRecommendation pathSlug={dashboard.path_slug} pathName={dashboard.path_name || "your path"} variant="featured" />
-              </Card>
-            )}
+            <div className="space-y-6 lg:space-y-8">
+              {roadmap && <RoadmapTimeline roadmap={roadmap} />}
+              {dashboard.path_slug && (
+                <Card className="border-warm/20 bg-warm/[0.03] p-6">
+                  <SmartMentorRecommendation pathSlug={dashboard.path_slug} pathName={dashboard.path_name || "your path"} variant="featured" />
+                </Card>
+              )}
+            </div>
           </div>
 
           <ProjectLabCard />
@@ -200,7 +198,9 @@ function HeroStatus({
             <span className="text-accent-light">{dashboard.path_name}</span>
           </h1>
         </div>
-        <StreakBadge days={dashboard.current_streak_days} />
+        <div className="self-start">
+          <StreakBadge days={dashboard.current_streak_days} />
+        </div>
       </div>
 
       {stats && (
@@ -213,24 +213,9 @@ function HeroStatus({
       )}
 
       {roadmap && roadmap.phases.length > 0 && (
-        <ol className="mt-5 flex flex-wrap items-center gap-x-2 gap-y-1.5">
-          {roadmap.phases.map((phase, i) => (
-            <li key={phase.id} className="flex items-center gap-2">
-              <span
-                className={
-                  phase.progress_pct === 100
-                    ? "font-mono text-[11px] uppercase tracking-wide text-accent-light"
-                    : phase.progress_pct > 0
-                    ? "font-mono text-[11px] font-semibold uppercase tracking-wide text-ink-100"
-                    : "font-mono text-[11px] uppercase tracking-wide text-ink-500"
-                }
-              >
-                {phase.title}
-              </span>
-              {i < roadmap.phases.length - 1 && <ArrowRight className="h-3 w-3 text-ink-700" aria-hidden="true" />}
-            </li>
-          ))}
-        </ol>
+        <p className="mt-3 text-sm text-ink-500">
+          {currentPhaseLine(roadmap)}
+        </p>
       )}
 
       {move ? (
@@ -265,16 +250,16 @@ function HeroStatus({
 /** Section C: five distinct, compact readouts in a single rail (divided by
  * hairlines) rather than five identical bordered cards — the numbers are
  * meant to be scanned together, not treated as five separate widgets. */
-function StatStrip({ dashboard, stats }: { dashboard: Dashboard; stats: ReturnType<typeof computeRoadmapStats> }) {
+function StatStrip({ stats }: { stats: ReturnType<typeof computeRoadmapStats> }) {
+  // The progress bar above already shows roadmap progress and the badge shows
+  // the streak, so this rail carries only the figures that appear nowhere else.
   const items: { value: string; label: string }[] = [
-    { value: `${stats.progressPct}%`, label: "Roadmap progress" },
-    { value: `${stats.milestonesCompleted}/${stats.milestonesTotal}`, label: "Milestones completed" },
+    { value: `${stats.milestonesCompleted} of ${stats.milestonesTotal}`, label: "Phases complete" },
     { value: `${stats.completedItems}`, label: "Steps completed" },
     { value: formatMinutes(stats.learningMinutes), label: "Learning time" },
-    { value: `${dashboard.current_streak_days}`, label: "Day streak" },
   ];
   return (
-    <div className="grid grid-cols-2 gap-y-5 rounded-2xl border border-[rgb(var(--fg-tint)/0.08)] bg-[rgb(var(--fg-tint)/0.02)] px-5 py-5 sm:grid-cols-5 sm:divide-x sm:divide-[rgb(var(--fg-tint)/0.08)]">
+    <div className="grid grid-cols-3 gap-y-5 rounded-2xl border border-[rgb(var(--fg-tint)/0.08)] bg-[rgb(var(--fg-tint)/0.02)] px-4 py-5 sm:px-5 sm:divide-x sm:divide-[rgb(var(--fg-tint)/0.08)]">
       {items.map((item) => (
         <div key={item.label} className="px-1 sm:px-5 sm:first:pl-0 sm:last:pr-0">
           <p className="font-display text-2xl font-semibold tabular-nums text-ink-100 sm:text-3xl">{item.value}</p>
@@ -366,6 +351,9 @@ function TodayMission({ mission }: { mission: NonNullable<Dashboard["today_missi
                 </Button>
               </Link>
             )}
+            <Link href="/mentor" className="focus-ring mt-3 flex min-h-[44px] items-center justify-center gap-2 rounded-lg text-xs font-medium text-ink-400 hover:text-accent-light">
+              <MessageCircle className="h-3.5 w-3.5" aria-hidden="true" /> Stuck? Ask the AI Mentor for a hint
+            </Link>
           </>
         )}
       </div>
@@ -386,62 +374,40 @@ function TodayMission({ mission }: { mission: NonNullable<Dashboard["today_missi
  * reusing the same <PathTrack> primitive the roadmap page itself uses for
  * its journey overview, rather than a second, different-looking timeline
  * component. Real phase titles and summaries, not placeholder stage names. */
+function currentPhaseLine(roadmap: Roadmap): string {
+  const idx = roadmap.phases.findIndex((p) => p.progress_pct < 100);
+  if (idx === -1) return `All ${roadmap.phases.length} phases complete.`;
+  return `Phase ${idx + 1} of ${roadmap.phases.length}: ${(roadmap.phases[idx]?.title ?? "").replace(/^Phase \d+,\s*/i, "")}`;
+}
+
 function RoadmapTimeline({ roadmap }: { roadmap: Roadmap }) {
   const firstIncomplete = roadmap.phases.findIndex((p) => p.progress_pct < 100);
-  const waypoints: PathWaypoint[] = roadmap.phases.map((phase, i) => ({
+  const current = firstIncomplete === -1 ? roadmap.phases.length - 1 : firstIncomplete;
+  // Show where the learner is, not all eleven phases again: the phase in
+  // progress and the two after it. The full list lives on the roadmap page.
+  const shown = roadmap.phases.slice(current, current + 3);
+  const waypoints: PathWaypoint[] = shown.map((phase, i) => ({
     icon: Flag,
     label: phase.title,
     caption: phase.summary,
-    state: phase.progress_pct === 100 ? "done" : i === firstIncomplete ? "active" : "upcoming",
+    state: phase.progress_pct === 100 ? "done" : i === 0 ? "active" : "upcoming",
   }));
+  const after = roadmap.phases.length - (current + shown.length);
+  const doneCount = roadmap.phases.filter((p) => p.progress_pct === 100).length;
 
   return (
     <Card className="p-6">
       <div className="flex items-center justify-between">
         <p className="eyebrow">Career roadmap</p>
-        <Link href="/roadmap" className="text-xs font-medium text-accent-light hover:underline">
+        <Link href="/roadmap" className="focus-ring tap rounded text-xs font-medium text-accent-light hover:underline">
           Open full roadmap
         </Link>
       </div>
       <PathTrack waypoints={waypoints} orientation="vertical" size="sm" className="mt-5" />
-    </Card>
-  );
-}
-
-/** Section H: "Your next step" — a short, real, forward-looking chain
- * (what's next, then what, then the milestone it leads to), not a
- * decorative example. Every line comes straight off the dashboard payload. */
-function NextStep({ dashboard }: { dashboard: Dashboard }) {
-  const tasks = dashboard.today_mission?.tasks ?? [];
-  const firstIncompleteIdx = tasks.findIndex((t) => !t.done);
-  const afterNext = firstIncompleteIdx >= 0 ? tasks.slice(firstIncompleteIdx + 1).find((t) => !t.done) : null;
-
-  const steps: string[] = [dashboard.recommended_next_action];
-  if (afterNext) steps.push(afterNext.title);
-  if (dashboard.upcoming_milestone) steps.push(`Then: ${dashboard.upcoming_milestone}`);
-
-  return (
-    <Card className="p-6">
-      <p className="eyebrow">Today on your roadmap</p>
-      <ol className="mt-4 space-y-3">
-        {steps.map((step, i) => (
-          <li key={i} className="flex flex-col gap-2">
-            <div className="flex items-start gap-3">
-              <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-accent/12 font-mono text-[10px] font-semibold text-accent-light">
-                {i + 1}
-              </span>
-              <p className="text-sm leading-snug text-ink-200">{step}</p>
-            </div>
-            {i < steps.length - 1 && <ArrowDown className="ml-[9px] h-3.5 w-3.5 text-ink-700" aria-hidden="true" />}
-          </li>
-        ))}
-      </ol>
-      <Link
-        href="/mentor"
-        className="focus-ring mt-5 flex items-center gap-2 rounded-lg border-t border-[rgb(var(--fg-tint)/0.08)] pt-4 text-xs font-medium text-ink-400 hover:text-accent-light"
-      >
-        <MessageCircle className="h-3.5 w-3.5" /> Stuck? Ask the AI Mentor for a hint.
-      </Link>
+      <p className="mt-4 border-t border-[rgb(var(--fg-tint)/0.08)] pt-3 text-xs text-ink-500">
+        {doneCount} of {roadmap.phases.length} phases complete
+        {after > 0 ? `, then ${after} more after these` : ""}.
+      </p>
     </Card>
   );
 }

@@ -70,14 +70,14 @@ function VerificationNotice() {
       </span>
       <Link
         href="/verify-pending"
-        className="focus-ring flex-shrink-0 rounded-md border border-warning/30 px-2.5 py-1 font-medium text-warning transition-colors hover:bg-warning/10"
+        className="focus-ring tap flex-shrink-0 rounded-md border border-warning/30 px-2.5 py-1 font-medium text-warning transition-colors hover:bg-warning/10"
       >
         Verify email
       </Link>
       <button
         onClick={() => setDismissed(true)}
         aria-label="Dismiss"
-        className="focus-ring flex-shrink-0 rounded-md p-0.5 text-ink-500 hover:bg-[rgb(var(--fg-tint)/0.08)] hover:text-ink-100"
+        className="focus-ring tap-icon flex-shrink-0 rounded-md p-0.5 text-ink-500 hover:bg-[rgb(var(--fg-tint)/0.08)] hover:text-ink-100"
       >
         <X className="h-3.5 w-3.5" />
       </button>
